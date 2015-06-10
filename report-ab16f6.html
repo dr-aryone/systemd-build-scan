@@ -1,0 +1,329 @@
+<!doctype html>
+<html>
+<head>
+<title>src/libsystemd-network/test-lldp.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Potential leak of memory pointed to by 'p' -->
+
+<!-- BUGTYPE Memory leak -->
+
+<!-- BUGCATEGORY Memory Error -->
+
+<!-- BUGFILE /home/runner/systemd/src/libsystemd-network/test-lldp.c -->
+
+<!-- FILENAME test-lldp.c -->
+
+<!-- FUNCTIONNAME lldp_parse_port_id_tlv -->
+
+<!-- BUGLINE 145 -->
+
+<!-- BUGCOLUMN 17 -->
+
+<!-- BUGPATHLENGTH 6 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/libsystemd-network/test-lldp.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 145, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'p'</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*-*- Mode: C; c-basic-offset: 8; indent-tabs-mode: nil -*-*/</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>Copyright (C) 2014 Tom Gundersen</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>Copyright (C) 2014 Susant Sahani</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"><span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"><span class='directive'>#include &lt;stdio.h&gt;</span></td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include &lt;string.h&gt;</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include &lt;net/ethernet.h&gt;</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include &lt;arpa/inet.h&gt;</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#include "macro.h"</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='directive'>#include "lldp.h"</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='directive'>#include "lldp-tlv.h"</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='directive'>#define <span class='macro'>TEST_LLDP_PORT<span class='expansion'>"em1"</span></span> "em1"</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"><span class='directive'>#define <span class='macro'>TEST_LLDP_TYPE_SYSTEM_NAME<span class='expansion'>"systemd-lldp"</span></span> "systemd-lldp"</span></td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='directive'>#define <span class='macro'>TEST_LLDP_TYPE_SYSTEM_DESC<span class='expansion'>"systemd-lldp-desc"</span></span> "systemd-lldp-desc"</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>struct</span> ether_addr mac_addr = {</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">        .ether_addr_octet = {'A', 'B', 'C', '1', '2', '3'}</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_build_tlv_packet(tlv_packet **ret) {</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">        <span class='macro'>_cleanup_tlv_packet_free_<span class='expansion'>__attribute__((cleanup(tlv_packet_freep)))</span></span> tlv_packet *m = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">        <span class='keyword'>const</span> uint8_t lldp_dst[] = <span class='macro'>LLDP_MULTICAST_ADDR<span class='expansion'>{ 0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e }</span></span>;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">        <span class='keyword'>struct</span> ether_header ether = {</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">                .ether_type = htons(<span class='macro'>ETHERTYPE_LLDP<span class='expansion'>0x88cc</span></span>),</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">        <span class='comment'>/* Append ethernet header */</span></td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">        memcpy(&amp;ether.ether_dhost, lldp_dst, <span class='macro'>ETHER_ADDR_LEN<span class='expansion'>6</span></span>);</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">        memcpy(&amp;ether.ether_shost, &amp;mac_addr, <span class='macro'>ETHER_ADDR_LEN<span class='expansion'>6</span></span>);</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">        <span class='macro'>assert_se(tlv_packet_new(&amp;m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_new(&amp;m) &gt;= 0<br>)),0))) log_assert_failed("tlv_packet_new(&amp;m) &gt;= 0", "src/libsystemd-network/test-lldp.c"<br>, 51, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">        <span class='macro'>assert_se(tlv_packet_append_bytes(m, &amp;ether, <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> ether_header)) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_bytes(m, &amp;<br>ether, sizeof(struct ether_header)) &gt;= 0)),0))) log_assert_failed<br>("tlv_packet_append_bytes(m, &amp;ether, sizeof(struct ether_header)) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 53, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_open_container(m, LLDP_TYPE_CHASSIS_ID) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_open_container<br>(m, LLDP_TYPE_CHASSIS_ID) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_open_container(m, LLDP_TYPE_CHASSIS_ID) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 55, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">        <span class='macro'>assert_se(tlv_packet_append_u8(m, LLDP_CHASSIS_SUBTYPE_MAC_ADDRESS) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_u8(m, LLDP_CHASSIS_SUBTYPE_MAC_ADDRESS<br>) &gt;= 0)),0))) log_assert_failed("tlv_packet_append_u8(m, LLDP_CHASSIS_SUBTYPE_MAC_ADDRESS) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 57, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">        <span class='macro'>assert_se(tlv_packet_append_bytes(m, &amp;mac_addr, ETHER_ADDR_LEN) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_bytes(m, &amp;<br>mac_addr, 6) &gt;= 0)),0))) log_assert_failed("tlv_packet_append_bytes(m, &amp;mac_addr, ETHER_ADDR_LEN) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 58, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_close_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_close_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_close_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 60, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">        <span class='comment'>/* port name */</span></td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_open_container(m, LLDP_TYPE_PORT_ID) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_open_container<br>(m, LLDP_TYPE_PORT_ID) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_open_container(m, LLDP_TYPE_PORT_ID) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 63, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">        <span class='macro'>assert_se(tlv_packet_append_u8(m, LLDP_PORT_SUBTYPE_INTERFACE_NAME) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_u8(m, LLDP_PORT_SUBTYPE_INTERFACE_NAME<br>) &gt;= 0)),0))) log_assert_failed("tlv_packet_append_u8(m, LLDP_PORT_SUBTYPE_INTERFACE_NAME) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 65, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">        <span class='macro'>assert_se(tlv_packet_append_bytes(m, TEST_LLDP_PORT, strlen(TEST_LLDP_PORT) + 1) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_bytes(m, "em1"<br>, strlen("em1") + 1) &gt;= 0)),0))) log_assert_failed("tlv_packet_append_bytes(m, TEST_LLDP_PORT, strlen(TEST_LLDP_PORT) + 1) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 66, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_close_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_close_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_close_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 68, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">        <span class='comment'>/* ttl */</span></td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_open_container(m, LLDP_TYPE_TTL) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_open_container<br>(m, LLDP_TYPE_TTL) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_open_container(m, LLDP_TYPE_TTL) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 71, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">        <span class='macro'>assert_se(tlv_packet_append_u16(m, 170) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_u16(m, 170)<br> &gt;= 0)),0))) log_assert_failed("tlv_packet_append_u16(m, 170) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 73, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_close_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_close_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_close_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 75, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">        <span class='comment'>/* system name */</span></td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_open_container(m, LLDP_TYPE_SYSTEM_NAME) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_open_container<br>(m, LLDP_TYPE_SYSTEM_NAME) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_open_container(m, LLDP_TYPE_SYSTEM_NAME) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 78, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">        <span class='macro'>assert_se(tlv_packet_append_bytes(m, TEST_LLDP_TYPE_SYSTEM_NAME,<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_bytes(m, "systemd-lldp"<br>, strlen("systemd-lldp")) &gt;= 0)),0))) log_assert_failed("tlv_packet_append_bytes(m, TEST_LLDP_TYPE_SYSTEM_NAME, strlen(TEST_LLDP_TYPE_SYSTEM_NAME)) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 81, __PRETTY_FUNCTION__<br>); } while (0)</span></span></td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">                                          <span class='macro'>strlen(TEST_LLDP_TYPE_SYSTEM_NAME)) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_bytes(m, "systemd-lldp"<br>, strlen("systemd-lldp")) &gt;= 0)),0))) log_assert_failed("tlv_packet_append_bytes(m, TEST_LLDP_TYPE_SYSTEM_NAME, strlen(TEST_LLDP_TYPE_SYSTEM_NAME)) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 81, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_close_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_close_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_close_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 82, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">        <span class='comment'>/* system descrition */</span></td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_open_container(m, LLDP_TYPE_SYSTEM_DESCRIPTION) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_open_container<br>(m, LLDP_TYPE_SYSTEM_DESCRIPTION) &gt;= 0)),0))) log_assert_failed<br>("lldp_tlv_packet_open_container(m, LLDP_TYPE_SYSTEM_DESCRIPTION) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 85, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">        <span class='macro'>assert_se(tlv_packet_append_bytes(m, TEST_LLDP_TYPE_SYSTEM_DESC,<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_bytes(m, "systemd-lldp-desc"<br>, strlen("systemd-lldp-desc")) &gt;= 0)),0))) log_assert_failed<br>("tlv_packet_append_bytes(m, TEST_LLDP_TYPE_SYSTEM_DESC, strlen(TEST_LLDP_TYPE_SYSTEM_DESC)) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 88, __PRETTY_FUNCTION__<br>); } while (0)</span></span></td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">                                          <span class='macro'>strlen(TEST_LLDP_TYPE_SYSTEM_DESC)) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_append_bytes(m, "systemd-lldp-desc"<br>, strlen("systemd-lldp-desc")) &gt;= 0)),0))) log_assert_failed<br>("tlv_packet_append_bytes(m, TEST_LLDP_TYPE_SYSTEM_DESC, strlen(TEST_LLDP_TYPE_SYSTEM_DESC)) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 88, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_close_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_close_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_close_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 90, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">        <span class='comment'>/* Mark end of packet */</span></td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_open_container(m, LLDP_TYPE_END) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_open_container<br>(m, LLDP_TYPE_END) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_open_container(m, LLDP_TYPE_END) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 93, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_close_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_close_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_close_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 94, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">        *ret = m;</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">        m = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_parse_chassis_tlv(tlv_packet *m, uint8_t *type) {</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">        uint8_t *p, subtype;</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">        uint16_t length;</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_enter_container(m, LLDP_TYPE_CHASSIS_ID) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_enter_container<br>(m, LLDP_TYPE_CHASSIS_ID) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_enter_container(m, LLDP_TYPE_CHASSIS_ID) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 107, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">        <span class='macro'>assert_se(tlv_packet_read_u8(m, &amp;subtype) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_read_u8(m, &amp;subtype<br>) &gt;= 0)),0))) log_assert_failed("tlv_packet_read_u8(m, &amp;subtype) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 108, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">        <span class='keyword'>switch</span> (subtype) {</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">        <span class='keyword'>case</span> LLDP_CHASSIS_SUBTYPE_MAC_ADDRESS:</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">                *type = LLDP_CHASSIS_SUBTYPE_MAC_ADDRESS;</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">                <span class='macro'>assert_se(tlv_packet_read_bytes(m, &amp;p, &amp;length) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_read_bytes(m, &amp;<br>p, &amp;length) &gt;= 0)),0))) log_assert_failed("tlv_packet_read_bytes(m, &amp;p, &amp;length) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 114, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">                <span class='macro'>assert_se(memcmp(p, &amp;mac_addr.ether_addr_octet, ETHER_ADDR_LEN) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(memcmp(p, &amp;mac_addr.ether_addr_octet<br>, 6) == 0)),0))) log_assert_failed("memcmp(p, &amp;mac_addr.ether_addr_octet, ETHER_ADDR_LEN) == 0"<br>, "src/libsystemd-network/test-lldp.c", 116, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Unhandled option"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unhandled option", "src/libsystemd-network/test-lldp.c"<br>, 120, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_exit_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_exit_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_exit_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 123, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_parse_port_id_tlv(tlv_packet *m) {</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">        <span class='keyword'>char</span> *str = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">        uint16_t length;</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">        uint8_t subtype;</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_enter_container(m, LLDP_TYPE_PORT_ID) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_enter_container<br>(m, LLDP_TYPE_PORT_ID) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_enter_container(m, LLDP_TYPE_PORT_ID) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 134, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">        <span class='macro'>assert_se(tlv_packet_read_u8(m, &amp;subtype) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_read_u8(m, &amp;subtype<br>) &gt;= 0)),0))) log_assert_failed("tlv_packet_read_u8(m, &amp;subtype) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 136, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">        <span class='keyword'>switch</span> (subtype) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Control jumps to 'case LLDP_PORT_SUBTYPE_INTERFACE_NAME:'  at line 139</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">        <span class='keyword'>case</span> LLDP_PORT_SUBTYPE_INTERFACE_NAME:</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">                <span class='macro'>assert_se(tlv_packet_read_string(m, &amp;str, &amp;length) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_read_string(m, &amp;<br>str, &amp;length) &gt;= 0)),0))) log_assert_failed("tlv_packet_read_string(m, &amp;str, &amp;length) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 140, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">                p = <span class="mrange">strndup(str, length-1)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">                <span class='macro'>assert_se(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/libsystemd-network/test-lldp.c", 143, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
+</td><td><div class="PathNav"><a href="#EndPath" title="Next event (6)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming 'p' is non-null</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">                <span class='macro'>assert_se(streq(p, TEST_LLDP_PORT) == 1)<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((p),("em1")) == 0) ==<br> 1)),0))) log_assert_failed("streq(p, TEST_LLDP_PORT) == 1", "src/libsystemd-network/test-lldp.c"<br>, 145, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'p'</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Unhandled option"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unhandled option", "src/libsystemd-network/test-lldp.c"<br>, 148, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_exit_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_exit_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_exit_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 151, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_parse_system_name_tlv(tlv_packet *m) {</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">        <span class='keyword'>char</span> *str = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">        uint16_t length;</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_enter_container(m, LLDP_TYPE_SYSTEM_NAME) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_enter_container<br>(m, LLDP_TYPE_SYSTEM_NAME) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_enter_container(m, LLDP_TYPE_SYSTEM_NAME) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 161, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">        <span class='macro'>assert_se(tlv_packet_read_string(m, &amp;str, &amp;length) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_read_string(m, &amp;<br>str, &amp;length) &gt;= 0)),0))) log_assert_failed("tlv_packet_read_string(m, &amp;str, &amp;length) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 162, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">        p = strndup(str, length);</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">        <span class='macro'>assert_se(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/libsystemd-network/test-lldp.c", 165, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">        <span class='macro'>assert_se(streq(p, TEST_LLDP_TYPE_SYSTEM_NAME) == 1)<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((p),("systemd-lldp"))<br> == 0) == 1)),0))) log_assert_failed("streq(p, TEST_LLDP_TYPE_SYSTEM_NAME) == 1"<br>, "src/libsystemd-network/test-lldp.c", 167, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_exit_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_exit_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_exit_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 169, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_parse_system_desc_tlv(tlv_packet *m) {</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">        <span class='keyword'>char</span> *str = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">        uint16_t length;</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_enter_container(m, LLDP_TYPE_SYSTEM_DESCRIPTION) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_enter_container<br>(m, LLDP_TYPE_SYSTEM_DESCRIPTION) &gt;= 0)),0))) log_assert_failed<br>("lldp_tlv_packet_enter_container(m, LLDP_TYPE_SYSTEM_DESCRIPTION) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 179, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">        <span class='macro'>assert_se(tlv_packet_read_string(m, &amp;str, &amp;length) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_read_string(m, &amp;<br>str, &amp;length) &gt;= 0)),0))) log_assert_failed("tlv_packet_read_string(m, &amp;str, &amp;length) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 180, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">        p = strndup(str, length);</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">        <span class='macro'>assert_se(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/libsystemd-network/test-lldp.c", 183, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">        <span class='macro'>assert_se(streq(p, TEST_LLDP_TYPE_SYSTEM_DESC) == 1)<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((p),("systemd-lldp-desc"<br>)) == 0) == 1)),0))) log_assert_failed("streq(p, TEST_LLDP_TYPE_SYSTEM_DESC) == 1"<br>, "src/libsystemd-network/test-lldp.c", 185, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_exit_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_exit_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_exit_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 187, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_parse_ttl_tlv(tlv_packet *m) {</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">        uint16_t ttl;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_enter_container(m, LLDP_TYPE_TTL) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_enter_container<br>(m, LLDP_TYPE_TTL) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_enter_container(m, LLDP_TYPE_TTL) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 195, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">        <span class='macro'>assert_se(tlv_packet_read_u16(m, &amp;ttl) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_read_u16(m, &amp;ttl<br>) &gt;= 0)),0))) log_assert_failed("tlv_packet_read_u16(m, &amp;ttl) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 196, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">        <span class='macro'>assert_se(ttl == 170)<span class='expansion'>do { if ((__builtin_expect(!!(!(ttl == 170)),0))) log_assert_failed<br>("ttl == 170", "src/libsystemd-network/test-lldp.c", 198, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">        <span class='macro'>assert_se(lldp_tlv_packet_exit_container(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_tlv_packet_exit_container<br>(m) &gt;= 0)),0))) log_assert_failed("lldp_tlv_packet_exit_container(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 200, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_parse_tlv_packet(tlv_packet *m, <span class='keyword'>int</span> len) {</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">        uint8_t subtype;</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">        <span class='macro'>assert_se(tlv_packet_parse_pdu(m, len) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(tlv_packet_parse_pdu(m, len) &gt;=<br> 0)),0))) log_assert_failed("tlv_packet_parse_pdu(m, len) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 208, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">        <span class='macro'>assert_se(lldp_parse_chassis_tlv(m, &amp;subtype) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_parse_chassis_tlv(m, &amp;<br>subtype) &gt;= 0)),0))) log_assert_failed("lldp_parse_chassis_tlv(m, &amp;subtype) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 209, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">        <span class='macro'>assert_se(lldp_parse_port_id_tlv(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_parse_port_id_tlv(m) &gt;=<br> 0)),0))) log_assert_failed("lldp_parse_port_id_tlv(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 210, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
+</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Calling 'lldp_parse_port_id_tlv'</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">        <span class='macro'>assert_se(lldp_parse_system_name_tlv(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_parse_system_name_tlv(m)<br> &gt;= 0)),0))) log_assert_failed("lldp_parse_system_name_tlv(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 211, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">        <span class='macro'>assert_se(lldp_parse_ttl_tlv(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_parse_ttl_tlv(m) &gt;= 0<br>)),0))) log_assert_failed("lldp_parse_ttl_tlv(m) &gt;= 0", "src/libsystemd-network/test-lldp.c"<br>, 212, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">        <span class='macro'>assert_se(lldp_parse_system_desc_tlv(m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(lldp_parse_system_desc_tlv(m)<br> &gt;= 0)),0))) log_assert_failed("lldp_parse_system_desc_tlv(m) &gt;= 0"<br>, "src/libsystemd-network/test-lldp.c", 213, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">        <span class='macro'>_cleanup_tlv_packet_free_<span class='expansion'>__attribute__((cleanup(tlv_packet_freep)))</span></span> tlv_packet *tlv = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">        <span class='comment'>/* form a packet */</span></td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">        lldp_build_tlv_packet(&amp;tlv);</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">        <span class='comment'>/* parse the packet */</span></td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">        tlv_packet_parse_pdu(tlv, tlv-&gt;length);</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">        <span class='comment'>/* verify */</span></td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">        <span class="mrange">lldp_parse_tlv_packet(tlv, tlv-&gt;length)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Calling 'lldp_parse_tlv_packet'</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">}</td></tr>
+</table></body></html>
