@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd_lock' is never read -->
+<!-- BUGDESC Potential leak of memory pointed to by 'worker' -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/udev/udevd.c -->
 
 <!-- FILENAME udevd.c -->
 
-<!-- FUNCTIONNAME worker_spawn -->
+<!-- FUNCTIONNAME worker_new -->
 
-<!-- BUGLINE 438 -->
+<!-- BUGLINE 225 -->
 
-<!-- BUGCOLUMN 49 -->
+<!-- BUGCOLUMN 24 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 10 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/udev/udevd.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 438, column 49</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd_lock' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 225, column 24</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'worker'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -204,7 +204,7 @@
 <tr><td class="num" id="LN119">119</td><td class="line">};</td></tr>
 <tr><td class="num" id="LN120">120</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN121">121</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>inline</span> <span class='keyword'>struct</span> event *node_to_event(<span class='keyword'>struct</span> udev_list_node *node) {</td></tr>
-<tr><td class="num" id="LN122">122</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>container_of(node, <span class='keyword'>struct</span> event, node)<span class='expansion'>__extension__ ({ const typeof( ((struct event*)0)-&gt;node ) *<br>__unique_prefix_A8 = ((node)); (struct event*)( (char *)__unique_prefix_A8<br> - __builtin_offsetof(struct event, node) ); })</span></span>;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>container_of(node, <span class='keyword'>struct</span> event, node)<span class='expansion'>__extension__ ({ const typeof( ((struct event*)0)-&gt;node ) *<br>__unique_prefix_A5 = ((node)); (struct event*)( (char *)__unique_prefix_A5<br> - __builtin_offsetof(struct event, node) ); })</span></span>;</td></tr>
 <tr><td class="num" id="LN123">123</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN124">124</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN125">125</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> event_queue_cleanup(Manager *manager, <span class='keyword'>enum</span> event_state type);</td></tr>
@@ -295,7 +295,12 @@
 <tr><td class="num" id="LN210">210</td><td class="line">        <span class='macro'>assert(pid &gt; 1)<span class='expansion'>do { if ((__builtin_expect(!!(!(pid &gt; 1)),0))) log_assert_failed<br>("pid &gt; 1", "src/udev/udevd.c", 210, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN211">211</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN212">212</td><td class="line">        worker = <span class='macro'>new0(<span class='keyword'>struct</span> worker, 1)<span class='expansion'>((struct worker*) calloc((1), sizeof(struct worker)))</span></span>;</td></tr>
-<tr><td class="num" id="LN213">213</td><td class="line">        <span class='keyword'>if</span> (!worker)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:18ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'new0':
+</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!worker</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'worker' is non-null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN214">214</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN215">215</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN216">216</td><td class="line">        worker-&gt;refcount = 1;</td></tr>
@@ -306,8 +311,11 @@
 <tr><td class="num" id="LN221">221</td><td class="line">        worker-&gt;pid = pid;</td></tr>
 <tr><td class="num" id="LN222">222</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN223">223</td><td class="line">        r = <span class='macro'>hashmap_ensure_allocated(&amp;manager-&gt;workers, NULL)<span class='expansion'>internal_hashmap_ensure_allocated(&amp;manager-&gt;workers, (<br>(void*)0) )</span></span>;</td></tr>
-<tr><td class="num" id="LN224">224</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN225">225</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'worker'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN226">226</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN227">227</td><td class="line">        r = hashmap_put(manager-&gt;workers, <span class='macro'>UINT_TO_PTR(pid)<span class='expansion'>((void *) ((uintptr_t) (pid)))</span></span>, worker);</td></tr>
 <tr><td class="num" id="LN228">228</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
@@ -415,7 +423,9 @@
 <tr><td class="num" id="LN330">330</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN331">331</td><td class="line">        <span class='comment'>/* listen for new events */</span></td></tr>
 <tr><td class="num" id="LN332">332</td><td class="line">        worker_monitor = udev_monitor_new_from_netlink(udev, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN333">333</td><td class="line">        <span class='keyword'>if</span> (worker_monitor == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">worker_monitor == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'worker_monitor' is not equal to null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN334">334</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN335">335</td><td class="line">        <span class='comment'>/* allow the main daemon netlink address to send devices to the worker */</span></td></tr>
 <tr><td class="num" id="LN336">336</td><td class="line">        udev_monitor_allow_unicast_sender(worker_monitor, manager-&gt;monitor);</td></tr>
@@ -423,6 +433,7 @@
 <tr><td class="num" id="LN338">338</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN339">339</td><td class="line">        pid = fork();</td></tr>
 <tr><td class="num" id="LN340">340</td><td class="line">        <span class='keyword'>switch</span> (pid) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Control jumps to the 'default' case at line 528</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN341">341</td><td class="line">        <span class='keyword'>case</span> 0: {</td></tr>
 <tr><td class="num" id="LN342">342</td><td class="line">                <span class='keyword'>struct</span> udev_device *dev = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN343">343</td><td class="line">                <span class='macro'>_cleanup_netlink_unref_<span class='expansion'>__attribute__((cleanup(sd_netlink_unrefp)))</span></span> sd_netlink *rtnl = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
@@ -520,8 +531,7 @@
 <tr><td class="num" id="LN435">435</td><td class="line">                                        fd_lock = open(udev_device_get_devnode(d), <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>);</td></tr>
 <tr><td class="num" id="LN436">436</td><td class="line">                                        <span class='keyword'>if</span> (fd_lock &gt;= 0 &amp;&amp; flock(fd_lock, <span class='macro'>LOCK_SH<span class='expansion'>1</span></span>|<span class='macro'>LOCK_NB<span class='expansion'>4</span></span>) &lt; 0) {</td></tr>
 <tr><td class="num" id="LN437">437</td><td class="line">                                                <span class='macro'>log_debug_errno(errno, <span class='string_literal'>"Unable to flock(%s), skipping event handling: %m"</span>, udev_device_get_devnode(d))<span class='expansion'>({ int _level = (7), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c"<br>, 437, __func__, "Unable to flock(%s), skipping event handling: %m"<br>, udev_device_get_devnode(d)) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN438">438</td><td class="line">                                                fd_lock = <span class="mrange">safe_close(fd_lock)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:49ex">Value stored to 'fd_lock' is never read</div></td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">                                                fd_lock = safe_close(fd_lock);</td></tr>
 <tr><td class="num" id="LN439">439</td><td class="line">                                                <span class='keyword'>goto</span> skip;</td></tr>
 <tr><td class="num" id="LN440">440</td><td class="line">                                        }</td></tr>
 <tr><td class="num" id="LN441">441</td><td class="line">                                }</td></tr>
@@ -616,7 +626,8 @@
 <tr><td class="num" id="LN530">530</td><td class="line">                <span class='keyword'>struct</span> worker *worker;</td></tr>
 <tr><td class="num" id="LN531">531</td><td class="line">                <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN532">532</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">                r = worker_new(&amp;worker, manager, worker_monitor, pid);</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">                r = <span class="mrange">worker_new(&amp;worker, manager, worker_monitor, pid)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Calling 'worker_new'</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN534">534</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN535">535</td><td class="line">                        <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN536">536</td><td class="line"> </td></tr>
@@ -760,7 +771,7 @@
 <tr><td class="num" id="LN674">674</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN675">675</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN676">676</td><td class="line">                <span class='comment'>/* compare devpath */</span></td></tr>
-<tr><td class="num" id="LN677">677</td><td class="line">                common = <span class='macro'>MIN(loop_event-&gt;devpath_len, event-&gt;devpath_len)<span class='expansion'>__extension__ ({ const typeof((loop_event-&gt;devpath_len)) __unique_prefix_A9<br> = ((loop_event-&gt;devpath_len)); const typeof((event-&gt;devpath_len<br>)) __unique_prefix_B10 = ((event-&gt;devpath_len)); __unique_prefix_A9<br> &lt; __unique_prefix_B10 ? __unique_prefix_A9 : __unique_prefix_B10<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">                common = <span class='macro'>MIN(loop_event-&gt;devpath_len, event-&gt;devpath_len)<span class='expansion'>__extension__ ({ const typeof((loop_event-&gt;devpath_len)) __unique_prefix_A6<br> = ((loop_event-&gt;devpath_len)); const typeof((event-&gt;devpath_len<br>)) __unique_prefix_B7 = ((event-&gt;devpath_len)); __unique_prefix_A6<br> &lt; __unique_prefix_B7 ? __unique_prefix_A6 : __unique_prefix_B7<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN678">678</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN679">679</td><td class="line">                <span class='comment'>/* one devpath is contained in the other? */</span></td></tr>
 <tr><td class="num" id="LN680">680</td><td class="line">                <span class='keyword'>if</span> (memcmp(loop_event-&gt;devpath, event-&gt;devpath, common) != 0)</td></tr>
@@ -1758,74 +1769,78 @@
 <tr><td class="num" id="LN1672">1672</td><td class="line">                   <span class='comment'>we only do this on systemd systems, and only if we are directly spawned</span></td></tr>
 <tr><td class="num" id="LN1673">1673</td><td class="line">                   <span class='comment'>by PID1. otherwise we are not guaranteed to have a dedicated cgroup */</span></td></tr>
 <tr><td class="num" id="LN1674">1674</td><td class="line">                r = cg_pid_get_path(<span class='macro'>SYSTEMD_CGROUP_CONTROLLER<span class='expansion'>"systemd"</span></span>, 0, &amp;cgroup);</td></tr>
-<tr><td class="num" id="LN1675">1675</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1676">1676</td><td class="line">                        <span class='macro'>log_warning_errno(r, <span class='string_literal'>"failed to get cgroup: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1676, __func__, "failed to get cgroup: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1677">1677</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1678">1678</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1679">1679</td><td class="line">        r = listen_fds(&amp;fd_ctrl, &amp;fd_uevent);</td></tr>
-<tr><td class="num" id="LN1680">1680</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1681">1681</td><td class="line">                r = <span class='macro'>log_error_errno(r, <span class='string_literal'>"could not listen on fds: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1681, __func__, "could not listen on fds: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1682">1682</td><td class="line">                <span class='keyword'>goto</span> exit;</td></tr>
-<tr><td class="num" id="LN1683">1683</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1684">1684</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1685">1685</td><td class="line">        <span class='keyword'>if</span> (arg_daemonize) {</td></tr>
-<tr><td class="num" id="LN1686">1686</td><td class="line">                pid_t pid;</td></tr>
-<tr><td class="num" id="LN1687">1687</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1688">1688</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"starting version "</span> VERSION)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1688, __func__, "starting version " "221") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1689">1689</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1690">1690</td><td class="line">                <span class='comment'>/* connect /dev/null to stdin, stdout, stderr */</span></td></tr>
-<tr><td class="num" id="LN1691">1691</td><td class="line">                <span class='keyword'>if</span> (log_get_max_level() &lt; <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>)</td></tr>
-<tr><td class="num" id="LN1692">1692</td><td class="line">                        (<span class='keyword'>void</span>) make_null_stdio();</td></tr>
+<tr><td class="num" id="LN1675">1675</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1676">1676</td><td class="line">                        <span class='keyword'>if</span> (r == -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN1677">1677</td><td class="line">                                <span class='macro'>log_debug_errno(r, <span class='string_literal'>"did not find dedicated cgroup: %m"</span>)<span class='expansion'>({ int _level = (7), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1677, __func__, "did not find dedicated cgroup: %m") : -abs(<br>_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1678">1678</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1679">1679</td><td class="line">                                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"failed to get cgroup: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1679, __func__, "failed to get cgroup: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1680">1680</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1681">1681</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1682">1682</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1683">1683</td><td class="line">        r = listen_fds(&amp;fd_ctrl, &amp;fd_uevent);</td></tr>
+<tr><td class="num" id="LN1684">1684</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1685">1685</td><td class="line">                r = <span class='macro'>log_error_errno(r, <span class='string_literal'>"could not listen on fds: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1685, __func__, "could not listen on fds: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1686">1686</td><td class="line">                <span class='keyword'>goto</span> exit;</td></tr>
+<tr><td class="num" id="LN1687">1687</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1688">1688</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1689">1689</td><td class="line">        <span class='keyword'>if</span> (arg_daemonize) {</td></tr>
+<tr><td class="num" id="LN1690">1690</td><td class="line">                pid_t pid;</td></tr>
+<tr><td class="num" id="LN1691">1691</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1692">1692</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"starting version "</span> VERSION)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1692, __func__, "starting version " "221") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1693">1693</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1694">1694</td><td class="line">                pid = fork();</td></tr>
-<tr><td class="num" id="LN1695">1695</td><td class="line">                <span class='keyword'>switch</span> (pid) {</td></tr>
-<tr><td class="num" id="LN1696">1696</td><td class="line">                <span class='keyword'>case</span> 0:</td></tr>
-<tr><td class="num" id="LN1697">1697</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN1698">1698</td><td class="line">                <span class='keyword'>case</span> -1:</td></tr>
-<tr><td class="num" id="LN1699">1699</td><td class="line">                        r = <span class='macro'>log_error_errno(errno, <span class='string_literal'>"fork of daemon failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c"<br>, 1699, __func__, "fork of daemon failed: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1700">1700</td><td class="line">                        <span class='keyword'>goto</span> exit;</td></tr>
-<tr><td class="num" id="LN1701">1701</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN1702">1702</td><td class="line">                        mac_selinux_finish();</td></tr>
-<tr><td class="num" id="LN1703">1703</td><td class="line">                        log_close();</td></tr>
-<tr><td class="num" id="LN1704">1704</td><td class="line">                        _exit(<span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN1705">1705</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1706">1706</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1707">1707</td><td class="line">                setsid();</td></tr>
-<tr><td class="num" id="LN1708">1708</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1709">1709</td><td class="line">                write_string_file(<span class='string_literal'>"/proc/self/oom_score_adj"</span>, <span class='string_literal'>"-1000"</span>);</td></tr>
-<tr><td class="num" id="LN1710">1710</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1711">1711</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1712">1712</td><td class="line">        r = manager_new(&amp;manager, fd_ctrl, fd_uevent, cgroup);</td></tr>
-<tr><td class="num" id="LN1713">1713</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1714">1714</td><td class="line">                r = <span class='macro'>log_error_errno(r, <span class='string_literal'>"failed to allocate manager object: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1714, __func__, "failed to allocate manager object: %m") : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1715">1715</td><td class="line">                <span class='keyword'>goto</span> exit;</td></tr>
-<tr><td class="num" id="LN1716">1716</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1717">1717</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1718">1718</td><td class="line">        r = udev_rules_apply_static_dev_perms(manager-&gt;rules);</td></tr>
-<tr><td class="num" id="LN1719">1719</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1720">1720</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"failed to apply permissions on static device nodes: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1720, __func__, "failed to apply permissions on static device nodes: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1694">1694</td><td class="line">                <span class='comment'>/* connect /dev/null to stdin, stdout, stderr */</span></td></tr>
+<tr><td class="num" id="LN1695">1695</td><td class="line">                <span class='keyword'>if</span> (log_get_max_level() &lt; <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>)</td></tr>
+<tr><td class="num" id="LN1696">1696</td><td class="line">                        (<span class='keyword'>void</span>) make_null_stdio();</td></tr>
+<tr><td class="num" id="LN1697">1697</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1698">1698</td><td class="line">                pid = fork();</td></tr>
+<tr><td class="num" id="LN1699">1699</td><td class="line">                <span class='keyword'>switch</span> (pid) {</td></tr>
+<tr><td class="num" id="LN1700">1700</td><td class="line">                <span class='keyword'>case</span> 0:</td></tr>
+<tr><td class="num" id="LN1701">1701</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1702">1702</td><td class="line">                <span class='keyword'>case</span> -1:</td></tr>
+<tr><td class="num" id="LN1703">1703</td><td class="line">                        r = <span class='macro'>log_error_errno(errno, <span class='string_literal'>"fork of daemon failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c"<br>, 1703, __func__, "fork of daemon failed: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1704">1704</td><td class="line">                        <span class='keyword'>goto</span> exit;</td></tr>
+<tr><td class="num" id="LN1705">1705</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN1706">1706</td><td class="line">                        mac_selinux_finish();</td></tr>
+<tr><td class="num" id="LN1707">1707</td><td class="line">                        log_close();</td></tr>
+<tr><td class="num" id="LN1708">1708</td><td class="line">                        _exit(<span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN1709">1709</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1710">1710</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1711">1711</td><td class="line">                setsid();</td></tr>
+<tr><td class="num" id="LN1712">1712</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1713">1713</td><td class="line">                write_string_file(<span class='string_literal'>"/proc/self/oom_score_adj"</span>, <span class='string_literal'>"-1000"</span>);</td></tr>
+<tr><td class="num" id="LN1714">1714</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1715">1715</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1716">1716</td><td class="line">        r = manager_new(&amp;manager, fd_ctrl, fd_uevent, cgroup);</td></tr>
+<tr><td class="num" id="LN1717">1717</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1718">1718</td><td class="line">                r = <span class='macro'>log_error_errno(r, <span class='string_literal'>"failed to allocate manager object: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1718, __func__, "failed to allocate manager object: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1719">1719</td><td class="line">                <span class='keyword'>goto</span> exit;</td></tr>
+<tr><td class="num" id="LN1720">1720</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1721">1721</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1722">1722</td><td class="line">        (<span class='keyword'>void</span>) sd_notify(<span class='macro'>false<span class='expansion'>0</span></span>,</td></tr>
-<tr><td class="num" id="LN1723">1723</td><td class="line">                         <span class='string_literal'>"READY=1\n"</span></td></tr>
-<tr><td class="num" id="LN1724">1724</td><td class="line">                         <span class='string_literal'>"STATUS=Processing..."</span>);</td></tr>
+<tr><td class="num" id="LN1722">1722</td><td class="line">        r = udev_rules_apply_static_dev_perms(manager-&gt;rules);</td></tr>
+<tr><td class="num" id="LN1723">1723</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1724">1724</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"failed to apply permissions on static device nodes: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1724, __func__, "failed to apply permissions on static device nodes: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1725">1725</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1726">1726</td><td class="line">        r = sd_event_loop(manager-&gt;event);</td></tr>
-<tr><td class="num" id="LN1727">1727</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1728">1728</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"event loop failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1728, __func__, "event loop failed: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1729">1729</td><td class="line">                <span class='keyword'>goto</span> exit;</td></tr>
-<tr><td class="num" id="LN1730">1730</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1731">1731</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1732">1732</td><td class="line">        sd_event_get_exit_code(manager-&gt;event, &amp;r);</td></tr>
-<tr><td class="num" id="LN1733">1733</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1734">1734</td><td class="line">exit:</td></tr>
-<tr><td class="num" id="LN1735">1735</td><td class="line">        sd_notify(<span class='macro'>false<span class='expansion'>0</span></span>,</td></tr>
-<tr><td class="num" id="LN1736">1736</td><td class="line">                  <span class='string_literal'>"STOPPING=1\n"</span></td></tr>
-<tr><td class="num" id="LN1737">1737</td><td class="line">                  <span class='string_literal'>"STATUS=Shutting down..."</span>);</td></tr>
-<tr><td class="num" id="LN1738">1738</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1739">1739</td><td class="line">        <span class='keyword'>if</span> (manager)</td></tr>
-<tr><td class="num" id="LN1740">1740</td><td class="line">                udev_ctrl_cleanup(manager-&gt;ctrl);</td></tr>
-<tr><td class="num" id="LN1741">1741</td><td class="line">        mac_selinux_finish();</td></tr>
-<tr><td class="num" id="LN1742">1742</td><td class="line">        log_close();</td></tr>
-<tr><td class="num" id="LN1743">1743</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN1744">1744</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1726">1726</td><td class="line">        (<span class='keyword'>void</span>) sd_notify(<span class='macro'>false<span class='expansion'>0</span></span>,</td></tr>
+<tr><td class="num" id="LN1727">1727</td><td class="line">                         <span class='string_literal'>"READY=1\n"</span></td></tr>
+<tr><td class="num" id="LN1728">1728</td><td class="line">                         <span class='string_literal'>"STATUS=Processing..."</span>);</td></tr>
+<tr><td class="num" id="LN1729">1729</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1730">1730</td><td class="line">        r = sd_event_loop(manager-&gt;event);</td></tr>
+<tr><td class="num" id="LN1731">1731</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1732">1732</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"event loop failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1732, __func__, "event loop failed: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1733">1733</td><td class="line">                <span class='keyword'>goto</span> exit;</td></tr>
+<tr><td class="num" id="LN1734">1734</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1735">1735</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1736">1736</td><td class="line">        sd_event_get_exit_code(manager-&gt;event, &amp;r);</td></tr>
+<tr><td class="num" id="LN1737">1737</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1738">1738</td><td class="line">exit:</td></tr>
+<tr><td class="num" id="LN1739">1739</td><td class="line">        sd_notify(<span class='macro'>false<span class='expansion'>0</span></span>,</td></tr>
+<tr><td class="num" id="LN1740">1740</td><td class="line">                  <span class='string_literal'>"STOPPING=1\n"</span></td></tr>
+<tr><td class="num" id="LN1741">1741</td><td class="line">                  <span class='string_literal'>"STATUS=Shutting down..."</span>);</td></tr>
+<tr><td class="num" id="LN1742">1742</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1743">1743</td><td class="line">        <span class='keyword'>if</span> (manager)</td></tr>
+<tr><td class="num" id="LN1744">1744</td><td class="line">                udev_ctrl_cleanup(manager-&gt;ctrl);</td></tr>
+<tr><td class="num" id="LN1745">1745</td><td class="line">        mac_selinux_finish();</td></tr>
+<tr><td class="num" id="LN1746">1746</td><td class="line">        log_close();</td></tr>
+<tr><td class="num" id="LN1747">1747</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1748">1748</td><td class="line">}</td></tr>
 </table></body></html>
