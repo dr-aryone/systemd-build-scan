@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'pidnsfd' is never read -->
+<!-- BUGDESC Potential leak of memory pointed to by 'u' -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/basic/util.c -->
 
 <!-- FILENAME util.c -->
 
-<!-- FUNCTIONNAME namespace_open -->
+<!-- FUNCTIONNAME tag_to_udev_node -->
 
-<!-- BUGLINE 4459 -->
+<!-- BUGLINE 2242 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 24 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 10 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/basic/util.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 4459, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'pidnsfd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2242, column 24</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'u'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -2243,8 +2243,11 @@
 <tr><td class="num" id="LN2155">2155</td><td class="line">         <span class='comment'>* DON'T USE THIS FOR NEW CODE ANYMORE!*/</span></td></tr>
 <tr><td class="num" id="LN2156">2156</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2157">2157</td><td class="line">        l = strlen(s);</td></tr>
-<tr><td class="num" id="LN2158">2158</td><td class="line">        <span class='keyword'>if</span> (l &lt; 2)</td></tr>
-<tr><td class="num" id="LN2159">2159</td><td class="line">                <span class='keyword'>return</span> strdup(s);</td></tr>
+<tr><td class="num" id="LN2158">2158</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">l &lt; 2</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'l' is &lt; 2</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN2159">2159</td><td class="line">                <span class='keyword'>return</span> <span class="mrange">strdup(s)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2160">2160</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2161">2161</td><td class="line">        <span class='keyword'>if</span> (strchr(quotes, s[0]) &amp;&amp; s[l-1] == s[0])</td></tr>
 <tr><td class="num" id="LN2162">2162</td><td class="line">                <span class='keyword'>return</span> strndup(s+1, l-2);</td></tr>
@@ -2320,14 +2323,23 @@
 <tr><td class="num" id="LN2232">2232</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *u = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN2233">2233</td><td class="line">        size_t enc_len;</td></tr>
 <tr><td class="num" id="LN2234">2234</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2235">2235</td><td class="line">        u = unquote(tagvalue, <span class='macro'>QUOTES<span class='expansion'>"\"\'"</span></span>);</td></tr>
-<tr><td class="num" id="LN2236">2236</td><td class="line">        <span class='keyword'>if</span> (!u)</td></tr>
+<tr><td class="num" id="LN2235">2235</td><td class="line">        u = <span class="mrange"><span class="mrange">unquote(tagvalue, <span class='macro'>QUOTES<span class='expansion'>"\"\'"</span></span>)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Calling 'unquote'</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Returned allocated memory</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN2236">2236</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!u</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'u' is non-null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2237">2237</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN2238">2238</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2239">2239</td><td class="line">        enc_len = strlen(u) * 4 + 1;</td></tr>
 <tr><td class="num" id="LN2240">2240</td><td class="line">        t = <span class='macro'>new(<span class='keyword'>char</span>, enc_len)<span class='expansion'>((char*) malloc_multiply(sizeof(char), (enc_len)))</span></span>;</td></tr>
-<tr><td class="num" id="LN2241">2241</td><td class="line">        <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN2241">2241</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!t</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 't' is null</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2242">2242</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:24ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'NULL':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'u'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN2243">2243</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2244">2244</td><td class="line">        <span class='keyword'>if</span> (encode_devnode_name(u, t, enc_len) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2245">2245</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
@@ -3506,8 +3518,8 @@
 <tr><td class="num" id="LN3418">3418</td><td class="line">         <span class='comment'>* to get as close as we can */</span></td></tr>
 <tr><td class="num" id="LN3419">3419</td><td class="line">        <span class='macro'>assert_se(getrlimit(resource, &amp;highest) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(getrlimit(resource, &amp;highest<br>) == 0)),0))) log_assert_failed("getrlimit(resource, &amp;highest) == 0"<br>, "src/basic/util.c", 3419, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN3420">3420</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3421">3421</td><td class="line">        fixed.rlim_cur = <span class='macro'>MIN(rlim-&gt;rlim_cur, highest.rlim_max)<span class='expansion'>__extension__ ({ const typeof((rlim-&gt;rlim_cur)) __unique_prefix_A14<br> = ((rlim-&gt;rlim_cur)); const typeof((highest.rlim_max)) __unique_prefix_B15<br> = ((highest.rlim_max)); __unique_prefix_A14 &lt; __unique_prefix_B15<br> ? __unique_prefix_A14 : __unique_prefix_B15; })</span></span>;</td></tr>
-<tr><td class="num" id="LN3422">3422</td><td class="line">        fixed.rlim_max = <span class='macro'>MIN(rlim-&gt;rlim_max, highest.rlim_max)<span class='expansion'>__extension__ ({ const typeof((rlim-&gt;rlim_max)) __unique_prefix_A16<br> = ((rlim-&gt;rlim_max)); const typeof((highest.rlim_max)) __unique_prefix_B17<br> = ((highest.rlim_max)); __unique_prefix_A16 &lt; __unique_prefix_B17<br> ? __unique_prefix_A16 : __unique_prefix_B17; })</span></span>;</td></tr>
+<tr><td class="num" id="LN3421">3421</td><td class="line">        fixed.rlim_cur = <span class='macro'>MIN(rlim-&gt;rlim_cur, highest.rlim_max)<span class='expansion'>__extension__ ({ const typeof((rlim-&gt;rlim_cur)) __unique_prefix_A8<br> = ((rlim-&gt;rlim_cur)); const typeof((highest.rlim_max)) __unique_prefix_B9<br> = ((highest.rlim_max)); __unique_prefix_A8 &lt; __unique_prefix_B9<br> ? __unique_prefix_A8 : __unique_prefix_B9; })</span></span>;</td></tr>
+<tr><td class="num" id="LN3422">3422</td><td class="line">        fixed.rlim_max = <span class='macro'>MIN(rlim-&gt;rlim_max, highest.rlim_max)<span class='expansion'>__extension__ ({ const typeof((rlim-&gt;rlim_max)) __unique_prefix_A10<br> = ((rlim-&gt;rlim_max)); const typeof((highest.rlim_max)) __unique_prefix_B11<br> = ((highest.rlim_max)); __unique_prefix_A10 &lt; __unique_prefix_B11<br> ? __unique_prefix_A10 : __unique_prefix_B11; })</span></span>;</td></tr>
 <tr><td class="num" id="LN3423">3423</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3424">3424</td><td class="line">        <span class='keyword'>if</span> (setrlimit(resource, &amp;fixed) &lt; 0)</td></tr>
 <tr><td class="num" id="LN3425">3425</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
@@ -3715,7 +3727,7 @@
 <tr><td class="num" id="LN3627">3627</td><td class="line">                <span class='keyword'>if</span> (*t &gt; 0 &amp;&amp; *t &lt; ' ')</td></tr>
 <tr><td class="num" id="LN3628">3628</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN3629">3629</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3630">3630</td><td class="line">                <span class='keyword'>if</span> (strchr(<span class='string_literal'>"\\\"\'\0x7f"</span>, *t))</td></tr>
+<tr><td class="num" id="LN3630">3630</td><td class="line">                <span class='keyword'>if</span> (strchr(<span class='string_literal'>"\\\"\'\x7f"</span>, *t))</td></tr>
 <tr><td class="num" id="LN3631">3631</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN3632">3632</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN3633">3633</td><td class="line"> </td></tr>
@@ -4238,7 +4250,7 @@
 <tr><td class="num" id="LN4150">4150</td><td class="line">        <span class='keyword'>if</span> (*allocated &gt;= need)</td></tr>
 <tr><td class="num" id="LN4151">4151</td><td class="line">                <span class='keyword'>return</span> *p;</td></tr>
 <tr><td class="num" id="LN4152">4152</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN4153">4153</td><td class="line">        newalloc = <span class='macro'>MAX(need * 2, 64u / size)<span class='expansion'>__extension__ ({ const typeof((need * 2)) __unique_prefix_A18<br> = ((need * 2)); const typeof((64u / size)) __unique_prefix_B19<br> = ((64u / size)); __unique_prefix_A18 &gt; __unique_prefix_B19<br> ? __unique_prefix_A18 : __unique_prefix_B19; })</span></span>;</td></tr>
+<tr><td class="num" id="LN4153">4153</td><td class="line">        newalloc = <span class='macro'>MAX(need * 2, 64u / size)<span class='expansion'>__extension__ ({ const typeof((need * 2)) __unique_prefix_A12<br> = ((need * 2)); const typeof((64u / size)) __unique_prefix_B13<br> = ((64u / size)); __unique_prefix_A12 &gt; __unique_prefix_B13<br> ? __unique_prefix_A12 : __unique_prefix_B13; })</span></span>;</td></tr>
 <tr><td class="num" id="LN4154">4154</td><td class="line">        a = newalloc * size;</td></tr>
 <tr><td class="num" id="LN4155">4155</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN4156">4156</td><td class="line">        <span class='comment'>/* check for overflows */</span></td></tr>
@@ -4544,8 +4556,7 @@
 <tr><td class="num" id="LN4456">4456</td><td class="line">        <span class='keyword'>if</span> (root_fd)</td></tr>
 <tr><td class="num" id="LN4457">4457</td><td class="line">                *root_fd = rfd;</td></tr>
 <tr><td class="num" id="LN4458">4458</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN4459">4459</td><td class="line">        pidnsfd = <span class="mrange">mntnsfd = netnsfd = -1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'pidnsfd' is never read</div></td></tr>
+<tr><td class="num" id="LN4459">4459</td><td class="line">        pidnsfd = mntnsfd = netnsfd = -1;</td></tr>
 <tr><td class="num" id="LN4460">4460</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN4461">4461</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN4462">4462</td><td class="line">}</td></tr>

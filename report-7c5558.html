@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'u' is never read -->
+<!-- BUGDESC Value stored to 'pidnsfd' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME util.c -->
 
-<!-- FUNCTIONNAME mkostemp_safe -->
+<!-- FUNCTIONNAME namespace_open -->
 
-<!-- BUGLINE 4563 -->
+<!-- BUGLINE 4459 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/basic/util.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 4563, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'u' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 4459, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'pidnsfd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -3506,8 +3506,8 @@
 <tr><td class="num" id="LN3418">3418</td><td class="line">         <span class='comment'>* to get as close as we can */</span></td></tr>
 <tr><td class="num" id="LN3419">3419</td><td class="line">        <span class='macro'>assert_se(getrlimit(resource, &amp;highest) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(getrlimit(resource, &amp;highest<br>) == 0)),0))) log_assert_failed("getrlimit(resource, &amp;highest) == 0"<br>, "src/basic/util.c", 3419, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN3420">3420</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3421">3421</td><td class="line">        fixed.rlim_cur = <span class='macro'>MIN(rlim-&gt;rlim_cur, highest.rlim_max)<span class='expansion'>__extension__ ({ const typeof((rlim-&gt;rlim_cur)) __unique_prefix_A20<br> = ((rlim-&gt;rlim_cur)); const typeof((highest.rlim_max)) __unique_prefix_B21<br> = ((highest.rlim_max)); __unique_prefix_A20 &lt; __unique_prefix_B21<br> ? __unique_prefix_A20 : __unique_prefix_B21; })</span></span>;</td></tr>
-<tr><td class="num" id="LN3422">3422</td><td class="line">        fixed.rlim_max = <span class='macro'>MIN(rlim-&gt;rlim_max, highest.rlim_max)<span class='expansion'>__extension__ ({ const typeof((rlim-&gt;rlim_max)) __unique_prefix_A22<br> = ((rlim-&gt;rlim_max)); const typeof((highest.rlim_max)) __unique_prefix_B23<br> = ((highest.rlim_max)); __unique_prefix_A22 &lt; __unique_prefix_B23<br> ? __unique_prefix_A22 : __unique_prefix_B23; })</span></span>;</td></tr>
+<tr><td class="num" id="LN3421">3421</td><td class="line">        fixed.rlim_cur = <span class='macro'>MIN(rlim-&gt;rlim_cur, highest.rlim_max)<span class='expansion'>__extension__ ({ const typeof((rlim-&gt;rlim_cur)) __unique_prefix_A14<br> = ((rlim-&gt;rlim_cur)); const typeof((highest.rlim_max)) __unique_prefix_B15<br> = ((highest.rlim_max)); __unique_prefix_A14 &lt; __unique_prefix_B15<br> ? __unique_prefix_A14 : __unique_prefix_B15; })</span></span>;</td></tr>
+<tr><td class="num" id="LN3422">3422</td><td class="line">        fixed.rlim_max = <span class='macro'>MIN(rlim-&gt;rlim_max, highest.rlim_max)<span class='expansion'>__extension__ ({ const typeof((rlim-&gt;rlim_max)) __unique_prefix_A16<br> = ((rlim-&gt;rlim_max)); const typeof((highest.rlim_max)) __unique_prefix_B17<br> = ((highest.rlim_max)); __unique_prefix_A16 &lt; __unique_prefix_B17<br> ? __unique_prefix_A16 : __unique_prefix_B17; })</span></span>;</td></tr>
 <tr><td class="num" id="LN3423">3423</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3424">3424</td><td class="line">        <span class='keyword'>if</span> (setrlimit(resource, &amp;fixed) &lt; 0)</td></tr>
 <tr><td class="num" id="LN3425">3425</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
@@ -3715,7 +3715,7 @@
 <tr><td class="num" id="LN3627">3627</td><td class="line">                <span class='keyword'>if</span> (*t &gt; 0 &amp;&amp; *t &lt; ' ')</td></tr>
 <tr><td class="num" id="LN3628">3628</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN3629">3629</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3630">3630</td><td class="line">                <span class='keyword'>if</span> (strchr(<span class='string_literal'>"\\\"\'\0x7f"</span>, *t))</td></tr>
+<tr><td class="num" id="LN3630">3630</td><td class="line">                <span class='keyword'>if</span> (strchr(<span class='string_literal'>"\\\"\'\x7f"</span>, *t))</td></tr>
 <tr><td class="num" id="LN3631">3631</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN3632">3632</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN3633">3633</td><td class="line"> </td></tr>
@@ -4238,7 +4238,7 @@
 <tr><td class="num" id="LN4150">4150</td><td class="line">        <span class='keyword'>if</span> (*allocated &gt;= need)</td></tr>
 <tr><td class="num" id="LN4151">4151</td><td class="line">                <span class='keyword'>return</span> *p;</td></tr>
 <tr><td class="num" id="LN4152">4152</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN4153">4153</td><td class="line">        newalloc = <span class='macro'>MAX(need * 2, 64u / size)<span class='expansion'>__extension__ ({ const typeof((need * 2)) __unique_prefix_A24<br> = ((need * 2)); const typeof((64u / size)) __unique_prefix_B25<br> = ((64u / size)); __unique_prefix_A24 &gt; __unique_prefix_B25<br> ? __unique_prefix_A24 : __unique_prefix_B25; })</span></span>;</td></tr>
+<tr><td class="num" id="LN4153">4153</td><td class="line">        newalloc = <span class='macro'>MAX(need * 2, 64u / size)<span class='expansion'>__extension__ ({ const typeof((need * 2)) __unique_prefix_A18<br> = ((need * 2)); const typeof((64u / size)) __unique_prefix_B19<br> = ((64u / size)); __unique_prefix_A18 &gt; __unique_prefix_B19<br> ? __unique_prefix_A18 : __unique_prefix_B19; })</span></span>;</td></tr>
 <tr><td class="num" id="LN4154">4154</td><td class="line">        a = newalloc * size;</td></tr>
 <tr><td class="num" id="LN4155">4155</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN4156">4156</td><td class="line">        <span class='comment'>/* check for overflows */</span></td></tr>
@@ -4544,7 +4544,8 @@
 <tr><td class="num" id="LN4456">4456</td><td class="line">        <span class='keyword'>if</span> (root_fd)</td></tr>
 <tr><td class="num" id="LN4457">4457</td><td class="line">                *root_fd = rfd;</td></tr>
 <tr><td class="num" id="LN4458">4458</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN4459">4459</td><td class="line">        pidnsfd = mntnsfd = netnsfd = -1;</td></tr>
+<tr><td class="num" id="LN4459">4459</td><td class="line">        pidnsfd = <span class="mrange">mntnsfd = netnsfd = -1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'pidnsfd' is never read</div></td></tr>
 <tr><td class="num" id="LN4460">4460</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN4461">4461</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN4462">4462</td><td class="line">}</td></tr>
@@ -4648,8 +4649,7 @@
 <tr><td class="num" id="LN4560">4560</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN4561">4561</td><td class="line">        <span class='macro'>assert(pattern)<span class='expansion'>do { if ((__builtin_expect(!!(!(pattern)),0))) log_assert_failed<br>("pattern", "src/basic/util.c", 4561, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN4562">4562</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN4563">4563</td><td class="line">        u = <span class="mrange">umask(077)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'u' is never read</div></td></tr>
+<tr><td class="num" id="LN4563">4563</td><td class="line">        u = umask(077);</td></tr>
 <tr><td class="num" id="LN4564">4564</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN4565">4565</td><td class="line">        fd = mkostemp(pattern, flags);</td></tr>
 <tr><td class="num" id="LN4566">4566</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
