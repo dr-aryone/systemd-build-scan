@@ -9079,6 +9079,8 @@ char octchar(int x) __attribute__ ((const));
 int unoctchar(char c) __attribute__ ((const));
 char decchar(int x) __attribute__ ((const));
 int undecchar(char c) __attribute__ ((const));
+char base32hexchar(int x) __attribute__ ((const));
+int unbase32hexchar(char c) __attribute__ ((const));
 char base64char(int x) __attribute__ ((const));
 int unbase64char(char c) __attribute__ ((const));
 
@@ -9103,9 +9105,9 @@ _Bool dirent_is_file_with_suffix(const struct dirent *de, const char *suffix) __
 _Bool hidden_file(const char *filename) __attribute__ ((pure));
 
 _Bool chars_intersect(const char *a, const char *b) __attribute__ ((pure));
-# 276 "./src/basic/util.h"
+# 278 "./src/basic/util.h"
 ssize_t string_table_lookup(const char * const *table, size_t len, const char *key);
-# 326 "./src/basic/util.h"
+# 328 "./src/basic/util.h"
 int fd_nonblock(int fd, _Bool nonblock);
 int fd_cloexec(int fd, _Bool cloexec);
 
@@ -9205,8 +9207,8 @@ char *strjoin(const char *x, ...) __attribute__ ((sentinel));
 _Bool is_main_thread(void);
 
 static inline _Bool __attribute__ ((pure)) in_charset(const char *s, const char* charset) {
-        do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s", "./src/basic/util.h", 425, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(charset)),0))) log_assert_failed("charset", "./src/basic/util.h", 426, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s", "./src/basic/util.h", 427, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(charset)),0))) log_assert_failed("charset", "./src/basic/util.h", 428, __PRETTY_FUNCTION__); } while (0);
         return s[strspn(s, charset)] == '\0';
 }
 
@@ -9289,7 +9291,7 @@ static inline void fclosep(FILE* *p) { if (*p) fclose(*p); } struct __useless_st
 static inline void pclosep(FILE* *p) { if (*p) pclose(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
 static inline void closedirp(DIR* *p) { if (*p) closedir(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
 static inline void endmntentp(FILE* *p) { if (*p) endmntent(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
-# 520 "./src/basic/util.h"
+# 522 "./src/basic/util.h"
 __attribute__ ((malloc)) __attribute__ ((alloc_size(1, 2))) static inline void *malloc_multiply(size_t a, size_t b) {
         if ((__builtin_expect(!!(b != 0 && a > ((size_t) -1) / b),0)))
                 return ((void*)0);
@@ -9353,7 +9355,7 @@ int on_ac_power(void);
 
 int search_and_fopen(const char *path, const char *mode, const char *root, const char **search, FILE **_f);
 int search_and_fopen_nulstr(const char *path, const char *mode, const char *root, const char *search, FILE **_f);
-# 613 "./src/basic/util.h"
+# 615 "./src/basic/util.h"
 static inline void *mempset(void *s, int c, size_t n) {
         memset(s, c, n);
         return (uint8_t*)s + n;
@@ -9361,6 +9363,9 @@ static inline void *mempset(void *s, int c, size_t n) {
 
 char *hexmem(const void *p, size_t l);
 int unhexmem(const char *p, size_t l, void **mem, size_t *len);
+
+char *base32hexmem(const void *p, size_t l, _Bool padding);
+int unbase32hexmem(const char *p, size_t l, _Bool padding, void **mem, size_t *len);
 
 char *base64mem(const void *p, size_t l);
 int unbase64mem(const char *p, size_t l, void **mem, size_t *len);
@@ -9387,7 +9392,7 @@ static inline int negative_errno(void) {
 
 
 
-        do { if (!(((__builtin_expect(!!((*__errno_location ()) > 0),1))) ? (1) : (log_assert_failed_return("(*__errno_location ()) > 0", "./src/basic/util.h", 646, __PRETTY_FUNCTION__), 0))) return (-22); } while (0);
+        do { if (!(((__builtin_expect(!!((*__errno_location ()) > 0),1))) ? (1) : (log_assert_failed_return("(*__errno_location ()) > 0", "./src/basic/util.h", 651, __PRETTY_FUNCTION__), 0))) return (-22); } while (0);
         return -(*__errno_location ());
 }
 
@@ -9422,19 +9427,19 @@ static inline unsigned u32ctz(uint32_t n) {
 }
 
 static inline unsigned log2i(int x) {
-        do { if ((__builtin_expect(!!(!(x > 0)),0))) log_assert_failed("x > 0", "./src/basic/util.h", 681, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(x > 0)),0))) log_assert_failed("x > 0", "./src/basic/util.h", 686, __PRETTY_FUNCTION__); } while (0);
 
         return 4 * 8 - __builtin_clz(x) - 1;
 }
 
 static inline unsigned log2u(unsigned x) {
-        do { if ((__builtin_expect(!!(!(x > 0)),0))) log_assert_failed("x > 0", "./src/basic/util.h", 687, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(x > 0)),0))) log_assert_failed("x > 0", "./src/basic/util.h", 692, __PRETTY_FUNCTION__); } while (0);
 
         return sizeof(unsigned) * 8 - __builtin_clz(x) - 1;
 }
 
 static inline unsigned log2u_round_up(unsigned x) {
-        do { if ((__builtin_expect(!!(!(x > 0)),0))) log_assert_failed("x > 0", "./src/basic/util.h", 693, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(x > 0)),0))) log_assert_failed("x > 0", "./src/basic/util.h", 698, __PRETTY_FUNCTION__); } while (0);
 
         if (x == 1)
                 return 0;
@@ -9445,9 +9450,9 @@ static inline unsigned log2u_round_up(unsigned x) {
 static inline _Bool logind_running(void) {
         return access("/run/systemd/seats/", 0) >= 0;
 }
-# 714 "./src/basic/util.h"
+# 719 "./src/basic/util.h"
 int unlink_noerrno(const char *path);
-# 756 "./src/basic/util.h"
+# 761 "./src/basic/util.h"
 _Bool id128_is_valid(const char *s) __attribute__ ((pure));
 
 int split_pair(const char *s, const char *sep, char **l, char **r);
@@ -9462,7 +9467,7 @@ static inline void qsort_safe(void *base, size_t nmemb, size_t size, comparison_
         if (nmemb <= 1)
                 return;
 
-        do { if ((__builtin_expect(!!(!(base)),0))) log_assert_failed("base", "./src/basic/util.h", 770, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(base)),0))) log_assert_failed("base", "./src/basic/util.h", 775, __PRETTY_FUNCTION__); } while (0);
         qsort(base, nmemb, size, compar);
 }
 
@@ -9475,8 +9480,8 @@ static inline void *memmem_safe(const void *haystack, size_t haystacklen, const 
         if (haystacklen < needlelen)
                 return ((void*)0);
 
-        do { if ((__builtin_expect(!!(!(haystack)),0))) log_assert_failed("haystack", "./src/basic/util.h", 783, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(needle)),0))) log_assert_failed("needle", "./src/basic/util.h", 784, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(haystack)),0))) log_assert_failed("haystack", "./src/basic/util.h", 788, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(needle)),0))) log_assert_failed("needle", "./src/basic/util.h", 789, __PRETTY_FUNCTION__); } while (0);
 
         return memmem(haystack, haystacklen, needle, needlelen);
 }
@@ -9499,7 +9504,7 @@ int mkostemp_safe(char *pattern, int flags);
 int open_tmpfile(const char *path, int flags);
 
 int fd_warn_permissions(const char *path, int fd);
-# 815 "./src/basic/util.h"
+# 820 "./src/basic/util.h"
 unsigned long personality_from_string(const char *p);
 const char *personality_to_string(unsigned long);
 
@@ -9542,7 +9547,7 @@ int unquote_first_word_and_warn(const char **p, char **ret, UnquoteFlags flags, 
 int unquote_many_words(const char **p, UnquoteFlags flags, ...) __attribute__ ((sentinel));
 
 int free_and_strdup(char **p, const char *s);
-# 865 "./src/basic/util.h"
+# 870 "./src/basic/util.h"
 union inotify_event_buffer {
         struct inotify_event ev;
         uint8_t raw[(sizeof(struct inotify_event) + 255 + 1)];
