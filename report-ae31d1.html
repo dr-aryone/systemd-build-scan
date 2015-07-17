@@ -66,7 +66,7 @@
 
 <!-- FUNCTIONNAME format_types -->
 
-<!-- BUGLINE 535 -->
+<!-- BUGLINE 536 -->
 
 <!-- BUGCOLUMN 27 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/resolve/resolved-dns-rr.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 535, column 27</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 536, column 27</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Potential memory leak</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -612,325 +612,326 @@
 <tr><td class="num" id="LN527">527</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>char</span> *format_types(Bitmap *types) {</td></tr>
 <tr><td class="num" id="LN528">528</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **strv = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN529">529</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *str = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line">        <span class='keyword'>unsigned</span> type;</td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN532">532</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">        <span class='macro'>BITMAP_FOREACH(type, types)<span class='expansion'>for (bitmap_rewind(types); bitmap_next((types), &amp;(type));<br> )</span></span> {</td></tr>
-<tr><td class="num" id="LN534">534</td><td class="line">                <span class='keyword'>if</span> (dns_type_to_string(type)) {</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>unsigned</span> type;</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">        <span class='macro'>BITMAP_FOREACH(type, types, i)<span class='expansion'>for ((i).idx = 0; bitmap_iterate((types), &amp;(i), (unsigned<br>*)&amp;(type)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">                <span class='keyword'>if</span> (dns_type_to_string(type)) {</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line">                        r = strv_extend(&amp;strv, <span class="mrange">strdup(dns_type_to_string(type))</span>);</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">                        r = strv_extend(&amp;strv, <span class="mrange">strdup(dns_type_to_string(type))</span>);</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:48ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#EndPath" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:27ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Potential memory leak</td></tr></table></div></td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN539">539</td><td class="line">                        <span class='keyword'>char</span> *t;</td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">                        r = asprintf(&amp;t, <span class='string_literal'>"TYPE%u"</span>, type);</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN543">543</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line">                        r = strv_extend(&amp;strv, t);</td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN547">547</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line">        str = strv_join(strv, <span class='string_literal'>" "</span>);</td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">        <span class='keyword'>if</span> (!str)</td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">        <span class='keyword'>return</span> strjoin(<span class='string_literal'>"( "</span>, str, <span class='string_literal'>" )"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line"><span class='keyword'>int</span> dns_resource_record_to_string(<span class='keyword'>const</span> DnsResourceRecord *rr, <span class='keyword'>char</span> **ret) {</td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *k = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line">        <span class='keyword'>char</span> *s;</td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line">        <span class='macro'>assert(rr)<span class='expansion'>do { if ((__builtin_expect(!!(!(rr)),0))) log_assert_failed("rr"<br>, "src/resolve/resolved-dns-rr.c", 563, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line">        r = dns_resource_key_to_string(rr-&gt;key, &amp;k);</td></tr>
-<tr><td class="num" id="LN566">566</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN568">568</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN569">569</td><td class="line">        <span class='keyword'>switch</span> (rr-&gt;unparseable ? _DNS_TYPE_INVALID : rr-&gt;key-&gt;type) {</td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN571">571</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_SRV:</td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u %u %u %s"</span>,</td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line">                             rr-&gt;srv.priority,</td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line">                             rr-&gt;srv.weight,</td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line">                             rr-&gt;srv.port,</td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line">                             strna(rr-&gt;srv.name));</td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_PTR:</td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_NS:</td></tr>
-<tr><td class="num" id="LN584">584</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_CNAME:</td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_DNAME:</td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, rr-&gt;ptr.name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
-<tr><td class="num" id="LN588">588</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN589">589</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN590">590</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN592">592</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_HINFO:</td></tr>
-<tr><td class="num" id="LN593">593</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, rr-&gt;hinfo.cpu, <span class='string_literal'>" "</span>, rr-&gt;hinfo.os, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN594">594</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN596">596</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN598">598</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_SPF: <span class='comment'>/* exactly the same as TXT */</span></td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_TXT:</td></tr>
-<tr><td class="num" id="LN600">600</td><td class="line">                t = strv_join_quoted(rr-&gt;txt.strings);</td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN602">602</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN603">603</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN604">604</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN605">605</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN608">608</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN609">609</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN610">610</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_A: {</td></tr>
-<tr><td class="num" id="LN611">611</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *x = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN613">613</td><td class="line">                r = in_addr_to_string(<span class='macro'>AF_INET<span class='expansion'>2</span></span>, (<span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union*) &amp;rr-&gt;a.in_addr, &amp;x);</td></tr>
-<tr><td class="num" id="LN614">614</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN615">615</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN616">616</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN617">617</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, x, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN618">618</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
-<tr><td class="num" id="LN619">619</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN620">620</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN621">621</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN622">622</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN623">623</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_AAAA:</td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line">                r = in_addr_to_string(<span class='macro'>AF_INET6<span class='expansion'>10</span></span>, (<span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union*) &amp;rr-&gt;aaaa.in6_addr, &amp;t);</td></tr>
-<tr><td class="num" id="LN625">625</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN626">626</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN627">627</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
-<tr><td class="num" id="LN630">630</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN633">633</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_SOA:</td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %s %s %u %u %u %u %u"</span>,</td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN636">636</td><td class="line">                             strna(rr-&gt;soa.mname),</td></tr>
-<tr><td class="num" id="LN637">637</td><td class="line">                             strna(rr-&gt;soa.rname),</td></tr>
-<tr><td class="num" id="LN638">638</td><td class="line">                             rr-&gt;soa.serial,</td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line">                             rr-&gt;soa.refresh,</td></tr>
-<tr><td class="num" id="LN640">640</td><td class="line">                             rr-&gt;soa.retry,</td></tr>
-<tr><td class="num" id="LN641">641</td><td class="line">                             rr-&gt;soa.expire,</td></tr>
-<tr><td class="num" id="LN642">642</td><td class="line">                             rr-&gt;soa.minimum);</td></tr>
-<tr><td class="num" id="LN643">643</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN644">644</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN645">645</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN646">646</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN647">647</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_MX:</td></tr>
-<tr><td class="num" id="LN648">648</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u %s"</span>,</td></tr>
-<tr><td class="num" id="LN649">649</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN650">650</td><td class="line">                             rr-&gt;mx.priority,</td></tr>
-<tr><td class="num" id="LN651">651</td><td class="line">                             rr-&gt;mx.exchange);</td></tr>
-<tr><td class="num" id="LN652">652</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN653">653</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN654">654</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN655">655</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN656">656</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_LOC:</td></tr>
-<tr><td class="num" id="LN657">657</td><td class="line">                <span class='macro'>assert(rr-&gt;loc.version == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(rr-&gt;loc.version == 0)),0))<br>) log_assert_failed("rr-&gt;loc.version == 0", "src/resolve/resolved-dns-rr.c"<br>, 657, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN658">658</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN659">659</td><td class="line">                t = format_location(rr-&gt;loc.latitude,</td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line">                                    rr-&gt;loc.longitude,</td></tr>
-<tr><td class="num" id="LN661">661</td><td class="line">                                    rr-&gt;loc.altitude,</td></tr>
-<tr><td class="num" id="LN662">662</td><td class="line">                                    rr-&gt;loc.size,</td></tr>
-<tr><td class="num" id="LN663">663</td><td class="line">                                    rr-&gt;loc.horiz_pre,</td></tr>
-<tr><td class="num" id="LN664">664</td><td class="line">                                    rr-&gt;loc.vert_pre);</td></tr>
-<tr><td class="num" id="LN665">665</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN666">666</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN667">667</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN668">668</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN669">669</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
-<tr><td class="num" id="LN670">670</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN671">671</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN672">672</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN673">673</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_DS:</td></tr>
-<tr><td class="num" id="LN674">674</td><td class="line">                t = hexmem(rr-&gt;ds.digest, rr-&gt;ds.digest_size);</td></tr>
-<tr><td class="num" id="LN675">675</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN676">676</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN678">678</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u %u %u %s"</span>,</td></tr>
-<tr><td class="num" id="LN679">679</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN680">680</td><td class="line">                             rr-&gt;ds.key_tag,</td></tr>
-<tr><td class="num" id="LN681">681</td><td class="line">                             rr-&gt;ds.algorithm,</td></tr>
-<tr><td class="num" id="LN682">682</td><td class="line">                             rr-&gt;ds.digest_type,</td></tr>
-<tr><td class="num" id="LN683">683</td><td class="line">                             t);</td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN685">685</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN686">686</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN687">687</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN688">688</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_SSHFP:</td></tr>
-<tr><td class="num" id="LN689">689</td><td class="line">                t = hexmem(rr-&gt;sshfp.key, rr-&gt;sshfp.key_size);</td></tr>
-<tr><td class="num" id="LN690">690</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN691">691</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN692">692</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u %u %s"</span>,</td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN695">695</td><td class="line">                             rr-&gt;sshfp.algorithm,</td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line">                             rr-&gt;sshfp.fptype,</td></tr>
-<tr><td class="num" id="LN697">697</td><td class="line">                             t);</td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_DNSKEY: {</td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *alg;</td></tr>
-<tr><td class="num" id="LN704">704</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line">                alg = dnssec_algorithm_to_string(rr-&gt;dnskey.algorithm);</td></tr>
-<tr><td class="num" id="LN706">706</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN707">707</td><td class="line">                t = base64mem(rr-&gt;dnskey.key, rr-&gt;dnskey.key_size);</td></tr>
-<tr><td class="num" id="LN708">708</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN710">710</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN711">711</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u 3 %.*s%.*u %s"</span>,</td></tr>
-<tr><td class="num" id="LN712">712</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line">                             dnskey_to_flags(rr),</td></tr>
-<tr><td class="num" id="LN714">714</td><td class="line">                             alg ? -1 : 0, alg,</td></tr>
-<tr><td class="num" id="LN715">715</td><td class="line">                             alg ? 0 : 1, alg ? 0u : (<span class='keyword'>unsigned</span>) rr-&gt;dnskey.algorithm,</td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line">                             t);</td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN718">718</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN720">720</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_RRSIG: {</td></tr>
-<tr><td class="num" id="LN723">723</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *type, *alg;</td></tr>
-<tr><td class="num" id="LN724">724</td><td class="line">                <span class='keyword'>char</span> expiration[strlen(<span class='string_literal'>"YYYYMMDDHHmmSS"</span>) + 1], inception[strlen(<span class='string_literal'>"YYYYMMDDHHmmSS"</span>) + 1];</td></tr>
-<tr><td class="num" id="LN725">725</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN726">726</td><td class="line">                type = dns_type_to_string(rr-&gt;rrsig.type_covered);</td></tr>
-<tr><td class="num" id="LN727">727</td><td class="line">                alg = dnssec_algorithm_to_string(rr-&gt;rrsig.algorithm);</td></tr>
-<tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN729">729</td><td class="line">                t = base64mem(rr-&gt;rrsig.signature, rr-&gt;rrsig.signature_size);</td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN731">731</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN732">732</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">                r = format_timestamp_dns(expiration, <span class='keyword'>sizeof</span>(expiration), rr-&gt;rrsig.expiration);</td></tr>
-<tr><td class="num" id="LN734">734</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN735">735</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN737">737</td><td class="line">                r = format_timestamp_dns(inception, <span class='keyword'>sizeof</span>(inception), rr-&gt;rrsig.inception);</td></tr>
-<tr><td class="num" id="LN738">738</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN739">739</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN741">741</td><td class="line">                <span class='comment'>/* TYPE?? follows</span></td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">                 <span class='comment'>* http://tools.ietf.org/html/rfc3597#section-5 */</span></td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN744">744</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %s%.*u %.*s%.*u %u %u %s %s %u %s %s"</span>,</td></tr>
-<tr><td class="num" id="LN745">745</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN746">746</td><td class="line">                             type ?: <span class='string_literal'>"TYPE"</span>,</td></tr>
-<tr><td class="num" id="LN747">747</td><td class="line">                             type ? 0 : 1, type ? 0u : (<span class='keyword'>unsigned</span>) rr-&gt;rrsig.type_covered,</td></tr>
-<tr><td class="num" id="LN748">748</td><td class="line">                             alg ? -1 : 0, alg,</td></tr>
-<tr><td class="num" id="LN749">749</td><td class="line">                             alg ? 0 : 1, alg ? 0u : (<span class='keyword'>unsigned</span>) rr-&gt;rrsig.algorithm,</td></tr>
-<tr><td class="num" id="LN750">750</td><td class="line">                             rr-&gt;rrsig.labels,</td></tr>
-<tr><td class="num" id="LN751">751</td><td class="line">                             rr-&gt;rrsig.original_ttl,</td></tr>
-<tr><td class="num" id="LN752">752</td><td class="line">                             expiration,</td></tr>
-<tr><td class="num" id="LN753">753</td><td class="line">                             inception,</td></tr>
-<tr><td class="num" id="LN754">754</td><td class="line">                             rr-&gt;rrsig.key_tag,</td></tr>
-<tr><td class="num" id="LN755">755</td><td class="line">                             rr-&gt;rrsig.signer,</td></tr>
-<tr><td class="num" id="LN756">756</td><td class="line">                             t);</td></tr>
-<tr><td class="num" id="LN757">757</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN758">758</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN759">759</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN760">760</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN761">761</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN762">762</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_NSEC:</td></tr>
-<tr><td class="num" id="LN763">763</td><td class="line">                t = format_types(rr-&gt;nsec.types);</td></tr>
-<tr><td class="num" id="LN764">764</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN765">765</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN766">766</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN767">767</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %s %s"</span>,</td></tr>
-<tr><td class="num" id="LN768">768</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN769">769</td><td class="line">                             rr-&gt;nsec.next_domain_name,</td></tr>
-<tr><td class="num" id="LN770">770</td><td class="line">                             t);</td></tr>
-<tr><td class="num" id="LN771">771</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN772">772</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN773">773</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN774">774</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN775">775</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_NSEC3: {</td></tr>
-<tr><td class="num" id="LN776">776</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *salt = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *hash = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN777">777</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN778">778</td><td class="line">                <span class='keyword'>if</span> (rr-&gt;nsec3.salt_size) {</td></tr>
-<tr><td class="num" id="LN779">779</td><td class="line">                        salt = hexmem(rr-&gt;nsec3.salt, rr-&gt;nsec3.salt_size);</td></tr>
-<tr><td class="num" id="LN780">780</td><td class="line">                        <span class='keyword'>if</span> (!salt)</td></tr>
-<tr><td class="num" id="LN781">781</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN782">782</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN783">783</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN784">784</td><td class="line">                hash = base32hexmem(rr-&gt;nsec3.next_hashed_name, rr-&gt;nsec3.next_hashed_name_size, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN785">785</td><td class="line">                <span class='keyword'>if</span> (!hash)</td></tr>
-<tr><td class="num" id="LN786">786</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN787">787</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN788">788</td><td class="line">                t = format_types(rr-&gt;nsec3.types);</td></tr>
-<tr><td class="num" id="LN789">789</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN790">790</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN791">791</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN792">792</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %"</span><span class='macro'>PRIu8<span class='expansion'>"u"</span></span><span class='string_literal'>" %"</span><span class='macro'>PRIu8<span class='expansion'>"u"</span></span><span class='string_literal'>" %"</span><span class='macro'>PRIu16<span class='expansion'>"u"</span></span><span class='string_literal'>" %s %s %s"</span>,</td></tr>
-<tr><td class="num" id="LN793">793</td><td class="line">                             k,</td></tr>
-<tr><td class="num" id="LN794">794</td><td class="line">                             rr-&gt;nsec3.algorithm,</td></tr>
-<tr><td class="num" id="LN795">795</td><td class="line">                             rr-&gt;nsec3.flags,</td></tr>
-<tr><td class="num" id="LN796">796</td><td class="line">                             rr-&gt;nsec3.iterations,</td></tr>
-<tr><td class="num" id="LN797">797</td><td class="line">                             rr-&gt;nsec3.salt_size ? salt : <span class='string_literal'>"-"</span>,</td></tr>
-<tr><td class="num" id="LN798">798</td><td class="line">                             hash,</td></tr>
-<tr><td class="num" id="LN799">799</td><td class="line">                             t);</td></tr>
-<tr><td class="num" id="LN800">800</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN801">801</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN802">802</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN803">803</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN804">804</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN805">805</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN806">806</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN807">807</td><td class="line">                t = hexmem(rr-&gt;generic.data, rr-&gt;generic.size);</td></tr>
-<tr><td class="num" id="LN808">808</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN809">809</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN810">810</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN811">811</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s \\# %"</span><span class='macro'>PRIu8<span class='expansion'>"u"</span></span><span class='string_literal'>" %s"</span>, k, rr-&gt;generic.size, t);</td></tr>
-<tr><td class="num" id="LN812">812</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN813">813</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN814">814</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN815">815</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN816">816</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN817">817</td><td class="line">        *ret = s;</td></tr>
-<tr><td class="num" id="LN818">818</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN819">819</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN820">820</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN821">821</td><td class="line"><span class='keyword'>const</span> <span class='keyword'>char</span> *dns_class_to_string(uint16_t class) {</td></tr>
-<tr><td class="num" id="LN822">822</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN823">823</td><td class="line">        <span class='keyword'>switch</span> (class) {</td></tr>
-<tr><td class="num" id="LN824">824</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN825">825</td><td class="line">        <span class='keyword'>case</span> DNS_CLASS_IN:</td></tr>
-<tr><td class="num" id="LN826">826</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"IN"</span>;</td></tr>
-<tr><td class="num" id="LN827">827</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN828">828</td><td class="line">        <span class='keyword'>case</span> DNS_CLASS_ANY:</td></tr>
-<tr><td class="num" id="LN829">829</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"ANY"</span>;</td></tr>
-<tr><td class="num" id="LN830">830</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN831">831</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN832">832</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN833">833</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN834">834</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN835">835</td><td class="line"><span class='keyword'>int</span> dns_class_from_string(<span class='keyword'>const</span> <span class='keyword'>char</span> *s, uint16_t *class) {</td></tr>
-<tr><td class="num" id="LN836">836</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/resolve/resolved-dns-rr.c", 836, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN837">837</td><td class="line">        <span class='macro'>assert(class)<span class='expansion'>do { if ((__builtin_expect(!!(!(class)),0))) log_assert_failed<br>("class", "src/resolve/resolved-dns-rr.c", 837, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN838">838</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN839">839</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>strcaseeq(s, <span class='string_literal'>"IN"</span>)<span class='expansion'>(strcasecmp((s),("IN")) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN840">840</td><td class="line">                *class = DNS_CLASS_IN;</td></tr>
-<tr><td class="num" id="LN841">841</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strcaseeq(s, <span class='string_literal'>"ANY"</span>)<span class='expansion'>(strcasecmp((s),("ANY")) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN842">842</td><td class="line">                *class = DNS_TYPE_ANY;</td></tr>
-<tr><td class="num" id="LN843">843</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN844">844</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN845">845</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN846">846</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN847">847</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">                        <span class='keyword'>char</span> *t;</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">                        r = asprintf(&amp;t, <span class='string_literal'>"TYPE%u"</span>, type);</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">                        r = strv_extend(&amp;strv, t);</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">        str = strv_join(strv, <span class='string_literal'>" "</span>);</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">        <span class='keyword'>if</span> (!str)</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">        <span class='keyword'>return</span> strjoin(<span class='string_literal'>"( "</span>, str, <span class='string_literal'>" )"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line"><span class='keyword'>int</span> dns_resource_record_to_string(<span class='keyword'>const</span> DnsResourceRecord *rr, <span class='keyword'>char</span> **ret) {</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *k = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">        <span class='keyword'>char</span> *s;</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">        <span class='macro'>assert(rr)<span class='expansion'>do { if ((__builtin_expect(!!(!(rr)),0))) log_assert_failed("rr"<br>, "src/resolve/resolved-dns-rr.c", 564, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">        r = dns_resource_key_to_string(rr-&gt;key, &amp;k);</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">        <span class='keyword'>switch</span> (rr-&gt;unparseable ? _DNS_TYPE_INVALID : rr-&gt;key-&gt;type) {</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_SRV:</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u %u %u %s"</span>,</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">                             rr-&gt;srv.priority,</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">                             rr-&gt;srv.weight,</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">                             rr-&gt;srv.port,</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">                             strna(rr-&gt;srv.name));</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_PTR:</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_NS:</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_CNAME:</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_DNAME:</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, rr-&gt;ptr.name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_HINFO:</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, rr-&gt;hinfo.cpu, <span class='string_literal'>" "</span>, rr-&gt;hinfo.os, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_SPF: <span class='comment'>/* exactly the same as TXT */</span></td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_TXT:</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">                t = strv_join_quoted(rr-&gt;txt.strings);</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_A: {</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *x = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">                r = in_addr_to_string(<span class='macro'>AF_INET<span class='expansion'>2</span></span>, (<span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union*) &amp;rr-&gt;a.in_addr, &amp;x);</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, x, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_AAAA:</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">                r = in_addr_to_string(<span class='macro'>AF_INET6<span class='expansion'>10</span></span>, (<span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union*) &amp;rr-&gt;aaaa.in6_addr, &amp;t);</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_SOA:</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %s %s %u %u %u %u %u"</span>,</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">                             strna(rr-&gt;soa.mname),</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">                             strna(rr-&gt;soa.rname),</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">                             rr-&gt;soa.serial,</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">                             rr-&gt;soa.refresh,</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">                             rr-&gt;soa.retry,</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">                             rr-&gt;soa.expire,</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">                             rr-&gt;soa.minimum);</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_MX:</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u %s"</span>,</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">                             rr-&gt;mx.priority,</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">                             rr-&gt;mx.exchange);</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_LOC:</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">                <span class='macro'>assert(rr-&gt;loc.version == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(rr-&gt;loc.version == 0)),0))<br>) log_assert_failed("rr-&gt;loc.version == 0", "src/resolve/resolved-dns-rr.c"<br>, 658, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">                t = format_location(rr-&gt;loc.latitude,</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">                                    rr-&gt;loc.longitude,</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">                                    rr-&gt;loc.altitude,</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">                                    rr-&gt;loc.size,</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">                                    rr-&gt;loc.horiz_pre,</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">                                    rr-&gt;loc.vert_pre);</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">                s = strjoin(k, <span class='string_literal'>" "</span>, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">                <span class='keyword'>if</span> (!s)</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_DS:</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">                t = hexmem(rr-&gt;ds.digest, rr-&gt;ds.digest_size);</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u %u %u %s"</span>,</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">                             rr-&gt;ds.key_tag,</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">                             rr-&gt;ds.algorithm,</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">                             rr-&gt;ds.digest_type,</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">                             t);</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_SSHFP:</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">                t = hexmem(rr-&gt;sshfp.key, rr-&gt;sshfp.key_size);</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u %u %s"</span>,</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">                             rr-&gt;sshfp.algorithm,</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">                             rr-&gt;sshfp.fptype,</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">                             t);</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_DNSKEY: {</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *alg;</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">                alg = dnssec_algorithm_to_string(rr-&gt;dnskey.algorithm);</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">                t = base64mem(rr-&gt;dnskey.key, rr-&gt;dnskey.key_size);</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %u 3 %.*s%.*u %s"</span>,</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">                             dnskey_to_flags(rr),</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">                             alg ? -1 : 0, alg,</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">                             alg ? 0 : 1, alg ? 0u : (<span class='keyword'>unsigned</span>) rr-&gt;dnskey.algorithm,</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">                             t);</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_RRSIG: {</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *type, *alg;</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">                <span class='keyword'>char</span> expiration[strlen(<span class='string_literal'>"YYYYMMDDHHmmSS"</span>) + 1], inception[strlen(<span class='string_literal'>"YYYYMMDDHHmmSS"</span>) + 1];</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">                type = dns_type_to_string(rr-&gt;rrsig.type_covered);</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">                alg = dnssec_algorithm_to_string(rr-&gt;rrsig.algorithm);</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">                t = base64mem(rr-&gt;rrsig.signature, rr-&gt;rrsig.signature_size);</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">                r = format_timestamp_dns(expiration, <span class='keyword'>sizeof</span>(expiration), rr-&gt;rrsig.expiration);</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">                r = format_timestamp_dns(inception, <span class='keyword'>sizeof</span>(inception), rr-&gt;rrsig.inception);</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">                <span class='comment'>/* TYPE?? follows</span></td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">                 <span class='comment'>* http://tools.ietf.org/html/rfc3597#section-5 */</span></td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %s%.*u %.*s%.*u %u %u %s %s %u %s %s"</span>,</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">                             type ?: <span class='string_literal'>"TYPE"</span>,</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">                             type ? 0 : 1, type ? 0u : (<span class='keyword'>unsigned</span>) rr-&gt;rrsig.type_covered,</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">                             alg ? -1 : 0, alg,</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">                             alg ? 0 : 1, alg ? 0u : (<span class='keyword'>unsigned</span>) rr-&gt;rrsig.algorithm,</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">                             rr-&gt;rrsig.labels,</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">                             rr-&gt;rrsig.original_ttl,</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">                             expiration,</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">                             inception,</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">                             rr-&gt;rrsig.key_tag,</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">                             rr-&gt;rrsig.signer,</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">                             t);</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_NSEC:</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">                t = format_types(rr-&gt;nsec.types);</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %s %s"</span>,</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">                             rr-&gt;nsec.next_domain_name,</td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">                             t);</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">        <span class='keyword'>case</span> DNS_TYPE_NSEC3: {</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *salt = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *hash = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">                <span class='keyword'>if</span> (rr-&gt;nsec3.salt_size) {</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">                        salt = hexmem(rr-&gt;nsec3.salt, rr-&gt;nsec3.salt_size);</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">                        <span class='keyword'>if</span> (!salt)</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">                hash = base32hexmem(rr-&gt;nsec3.next_hashed_name, rr-&gt;nsec3.next_hashed_name_size, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">                <span class='keyword'>if</span> (!hash)</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">                t = format_types(rr-&gt;nsec3.types);</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s %"</span><span class='macro'>PRIu8<span class='expansion'>"u"</span></span><span class='string_literal'>" %"</span><span class='macro'>PRIu8<span class='expansion'>"u"</span></span><span class='string_literal'>" %"</span><span class='macro'>PRIu16<span class='expansion'>"u"</span></span><span class='string_literal'>" %s %s %s"</span>,</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">                             k,</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">                             rr-&gt;nsec3.algorithm,</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">                             rr-&gt;nsec3.flags,</td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">                             rr-&gt;nsec3.iterations,</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">                             rr-&gt;nsec3.salt_size ? salt : <span class='string_literal'>"-"</span>,</td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">                             hash,</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">                             t);</td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">                t = hexmem(rr-&gt;generic.data, rr-&gt;generic.size);</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">                r = asprintf(&amp;s, <span class='string_literal'>"%s \\# %"</span><span class='macro'>PRIu8<span class='expansion'>"u"</span></span><span class='string_literal'>" %s"</span>, k, rr-&gt;generic.size, t);</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">        *ret = s;</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line"><span class='keyword'>const</span> <span class='keyword'>char</span> *dns_class_to_string(uint16_t class) {</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line">        <span class='keyword'>switch</span> (class) {</td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">        <span class='keyword'>case</span> DNS_CLASS_IN:</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"IN"</span>;</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">        <span class='keyword'>case</span> DNS_CLASS_ANY:</td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"ANY"</span>;</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line"><span class='keyword'>int</span> dns_class_from_string(<span class='keyword'>const</span> <span class='keyword'>char</span> *s, uint16_t *class) {</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/resolve/resolved-dns-rr.c", 837, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">        <span class='macro'>assert(class)<span class='expansion'>do { if ((__builtin_expect(!!(!(class)),0))) log_assert_failed<br>("class", "src/resolve/resolved-dns-rr.c", 838, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>strcaseeq(s, <span class='string_literal'>"IN"</span>)<span class='expansion'>(strcasecmp((s),("IN")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">                *class = DNS_CLASS_IN;</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strcaseeq(s, <span class='string_literal'>"ANY"</span>)<span class='expansion'>(strcasecmp((s),("ANY")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">                *class = DNS_TYPE_ANY;</td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line">}</td></tr>
 </table></body></html>
