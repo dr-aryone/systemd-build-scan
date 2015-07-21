@@ -8789,7 +8789,7 @@ static inline int getrandom(void *buffer, size_t count, unsigned flags) {
 static inline pid_t gettid(void) {
         return (pid_t) syscall(186);
 }
-# 937 "./src/basic/missing.h"
+# 942 "./src/basic/missing.h"
 static inline int raw_clone(unsigned long flags, void *child_stack) {
 
 
@@ -8803,7 +8803,7 @@ static inline int raw_clone(unsigned long flags, void *child_stack) {
 static inline pid_t raw_getpid(void) {
         return (pid_t) syscall(39);
 }
-# 976 "./src/basic/missing.h"
+# 981 "./src/basic/missing.h"
 static inline int renameat2(int oldfd, const char *oldname, int newfd, const char *newname, unsigned flags) {
         return syscall(316, oldfd, oldname, newfd, newname, flags);
 }
