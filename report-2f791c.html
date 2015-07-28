@@ -1011,417 +1011,455 @@
 <tr><td class="num" id="LN912">912</td><td class="line">        <span class='keyword'>if</span> (p-&gt;ifindex == <span class='macro'>LOOPBACK_IFINDEX<span class='expansion'>1</span></span>)</td></tr>
 <tr><td class="num" id="LN913">913</td><td class="line">                p-&gt;ifindex = 0;</td></tr>
 <tr><td class="num" id="LN914">914</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN915">915</td><td class="line">        <span class='comment'>/* If we don't know the interface index still, we look for the</span></td></tr>
-<tr><td class="num" id="LN916">916</td><td class="line">         <span class='comment'>* first local interface with a matching address. Yuck! */</span></td></tr>
-<tr><td class="num" id="LN917">917</td><td class="line">        <span class='keyword'>if</span> (p-&gt;ifindex &lt;= 0)</td></tr>
-<tr><td class="num" id="LN918">918</td><td class="line">                p-&gt;ifindex = manager_find_ifindex(m, p-&gt;family, &amp;p-&gt;destination);</td></tr>
-<tr><td class="num" id="LN919">919</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN920">920</td><td class="line">        *ret = p;</td></tr>
-<tr><td class="num" id="LN921">921</td><td class="line">        p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN922">922</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN923">923</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN924">924</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN925">925</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN926">926</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> sendmsg_loop(<span class='keyword'>int</span> fd, <span class='keyword'>struct</span> msghdr *mh, <span class='keyword'>int</span> flags) {</td></tr>
-<tr><td class="num" id="LN927">927</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN928">928</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN929">929</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 929, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN930">930</td><td class="line">        <span class='macro'>assert(mh)<span class='expansion'>do { if ((__builtin_expect(!!(!(mh)),0))) log_assert_failed("mh"<br>, "src/resolve/resolved-manager.c", 930, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN931">931</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN932">932</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN933">933</td><td class="line">                <span class='keyword'>if</span> (sendmsg(fd, mh, flags) &gt;= 0)</td></tr>
-<tr><td class="num" id="LN934">934</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN935">935</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN936">936</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EINTR<span class='expansion'>4</span></span>)</td></tr>
-<tr><td class="num" id="LN937">937</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN938">938</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN939">939</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
-<tr><td class="num" id="LN940">940</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN941">941</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN942">942</td><td class="line">                r = fd_wait_for_event(fd, <span class='macro'>POLLOUT<span class='expansion'>0x004</span></span>, <span class='macro'>SEND_TIMEOUT_USEC<span class='expansion'>(200 * ((usec_t) 1000ULL))</span></span>);</td></tr>
-<tr><td class="num" id="LN943">943</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN944">944</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN945">945</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN946">946</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ETIMEDOUT<span class='expansion'>110</span></span>;</td></tr>
-<tr><td class="num" id="LN947">947</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN948">948</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN949">949</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN950">950</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> manager_ipv4_send(Manager *m, <span class='keyword'>int</span> fd, <span class='keyword'>int</span> ifindex, <span class='keyword'>const</span> <span class='keyword'>struct</span> in_addr *addr, uint16_t port, DnsPacket *p) {</td></tr>
-<tr><td class="num" id="LN951">951</td><td class="line">        <span class='keyword'>union</span> sockaddr_union sa = {</td></tr>
-<tr><td class="num" id="LN952">952</td><td class="line">                .in.sin_family = <span class='macro'>AF_INET<span class='expansion'>2</span></span>,</td></tr>
-<tr><td class="num" id="LN953">953</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN954">954</td><td class="line">        <span class='keyword'>union</span> {</td></tr>
-<tr><td class="num" id="LN955">955</td><td class="line">                <span class='keyword'>struct</span> cmsghdr header; <span class='comment'>/* For alignment */</span></td></tr>
-<tr><td class="num" id="LN956">956</td><td class="line">                uint8_t buffer[<span class='macro'>CMSG_SPACE(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> in_pktinfo))<span class='expansion'>((((sizeof(struct in_pktinfo)) + sizeof (size_t) - 1) &amp; (<br>size_t) ~(sizeof (size_t) - 1)) + (((sizeof (struct cmsghdr))<br> + sizeof (size_t) - 1) &amp; (size_t) ~(sizeof (size_t) - 1)<br>))</span></span>];</td></tr>
-<tr><td class="num" id="LN957">957</td><td class="line">        } control;</td></tr>
-<tr><td class="num" id="LN958">958</td><td class="line">        <span class='keyword'>struct</span> msghdr mh = {};</td></tr>
-<tr><td class="num" id="LN959">959</td><td class="line">        <span class='keyword'>struct</span> iovec iov;</td></tr>
-<tr><td class="num" id="LN960">960</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN961">961</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 961, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN962">962</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 962, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN963">963</td><td class="line">        <span class='macro'>assert(addr)<span class='expansion'>do { if ((__builtin_expect(!!(!(addr)),0))) log_assert_failed<br>("addr", "src/resolve/resolved-manager.c", 963, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN964">964</td><td class="line">        <span class='macro'>assert(port &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(port &gt; 0)),0))) log_assert_failed<br>("port &gt; 0", "src/resolve/resolved-manager.c", 964, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN965">965</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 965, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN966">966</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN967">967</td><td class="line">        iov.iov_base = DNS_PACKET_DATA(p);</td></tr>
-<tr><td class="num" id="LN968">968</td><td class="line">        iov.iov_len = p-&gt;size;</td></tr>
-<tr><td class="num" id="LN969">969</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN970">970</td><td class="line">        sa.in.sin_addr = *addr;</td></tr>
-<tr><td class="num" id="LN971">971</td><td class="line">        sa.in.sin_port = htobe16(port),</td></tr>
-<tr><td class="num" id="LN972">972</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN973">973</td><td class="line">        mh.msg_iov = &amp;iov;</td></tr>
-<tr><td class="num" id="LN974">974</td><td class="line">        mh.msg_iovlen = 1;</td></tr>
-<tr><td class="num" id="LN975">975</td><td class="line">        mh.msg_name = &amp;sa.sa;</td></tr>
-<tr><td class="num" id="LN976">976</td><td class="line">        mh.msg_namelen = <span class='keyword'>sizeof</span>(sa.in);</td></tr>
-<tr><td class="num" id="LN977">977</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN978">978</td><td class="line">        <span class='keyword'>if</span> (ifindex &gt; 0) {</td></tr>
-<tr><td class="num" id="LN979">979</td><td class="line">                <span class='keyword'>struct</span> cmsghdr *cmsg;</td></tr>
-<tr><td class="num" id="LN980">980</td><td class="line">                <span class='keyword'>struct</span> in_pktinfo *pi;</td></tr>
-<tr><td class="num" id="LN981">981</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN982">982</td><td class="line">                <span class='macro'>zero(control)<span class='expansion'>((memset((&amp;(control)), 0, (sizeof(control)))))</span></span>;</td></tr>
-<tr><td class="num" id="LN983">983</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN984">984</td><td class="line">                mh.msg_control = &amp;control;</td></tr>
-<tr><td class="num" id="LN985">985</td><td class="line">                mh.msg_controllen = <span class='macro'>CMSG_LEN(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> in_pktinfo))<span class='expansion'>((((sizeof (struct cmsghdr)) + sizeof (size_t) - 1) &amp; (size_t<br>) ~(sizeof (size_t) - 1)) + (sizeof(struct in_pktinfo)))</span></span>;</td></tr>
-<tr><td class="num" id="LN986">986</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN987">987</td><td class="line">                cmsg = <span class='macro'>CMSG_FIRSTHDR(&amp;mh)<span class='expansion'>((size_t) (&amp;mh)-&gt;msg_controllen &gt;= sizeof (struct cmsghdr<br>) ? (struct cmsghdr *) (&amp;mh)-&gt;msg_control : (struct cmsghdr<br> *) 0)</span></span>;</td></tr>
-<tr><td class="num" id="LN988">988</td><td class="line">                cmsg-&gt;cmsg_len = mh.msg_controllen;</td></tr>
-<tr><td class="num" id="LN989">989</td><td class="line">                cmsg-&gt;cmsg_level = <span class='macro'>IPPROTO_IP<span class='expansion'>IPPROTO_IP</span></span>;</td></tr>
-<tr><td class="num" id="LN990">990</td><td class="line">                cmsg-&gt;cmsg_type = <span class='macro'>IP_PKTINFO<span class='expansion'>8</span></span>;</td></tr>
-<tr><td class="num" id="LN991">991</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN992">992</td><td class="line">                pi = (<span class='keyword'>struct</span> in_pktinfo*) <span class='macro'>CMSG_DATA(cmsg)<span class='expansion'>((cmsg)-&gt;__cmsg_data)</span></span>;</td></tr>
-<tr><td class="num" id="LN993">993</td><td class="line">                pi-&gt;ipi_ifindex = ifindex;</td></tr>
-<tr><td class="num" id="LN994">994</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN995">995</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN996">996</td><td class="line">        <span class='keyword'>return</span> sendmsg_loop(fd, &amp;mh, 0);</td></tr>
-<tr><td class="num" id="LN997">997</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN915">915</td><td class="line">        <span class='keyword'>if</span> (protocol != DNS_PROTOCOL_DNS) {</td></tr>
+<tr><td class="num" id="LN916">916</td><td class="line">                <span class='comment'>/* If we don't know the interface index still, we look for the</span></td></tr>
+<tr><td class="num" id="LN917">917</td><td class="line">                 <span class='comment'>* first local interface with a matching address. Yuck! */</span></td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">                <span class='keyword'>if</span> (p-&gt;ifindex &lt;= 0)</td></tr>
+<tr><td class="num" id="LN919">919</td><td class="line">                        p-&gt;ifindex = manager_find_ifindex(m, p-&gt;family, &amp;p-&gt;destination);</td></tr>
+<tr><td class="num" id="LN920">920</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN921">921</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line">        *ret = p;</td></tr>
+<tr><td class="num" id="LN923">923</td><td class="line">        p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN924">924</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN925">925</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN927">927</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN928">928</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> sendmsg_loop(<span class='keyword'>int</span> fd, <span class='keyword'>struct</span> msghdr *mh, <span class='keyword'>int</span> flags) {</td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN930">930</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN931">931</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 931, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN932">932</td><td class="line">        <span class='macro'>assert(mh)<span class='expansion'>do { if ((__builtin_expect(!!(!(mh)),0))) log_assert_failed("mh"<br>, "src/resolve/resolved-manager.c", 932, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN934">934</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN935">935</td><td class="line">                <span class='keyword'>if</span> (sendmsg(fd, mh, flags) &gt;= 0)</td></tr>
+<tr><td class="num" id="LN936">936</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN937">937</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN938">938</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EINTR<span class='expansion'>4</span></span>)</td></tr>
+<tr><td class="num" id="LN939">939</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN940">940</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN941">941</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
+<tr><td class="num" id="LN942">942</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN943">943</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN944">944</td><td class="line">                r = fd_wait_for_event(fd, <span class='macro'>POLLOUT<span class='expansion'>0x004</span></span>, <span class='macro'>SEND_TIMEOUT_USEC<span class='expansion'>(200 * ((usec_t) 1000ULL))</span></span>);</td></tr>
+<tr><td class="num" id="LN945">945</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN946">946</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN947">947</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN948">948</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ETIMEDOUT<span class='expansion'>110</span></span>;</td></tr>
+<tr><td class="num" id="LN949">949</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN950">950</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN951">951</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> write_loop(<span class='keyword'>int</span> fd, <span class='keyword'>void</span> *message, size_t length) {</td></tr>
+<tr><td class="num" id="LN953">953</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN954">954</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN955">955</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 955, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN956">956</td><td class="line">        <span class='macro'>assert(message)<span class='expansion'>do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed<br>("message", "src/resolve/resolved-manager.c", 956, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN957">957</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN958">958</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN959">959</td><td class="line">                <span class='keyword'>if</span> (write(fd, message, length) &gt;= 0)</td></tr>
+<tr><td class="num" id="LN960">960</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN961">961</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN962">962</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EINTR<span class='expansion'>4</span></span>)</td></tr>
+<tr><td class="num" id="LN963">963</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN964">964</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN965">965</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
+<tr><td class="num" id="LN966">966</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN967">967</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN968">968</td><td class="line">                r = fd_wait_for_event(fd, <span class='macro'>POLLOUT<span class='expansion'>0x004</span></span>, <span class='macro'>SEND_TIMEOUT_USEC<span class='expansion'>(200 * ((usec_t) 1000ULL))</span></span>);</td></tr>
+<tr><td class="num" id="LN969">969</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN970">970</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN971">971</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN972">972</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ETIMEDOUT<span class='expansion'>110</span></span>;</td></tr>
+<tr><td class="num" id="LN973">973</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN974">974</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN975">975</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN976">976</td><td class="line"><span class='keyword'>int</span> manager_write(Manager *m, <span class='keyword'>int</span> fd, DnsPacket *p) {</td></tr>
+<tr><td class="num" id="LN977">977</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN978">978</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">        <span class='macro'>log_debug(<span class='string_literal'>"Sending %s packet with id %u"</span>, DNS_PACKET_QR(p) ? <span class='string_literal'>"response"</span> : <span class='string_literal'>"query"</span>, DNS_PACKET_ID(p))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-manager.c"<br>, 979, __func__, "Sending %s packet with id %u", ((be16toh(((<br>DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags) &gt;&gt; 15)<br> &amp; 1) ? "response" : "query", ((DnsPacketHeader*) DNS_PACKET_DATA<br>(p))-&gt;id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN980">980</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN981">981</td><td class="line">        r = write_loop(fd, DNS_PACKET_DATA(p), p-&gt;size);</td></tr>
+<tr><td class="num" id="LN982">982</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN984">984</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN985">985</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN986">986</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN987">987</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN988">988</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> manager_ipv4_send(Manager *m, <span class='keyword'>int</span> fd, <span class='keyword'>int</span> ifindex, <span class='keyword'>const</span> <span class='keyword'>struct</span> in_addr *addr, uint16_t port, DnsPacket *p) {</td></tr>
+<tr><td class="num" id="LN989">989</td><td class="line">        <span class='keyword'>union</span> sockaddr_union sa = {</td></tr>
+<tr><td class="num" id="LN990">990</td><td class="line">                .in.sin_family = <span class='macro'>AF_INET<span class='expansion'>2</span></span>,</td></tr>
+<tr><td class="num" id="LN991">991</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN992">992</td><td class="line">        <span class='keyword'>union</span> {</td></tr>
+<tr><td class="num" id="LN993">993</td><td class="line">                <span class='keyword'>struct</span> cmsghdr header; <span class='comment'>/* For alignment */</span></td></tr>
+<tr><td class="num" id="LN994">994</td><td class="line">                uint8_t buffer[<span class='macro'>CMSG_SPACE(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> in_pktinfo))<span class='expansion'>((((sizeof(struct in_pktinfo)) + sizeof (size_t) - 1) &amp; (<br>size_t) ~(sizeof (size_t) - 1)) + (((sizeof (struct cmsghdr))<br> + sizeof (size_t) - 1) &amp; (size_t) ~(sizeof (size_t) - 1)<br>))</span></span>];</td></tr>
+<tr><td class="num" id="LN995">995</td><td class="line">        } control;</td></tr>
+<tr><td class="num" id="LN996">996</td><td class="line">        <span class='keyword'>struct</span> msghdr mh = {};</td></tr>
+<tr><td class="num" id="LN997">997</td><td class="line">        <span class='keyword'>struct</span> iovec iov;</td></tr>
 <tr><td class="num" id="LN998">998</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN999">999</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> manager_ipv6_send(Manager *m, <span class='keyword'>int</span> fd, <span class='keyword'>int</span> ifindex, <span class='keyword'>const</span> <span class='keyword'>struct</span> in6_addr *addr, uint16_t port, DnsPacket *p) {</td></tr>
-<tr><td class="num" id="LN1000">1000</td><td class="line">        <span class='keyword'>union</span> sockaddr_union sa = {</td></tr>
-<tr><td class="num" id="LN1001">1001</td><td class="line">                .in6.sin6_family = <span class='macro'>AF_INET6<span class='expansion'>10</span></span>,</td></tr>
-<tr><td class="num" id="LN1002">1002</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN1003">1003</td><td class="line">        <span class='keyword'>union</span> {</td></tr>
-<tr><td class="num" id="LN1004">1004</td><td class="line">                <span class='keyword'>struct</span> cmsghdr header; <span class='comment'>/* For alignment */</span></td></tr>
-<tr><td class="num" id="LN1005">1005</td><td class="line">                uint8_t buffer[<span class='macro'>CMSG_SPACE(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> in6_pktinfo))<span class='expansion'>((((sizeof(struct in6_pktinfo)) + sizeof (size_t) - 1) &amp; (<br>size_t) ~(sizeof (size_t) - 1)) + (((sizeof (struct cmsghdr))<br> + sizeof (size_t) - 1) &amp; (size_t) ~(sizeof (size_t) - 1)<br>))</span></span>];</td></tr>
-<tr><td class="num" id="LN1006">1006</td><td class="line">        } control;</td></tr>
-<tr><td class="num" id="LN1007">1007</td><td class="line">        <span class='keyword'>struct</span> msghdr mh = {};</td></tr>
-<tr><td class="num" id="LN1008">1008</td><td class="line">        <span class='keyword'>struct</span> iovec iov;</td></tr>
-<tr><td class="num" id="LN1009">1009</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1010">1010</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1010, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1011">1011</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 1011, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1012">1012</td><td class="line">        <span class='macro'>assert(addr)<span class='expansion'>do { if ((__builtin_expect(!!(!(addr)),0))) log_assert_failed<br>("addr", "src/resolve/resolved-manager.c", 1012, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1013">1013</td><td class="line">        <span class='macro'>assert(port &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(port &gt; 0)),0))) log_assert_failed<br>("port &gt; 0", "src/resolve/resolved-manager.c", 1013, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1014">1014</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1014, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN999">999</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 999, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1000">1000</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 1000, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1001">1001</td><td class="line">        <span class='macro'>assert(addr)<span class='expansion'>do { if ((__builtin_expect(!!(!(addr)),0))) log_assert_failed<br>("addr", "src/resolve/resolved-manager.c", 1001, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1002">1002</td><td class="line">        <span class='macro'>assert(port &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(port &gt; 0)),0))) log_assert_failed<br>("port &gt; 0", "src/resolve/resolved-manager.c", 1002, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1003">1003</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1003, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1004">1004</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1005">1005</td><td class="line">        iov.iov_base = DNS_PACKET_DATA(p);</td></tr>
+<tr><td class="num" id="LN1006">1006</td><td class="line">        iov.iov_len = p-&gt;size;</td></tr>
+<tr><td class="num" id="LN1007">1007</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1008">1008</td><td class="line">        sa.in.sin_addr = *addr;</td></tr>
+<tr><td class="num" id="LN1009">1009</td><td class="line">        sa.in.sin_port = htobe16(port),</td></tr>
+<tr><td class="num" id="LN1010">1010</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1011">1011</td><td class="line">        mh.msg_iov = &amp;iov;</td></tr>
+<tr><td class="num" id="LN1012">1012</td><td class="line">        mh.msg_iovlen = 1;</td></tr>
+<tr><td class="num" id="LN1013">1013</td><td class="line">        mh.msg_name = &amp;sa.sa;</td></tr>
+<tr><td class="num" id="LN1014">1014</td><td class="line">        mh.msg_namelen = <span class='keyword'>sizeof</span>(sa.in);</td></tr>
 <tr><td class="num" id="LN1015">1015</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1016">1016</td><td class="line">        iov.iov_base = DNS_PACKET_DATA(p);</td></tr>
-<tr><td class="num" id="LN1017">1017</td><td class="line">        iov.iov_len = p-&gt;size;</td></tr>
-<tr><td class="num" id="LN1018">1018</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1019">1019</td><td class="line">        sa.in6.sin6_addr = *addr;</td></tr>
-<tr><td class="num" id="LN1020">1020</td><td class="line">        sa.in6.sin6_port = htobe16(port),</td></tr>
-<tr><td class="num" id="LN1021">1021</td><td class="line">        sa.in6.sin6_scope_id = ifindex;</td></tr>
-<tr><td class="num" id="LN1022">1022</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1023">1023</td><td class="line">        mh.msg_iov = &amp;iov;</td></tr>
-<tr><td class="num" id="LN1024">1024</td><td class="line">        mh.msg_iovlen = 1;</td></tr>
-<tr><td class="num" id="LN1025">1025</td><td class="line">        mh.msg_name = &amp;sa.sa;</td></tr>
-<tr><td class="num" id="LN1026">1026</td><td class="line">        mh.msg_namelen = <span class='keyword'>sizeof</span>(sa.in6);</td></tr>
-<tr><td class="num" id="LN1027">1027</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1028">1028</td><td class="line">        <span class='keyword'>if</span> (ifindex &gt; 0) {</td></tr>
-<tr><td class="num" id="LN1029">1029</td><td class="line">                <span class='keyword'>struct</span> cmsghdr *cmsg;</td></tr>
-<tr><td class="num" id="LN1030">1030</td><td class="line">                <span class='keyword'>struct</span> in6_pktinfo *pi;</td></tr>
-<tr><td class="num" id="LN1031">1031</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1032">1032</td><td class="line">                <span class='macro'>zero(control)<span class='expansion'>((memset((&amp;(control)), 0, (sizeof(control)))))</span></span>;</td></tr>
+<tr><td class="num" id="LN1016">1016</td><td class="line">        <span class='keyword'>if</span> (ifindex &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1017">1017</td><td class="line">                <span class='keyword'>struct</span> cmsghdr *cmsg;</td></tr>
+<tr><td class="num" id="LN1018">1018</td><td class="line">                <span class='keyword'>struct</span> in_pktinfo *pi;</td></tr>
+<tr><td class="num" id="LN1019">1019</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1020">1020</td><td class="line">                <span class='macro'>zero(control)<span class='expansion'>((memset((&amp;(control)), 0, (sizeof(control)))))</span></span>;</td></tr>
+<tr><td class="num" id="LN1021">1021</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1022">1022</td><td class="line">                mh.msg_control = &amp;control;</td></tr>
+<tr><td class="num" id="LN1023">1023</td><td class="line">                mh.msg_controllen = <span class='macro'>CMSG_LEN(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> in_pktinfo))<span class='expansion'>((((sizeof (struct cmsghdr)) + sizeof (size_t) - 1) &amp; (size_t<br>) ~(sizeof (size_t) - 1)) + (sizeof(struct in_pktinfo)))</span></span>;</td></tr>
+<tr><td class="num" id="LN1024">1024</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1025">1025</td><td class="line">                cmsg = <span class='macro'>CMSG_FIRSTHDR(&amp;mh)<span class='expansion'>((size_t) (&amp;mh)-&gt;msg_controllen &gt;= sizeof (struct cmsghdr<br>) ? (struct cmsghdr *) (&amp;mh)-&gt;msg_control : (struct cmsghdr<br> *) 0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1026">1026</td><td class="line">                cmsg-&gt;cmsg_len = mh.msg_controllen;</td></tr>
+<tr><td class="num" id="LN1027">1027</td><td class="line">                cmsg-&gt;cmsg_level = <span class='macro'>IPPROTO_IP<span class='expansion'>IPPROTO_IP</span></span>;</td></tr>
+<tr><td class="num" id="LN1028">1028</td><td class="line">                cmsg-&gt;cmsg_type = <span class='macro'>IP_PKTINFO<span class='expansion'>8</span></span>;</td></tr>
+<tr><td class="num" id="LN1029">1029</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1030">1030</td><td class="line">                pi = (<span class='keyword'>struct</span> in_pktinfo*) <span class='macro'>CMSG_DATA(cmsg)<span class='expansion'>((cmsg)-&gt;__cmsg_data)</span></span>;</td></tr>
+<tr><td class="num" id="LN1031">1031</td><td class="line">                pi-&gt;ipi_ifindex = ifindex;</td></tr>
+<tr><td class="num" id="LN1032">1032</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1033">1033</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1034">1034</td><td class="line">                mh.msg_control = &amp;control;</td></tr>
-<tr><td class="num" id="LN1035">1035</td><td class="line">                mh.msg_controllen = <span class='macro'>CMSG_LEN(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> in6_pktinfo))<span class='expansion'>((((sizeof (struct cmsghdr)) + sizeof (size_t) - 1) &amp; (size_t<br>) ~(sizeof (size_t) - 1)) + (sizeof(struct in6_pktinfo)))</span></span>;</td></tr>
+<tr><td class="num" id="LN1034">1034</td><td class="line">        <span class='keyword'>return</span> sendmsg_loop(fd, &amp;mh, 0);</td></tr>
+<tr><td class="num" id="LN1035">1035</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1036">1036</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1037">1037</td><td class="line">                cmsg = <span class='macro'>CMSG_FIRSTHDR(&amp;mh)<span class='expansion'>((size_t) (&amp;mh)-&gt;msg_controllen &gt;= sizeof (struct cmsghdr<br>) ? (struct cmsghdr *) (&amp;mh)-&gt;msg_control : (struct cmsghdr<br> *) 0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1038">1038</td><td class="line">                cmsg-&gt;cmsg_len = mh.msg_controllen;</td></tr>
-<tr><td class="num" id="LN1039">1039</td><td class="line">                cmsg-&gt;cmsg_level = <span class='macro'>IPPROTO_IPV6<span class='expansion'>IPPROTO_IPV6</span></span>;</td></tr>
-<tr><td class="num" id="LN1040">1040</td><td class="line">                cmsg-&gt;cmsg_type = <span class='macro'>IPV6_PKTINFO<span class='expansion'>50</span></span>;</td></tr>
-<tr><td class="num" id="LN1041">1041</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1042">1042</td><td class="line">                pi = (<span class='keyword'>struct</span> in6_pktinfo*) <span class='macro'>CMSG_DATA(cmsg)<span class='expansion'>((cmsg)-&gt;__cmsg_data)</span></span>;</td></tr>
-<tr><td class="num" id="LN1043">1043</td><td class="line">                pi-&gt;ipi6_ifindex = ifindex;</td></tr>
-<tr><td class="num" id="LN1044">1044</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1045">1045</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1046">1046</td><td class="line">        <span class='keyword'>return</span> sendmsg_loop(fd, &amp;mh, 0);</td></tr>
-<tr><td class="num" id="LN1047">1047</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1048">1048</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1049">1049</td><td class="line"><span class='keyword'>int</span> manager_send(Manager *m, <span class='keyword'>int</span> fd, <span class='keyword'>int</span> ifindex, <span class='keyword'>int</span> family, <span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union *addr, uint16_t port, DnsPacket *p) {</td></tr>
-<tr><td class="num" id="LN1050">1050</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1050, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1051">1051</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 1051, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1052">1052</td><td class="line">        <span class='macro'>assert(addr)<span class='expansion'>do { if ((__builtin_expect(!!(!(addr)),0))) log_assert_failed<br>("addr", "src/resolve/resolved-manager.c", 1052, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1053">1053</td><td class="line">        <span class='macro'>assert(port &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(port &gt; 0)),0))) log_assert_failed<br>("port &gt; 0", "src/resolve/resolved-manager.c", 1053, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1054">1054</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1054, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1055">1055</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1056">1056</td><td class="line">        <span class='macro'>log_debug(<span class='string_literal'>"Sending %s packet with id %u on interface %i/%s"</span>, DNS_PACKET_QR(p) ? <span class='string_literal'>"response"</span> : <span class='string_literal'>"query"</span>, DNS_PACKET_ID(p), ifindex, af_to_name(family))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-manager.c"<br>, 1056, __func__, "Sending %s packet with id %u on interface %i/%s"<br>, ((be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags<br>) &gt;&gt; 15) &amp; 1) ? "response" : "query", ((DnsPacketHeader<br>*) DNS_PACKET_DATA(p))-&gt;id, ifindex, af_to_name(family)) :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1057">1057</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1058">1058</td><td class="line">        <span class='keyword'>if</span> (family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN1059">1059</td><td class="line">                <span class='keyword'>return</span> manager_ipv4_send(m, fd, ifindex, &amp;addr-&gt;in, port, p);</td></tr>
-<tr><td class="num" id="LN1060">1060</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
-<tr><td class="num" id="LN1061">1061</td><td class="line">                <span class='keyword'>return</span> manager_ipv6_send(m, fd, ifindex, &amp;addr-&gt;in6, port, p);</td></tr>
-<tr><td class="num" id="LN1062">1062</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1063">1063</td><td class="line">        <span class='keyword'>return</span> -<span class='macro'>EAFNOSUPPORT<span class='expansion'>97</span></span>;</td></tr>
-<tr><td class="num" id="LN1064">1064</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1037">1037</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> manager_ipv6_send(Manager *m, <span class='keyword'>int</span> fd, <span class='keyword'>int</span> ifindex, <span class='keyword'>const</span> <span class='keyword'>struct</span> in6_addr *addr, uint16_t port, DnsPacket *p) {</td></tr>
+<tr><td class="num" id="LN1038">1038</td><td class="line">        <span class='keyword'>union</span> sockaddr_union sa = {</td></tr>
+<tr><td class="num" id="LN1039">1039</td><td class="line">                .in6.sin6_family = <span class='macro'>AF_INET6<span class='expansion'>10</span></span>,</td></tr>
+<tr><td class="num" id="LN1040">1040</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN1041">1041</td><td class="line">        <span class='keyword'>union</span> {</td></tr>
+<tr><td class="num" id="LN1042">1042</td><td class="line">                <span class='keyword'>struct</span> cmsghdr header; <span class='comment'>/* For alignment */</span></td></tr>
+<tr><td class="num" id="LN1043">1043</td><td class="line">                uint8_t buffer[<span class='macro'>CMSG_SPACE(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> in6_pktinfo))<span class='expansion'>((((sizeof(struct in6_pktinfo)) + sizeof (size_t) - 1) &amp; (<br>size_t) ~(sizeof (size_t) - 1)) + (((sizeof (struct cmsghdr))<br> + sizeof (size_t) - 1) &amp; (size_t) ~(sizeof (size_t) - 1)<br>))</span></span>];</td></tr>
+<tr><td class="num" id="LN1044">1044</td><td class="line">        } control;</td></tr>
+<tr><td class="num" id="LN1045">1045</td><td class="line">        <span class='keyword'>struct</span> msghdr mh = {};</td></tr>
+<tr><td class="num" id="LN1046">1046</td><td class="line">        <span class='keyword'>struct</span> iovec iov;</td></tr>
+<tr><td class="num" id="LN1047">1047</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1048">1048</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1048, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1049">1049</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 1049, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1050">1050</td><td class="line">        <span class='macro'>assert(addr)<span class='expansion'>do { if ((__builtin_expect(!!(!(addr)),0))) log_assert_failed<br>("addr", "src/resolve/resolved-manager.c", 1050, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1051">1051</td><td class="line">        <span class='macro'>assert(port &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(port &gt; 0)),0))) log_assert_failed<br>("port &gt; 0", "src/resolve/resolved-manager.c", 1051, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1052">1052</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1052, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1053">1053</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1054">1054</td><td class="line">        iov.iov_base = DNS_PACKET_DATA(p);</td></tr>
+<tr><td class="num" id="LN1055">1055</td><td class="line">        iov.iov_len = p-&gt;size;</td></tr>
+<tr><td class="num" id="LN1056">1056</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1057">1057</td><td class="line">        sa.in6.sin6_addr = *addr;</td></tr>
+<tr><td class="num" id="LN1058">1058</td><td class="line">        sa.in6.sin6_port = htobe16(port),</td></tr>
+<tr><td class="num" id="LN1059">1059</td><td class="line">        sa.in6.sin6_scope_id = ifindex;</td></tr>
+<tr><td class="num" id="LN1060">1060</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1061">1061</td><td class="line">        mh.msg_iov = &amp;iov;</td></tr>
+<tr><td class="num" id="LN1062">1062</td><td class="line">        mh.msg_iovlen = 1;</td></tr>
+<tr><td class="num" id="LN1063">1063</td><td class="line">        mh.msg_name = &amp;sa.sa;</td></tr>
+<tr><td class="num" id="LN1064">1064</td><td class="line">        mh.msg_namelen = <span class='keyword'>sizeof</span>(sa.in6);</td></tr>
 <tr><td class="num" id="LN1065">1065</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1066">1066</td><td class="line">DnsServer* manager_find_dns_server(Manager *m, <span class='keyword'>int</span> family, <span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union *in_addr) {</td></tr>
-<tr><td class="num" id="LN1067">1067</td><td class="line">        DnsServer *s;</td></tr>
-<tr><td class="num" id="LN1068">1068</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1069">1069</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1069, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1070">1070</td><td class="line">        <span class='macro'>assert(in_addr)<span class='expansion'>do { if ((__builtin_expect(!!(!(in_addr)),0))) log_assert_failed<br>("in_addr", "src/resolve/resolved-manager.c", 1070, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1066">1066</td><td class="line">        <span class='keyword'>if</span> (ifindex &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1067">1067</td><td class="line">                <span class='keyword'>struct</span> cmsghdr *cmsg;</td></tr>
+<tr><td class="num" id="LN1068">1068</td><td class="line">                <span class='keyword'>struct</span> in6_pktinfo *pi;</td></tr>
+<tr><td class="num" id="LN1069">1069</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line">                <span class='macro'>zero(control)<span class='expansion'>((memset((&amp;(control)), 0, (sizeof(control)))))</span></span>;</td></tr>
 <tr><td class="num" id="LN1071">1071</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1072">1072</td><td class="line">        <span class='macro'>LIST_FOREACH(servers, s, m-&gt;dns_servers)<span class='expansion'>for ((s) = (m-&gt;dns_servers); (s); (s) = (s)-&gt;servers_next<br>)</span></span></td></tr>
-<tr><td class="num" id="LN1073">1073</td><td class="line">                <span class='keyword'>if</span> (s-&gt;family == family &amp;&amp; in_addr_equal(family, &amp;s-&gt;address, in_addr) &gt; 0)</td></tr>
-<tr><td class="num" id="LN1074">1074</td><td class="line">                        <span class='keyword'>return</span> s;</td></tr>
-<tr><td class="num" id="LN1075">1075</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1076">1076</td><td class="line">        <span class='macro'>LIST_FOREACH(servers, s, m-&gt;fallback_dns_servers)<span class='expansion'>for ((s) = (m-&gt;fallback_dns_servers); (s); (s) = (s)-&gt;servers_next<br>)</span></span></td></tr>
-<tr><td class="num" id="LN1077">1077</td><td class="line">                <span class='keyword'>if</span> (s-&gt;family == family &amp;&amp; in_addr_equal(family, &amp;s-&gt;address, in_addr) &gt; 0)</td></tr>
-<tr><td class="num" id="LN1078">1078</td><td class="line">                        <span class='keyword'>return</span> s;</td></tr>
+<tr><td class="num" id="LN1072">1072</td><td class="line">                mh.msg_control = &amp;control;</td></tr>
+<tr><td class="num" id="LN1073">1073</td><td class="line">                mh.msg_controllen = <span class='macro'>CMSG_LEN(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> in6_pktinfo))<span class='expansion'>((((sizeof (struct cmsghdr)) + sizeof (size_t) - 1) &amp; (size_t<br>) ~(sizeof (size_t) - 1)) + (sizeof(struct in6_pktinfo)))</span></span>;</td></tr>
+<tr><td class="num" id="LN1074">1074</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1075">1075</td><td class="line">                cmsg = <span class='macro'>CMSG_FIRSTHDR(&amp;mh)<span class='expansion'>((size_t) (&amp;mh)-&gt;msg_controllen &gt;= sizeof (struct cmsghdr<br>) ? (struct cmsghdr *) (&amp;mh)-&gt;msg_control : (struct cmsghdr<br> *) 0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1076">1076</td><td class="line">                cmsg-&gt;cmsg_len = mh.msg_controllen;</td></tr>
+<tr><td class="num" id="LN1077">1077</td><td class="line">                cmsg-&gt;cmsg_level = <span class='macro'>IPPROTO_IPV6<span class='expansion'>IPPROTO_IPV6</span></span>;</td></tr>
+<tr><td class="num" id="LN1078">1078</td><td class="line">                cmsg-&gt;cmsg_type = <span class='macro'>IPV6_PKTINFO<span class='expansion'>50</span></span>;</td></tr>
 <tr><td class="num" id="LN1079">1079</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1080">1080</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1081">1081</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1082">1082</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1083">1083</td><td class="line">DnsServer *manager_set_dns_server(Manager *m, DnsServer *s) {</td></tr>
-<tr><td class="num" id="LN1084">1084</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1084, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1085">1085</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1086">1086</td><td class="line">        <span class='keyword'>if</span> (m-&gt;current_dns_server == s)</td></tr>
-<tr><td class="num" id="LN1087">1087</td><td class="line">                <span class='keyword'>return</span> s;</td></tr>
-<tr><td class="num" id="LN1088">1088</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1089">1089</td><td class="line">        <span class='keyword'>if</span> (s) {</td></tr>
-<tr><td class="num" id="LN1090">1090</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *ip = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1091">1091</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1092">1092</td><td class="line">                in_addr_to_string(s-&gt;family, &amp;s-&gt;address, &amp;ip);</td></tr>
-<tr><td class="num" id="LN1093">1093</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Switching to system DNS server %s."</span>, strna(ip))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-manager.c"<br>, 1093, __func__, "Switching to system DNS server %s.", strna<br>(ip)) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1094">1094</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1080">1080</td><td class="line">                pi = (<span class='keyword'>struct</span> in6_pktinfo*) <span class='macro'>CMSG_DATA(cmsg)<span class='expansion'>((cmsg)-&gt;__cmsg_data)</span></span>;</td></tr>
+<tr><td class="num" id="LN1081">1081</td><td class="line">                pi-&gt;ipi6_ifindex = ifindex;</td></tr>
+<tr><td class="num" id="LN1082">1082</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1083">1083</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1084">1084</td><td class="line">        <span class='keyword'>return</span> sendmsg_loop(fd, &amp;mh, 0);</td></tr>
+<tr><td class="num" id="LN1085">1085</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1086">1086</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1087">1087</td><td class="line"><span class='keyword'>int</span> manager_send(Manager *m, <span class='keyword'>int</span> fd, <span class='keyword'>int</span> ifindex, <span class='keyword'>int</span> family, <span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union *addr, uint16_t port, DnsPacket *p) {</td></tr>
+<tr><td class="num" id="LN1088">1088</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1088, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1089">1089</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/resolve/resolved-manager.c", 1089, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1090">1090</td><td class="line">        <span class='macro'>assert(addr)<span class='expansion'>do { if ((__builtin_expect(!!(!(addr)),0))) log_assert_failed<br>("addr", "src/resolve/resolved-manager.c", 1090, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1091">1091</td><td class="line">        <span class='macro'>assert(port &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(port &gt; 0)),0))) log_assert_failed<br>("port &gt; 0", "src/resolve/resolved-manager.c", 1091, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1092">1092</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1092, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1093">1093</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1094">1094</td><td class="line">        <span class='macro'>log_debug(<span class='string_literal'>"Sending %s packet with id %u on interface %i/%s"</span>, DNS_PACKET_QR(p) ? <span class='string_literal'>"response"</span> : <span class='string_literal'>"query"</span>, DNS_PACKET_ID(p), ifindex, af_to_name(family))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-manager.c"<br>, 1094, __func__, "Sending %s packet with id %u on interface %i/%s"<br>, ((be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags<br>) &gt;&gt; 15) &amp; 1) ? "response" : "query", ((DnsPacketHeader<br>*) DNS_PACKET_DATA(p))-&gt;id, ifindex, af_to_name(family)) :<br> -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1095">1095</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1096">1096</td><td class="line">        m-&gt;current_dns_server = s;</td></tr>
-<tr><td class="num" id="LN1097">1097</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1098">1098</td><td class="line">        <span class='keyword'>if</span> (m-&gt;unicast_scope)</td></tr>
-<tr><td class="num" id="LN1099">1099</td><td class="line">                dns_cache_flush(&amp;m-&gt;unicast_scope-&gt;cache);</td></tr>
+<tr><td class="num" id="LN1096">1096</td><td class="line">        <span class='keyword'>if</span> (family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN1097">1097</td><td class="line">                <span class='keyword'>return</span> manager_ipv4_send(m, fd, ifindex, &amp;addr-&gt;in, port, p);</td></tr>
+<tr><td class="num" id="LN1098">1098</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
+<tr><td class="num" id="LN1099">1099</td><td class="line">                <span class='keyword'>return</span> manager_ipv6_send(m, fd, ifindex, &amp;addr-&gt;in6, port, p);</td></tr>
 <tr><td class="num" id="LN1100">1100</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1101">1101</td><td class="line">        <span class='keyword'>return</span> s;</td></tr>
+<tr><td class="num" id="LN1101">1101</td><td class="line">        <span class='keyword'>return</span> -<span class='macro'>EAFNOSUPPORT<span class='expansion'>97</span></span>;</td></tr>
 <tr><td class="num" id="LN1102">1102</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1103">1103</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1104">1104</td><td class="line">DnsServer *manager_get_dns_server(Manager *m) {</td></tr>
-<tr><td class="num" id="LN1105">1105</td><td class="line">        Link *l;</td></tr>
-<tr><td class="num" id="LN1106">1106</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1106, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1107">1107</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1108">1108</td><td class="line">        <span class='comment'>/* Try to read updates resolv.conf */</span></td></tr>
-<tr><td class="num" id="LN1109">1109</td><td class="line">        manager_read_resolv_conf(m);</td></tr>
-<tr><td class="num" id="LN1110">1110</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1111">1111</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;current_dns_server)</td></tr>
-<tr><td class="num" id="LN1112">1112</td><td class="line">                manager_set_dns_server(m, m-&gt;dns_servers);</td></tr>
+<tr><td class="num" id="LN1104">1104</td><td class="line">DnsServer* manager_find_dns_server(Manager *m, <span class='keyword'>int</span> family, <span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union *in_addr) {</td></tr>
+<tr><td class="num" id="LN1105">1105</td><td class="line">        DnsServer *s;</td></tr>
+<tr><td class="num" id="LN1106">1106</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1107">1107</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1107, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1108">1108</td><td class="line">        <span class='macro'>assert(in_addr)<span class='expansion'>do { if ((__builtin_expect(!!(!(in_addr)),0))) log_assert_failed<br>("in_addr", "src/resolve/resolved-manager.c", 1108, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1109">1109</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1110">1110</td><td class="line">        <span class='macro'>LIST_FOREACH(servers, s, m-&gt;dns_servers)<span class='expansion'>for ((s) = (m-&gt;dns_servers); (s); (s) = (s)-&gt;servers_next<br>)</span></span></td></tr>
+<tr><td class="num" id="LN1111">1111</td><td class="line">                <span class='keyword'>if</span> (s-&gt;family == family &amp;&amp; in_addr_equal(family, &amp;s-&gt;address, in_addr) &gt; 0)</td></tr>
+<tr><td class="num" id="LN1112">1112</td><td class="line">                        <span class='keyword'>return</span> s;</td></tr>
 <tr><td class="num" id="LN1113">1113</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1114">1114</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;current_dns_server) {</td></tr>
-<tr><td class="num" id="LN1115">1115</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> found = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN1116">1116</td><td class="line">                Iterator i;</td></tr>
+<tr><td class="num" id="LN1114">1114</td><td class="line">        <span class='macro'>LIST_FOREACH(servers, s, m-&gt;fallback_dns_servers)<span class='expansion'>for ((s) = (m-&gt;fallback_dns_servers); (s); (s) = (s)-&gt;servers_next<br>)</span></span></td></tr>
+<tr><td class="num" id="LN1115">1115</td><td class="line">                <span class='keyword'>if</span> (s-&gt;family == family &amp;&amp; in_addr_equal(family, &amp;s-&gt;address, in_addr) &gt; 0)</td></tr>
+<tr><td class="num" id="LN1116">1116</td><td class="line">                        <span class='keyword'>return</span> s;</td></tr>
 <tr><td class="num" id="LN1117">1117</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1118">1118</td><td class="line">                <span class='comment'>/* No DNS servers configured, let's see if there are</span></td></tr>
-<tr><td class="num" id="LN1119">1119</td><td class="line">                 <span class='comment'>* any on any links. If not, we use the fallback</span></td></tr>
-<tr><td class="num" id="LN1120">1120</td><td class="line">                 <span class='comment'>* servers */</span></td></tr>
-<tr><td class="num" id="LN1121">1121</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1122">1122</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(l, m-&gt;links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;links), &amp;<br>(i), (void**)&amp;(l), ((void*)0)); )</span></span></td></tr>
-<tr><td class="num" id="LN1123">1123</td><td class="line">                        <span class='keyword'>if</span> (l-&gt;dns_servers) {</td></tr>
-<tr><td class="num" id="LN1124">1124</td><td class="line">                                found = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1125">1125</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN1126">1126</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1127">1127</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1128">1128</td><td class="line">                <span class='keyword'>if</span> (!found)</td></tr>
-<tr><td class="num" id="LN1129">1129</td><td class="line">                        manager_set_dns_server(m, m-&gt;fallback_dns_servers);</td></tr>
-<tr><td class="num" id="LN1130">1130</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1131">1131</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1132">1132</td><td class="line">        <span class='keyword'>return</span> m-&gt;current_dns_server;</td></tr>
-<tr><td class="num" id="LN1133">1133</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1134">1134</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1135">1135</td><td class="line"><span class='keyword'>void</span> manager_next_dns_server(Manager *m) {</td></tr>
-<tr><td class="num" id="LN1136">1136</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1136, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1137">1137</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1138">1138</td><td class="line">        <span class='comment'>/* If there's currently no DNS server set, then the next</span></td></tr>
-<tr><td class="num" id="LN1139">1139</td><td class="line">         <span class='comment'>* manager_get_dns_server() will find one */</span></td></tr>
-<tr><td class="num" id="LN1140">1140</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;current_dns_server)</td></tr>
-<tr><td class="num" id="LN1141">1141</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN1142">1142</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1143">1143</td><td class="line">        <span class='comment'>/* Change to the next one */</span></td></tr>
-<tr><td class="num" id="LN1144">1144</td><td class="line">        <span class='keyword'>if</span> (m-&gt;current_dns_server-&gt;servers_next) {</td></tr>
-<tr><td class="num" id="LN1145">1145</td><td class="line">                manager_set_dns_server(m, m-&gt;current_dns_server-&gt;servers_next);</td></tr>
-<tr><td class="num" id="LN1146">1146</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN1147">1147</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1118">1118</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1119">1119</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1120">1120</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1121">1121</td><td class="line">DnsServer *manager_set_dns_server(Manager *m, DnsServer *s) {</td></tr>
+<tr><td class="num" id="LN1122">1122</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1122, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1123">1123</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1124">1124</td><td class="line">        <span class='keyword'>if</span> (m-&gt;current_dns_server == s)</td></tr>
+<tr><td class="num" id="LN1125">1125</td><td class="line">                <span class='keyword'>return</span> s;</td></tr>
+<tr><td class="num" id="LN1126">1126</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1127">1127</td><td class="line">        <span class='keyword'>if</span> (s) {</td></tr>
+<tr><td class="num" id="LN1128">1128</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *ip = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1129">1129</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1130">1130</td><td class="line">                in_addr_to_string(s-&gt;family, &amp;s-&gt;address, &amp;ip);</td></tr>
+<tr><td class="num" id="LN1131">1131</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Switching to system DNS server %s."</span>, strna(ip))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-manager.c"<br>, 1131, __func__, "Switching to system DNS server %s.", strna<br>(ip)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1132">1132</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1133">1133</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1134">1134</td><td class="line">        m-&gt;current_dns_server = s;</td></tr>
+<tr><td class="num" id="LN1135">1135</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1136">1136</td><td class="line">        <span class='keyword'>if</span> (m-&gt;unicast_scope)</td></tr>
+<tr><td class="num" id="LN1137">1137</td><td class="line">                dns_cache_flush(&amp;m-&gt;unicast_scope-&gt;cache);</td></tr>
+<tr><td class="num" id="LN1138">1138</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1139">1139</td><td class="line">        <span class='keyword'>return</span> s;</td></tr>
+<tr><td class="num" id="LN1140">1140</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1141">1141</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1142">1142</td><td class="line">DnsServer *manager_get_dns_server(Manager *m) {</td></tr>
+<tr><td class="num" id="LN1143">1143</td><td class="line">        Link *l;</td></tr>
+<tr><td class="num" id="LN1144">1144</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1144, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1145">1145</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1146">1146</td><td class="line">        <span class='comment'>/* Try to read updates resolv.conf */</span></td></tr>
+<tr><td class="num" id="LN1147">1147</td><td class="line">        manager_read_resolv_conf(m);</td></tr>
 <tr><td class="num" id="LN1148">1148</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1149">1149</td><td class="line">        <span class='comment'>/* If there was no next one, then start from the beginning of</span></td></tr>
-<tr><td class="num" id="LN1150">1150</td><td class="line">         <span class='comment'>* the list */</span></td></tr>
-<tr><td class="num" id="LN1151">1151</td><td class="line">        <span class='keyword'>if</span> (m-&gt;current_dns_server-&gt;type == DNS_SERVER_FALLBACK)</td></tr>
-<tr><td class="num" id="LN1152">1152</td><td class="line">                manager_set_dns_server(m, m-&gt;fallback_dns_servers);</td></tr>
-<tr><td class="num" id="LN1153">1153</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1154">1154</td><td class="line">                manager_set_dns_server(m, m-&gt;dns_servers);</td></tr>
-<tr><td class="num" id="LN1155">1155</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1156">1156</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1157">1157</td><td class="line">uint32_t manager_find_mtu(Manager *m) {</td></tr>
-<tr><td class="num" id="LN1158">1158</td><td class="line">        uint32_t mtu = 0;</td></tr>
-<tr><td class="num" id="LN1159">1159</td><td class="line">        Link *l;</td></tr>
-<tr><td class="num" id="LN1160">1160</td><td class="line">        Iterator i;</td></tr>
-<tr><td class="num" id="LN1161">1161</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1162">1162</td><td class="line">        <span class='comment'>/* If we don't know on which link a DNS packet would be</span></td></tr>
-<tr><td class="num" id="LN1163">1163</td><td class="line">         <span class='comment'>* delivered, let's find the largest MTU that works on all</span></td></tr>
-<tr><td class="num" id="LN1164">1164</td><td class="line">         <span class='comment'>* interfaces we know of */</span></td></tr>
+<tr><td class="num" id="LN1149">1149</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;current_dns_server)</td></tr>
+<tr><td class="num" id="LN1150">1150</td><td class="line">                manager_set_dns_server(m, m-&gt;dns_servers);</td></tr>
+<tr><td class="num" id="LN1151">1151</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1152">1152</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;current_dns_server) {</td></tr>
+<tr><td class="num" id="LN1153">1153</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> found = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1154">1154</td><td class="line">                Iterator i;</td></tr>
+<tr><td class="num" id="LN1155">1155</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1156">1156</td><td class="line">                <span class='comment'>/* No DNS servers configured, let's see if there are</span></td></tr>
+<tr><td class="num" id="LN1157">1157</td><td class="line">                 <span class='comment'>* any on any links. If not, we use the fallback</span></td></tr>
+<tr><td class="num" id="LN1158">1158</td><td class="line">                 <span class='comment'>* servers */</span></td></tr>
+<tr><td class="num" id="LN1159">1159</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1160">1160</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(l, m-&gt;links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;links), &amp;<br>(i), (void**)&amp;(l), ((void*)0)); )</span></span></td></tr>
+<tr><td class="num" id="LN1161">1161</td><td class="line">                        <span class='keyword'>if</span> (l-&gt;dns_servers) {</td></tr>
+<tr><td class="num" id="LN1162">1162</td><td class="line">                                found = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1163">1163</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1164">1164</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN1165">1165</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1166">1166</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(l, m-&gt;links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;links), &amp;<br>(i), (void**)&amp;(l), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN1167">1167</td><td class="line">                <span class='keyword'>if</span> (l-&gt;mtu &lt;= 0)</td></tr>
-<tr><td class="num" id="LN1168">1168</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1166">1166</td><td class="line">                <span class='keyword'>if</span> (!found)</td></tr>
+<tr><td class="num" id="LN1167">1167</td><td class="line">                        manager_set_dns_server(m, m-&gt;fallback_dns_servers);</td></tr>
+<tr><td class="num" id="LN1168">1168</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1169">1169</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1170">1170</td><td class="line">                <span class='keyword'>if</span> (mtu &lt;= 0 || l-&gt;mtu &lt; mtu)</td></tr>
-<tr><td class="num" id="LN1171">1171</td><td class="line">                        mtu = l-&gt;mtu;</td></tr>
-<tr><td class="num" id="LN1172">1172</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1173">1173</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1174">1174</td><td class="line">        <span class='keyword'>return</span> mtu;</td></tr>
-<tr><td class="num" id="LN1175">1175</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1176">1176</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1177">1177</td><td class="line"><span class='keyword'>int</span> manager_find_ifindex(Manager *m, <span class='keyword'>int</span> family, <span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union *in_addr) {</td></tr>
-<tr><td class="num" id="LN1178">1178</td><td class="line">        LinkAddress *a;</td></tr>
-<tr><td class="num" id="LN1179">1179</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1180">1180</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1180, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1181">1181</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1182">1182</td><td class="line">        a = manager_find_link_address(m, family, in_addr);</td></tr>
-<tr><td class="num" id="LN1183">1183</td><td class="line">        <span class='keyword'>if</span> (a)</td></tr>
-<tr><td class="num" id="LN1184">1184</td><td class="line">                <span class='keyword'>return</span> a-&gt;link-&gt;ifindex;</td></tr>
-<tr><td class="num" id="LN1185">1185</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1186">1186</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1187">1187</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1188">1188</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1189">1189</td><td class="line"><span class='keyword'>void</span> manager_refresh_rrs(Manager *m) {</td></tr>
-<tr><td class="num" id="LN1190">1190</td><td class="line">        Iterator i;</td></tr>
-<tr><td class="num" id="LN1191">1191</td><td class="line">        Link *l;</td></tr>
-<tr><td class="num" id="LN1192">1192</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1193">1193</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1193, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1170">1170</td><td class="line">        <span class='keyword'>return</span> m-&gt;current_dns_server;</td></tr>
+<tr><td class="num" id="LN1171">1171</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1172">1172</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1173">1173</td><td class="line"><span class='keyword'>void</span> manager_next_dns_server(Manager *m) {</td></tr>
+<tr><td class="num" id="LN1174">1174</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1174, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1175">1175</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1176">1176</td><td class="line">        <span class='comment'>/* If there's currently no DNS server set, then the next</span></td></tr>
+<tr><td class="num" id="LN1177">1177</td><td class="line">         <span class='comment'>* manager_get_dns_server() will find one */</span></td></tr>
+<tr><td class="num" id="LN1178">1178</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;current_dns_server)</td></tr>
+<tr><td class="num" id="LN1179">1179</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN1180">1180</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1181">1181</td><td class="line">        <span class='comment'>/* Change to the next one */</span></td></tr>
+<tr><td class="num" id="LN1182">1182</td><td class="line">        <span class='keyword'>if</span> (m-&gt;current_dns_server-&gt;servers_next) {</td></tr>
+<tr><td class="num" id="LN1183">1183</td><td class="line">                manager_set_dns_server(m, m-&gt;current_dns_server-&gt;servers_next);</td></tr>
+<tr><td class="num" id="LN1184">1184</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN1185">1185</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1186">1186</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1187">1187</td><td class="line">        <span class='comment'>/* If there was no next one, then start from the beginning of</span></td></tr>
+<tr><td class="num" id="LN1188">1188</td><td class="line">         <span class='comment'>* the list */</span></td></tr>
+<tr><td class="num" id="LN1189">1189</td><td class="line">        <span class='keyword'>if</span> (m-&gt;current_dns_server-&gt;type == DNS_SERVER_FALLBACK)</td></tr>
+<tr><td class="num" id="LN1190">1190</td><td class="line">                manager_set_dns_server(m, m-&gt;fallback_dns_servers);</td></tr>
+<tr><td class="num" id="LN1191">1191</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1192">1192</td><td class="line">                manager_set_dns_server(m, m-&gt;dns_servers);</td></tr>
+<tr><td class="num" id="LN1193">1193</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1194">1194</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1195">1195</td><td class="line">        m-&gt;host_ipv4_key = dns_resource_key_unref(m-&gt;host_ipv4_key);</td></tr>
-<tr><td class="num" id="LN1196">1196</td><td class="line">        m-&gt;host_ipv6_key = dns_resource_key_unref(m-&gt;host_ipv6_key);</td></tr>
-<tr><td class="num" id="LN1197">1197</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1198">1198</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(l, m-&gt;links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;links), &amp;<br>(i), (void**)&amp;(l), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN1199">1199</td><td class="line">                link_add_rrs(l, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN1200">1200</td><td class="line">                link_add_rrs(l, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN1201">1201</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1202">1202</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1195">1195</td><td class="line">uint32_t manager_find_mtu(Manager *m) {</td></tr>
+<tr><td class="num" id="LN1196">1196</td><td class="line">        uint32_t mtu = 0;</td></tr>
+<tr><td class="num" id="LN1197">1197</td><td class="line">        Link *l;</td></tr>
+<tr><td class="num" id="LN1198">1198</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN1199">1199</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1200">1200</td><td class="line">        <span class='comment'>/* If we don't know on which link a DNS packet would be</span></td></tr>
+<tr><td class="num" id="LN1201">1201</td><td class="line">         <span class='comment'>* delivered, let's find the largest MTU that works on all</span></td></tr>
+<tr><td class="num" id="LN1202">1202</td><td class="line">         <span class='comment'>* interfaces we know of */</span></td></tr>
 <tr><td class="num" id="LN1203">1203</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1204">1204</td><td class="line"><span class='keyword'>int</span> manager_next_hostname(Manager *m) {</td></tr>
-<tr><td class="num" id="LN1205">1205</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
-<tr><td class="num" id="LN1206">1206</td><td class="line">        uint64_t u, a;</td></tr>
-<tr><td class="num" id="LN1207">1207</td><td class="line">        <span class='keyword'>char</span> *h;</td></tr>
-<tr><td class="num" id="LN1208">1208</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1209">1209</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1209, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1210">1210</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1211">1211</td><td class="line">        p = strchr(m-&gt;hostname, 0);</td></tr>
-<tr><td class="num" id="LN1212">1212</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1212, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1213">1213</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1214">1214</td><td class="line">        <span class='keyword'>while</span> (p &gt; m-&gt;hostname) {</td></tr>
-<tr><td class="num" id="LN1215">1215</td><td class="line">                <span class='keyword'>if</span> (!strchr(<span class='string_literal'>"0123456789"</span>, p[-1]))</td></tr>
-<tr><td class="num" id="LN1216">1216</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1204">1204</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(l, m-&gt;links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;links), &amp;<br>(i), (void**)&amp;(l), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN1205">1205</td><td class="line">                <span class='keyword'>if</span> (l-&gt;mtu &lt;= 0)</td></tr>
+<tr><td class="num" id="LN1206">1206</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1207">1207</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1208">1208</td><td class="line">                <span class='keyword'>if</span> (mtu &lt;= 0 || l-&gt;mtu &lt; mtu)</td></tr>
+<tr><td class="num" id="LN1209">1209</td><td class="line">                        mtu = l-&gt;mtu;</td></tr>
+<tr><td class="num" id="LN1210">1210</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1211">1211</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1212">1212</td><td class="line">        <span class='keyword'>return</span> mtu;</td></tr>
+<tr><td class="num" id="LN1213">1213</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1214">1214</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1215">1215</td><td class="line"><span class='keyword'>int</span> manager_find_ifindex(Manager *m, <span class='keyword'>int</span> family, <span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union *in_addr) {</td></tr>
+<tr><td class="num" id="LN1216">1216</td><td class="line">        LinkAddress *a;</td></tr>
 <tr><td class="num" id="LN1217">1217</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1218">1218</td><td class="line">                p--;</td></tr>
-<tr><td class="num" id="LN1219">1219</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1220">1220</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1221">1221</td><td class="line">        <span class='keyword'>if</span> (*p == 0 || safe_atou64(p, &amp;u) &lt; 0 || u &lt;= 0)</td></tr>
-<tr><td class="num" id="LN1222">1222</td><td class="line">                u = 1;</td></tr>
+<tr><td class="num" id="LN1218">1218</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1218, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1219">1219</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1220">1220</td><td class="line">        a = manager_find_link_address(m, family, in_addr);</td></tr>
+<tr><td class="num" id="LN1221">1221</td><td class="line">        <span class='keyword'>if</span> (a)</td></tr>
+<tr><td class="num" id="LN1222">1222</td><td class="line">                <span class='keyword'>return</span> a-&gt;link-&gt;ifindex;</td></tr>
 <tr><td class="num" id="LN1223">1223</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1224">1224</td><td class="line">        <span class='comment'>/* Add a random number to the old value. This way we can avoid</span></td></tr>
-<tr><td class="num" id="LN1225">1225</td><td class="line">         <span class='comment'>* that two hosts pick the same hostname, win on IPv4 and lose</span></td></tr>
-<tr><td class="num" id="LN1226">1226</td><td class="line">         <span class='comment'>* on IPv6 (or vice versa), and pick the same hostname</span></td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">         <span class='comment'>* replacement hostname, ad infinitum. We still want the</span></td></tr>
-<tr><td class="num" id="LN1228">1228</td><td class="line">         <span class='comment'>* numbers to go up monotonically, hence we just add a random</span></td></tr>
-<tr><td class="num" id="LN1229">1229</td><td class="line">         <span class='comment'>* value 1..10 */</span></td></tr>
+<tr><td class="num" id="LN1224">1224</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1225">1225</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1226">1226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line"><span class='keyword'>void</span> manager_refresh_rrs(Manager *m) {</td></tr>
+<tr><td class="num" id="LN1228">1228</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN1229">1229</td><td class="line">        Link *l;</td></tr>
 <tr><td class="num" id="LN1230">1230</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1231">1231</td><td class="line">        random_bytes(&amp;a, <span class='keyword'>sizeof</span>(a));</td></tr>
-<tr><td class="num" id="LN1232">1232</td><td class="line">        u += 1 + a % 10;</td></tr>
-<tr><td class="num" id="LN1233">1233</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1234">1234</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;h, <span class='string_literal'>"%.*s%"</span> <span class='macro'>PRIu64<span class='expansion'>"l" "u"</span></span>, (<span class='keyword'>int</span>) (p - m-&gt;hostname), m-&gt;hostname, u) &lt; 0)</td></tr>
-<tr><td class="num" id="LN1235">1235</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1236">1236</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1237">1237</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Hostname conflict, changing published hostname from '%s' to '%s'."</span>, m-&gt;hostname, h)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-manager.c"<br>, 1237, __func__, "Hostname conflict, changing published hostname from '%s' to '%s'."<br>, m-&gt;hostname, h) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1238">1238</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1239">1239</td><td class="line">        free(m-&gt;hostname);</td></tr>
-<tr><td class="num" id="LN1240">1240</td><td class="line">        m-&gt;hostname = h;</td></tr>
+<tr><td class="num" id="LN1231">1231</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1231, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1232">1232</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1233">1233</td><td class="line">        m-&gt;host_ipv4_key = dns_resource_key_unref(m-&gt;host_ipv4_key);</td></tr>
+<tr><td class="num" id="LN1234">1234</td><td class="line">        m-&gt;host_ipv6_key = dns_resource_key_unref(m-&gt;host_ipv6_key);</td></tr>
+<tr><td class="num" id="LN1235">1235</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1236">1236</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(l, m-&gt;links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;links), &amp;<br>(i), (void**)&amp;(l), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN1237">1237</td><td class="line">                link_add_rrs(l, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN1238">1238</td><td class="line">                link_add_rrs(l, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN1239">1239</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1240">1240</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1241">1241</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1242">1242</td><td class="line">        manager_refresh_rrs(m);</td></tr>
-<tr><td class="num" id="LN1243">1243</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1244">1244</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1245">1245</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1242">1242</td><td class="line"><span class='keyword'>int</span> manager_next_hostname(Manager *m) {</td></tr>
+<tr><td class="num" id="LN1243">1243</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN1244">1244</td><td class="line">        uint64_t u, a;</td></tr>
+<tr><td class="num" id="LN1245">1245</td><td class="line">        <span class='keyword'>char</span> *h;</td></tr>
 <tr><td class="num" id="LN1246">1246</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1247">1247</td><td class="line">LinkAddress* manager_find_link_address(Manager *m, <span class='keyword'>int</span> family, <span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union *in_addr) {</td></tr>
-<tr><td class="num" id="LN1248">1248</td><td class="line">        Iterator i;</td></tr>
-<tr><td class="num" id="LN1249">1249</td><td class="line">        Link *l;</td></tr>
-<tr><td class="num" id="LN1250">1250</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1251">1251</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1251, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1252">1252</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1253">1253</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(l, m-&gt;links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;links), &amp;<br>(i), (void**)&amp;(l), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN1254">1254</td><td class="line">                LinkAddress *a;</td></tr>
+<tr><td class="num" id="LN1247">1247</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1247, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1248">1248</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1249">1249</td><td class="line">        p = strchr(m-&gt;hostname, 0);</td></tr>
+<tr><td class="num" id="LN1250">1250</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1250, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1251">1251</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1252">1252</td><td class="line">        <span class='keyword'>while</span> (p &gt; m-&gt;hostname) {</td></tr>
+<tr><td class="num" id="LN1253">1253</td><td class="line">                <span class='keyword'>if</span> (!strchr(<span class='string_literal'>"0123456789"</span>, p[-1]))</td></tr>
+<tr><td class="num" id="LN1254">1254</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1255">1255</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1256">1256</td><td class="line">                a = link_find_address(l, family, in_addr);</td></tr>
-<tr><td class="num" id="LN1257">1257</td><td class="line">                <span class='keyword'>if</span> (a)</td></tr>
-<tr><td class="num" id="LN1258">1258</td><td class="line">                        <span class='keyword'>return</span> a;</td></tr>
-<tr><td class="num" id="LN1259">1259</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1260">1260</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1261">1261</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1262">1262</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1263">1263</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1264">1264</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> manager_our_packet(Manager *m, DnsPacket *p) {</td></tr>
-<tr><td class="num" id="LN1265">1265</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1265, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1266">1266</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1266, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1267">1267</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1268">1268</td><td class="line">        <span class='keyword'>return</span> !!manager_find_link_address(m, p-&gt;family, &amp;p-&gt;sender);</td></tr>
-<tr><td class="num" id="LN1269">1269</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1270">1270</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1271">1271</td><td class="line">DnsScope* manager_find_scope(Manager *m, DnsPacket *p) {</td></tr>
-<tr><td class="num" id="LN1272">1272</td><td class="line">        Link *l;</td></tr>
-<tr><td class="num" id="LN1273">1273</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1274">1274</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1274, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1275">1275</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1275, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1256">1256</td><td class="line">                p--;</td></tr>
+<tr><td class="num" id="LN1257">1257</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1258">1258</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1259">1259</td><td class="line">        <span class='keyword'>if</span> (*p == 0 || safe_atou64(p, &amp;u) &lt; 0 || u &lt;= 0)</td></tr>
+<tr><td class="num" id="LN1260">1260</td><td class="line">                u = 1;</td></tr>
+<tr><td class="num" id="LN1261">1261</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1262">1262</td><td class="line">        <span class='comment'>/* Add a random number to the old value. This way we can avoid</span></td></tr>
+<tr><td class="num" id="LN1263">1263</td><td class="line">         <span class='comment'>* that two hosts pick the same hostname, win on IPv4 and lose</span></td></tr>
+<tr><td class="num" id="LN1264">1264</td><td class="line">         <span class='comment'>* on IPv6 (or vice versa), and pick the same hostname</span></td></tr>
+<tr><td class="num" id="LN1265">1265</td><td class="line">         <span class='comment'>* replacement hostname, ad infinitum. We still want the</span></td></tr>
+<tr><td class="num" id="LN1266">1266</td><td class="line">         <span class='comment'>* numbers to go up monotonically, hence we just add a random</span></td></tr>
+<tr><td class="num" id="LN1267">1267</td><td class="line">         <span class='comment'>* value 1..10 */</span></td></tr>
+<tr><td class="num" id="LN1268">1268</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1269">1269</td><td class="line">        random_bytes(&amp;a, <span class='keyword'>sizeof</span>(a));</td></tr>
+<tr><td class="num" id="LN1270">1270</td><td class="line">        u += 1 + a % 10;</td></tr>
+<tr><td class="num" id="LN1271">1271</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1272">1272</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;h, <span class='string_literal'>"%.*s%"</span> <span class='macro'>PRIu64<span class='expansion'>"l" "u"</span></span>, (<span class='keyword'>int</span>) (p - m-&gt;hostname), m-&gt;hostname, u) &lt; 0)</td></tr>
+<tr><td class="num" id="LN1273">1273</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1274">1274</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1275">1275</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Hostname conflict, changing published hostname from '%s' to '%s'."</span>, m-&gt;hostname, h)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-manager.c"<br>, 1275, __func__, "Hostname conflict, changing published hostname from '%s' to '%s'."<br>, m-&gt;hostname, h) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1276">1276</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1277">1277</td><td class="line">        l = hashmap_get(m-&gt;links, <span class='macro'>INT_TO_PTR(p-&gt;ifindex)<span class='expansion'>((void *) ((intptr_t) (p-&gt;ifindex)))</span></span>);</td></tr>
-<tr><td class="num" id="LN1278">1278</td><td class="line">        <span class='keyword'>if</span> (!l)</td></tr>
-<tr><td class="num" id="LN1279">1279</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1280">1280</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1281">1281</td><td class="line">        <span class='keyword'>if</span> (p-&gt;protocol == DNS_PROTOCOL_LLMNR) {</td></tr>
-<tr><td class="num" id="LN1282">1282</td><td class="line">                <span class='keyword'>if</span> (p-&gt;family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN1283">1283</td><td class="line">                        <span class='keyword'>return</span> l-&gt;llmnr_ipv4_scope;</td></tr>
-<tr><td class="num" id="LN1284">1284</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (p-&gt;family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
-<tr><td class="num" id="LN1285">1285</td><td class="line">                        <span class='keyword'>return</span> l-&gt;llmnr_ipv6_scope;</td></tr>
-<tr><td class="num" id="LN1286">1286</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1287">1287</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1288">1288</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1289">1289</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1277">1277</td><td class="line">        free(m-&gt;hostname);</td></tr>
+<tr><td class="num" id="LN1278">1278</td><td class="line">        m-&gt;hostname = h;</td></tr>
+<tr><td class="num" id="LN1279">1279</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1280">1280</td><td class="line">        manager_refresh_rrs(m);</td></tr>
+<tr><td class="num" id="LN1281">1281</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1282">1282</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1283">1283</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1284">1284</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1285">1285</td><td class="line">LinkAddress* manager_find_link_address(Manager *m, <span class='keyword'>int</span> family, <span class='keyword'>const</span> <span class='keyword'>union</span> in_addr_union *in_addr) {</td></tr>
+<tr><td class="num" id="LN1286">1286</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN1287">1287</td><td class="line">        Link *l;</td></tr>
+<tr><td class="num" id="LN1288">1288</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1289">1289</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1289, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1290">1290</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1291">1291</td><td class="line"><span class='keyword'>void</span> manager_verify_all(Manager *m) {</td></tr>
-<tr><td class="num" id="LN1292">1292</td><td class="line">        DnsScope *s;</td></tr>
+<tr><td class="num" id="LN1291">1291</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(l, m-&gt;links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;links), &amp;<br>(i), (void**)&amp;(l), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN1292">1292</td><td class="line">                LinkAddress *a;</td></tr>
 <tr><td class="num" id="LN1293">1293</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1294">1294</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1294, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1295">1295</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1296">1296</td><td class="line">        <span class='macro'>LIST_FOREACH(scopes, s, m-&gt;dns_scopes)<span class='expansion'>for ((s) = (m-&gt;dns_scopes); (s); (s) = (s)-&gt;scopes_next<br>)</span></span></td></tr>
-<tr><td class="num" id="LN1297">1297</td><td class="line">                dns_zone_verify_all(&amp;s-&gt;zone);</td></tr>
-<tr><td class="num" id="LN1298">1298</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1299">1299</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1300">1300</td><td class="line"><span class='keyword'>void</span> manager_flush_dns_servers(Manager *m, DnsServerType t) {</td></tr>
-<tr><td class="num" id="LN1301">1301</td><td class="line">        DnsServer *s;</td></tr>
-<tr><td class="num" id="LN1302">1302</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1294">1294</td><td class="line">                a = link_find_address(l, family, in_addr);</td></tr>
+<tr><td class="num" id="LN1295">1295</td><td class="line">                <span class='keyword'>if</span> (a)</td></tr>
+<tr><td class="num" id="LN1296">1296</td><td class="line">                        <span class='keyword'>return</span> a;</td></tr>
+<tr><td class="num" id="LN1297">1297</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1298">1298</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1299">1299</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1300">1300</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1301">1301</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1302">1302</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> manager_our_packet(Manager *m, DnsPacket *p) {</td></tr>
 <tr><td class="num" id="LN1303">1303</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1303, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1304">1304</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1305">1305</td><td class="line">        <span class='keyword'>if</span> (t == DNS_SERVER_SYSTEM)</td></tr>
-<tr><td class="num" id="LN1306">1306</td><td class="line">                <span class='keyword'>while</span> (m-&gt;dns_servers) {</td></tr>
-<tr><td class="num" id="LN1307">1307</td><td class="line">                        s = m-&gt;dns_servers;</td></tr>
+<tr><td class="num" id="LN1304">1304</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1304, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1305">1305</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1306">1306</td><td class="line">        <span class='keyword'>return</span> !!manager_find_link_address(m, p-&gt;family, &amp;p-&gt;sender);</td></tr>
+<tr><td class="num" id="LN1307">1307</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1308">1308</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1309">1309</td><td class="line">                        <span class='macro'>LIST_REMOVE(servers, m-&gt;dns_servers, s)<span class='expansion'>do { typeof(*(m-&gt;dns_servers)) **_head = &amp;(m-&gt;dns_servers<br>), *_item = (s); do { if ((__builtin_expect(!!(!(_item)),0)))<br> log_assert_failed("_item", "src/resolve/resolved-manager.c",<br> 1309, __PRETTY_FUNCTION__); } while (0); if (_item-&gt;servers_next<br>) _item-&gt;servers_next-&gt;servers_prev = _item-&gt;servers_prev<br>; if (_item-&gt;servers_prev) _item-&gt;servers_prev-&gt;servers_next<br> = _item-&gt;servers_next; else { do { if ((__builtin_expect(<br>!!(!(*_head == _item)),0))) log_assert_failed("*_head == _item"<br>, "src/resolve/resolved-manager.c", 1309, __PRETTY_FUNCTION__<br>); } while (0); *_head = _item-&gt;servers_next; } _item-&gt;<br>servers_next = _item-&gt;servers_prev = ((void*)0); } while(0<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1310">1310</td><td class="line">                        dns_server_unref(s);</td></tr>
-<tr><td class="num" id="LN1311">1311</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1312">1312</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1313">1313</td><td class="line">        <span class='keyword'>if</span> (t == DNS_SERVER_FALLBACK)</td></tr>
-<tr><td class="num" id="LN1314">1314</td><td class="line">                <span class='keyword'>while</span> (m-&gt;fallback_dns_servers) {</td></tr>
-<tr><td class="num" id="LN1315">1315</td><td class="line">                        s = m-&gt;fallback_dns_servers;</td></tr>
-<tr><td class="num" id="LN1316">1316</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1317">1317</td><td class="line">                        <span class='macro'>LIST_REMOVE(servers, m-&gt;fallback_dns_servers, s)<span class='expansion'>do { typeof(*(m-&gt;fallback_dns_servers)) **_head = &amp;(m-&gt;<br>fallback_dns_servers), *_item = (s); do { if ((__builtin_expect<br>(!!(!(_item)),0))) log_assert_failed("_item", "src/resolve/resolved-manager.c"<br>, 1317, __PRETTY_FUNCTION__); } while (0); if (_item-&gt;servers_next<br>) _item-&gt;servers_next-&gt;servers_prev = _item-&gt;servers_prev<br>; if (_item-&gt;servers_prev) _item-&gt;servers_prev-&gt;servers_next<br> = _item-&gt;servers_next; else { do { if ((__builtin_expect(<br>!!(!(*_head == _item)),0))) log_assert_failed("*_head == _item"<br>, "src/resolve/resolved-manager.c", 1317, __PRETTY_FUNCTION__<br>); } while (0); *_head = _item-&gt;servers_next; } _item-&gt;<br>servers_next = _item-&gt;servers_prev = ((void*)0); } while(0<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1318">1318</td><td class="line">                        dns_server_unref(s);</td></tr>
-<tr><td class="num" id="LN1319">1319</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1320">1320</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1321">1321</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1322">1322</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> support_table[_SUPPORT_MAX] = {</td></tr>
-<tr><td class="num" id="LN1323">1323</td><td class="line">        [SUPPORT_NO] = <span class='string_literal'>"no"</span>,</td></tr>
-<tr><td class="num" id="LN1324">1324</td><td class="line">        [SUPPORT_YES] = <span class='string_literal'>"yes"</span>,</td></tr>
-<tr><td class="num" id="LN1325">1325</td><td class="line">        [SUPPORT_RESOLVE] = <span class='string_literal'>"resolve"</span>,</td></tr>
-<tr><td class="num" id="LN1326">1326</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1327">1327</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(support, Support)<span class='expansion'>const char *support_to_string(Support i) { if (i &lt; 0 || i &gt;=<br> (Support) (sizeof(support_table)/sizeof((support_table)[0]))<br>) return ((void*)0); return support_table[i]; } inline Support<br> support_from_string(const char *s) { return (Support)string_table_lookup<br>(support_table, (sizeof(support_table)/sizeof((support_table)<br>[0])), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1309">1309</td><td class="line">DnsScope* manager_find_scope(Manager *m, DnsPacket *p) {</td></tr>
+<tr><td class="num" id="LN1310">1310</td><td class="line">        Link *l;</td></tr>
+<tr><td class="num" id="LN1311">1311</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1312">1312</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1312, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1313">1313</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/resolve/resolved-manager.c", 1313, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1314">1314</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1315">1315</td><td class="line">        l = hashmap_get(m-&gt;links, <span class='macro'>INT_TO_PTR(p-&gt;ifindex)<span class='expansion'>((void *) ((intptr_t) (p-&gt;ifindex)))</span></span>);</td></tr>
+<tr><td class="num" id="LN1316">1316</td><td class="line">        <span class='keyword'>if</span> (!l)</td></tr>
+<tr><td class="num" id="LN1317">1317</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1318">1318</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1319">1319</td><td class="line">        <span class='keyword'>if</span> (p-&gt;protocol == DNS_PROTOCOL_LLMNR) {</td></tr>
+<tr><td class="num" id="LN1320">1320</td><td class="line">                <span class='keyword'>if</span> (p-&gt;family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN1321">1321</td><td class="line">                        <span class='keyword'>return</span> l-&gt;llmnr_ipv4_scope;</td></tr>
+<tr><td class="num" id="LN1322">1322</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (p-&gt;family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
+<tr><td class="num" id="LN1323">1323</td><td class="line">                        <span class='keyword'>return</span> l-&gt;llmnr_ipv6_scope;</td></tr>
+<tr><td class="num" id="LN1324">1324</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1325">1325</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1326">1326</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1327">1327</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1328">1328</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1329">1329</td><td class="line"><span class='keyword'>void</span> manager_verify_all(Manager *m) {</td></tr>
+<tr><td class="num" id="LN1330">1330</td><td class="line">        DnsScope *s;</td></tr>
+<tr><td class="num" id="LN1331">1331</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1332">1332</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1332, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1333">1333</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1334">1334</td><td class="line">        <span class='macro'>LIST_FOREACH(scopes, s, m-&gt;dns_scopes)<span class='expansion'>for ((s) = (m-&gt;dns_scopes); (s); (s) = (s)-&gt;scopes_next<br>)</span></span></td></tr>
+<tr><td class="num" id="LN1335">1335</td><td class="line">                dns_zone_verify_all(&amp;s-&gt;zone);</td></tr>
+<tr><td class="num" id="LN1336">1336</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1337">1337</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1338">1338</td><td class="line"><span class='keyword'>void</span> manager_flush_dns_servers(Manager *m, DnsServerType t) {</td></tr>
+<tr><td class="num" id="LN1339">1339</td><td class="line">        DnsServer *s;</td></tr>
+<tr><td class="num" id="LN1340">1340</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1341">1341</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/resolve/resolved-manager.c", 1341, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1342">1342</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1343">1343</td><td class="line">        <span class='keyword'>if</span> (t == DNS_SERVER_SYSTEM)</td></tr>
+<tr><td class="num" id="LN1344">1344</td><td class="line">                <span class='keyword'>while</span> (m-&gt;dns_servers) {</td></tr>
+<tr><td class="num" id="LN1345">1345</td><td class="line">                        s = m-&gt;dns_servers;</td></tr>
+<tr><td class="num" id="LN1346">1346</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1347">1347</td><td class="line">                        <span class='macro'>LIST_REMOVE(servers, m-&gt;dns_servers, s)<span class='expansion'>do { typeof(*(m-&gt;dns_servers)) **_head = &amp;(m-&gt;dns_servers<br>), *_item = (s); do { if ((__builtin_expect(!!(!(_item)),0)))<br> log_assert_failed("_item", "src/resolve/resolved-manager.c",<br> 1347, __PRETTY_FUNCTION__); } while (0); if (_item-&gt;servers_next<br>) _item-&gt;servers_next-&gt;servers_prev = _item-&gt;servers_prev<br>; if (_item-&gt;servers_prev) _item-&gt;servers_prev-&gt;servers_next<br> = _item-&gt;servers_next; else { do { if ((__builtin_expect(<br>!!(!(*_head == _item)),0))) log_assert_failed("*_head == _item"<br>, "src/resolve/resolved-manager.c", 1347, __PRETTY_FUNCTION__<br>); } while (0); *_head = _item-&gt;servers_next; } _item-&gt;<br>servers_next = _item-&gt;servers_prev = ((void*)0); } while(0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1348">1348</td><td class="line">                        dns_server_unref(s);</td></tr>
+<tr><td class="num" id="LN1349">1349</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1350">1350</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1351">1351</td><td class="line">        <span class='keyword'>if</span> (t == DNS_SERVER_FALLBACK)</td></tr>
+<tr><td class="num" id="LN1352">1352</td><td class="line">                <span class='keyword'>while</span> (m-&gt;fallback_dns_servers) {</td></tr>
+<tr><td class="num" id="LN1353">1353</td><td class="line">                        s = m-&gt;fallback_dns_servers;</td></tr>
+<tr><td class="num" id="LN1354">1354</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1355">1355</td><td class="line">                        <span class='macro'>LIST_REMOVE(servers, m-&gt;fallback_dns_servers, s)<span class='expansion'>do { typeof(*(m-&gt;fallback_dns_servers)) **_head = &amp;(m-&gt;<br>fallback_dns_servers), *_item = (s); do { if ((__builtin_expect<br>(!!(!(_item)),0))) log_assert_failed("_item", "src/resolve/resolved-manager.c"<br>, 1355, __PRETTY_FUNCTION__); } while (0); if (_item-&gt;servers_next<br>) _item-&gt;servers_next-&gt;servers_prev = _item-&gt;servers_prev<br>; if (_item-&gt;servers_prev) _item-&gt;servers_prev-&gt;servers_next<br> = _item-&gt;servers_next; else { do { if ((__builtin_expect(<br>!!(!(*_head == _item)),0))) log_assert_failed("*_head == _item"<br>, "src/resolve/resolved-manager.c", 1355, __PRETTY_FUNCTION__<br>); } while (0); *_head = _item-&gt;servers_next; } _item-&gt;<br>servers_next = _item-&gt;servers_prev = ((void*)0); } while(0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1356">1356</td><td class="line">                        dns_server_unref(s);</td></tr>
+<tr><td class="num" id="LN1357">1357</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1358">1358</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1359">1359</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1360">1360</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> support_table[_SUPPORT_MAX] = {</td></tr>
+<tr><td class="num" id="LN1361">1361</td><td class="line">        [SUPPORT_NO] = <span class='string_literal'>"no"</span>,</td></tr>
+<tr><td class="num" id="LN1362">1362</td><td class="line">        [SUPPORT_YES] = <span class='string_literal'>"yes"</span>,</td></tr>
+<tr><td class="num" id="LN1363">1363</td><td class="line">        [SUPPORT_RESOLVE] = <span class='string_literal'>"resolve"</span>,</td></tr>
+<tr><td class="num" id="LN1364">1364</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1365">1365</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(support, Support)<span class='expansion'>const char *support_to_string(Support i) { if (i &lt; 0 || i &gt;=<br> (Support) (sizeof(support_table)/sizeof((support_table)[0]))<br>) return ((void*)0); return support_table[i]; } inline Support<br> support_from_string(const char *s) { return (Support)string_table_lookup<br>(support_table, (sizeof(support_table)/sizeof((support_table)<br>[0])), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
 </table></body></html>
