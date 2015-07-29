@@ -64,11 +64,11 @@
 
 <!-- FILENAME resolved-dns-transaction.c -->
 
-<!-- FUNCTIONNAME dns_transaction_open_tcp -->
+<!-- FUNCTIONNAME dns_transaction_emit -->
 
-<!-- BUGLINE 287 -->
+<!-- BUGLINE 463 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 17 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/resolve/resolved-dns-transaction.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 287, column 9</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 463, column 17</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -369,8 +369,7 @@
 <tr><td class="num" id="LN284">284</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN285">285</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN286">286</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN287">287</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">        fd = -1;</td></tr>
 <tr><td class="num" id="LN288">288</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN289">289</td><td class="line">        r = dns_stream_write_packet(t-&gt;stream, t-&gt;sent);</td></tr>
 <tr><td class="num" id="LN290">290</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
@@ -492,8 +491,8 @@
 <tr><td class="num" id="LN406">406</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN407">407</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN408">408</td><td class="line">        <span class='comment'>/* Only consider responses with equivalent query section to the request */</span></td></tr>
-<tr><td class="num" id="LN409">409</td><td class="line">        <span class='keyword'>if</span> (!dns_question_is_superset(p-&gt;question, t-&gt;question) ||</td></tr>
-<tr><td class="num" id="LN410">410</td><td class="line">            !dns_question_is_superset(t-&gt;question, p-&gt;question)) {</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">        r = dns_question_is_equal(p-&gt;question, t-&gt;question);</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0) {</td></tr>
 <tr><td class="num" id="LN411">411</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_INVALID_REPLY);</td></tr>
 <tr><td class="num" id="LN412">412</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN413">413</td><td class="line">        }</td></tr>
@@ -546,7 +545,8 @@
 <tr><td class="num" id="LN460">460</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN461">461</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN462">462</td><td class="line">                t-&gt;dns_fd = fd;</td></tr>
-<tr><td class="num" id="LN463">463</td><td class="line">                fd = -1;</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
 <tr><td class="num" id="LN464">464</td><td class="line">                t-&gt;server = dns_server_ref(server);</td></tr>
 <tr><td class="num" id="LN465">465</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN466">466</td><td class="line"> </td></tr>
