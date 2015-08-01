@@ -1,0 +1,396 @@
+<!doctype html>
+<html>
+<head>
+<title>src/core/snapshot.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Access to field 'manager' results in a dereference of a null pointer -->
+
+<!-- BUGTYPE Dereference of null pointer -->
+
+<!-- BUGCATEGORY Logic error -->
+
+<!-- BUGFILE /home/runner/systemd/src/core/snapshot.c -->
+
+<!-- FILENAME snapshot.c -->
+
+<!-- FUNCTIONNAME snapshot_load -->
+
+<!-- BUGLINE 67 -->
+
+<!-- BUGCOLUMN 30 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/core/snapshot.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 67, column 30</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Access to field 'manager' results in a dereference of a null pointer</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*-*- Mode: C; c-basic-offset: 8; indent-tabs-mode: nil -*-*/</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>Copyright 2010 Lennart Poettering</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line"><span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='directive'>#include &lt;<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>.h&gt;</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "unit.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "snapshot.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "unit-name.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include "dbus-snapshot.h"</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#include "bus-common-errors.h"</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> UnitActiveState state_translation_table[_SNAPSHOT_STATE_MAX] = {</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line">        [SNAPSHOT_DEAD] = UNIT_INACTIVE,</td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">        [SNAPSHOT_ACTIVE] = UNIT_ACTIVE</td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> snapshot_init(Unit *u) {</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">        Snapshot *s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/core/snapshot.c", 38, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">        <span class='macro'>assert(UNIT(s)-&gt;load_state == UNIT_STUB)<span class='expansion'>do { if ((__builtin_expect(!!(!((&amp;(s)-&gt;meta)-&gt;load_state<br> == UNIT_STUB)),0))) log_assert_failed("(&amp;(s)-&gt;meta)-&gt;load_state == UNIT_STUB"<br>, "src/core/snapshot.c", 39, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">        <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;ignore_on_isolate = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">        <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;ignore_on_snapshot = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">        <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;allow_isolate = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> snapshot_set_state(Snapshot *s, SnapshotState state) {</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">        SnapshotState old_state;</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/core/snapshot.c", 48, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">        old_state = s-&gt;state;</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">        s-&gt;state = state;</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">        <span class='keyword'>if</span> (state != old_state)</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">                <span class='macro'>log_unit_debug(UNIT(s), <span class='string_literal'>"Changed %s -&gt; %s"</span>, snapshot_state_to_string(old_state), snapshot_state_to_string(state))<span class='expansion'>({ Unit *_u = ((&amp;(s)-&gt;meta)); _u ? log_object_internal<br>(7, 0, "src/core/snapshot.c", 54, __func__, _u-&gt;manager-&gt;<br>unit_log_field, _u-&gt;id, "Changed %s -&gt; %s", snapshot_state_to_string<br>(old_state), snapshot_state_to_string(state)) : log_internal(<br>7, 0, "src/core/snapshot.c", 54, __func__, "Changed %s -&gt; %s"<br>, snapshot_state_to_string(old_state), snapshot_state_to_string<br>(state)); })</span></span>;</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">        unit_notify(<span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>, state_translation_table[old_state], state_translation_table[state], <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> snapshot_load(Unit *u) {</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">        Snapshot *s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/snapshot.c", 62, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">        <span class='macro'>assert(u-&gt;load_state == UNIT_STUB)<span class='expansion'>do { if ((__builtin_expect(!!(!(u-&gt;load_state == UNIT_STUB<br>)),0))) log_assert_failed("u-&gt;load_state == UNIT_STUB", "src/core/snapshot.c"<br>, 63, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">        <span class='comment'>/* Make sure that only snapshots created via snapshot_create()</span></td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">         <span class='comment'>* can be loaded */</span></td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">        <span class='keyword'>if</span> (!u-&gt;transient &amp;&amp; <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;manager-&gt;n_reloading &lt;= 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:30ex; max-width:100em">Within the expansion of the macro 'UNIT':
+<div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Access to field 'manager' results in a dereference of a null pointer</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOENT<span class='expansion'>2</span></span>;</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">        u-&gt;load_state = UNIT_LOADED;</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> snapshot_coldplug(Unit *u) {</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">        Snapshot *s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/core/snapshot.c", 77, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">        <span class='macro'>assert(s-&gt;state == SNAPSHOT_DEAD)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;state == SNAPSHOT_DEAD)<br>),0))) log_assert_failed("s-&gt;state == SNAPSHOT_DEAD", "src/core/snapshot.c"<br>, 78, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">        <span class='keyword'>if</span> (s-&gt;deserialized_state != s-&gt;state)</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">                snapshot_set_state(s, s-&gt;deserialized_state);</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> snapshot_dump(Unit *u, FILE *f, <span class='keyword'>const</span> <span class='keyword'>char</span> *prefix) {</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">        Snapshot *s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/core/snapshot.c", 89, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">        <span class='macro'>assert(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/core/snapshot.c", 90, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">        fprintf(f,</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">                <span class='string_literal'>"%sSnapshot State: %s\n"</span></td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">                <span class='string_literal'>"%sClean Up: %s\n"</span>,</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">                prefix, snapshot_state_to_string(s-&gt;state),</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">                prefix, yes_no(s-&gt;cleanup));</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> snapshot_start(Unit *u) {</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">        Snapshot *s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/core/snapshot.c", 102, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">        <span class='macro'>assert(s-&gt;state == SNAPSHOT_DEAD)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;state == SNAPSHOT_DEAD)<br>),0))) log_assert_failed("s-&gt;state == SNAPSHOT_DEAD", "src/core/snapshot.c"<br>, 103, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">        snapshot_set_state(s, SNAPSHOT_ACTIVE);</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">        <span class='keyword'>if</span> (s-&gt;cleanup)</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">                unit_add_to_cleanup_queue(u);</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> snapshot_stop(Unit *u) {</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">        Snapshot *s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/core/snapshot.c", 116, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">        <span class='macro'>assert(s-&gt;state == SNAPSHOT_ACTIVE)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;state == SNAPSHOT_ACTIVE<br>)),0))) log_assert_failed("s-&gt;state == SNAPSHOT_ACTIVE", "src/core/snapshot.c"<br>, 117, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">        snapshot_set_state(s, SNAPSHOT_DEAD);</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> snapshot_serialize(Unit *u, FILE *f, FDSet *fds) {</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">        Snapshot *s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">        Unit *other;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/core/snapshot.c", 128, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">        <span class='macro'>assert(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/core/snapshot.c", 129, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">        <span class='macro'>assert(fds)<span class='expansion'>do { if ((__builtin_expect(!!(!(fds)),0))) log_assert_failed(<br>"fds", "src/core/snapshot.c", 130, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">        unit_serialize_item(u, f, <span class='string_literal'>"state"</span>, snapshot_state_to_string(s-&gt;state));</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">        unit_serialize_item(u, f, <span class='string_literal'>"cleanup"</span>, yes_no(s-&gt;cleanup));</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">        <span class='macro'>SET_FOREACH(other, u-&gt;dependencies[UNIT_WANTS], i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((u-&gt;dependencies[UNIT_WANTS<br>]), &amp;(i), (void**)&amp;(other)); )</span></span></td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">                unit_serialize_item(u, f, <span class='string_literal'>"wants"</span>, other-&gt;id);</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> snapshot_deserialize_item(Unit *u, <span class='keyword'>const</span> <span class='keyword'>char</span> *key, <span class='keyword'>const</span> <span class='keyword'>char</span> *value, FDSet *fds) {</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">        Snapshot *s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/snapshot.c", 144, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">        <span class='macro'>assert(key)<span class='expansion'>do { if ((__builtin_expect(!!(!(key)),0))) log_assert_failed(<br>"key", "src/core/snapshot.c", 145, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">        <span class='macro'>assert(value)<span class='expansion'>do { if ((__builtin_expect(!!(!(value)),0))) log_assert_failed<br>("value", "src/core/snapshot.c", 146, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">        <span class='macro'>assert(fds)<span class='expansion'>do { if ((__builtin_expect(!!(!(fds)),0))) log_assert_failed(<br>"fds", "src/core/snapshot.c", 147, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(key, <span class='string_literal'>"state"</span>)<span class='expansion'>(strcmp((key),("state")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">                SnapshotState state;</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">                state = snapshot_state_from_string(value);</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">                <span class='keyword'>if</span> (state &lt; 0)</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">                        <span class='macro'>log_unit_debug(u, <span class='string_literal'>"Failed to parse state value: %s"</span>, value)<span class='expansion'>({ Unit *_u = (u); _u ? log_object_internal(7, 0, "src/core/snapshot.c"<br>, 154, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Failed to parse state value: %s", value) : log_internal(7,<br> 0, "src/core/snapshot.c", 154, __func__, "Failed to parse state value: %s"<br>, value); })</span></span>;</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">                        s-&gt;deserialized_state = state;</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(key, <span class='string_literal'>"cleanup"</span>)<span class='expansion'>(strcmp((key),("cleanup")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                r = parse_boolean(value);</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">                        <span class='macro'>log_unit_debug(u, <span class='string_literal'>"Failed to parse cleanup value: %s"</span>, value)<span class='expansion'>({ Unit *_u = (u); _u ? log_object_internal(7, 0, "src/core/snapshot.c"<br>, 162, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Failed to parse cleanup value: %s", value) : log_internal(<br>7, 0, "src/core/snapshot.c", 162, __func__, "Failed to parse cleanup value: %s"<br>, value); })</span></span>;</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">                        s-&gt;cleanup = r;</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(key, <span class='string_literal'>"wants"</span>)<span class='expansion'>(strcmp((key),("wants")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">                r = unit_add_two_dependencies_by_name(u, UNIT_AFTER, UNIT_WANTS, value, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">                <span class='macro'>log_unit_debug(u, <span class='string_literal'>"Unknown serialization key: %s"</span>, key)<span class='expansion'>({ Unit *_u = (u); _u ? log_object_internal(7, 0, "src/core/snapshot.c"<br>, 172, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Unknown serialization key: %s", key) : log_internal(7, 0, "src/core/snapshot.c"<br>, 172, __func__, "Unknown serialization key: %s", key); })</span></span>;</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line"><span class='macro'>_pure_<span class='expansion'>__attribute__ ((pure))</span></span> <span class='keyword'>static</span> UnitActiveState snapshot_active_state(Unit *u) {</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/snapshot.c", 178, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">        <span class='keyword'>return</span> state_translation_table[SNAPSHOT(u)-&gt;state];</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line"><span class='macro'>_pure_<span class='expansion'>__attribute__ ((pure))</span></span> <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> *snapshot_sub_state_to_string(Unit *u) {</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/snapshot.c", 184, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">        <span class='keyword'>return</span> snapshot_state_to_string(SNAPSHOT(u)-&gt;state);</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line"><span class='keyword'>int</span> snapshot_create(Manager *m, <span class='keyword'>const</span> <span class='keyword'>char</span> *name, <span class='macro'>bool<span class='expansion'>_Bool</span></span> cleanup, sd_bus_error *e, Snapshot **_s) {</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">        Unit *other, *u = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *k;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/snapshot.c", 196, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">        <span class='macro'>assert(_s)<span class='expansion'>do { if ((__builtin_expect(!!(!(_s)),0))) log_assert_failed("_s"<br>, "src/core/snapshot.c", 197, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">        <span class='keyword'>if</span> (name) {</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">                <span class='keyword'>if</span> (!unit_name_is_valid(name, UNIT_NAME_PLAIN))</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">                        <span class='keyword'>return</span> sd_bus_error_setf(e, <span class='macro'>SD_BUS_ERROR_INVALID_ARGS<span class='expansion'>"org.freedesktop.DBus.Error.InvalidArgs"</span></span>, <span class='string_literal'>"Unit name %s is not valid."</span>, name);</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">                <span class='keyword'>if</span> (!endswith(name, <span class='string_literal'>".snapshot"</span>))</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">                        <span class='keyword'>return</span> sd_bus_error_setf(e, <span class='macro'>SD_BUS_ERROR_INVALID_ARGS<span class='expansion'>"org.freedesktop.DBus.Error.InvalidArgs"</span></span>, <span class='string_literal'>"Unit name %s lacks snapshot suffix."</span>, name);</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">                <span class='keyword'>if</span> (manager_get_unit(m, name))</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">                        <span class='keyword'>return</span> sd_bus_error_setf(e, <span class='macro'>BUS_ERROR_UNIT_EXISTS<span class='expansion'>"org.freedesktop.systemd1.UnitExists"</span></span>, <span class='string_literal'>"Snapshot %s exists already."</span>, name);</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">                <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">                        <span class='keyword'>if</span> (asprintf(&amp;n, <span class='string_literal'>"snapshot-%u.snapshot"</span>, ++ m-&gt;n_snapshots) &lt; 0)</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">                        <span class='keyword'>if</span> (!manager_get_unit(m, n)) {</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">                                name = n;</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">                        n = mfree(n);</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">        r = manager_load_unit_prepare(m, name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, e, &amp;u);</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">        u-&gt;transient = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">        manager_dispatch_load_queue(m);</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">        <span class='macro'>assert(u-&gt;load_state == UNIT_LOADED)<span class='expansion'>do { if ((__builtin_expect(!!(!(u-&gt;load_state == UNIT_LOADED<br>)),0))) log_assert_failed("u-&gt;load_state == UNIT_LOADED", "src/core/snapshot.c"<br>, 230, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">        <span class='macro'>HASHMAP_FOREACH_KEY(other, k, m-&gt;units, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;units), &amp;<br>(i), (void**)&amp;(other), (const void**) &amp;(k)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">                <span class='keyword'>if</span> (other-&gt;ignore_on_snapshot ||</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">                    other-&gt;transient)</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">                <span class='keyword'>if</span> (k != other-&gt;id)</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>UNIT_VTABLE(other)<span class='expansion'>unit_vtable[(other)-&gt;type]</span></span>-&gt;check_snapshot)</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">                        <span class='keyword'>if</span> (!<span class='macro'>UNIT_VTABLE(other)<span class='expansion'>unit_vtable[(other)-&gt;type]</span></span>-&gt;check_snapshot(other))</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">                            <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">                <span class='keyword'>if</span> (!UNIT_IS_ACTIVE_OR_ACTIVATING(unit_active_state(other)))</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">                r = unit_add_two_dependencies(u, UNIT_AFTER, UNIT_WANTS, other, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">                        <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">        SNAPSHOT(u)-&gt;cleanup = cleanup;</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">        *_s = SNAPSHOT(u);</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">        <span class='macro'>log_unit_info(u, <span class='string_literal'>"Created snapshot."</span>)<span class='expansion'>({ Unit *_u = (u); _u ? log_object_internal(6, 0, "src/core/snapshot.c"<br>, 256, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Created snapshot.") : log_internal(6, 0, "src/core/snapshot.c"<br>, 256, __func__, "Created snapshot."); })</span></span>;</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">fail:</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">        <span class='keyword'>if</span> (u)</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">                unit_add_to_cleanup_queue(u);</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line"><span class='keyword'>void</span> snapshot_remove(Snapshot *s) {</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/core/snapshot.c", 268, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">        <span class='macro'>log_unit_info(UNIT(s), <span class='string_literal'>"Removing snapshot."</span>)<span class='expansion'>({ Unit *_u = ((&amp;(s)-&gt;meta)); _u ? log_object_internal<br>(6, 0, "src/core/snapshot.c", 270, __func__, _u-&gt;manager-&gt;<br>unit_log_field, _u-&gt;id, "Removing snapshot.") : log_internal<br>(6, 0, "src/core/snapshot.c", 270, __func__, "Removing snapshot."<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">        unit_add_to_cleanup_queue(<span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>);</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> snapshot_state_table[_SNAPSHOT_STATE_MAX] = {</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">        [SNAPSHOT_DEAD] = <span class='string_literal'>"dead"</span>,</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">        [SNAPSHOT_ACTIVE] = <span class='string_literal'>"active"</span></td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(snapshot_state, SnapshotState)<span class='expansion'>const char *snapshot_state_to_string(SnapshotState i) { if (i<br> &lt; 0 || i &gt;= (SnapshotState) (sizeof(snapshot_state_table<br>)/sizeof((snapshot_state_table)[0]))) return ((void*)0); return<br> snapshot_state_table[i]; } inline SnapshotState snapshot_state_from_string<br>(const char *s) { return (SnapshotState)string_table_lookup(snapshot_state_table<br>, (sizeof(snapshot_state_table)/sizeof((snapshot_state_table)<br>[0])), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line"><span class='keyword'>const</span> UnitVTable snapshot_vtable = {</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">        .object_size = <span class='keyword'>sizeof</span>(Snapshot),</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">        .no_alias = <span class='macro'>true<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">        .no_instances = <span class='macro'>true<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">        .no_gc = <span class='macro'>true<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">        .init = snapshot_init,</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">        .load = snapshot_load,</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">        .coldplug = snapshot_coldplug,</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">        .dump = snapshot_dump,</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">        .start = snapshot_start,</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        .stop = snapshot_stop,</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">        .serialize = snapshot_serialize,</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">        .deserialize_item = snapshot_deserialize_item,</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">        .active_state = snapshot_active_state,</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">        .sub_state_to_string = snapshot_sub_state_to_string,</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">        .bus_interface = <span class='string_literal'>"org.freedesktop.systemd1.Snapshot"</span>,</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">        .bus_vtable = bus_snapshot_vtable</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">};</td></tr>
+</table></body></html>
