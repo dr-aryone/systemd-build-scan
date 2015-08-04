@@ -64,20 +64,20 @@
 
 <!-- FILENAME networkctl.c -->
 
-<!-- FUNCTIONNAME link_lldp_status -->
+<!-- FUNCTIONNAME link_status_one -->
 
-<!-- BUGLINE 956 -->
+<!-- BUGLINE 626 -->
 
-<!-- BUGCOLUMN 35 -->
+<!-- BUGCOLUMN 13 -->
 
-<!-- BUGPATHLENGTH 20 -->
+<!-- BUGPATHLENGTH 33 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/network/networkctl.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 956, column 35</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 626, column 13</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 't'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -146,7 +146,9 @@
 <tr><td class="num" id="LN61">61</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN62">62</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/network/networkctl.c", 62, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN63">63</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN64">64</td><td class="line">        <span class='keyword'>if</span> (iftype == <span class='macro'>ARPHRD_ETHER<span class='expansion'>1</span></span> &amp;&amp; d) {</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">iftype == <span class='macro'>ARPHRD_ETHER<span class='expansion'>1</span></span></span> &amp;&amp; d) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Assuming 'iftype' is equal to 1</td><td><div class="PathNav"><a href="#Path24" title="Next event (24)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN65">65</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *devtype = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *id = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN66">66</td><td class="line">                <span class='comment'>/* WLANs have iftype ARPHRD_ETHER, but we want</span></td></tr>
 <tr><td class="num" id="LN67">67</td><td class="line">                 <span class='comment'>* to show a more useful type string for</span></td></tr>
@@ -155,13 +157,18 @@
 <tr><td class="num" id="LN70">70</td><td class="line">                (<span class='keyword'>void</span>)sd_device_get_devtype(d, &amp;devtype);</td></tr>
 <tr><td class="num" id="LN71">71</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN72">72</td><td class="line">                <span class='keyword'>if</span> (streq_ptr(devtype, <span class='string_literal'>"wlan"</span>))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN73">73</td><td class="line">                        id = <span class='string_literal'>"wlan"</span>;</td></tr>
 <tr><td class="num" id="LN74">74</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (streq_ptr(devtype, <span class='string_literal'>"wwan"</span>))</td></tr>
 <tr><td class="num" id="LN75">75</td><td class="line">                        id = <span class='string_literal'>"wwan"</span>;</td></tr>
 <tr><td class="num" id="LN76">76</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN77">77</td><td class="line">                <span class='keyword'>if</span> (id) {</td></tr>
-<tr><td class="num" id="LN78">78</td><td class="line">                        p = strdup(id);</td></tr>
-<tr><td class="num" id="LN79">79</td><td class="line">                        <span class='keyword'>if</span> (!p)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path27" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">                        p = <span class="mrange">strdup(id)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path27" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path28" title="Next event (28)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!p</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Assuming 'p' is non-null</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN80">80</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN81">81</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN82">82</td><td class="line">                        *ret = p;</td></tr>
@@ -605,34 +612,47 @@
 <tr><td class="num" id="LN520">520</td><td class="line">                r = sd_rtnl_message_new_link(rtnl, &amp;req, <span class='macro'>RTM_GETLINK<span class='expansion'>RTM_GETLINK</span></span>, ifindex);</td></tr>
 <tr><td class="num" id="LN521">521</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN522">522</td><td class="line">                r = sd_rtnl_message_new_link(rtnl, &amp;req, <span class='macro'>RTM_GETLINK<span class='expansion'>RTM_GETLINK</span></span>, 0);</td></tr>
-<tr><td class="num" id="LN523">523</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN524">524</td><td class="line">                        <span class='keyword'>return</span> rtnl_log_create_error(r);</td></tr>
 <tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN526">526</td><td class="line">                r = sd_netlink_message_append_string(req, IFLA_IFNAME, name);</td></tr>
 <tr><td class="num" id="LN527">527</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN528">528</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN530">530</td><td class="line">                <span class='keyword'>return</span> rtnl_log_create_error(r);</td></tr>
 <tr><td class="num" id="LN531">531</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN532">532</td><td class="line">        r = sd_netlink_call(rtnl, req, 0, &amp;reply);</td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN534">534</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to query link: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkctl.c"<br>, 534, __func__, "Failed to query link: %m") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN535">535</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN536">536</td><td class="line">        r = sd_rtnl_message_link_get_ifindex(reply, &amp;ifindex);</td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN538">538</td><td class="line">                <span class='keyword'>return</span> rtnl_log_parse_error(r);</td></tr>
 <tr><td class="num" id="LN539">539</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN540">540</td><td class="line">        r = sd_netlink_message_read_string(reply, IFLA_IFNAME, &amp;name);</td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN542">542</td><td class="line">                <span class='keyword'>return</span> rtnl_log_parse_error(r);</td></tr>
 <tr><td class="num" id="LN543">543</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN544">544</td><td class="line">        r = sd_rtnl_message_link_get_type(reply, &amp;iftype);</td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN546">546</td><td class="line">                <span class='keyword'>return</span> rtnl_log_parse_error(r);</td></tr>
 <tr><td class="num" id="LN547">547</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN548">548</td><td class="line">        have_mac = sd_netlink_message_read_ether_addr(reply, IFLA_ADDRESS, &amp;e) &gt;= 0;</td></tr>
 <tr><td class="num" id="LN549">549</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN550">550</td><td class="line">        <span class='keyword'>if</span> (have_mac) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN551">551</td><td class="line">                <span class='keyword'>const</span> uint8_t *p;</td></tr>
 <tr><td class="num" id="LN552">552</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> all_zeroes = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN553">553</td><td class="line"> </td></tr>
@@ -658,7 +678,9 @@
 <tr><td class="num" id="LN573">573</td><td class="line">        sd_network_link_get_ntp(ifindex, &amp;ntp);</td></tr>
 <tr><td class="num" id="LN574">574</td><td class="line">        sd_network_link_get_domains(ifindex, &amp;domains);</td></tr>
 <tr><td class="num" id="LN575">575</td><td class="line">        r = sd_network_link_get_wildcard_domain(ifindex);</td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line">        <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &gt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt;= 0</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN577">577</td><td class="line">                <span class='keyword'>char</span> *wildcard;</td></tr>
 <tr><td class="num" id="LN578">578</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN579">579</td><td class="line">                wildcard = strdup(<span class='string_literal'>"*"</span>);</td></tr>
@@ -673,21 +695,29 @@
 <tr><td class="num" id="LN588">588</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN589">589</td><td class="line">        (<span class='keyword'>void</span>)sd_device_new_from_device_id(&amp;d, devid);</td></tr>
 <tr><td class="num" id="LN590">590</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line">        <span class='keyword'>if</span> (d) {</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">d</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Assuming 'd' is non-null</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN592">592</td><td class="line">                (<span class='keyword'>void</span>)sd_device_get_property_value(d, <span class='string_literal'>"ID_NET_LINK_FILE"</span>, &amp;link);</td></tr>
 <tr><td class="num" id="LN593">593</td><td class="line">                (<span class='keyword'>void</span>)sd_device_get_property_value(d, <span class='string_literal'>"ID_NET_DRIVER"</span>, &amp;driver);</td></tr>
 <tr><td class="num" id="LN594">594</td><td class="line">                (<span class='keyword'>void</span>)sd_device_get_property_value(d, <span class='string_literal'>"ID_PATH"</span>, &amp;path);</td></tr>
 <tr><td class="num" id="LN595">595</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN596">596</td><td class="line">                r = sd_device_get_property_value(d, <span class='string_literal'>"ID_VENDOR_FROM_DATABASE"</span>, &amp;vendor);</td></tr>
-<tr><td class="num" id="LN597">597</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN598">598</td><td class="line">                        (<span class='keyword'>void</span>)sd_device_get_property_value(d, <span class='string_literal'>"ID_VENDOR"</span>, &amp;vendor);</td></tr>
 <tr><td class="num" id="LN599">599</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN600">600</td><td class="line">                r = sd_device_get_property_value(d, <span class='string_literal'>"ID_MODEL_FROM_DATABASE"</span>, &amp;model);</td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN602">602</td><td class="line">                        (<span class='keyword'>void</span>)sd_device_get_property_value(d, <span class='string_literal'>"ID_MODEL"</span>, &amp;model);</td></tr>
 <tr><td class="num" id="LN603">603</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN604">604</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN605">605</td><td class="line">        link_get_type_string(iftype, d, &amp;t);</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">        <span class="mrange"><span class="mrange">link_get_type_string(iftype, d, &amp;t)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Calling 'link_get_type_string'</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Returned allocated memory via 3rd parameter</td><td><div class="PathNav"><a href="#Path31" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN607">607</td><td class="line">        sd_network_link_get_network_file(ifindex, &amp;network);</td></tr>
 <tr><td class="num" id="LN608">608</td><td class="line"> </td></tr>
@@ -706,9 +736,12 @@
 <tr><td class="num" id="LN621">621</td><td class="line">               on_color_operational, strna(operational_state), off_color_operational,</td></tr>
 <tr><td class="num" id="LN622">622</td><td class="line">               on_color_setup, strna(setup_state), off_color_setup);</td></tr>
 <tr><td class="num" id="LN623">623</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line">        <span class='keyword'>if</span> (path)</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">path</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path31" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Assuming 'path' is null</td><td><div class="PathNav"><a href="#Path32" title="Next event (32)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path32" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">32</div></td><td><div class="PathNav"><a href="#Path31" title="Previous event (31)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (33)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN625">625</td><td class="line">                printf(<span class='string_literal'>"            Path: %s\n"</span>, path);</td></tr>
 <tr><td class="num" id="LN626">626</td><td class="line">        <span class='keyword'>if</span> (driver)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">33</div></td><td><div class="PathNav"><a href="#Path32" title="Previous event (32)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 't'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN627">627</td><td class="line">                printf(<span class='string_literal'>"          Driver: %s\n"</span>, driver);</td></tr>
 <tr><td class="num" id="LN628">628</td><td class="line">        <span class='keyword'>if</span> (vendor)</td></tr>
 <tr><td class="num" id="LN629">629</td><td class="line">                printf(<span class='string_literal'>"          Vendor: %s\n"</span>, vendor);</td></tr>
@@ -996,69 +1029,49 @@
 <tr><td class="num" id="LN911">911</td><td class="line">        pager_open_if_enabled();</td></tr>
 <tr><td class="num" id="LN912">912</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN913">913</td><td class="line">        r = sd_netlink_open(&amp;rtnl);</td></tr>
-<tr><td class="num" id="LN914">914</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN914">914</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN915">915</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to connect to netlink: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkctl.c"<br>, 915, __func__, "Failed to connect to netlink: %m") : -abs(_e<br>); })</span></span>;</td></tr>
 <tr><td class="num" id="LN916">916</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN917">917</td><td class="line">        r = sd_rtnl_message_new_link(rtnl, &amp;req, <span class='macro'>RTM_GETLINK<span class='expansion'>RTM_GETLINK</span></span>, 0);</td></tr>
-<tr><td class="num" id="LN918">918</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN919">919</td><td class="line">                <span class='keyword'>return</span> rtnl_log_create_error(r);</td></tr>
 <tr><td class="num" id="LN920">920</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN921">921</td><td class="line">        r = sd_netlink_message_request_dump(req, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN922">922</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN923">923</td><td class="line">                <span class='keyword'>return</span> rtnl_log_create_error(r);</td></tr>
 <tr><td class="num" id="LN924">924</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN925">925</td><td class="line">        r = sd_netlink_call(rtnl, req, 0, &amp;reply);</td></tr>
-<tr><td class="num" id="LN926">926</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN927">927</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to enumerate links: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkctl.c"<br>, 927, __func__, "Failed to enumerate links: %m") : -abs(_e);<br> })</span></span>;</td></tr>
 <tr><td class="num" id="LN928">928</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN929">929</td><td class="line">        c = decode_and_sort_links(reply, &amp;links);</td></tr>
 <tr><td class="num" id="LN930">930</td><td class="line">        <span class='keyword'>if</span> (c &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN931">931</td><td class="line">                <span class='keyword'>return</span> rtnl_log_parse_error(c);</td></tr>
 <tr><td class="num" id="LN932">932</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN933">933</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">arg_legend</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Assuming 'arg_legend' is 0</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line">        <span class='keyword'>if</span> (arg_legend)</td></tr>
 <tr><td class="num" id="LN934">934</td><td class="line">                printf(<span class='string_literal'>"%s %16s %24s %16s %16s\n"</span>, <span class='string_literal'>"Local Intf"</span>, <span class='string_literal'>"Device ID"</span>, <span class='string_literal'>"Port ID"</span>, <span class='string_literal'>"TTL"</span>, <span class='string_literal'>"Capability"</span>);</td></tr>
 <tr><td class="num" id="LN935">935</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN936">936</td><td class="line">        <span class='keyword'>for</span> (i = j = 0; i &lt; c; i++) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN937">937</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *chassis = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *port = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *cap = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *lldp = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN938">938</td><td class="line">                <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN939">939</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN940">940</td><td class="line">                r = sd_network_link_get_lldp(links[i].ifindex, &amp;lldp);</td></tr>
-<tr><td class="num" id="LN941">941</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN941">941</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN942">942</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN943">943</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN944">944</td><td class="line">                l = strv_split_newlines(lldp);</td></tr>
-<tr><td class="num" id="LN945">945</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!l</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'l' is non-null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN945">945</td><td class="line">                <span class='keyword'>if</span> (!l)</td></tr>
 <tr><td class="num" id="LN946">946</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN947">947</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN948">948</td><td class="line">                <span class='macro'>STRV_FOREACH(s, l)<span class='expansion'>for ((s) = (l); (s) &amp;&amp; *(s); (s)++)</span></span> {</td></tr>
 <tr><td class="num" id="LN949">949</td><td class="line">                        <span class='macro'>FOREACH_WORD_QUOTED(word, ll, *s, state)<span class='expansion'>for ((state) = (*s), (word) = split(&amp;(state), &amp;(ll), (<br>" \t\n\r"), (1)); (word); (word) = split(&amp;(state), &amp;(<br>ll), (" \t\n\r"), (1)))</span></span> {</td></tr>
 <tr><td class="num" id="LN950">950</td><td class="line">                                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN951">951</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN952">952</td><td class="line">                                t = <span class="mrange">strndup(word, ll)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN953">953</td><td class="line">                                <span class='keyword'>if</span> (<span class="mrange">!t</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Assuming 't' is non-null</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line">                                t = strndup(word, ll);</td></tr>
+<tr><td class="num" id="LN953">953</td><td class="line">                                <span class='keyword'>if</span> (!t)</td></tr>
 <tr><td class="num" id="LN954">954</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN955">955</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN956">956</td><td class="line">                                r = split_pair(t, <span class='string_literal'>"="</span>, &amp;a, &amp;b);</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:35ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 't'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN957">957</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN958">958</td><td class="line">                                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN959">959</td><td class="line"> </td></tr>
@@ -1081,7 +1094,7 @@
 <tr><td class="num" id="LN976">976</td><td class="line">                                                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r &lt; 0 ? r : ERANGE,<span class='expansion'>({ int _level = (4), _e = (r &lt; 0 ? r : 34); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkctl.c"<br>, 977, __func__, "Failed to parse TTL \"%s\": %m", b) : -abs(<br>_e); })</span></span></td></tr>
 <tr><td class="num" id="LN977">977</td><td class="line">                                                                         <span class='string_literal'><span class='macro'>"Failed to parse TTL \"%s\": %m"</span>, b)<span class='expansion'>({ int _level = (4), _e = (r &lt; 0 ? r : 34); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkctl.c"<br>, 977, __func__, "Failed to parse TTL \"%s\": %m", b) : -abs(<br>_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN978">978</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN979">979</td><td class="line">                                        time = now(<span class='macro'>CLOCK_BOOTTIME<span class='expansion'>7</span></span>);</td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">                                        time = now(clock_boottime_or_monotonic());</td></tr>
 <tr><td class="num" id="LN980">980</td><td class="line">                                        <span class='keyword'>if</span> (x &lt; time)</td></tr>
 <tr><td class="num" id="LN981">981</td><td class="line">                                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN982">982</td><td class="line"> </td></tr>

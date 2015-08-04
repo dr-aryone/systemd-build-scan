@@ -54,11 +54,11 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Access to field 'link_prev' results in a dereference of a null pointer (loaded from variable 'sampledata') -->
+<!-- BUGDESC Potential leak of memory pointed to by 'ps_first' -->
 
-<!-- BUGTYPE Dereference of null pointer -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Logic error -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/bootchart/bootchart.c -->
 
@@ -66,19 +66,19 @@
 
 <!-- FUNCTIONNAME main -->
 
-<!-- BUGLINE 521 -->
+<!-- BUGLINE 395 -->
 
-<!-- BUGCOLUMN 16 -->
+<!-- BUGCOLUMN 25 -->
 
-<!-- BUGPATHLENGTH 23 -->
+<!-- BUGPATHLENGTH 42 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/bootchart/bootchart.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 521, column 16</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Access to field 'link_prev' results in a dereference of a null pointer (loaded from variable 'sampledata')</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 395, column 25</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'ps_first'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -441,9 +441,12 @@
 <tr><td class="num" id="LN351">351</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN352">352</td><td class="line">        <span class='comment'>/* start with empty ps LL */</span></td></tr>
 <tr><td class="num" id="LN353">353</td><td class="line">        ps_first = <span class='macro'>new0(<span class='keyword'>struct</span> ps_struct, 1)<span class='expansion'>((struct ps_struct*) calloc((1), sizeof(struct ps_struct)))</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:20ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'new0':
+</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN354">354</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!ps_first</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'ps_first' is non-null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'ps_first' is non-null</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN355">355</td><td class="line">                <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/bootchart/bootchart.c", 355, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN356">356</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN357">357</td><td class="line">        }</td></tr>
@@ -454,14 +457,14 @@
 <tr><td class="num" id="LN362">362</td><td class="line">        interval = (1.0 / arg_hz) * 1000000000.0;</td></tr>
 <tr><td class="num" id="LN363">363</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN364">364</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">arg_relative</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'arg_relative' is 0</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'arg_relative' is 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN365">365</td><td class="line">                graph_start = log_start = gettime_ns();</td></tr>
 <tr><td class="num" id="LN366">366</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN367">367</td><td class="line">                <span class='keyword'>struct</span> timespec n;</td></tr>
 <tr><td class="num" id="LN368">368</td><td class="line">                <span class='keyword'>double</span> uptime;</td></tr>
 <tr><td class="num" id="LN369">369</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN370">370</td><td class="line">                clock_gettime(<span class='macro'>CLOCK_BOOTTIME<span class='expansion'>7</span></span>, &amp;n);</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">                clock_gettime(clock_boottime_or_monotonic(), &amp;n);</td></tr>
 <tr><td class="num" id="LN371">371</td><td class="line">                uptime = (n.tv_sec + (n.tv_nsec / (<span class='keyword'>double</span>) <span class='macro'>NSEC_PER_SEC<span class='expansion'>((nsec_t) 1000000000ULL)</span></span>));</td></tr>
 <tr><td class="num" id="LN372">372</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN373">373</td><td class="line">                log_start = gettime_ns();</td></tr>
@@ -469,7 +472,7 @@
 <tr><td class="num" id="LN375">375</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN376">376</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN377">377</td><td class="line">        <span class='keyword'>if</span> (graph_start &lt; 0.0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN378">378</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Failed to setup graph start time.\n\n"<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 380, __func__, "Failed to setup graph start time.\n\n" "The system uptime probably includes time that the system was suspended. "<br> "Use --rel to bypass this issue.") : -abs(_e); })</span></span></span></td></tr>
 <tr><td class="num" id="LN379">379</td><td class="line">                          <span class='string_literal'><span class='macro'>"The system uptime probably includes time that the system was suspended. "<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 380, __func__, "Failed to setup graph start time.\n\n" "The system uptime probably includes time that the system was suspended. "<br> "Use --rel to bypass this issue.") : -abs(_e); })</span></span></span></td></tr>
 <tr><td class="num" id="LN380">380</td><td class="line">                          <span class='string_literal'><span class='macro'>"Use --rel to bypass this issue."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 380, __func__, "Failed to setup graph start time.\n\n" "The system uptime probably includes time that the system was suspended. "<br> "Use --rel to bypass this issue.") : -abs(_e); })</span></span>;</td></tr>
@@ -477,42 +480,69 @@
 <tr><td class="num" id="LN382">382</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN384">384</td><td class="line">        <span class='macro'>LIST_HEAD_INIT(head)<span class='expansion'>do { (head) = ((void*)0); } while(0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'LIST_HEAD_INIT':
-</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Null pointer value stored to 'head'</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN385">385</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN386">386</td><td class="line">        <span class='comment'>/* main program loop */</span></td></tr>
-<tr><td class="num" id="LN387">387</td><td class="line">        <span class='keyword'>for</span> (samples = 0; <span class="mrange">!exiting</span> &amp;&amp; samples &lt; arg_samples_len; samples++) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:27ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Assuming 'exiting' is not equal to 0</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">        <span class='keyword'>for</span> (samples = 0; <span class="mrange"><span class="mrange"><span class="mrange">!exiting</span></span></span> &amp;&amp; <span class="mrange"><span class="mrange"><span class="mrange">samples &lt; arg_samples_len</span></span></span>; samples++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:27ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Assuming 'exiting' is 0</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:39ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'samples' is &lt; 'arg_samples_len'</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgEvent" style="margin-left:27ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Assuming 'exiting' is 0</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgEvent" style="margin-left:39ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Assuming 'samples' is &lt; 'arg_samples_len'</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path27" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path37" class="msg msgEvent" style="margin-left:27ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">37</div></td><td><div class="PathNav"><a href="#Path36" title="Previous event (36)">&#x2190;</a></div></td></td><td>Assuming 'exiting' is 0</td><td><div class="PathNav"><a href="#Path38" title="Next event (38)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path38" class="msg msgEvent" style="margin-left:39ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">38</div></td><td><div class="PathNav"><a href="#Path37" title="Previous event (37)">&#x2190;</a></div></td></td><td>Assuming 'samples' is &lt; 'arg_samples_len'</td><td><div class="PathNav"><a href="#Path39" title="Next event (39)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path39" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">39</div></td><td><div class="PathNav"><a href="#Path38" title="Previous event (38)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path40" title="Next event (40)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN388">388</td><td class="line">                <span class='keyword'>int</span> res;</td></tr>
 <tr><td class="num" id="LN389">389</td><td class="line">                <span class='keyword'>double</span> sample_stop;</td></tr>
 <tr><td class="num" id="LN390">390</td><td class="line">                <span class='keyword'>double</span> elapsed;</td></tr>
 <tr><td class="num" id="LN391">391</td><td class="line">                <span class='keyword'>double</span> timeleft;</td></tr>
 <tr><td class="num" id="LN392">392</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN393">393</td><td class="line">                sampledata = <span class='macro'>new0(<span class='keyword'>struct</span> list_sample_data, 1)<span class='expansion'>((struct list_sample_data*) calloc((1), sizeof(struct list_sample_data<br>)))</span></span>;</td></tr>
-<tr><td class="num" id="LN394">394</td><td class="line">                <span class='keyword'>if</span> (sampledata == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange"><span class="mrange"><span class="mrange">sampledata == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span></span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'sampledata' is not equal to null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path27" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Assuming 'sampledata' is not equal to null</td><td><div class="PathNav"><a href="#Path28" title="Next event (28)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path40" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">40</div></td><td><div class="PathNav"><a href="#Path39" title="Previous event (39)">&#x2190;</a></div></td></td><td>Assuming 'sampledata' is equal to null</td><td><div class="PathNav"><a href="#Path41" title="Next event (41)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path41" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">41</div></td><td><div class="PathNav"><a href="#Path40" title="Previous event (40)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (42)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN395">395</td><td class="line">                        <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/bootchart/bootchart.c", 395, __func__)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:25ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">42</div></td><td><div class="PathNav"><a href="#Path41" title="Previous event (41)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_oom':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'ps_first'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN396">396</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN397">397</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN398">398</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN399">399</td><td class="line">                sampledata-&gt;sampletime = gettime_ns();</td></tr>
 <tr><td class="num" id="LN400">400</td><td class="line">                sampledata-&gt;counter = samples;</td></tr>
 <tr><td class="num" id="LN401">401</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN402">402</td><td class="line">                <span class='keyword'>if</span> (sysfd &lt; 0)</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">sysfd &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Assuming 'sysfd' is &gt;= 0</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path31" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN403">403</td><td class="line">                        sysfd = open(<span class='string_literal'>"/sys"</span>, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
 <tr><td class="num" id="LN404">404</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN405">405</td><td class="line">                <span class='keyword'>if</span> (!build) {</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!build</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path31" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Assuming 'build' is non-null</td><td><div class="PathNav"><a href="#Path32" title="Next event (32)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path32" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">32</div></td><td><div class="PathNav"><a href="#Path31" title="Previous event (31)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path33" title="Next event (33)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN406">406</td><td class="line">                        <span class='keyword'>if</span> (parse_env_file(<span class='string_literal'>"/etc/os-release"</span>, <span class='macro'>NEWLINE<span class='expansion'>"\n\r"</span></span>, <span class='string_literal'>"PRETTY_NAME"</span>, &amp;build, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) == -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN407">407</td><td class="line">                                parse_env_file(<span class='string_literal'>"/usr/lib/os-release"</span>, <span class='macro'>NEWLINE<span class='expansion'>"\n\r"</span></span>, <span class='string_literal'>"PRETTY_NAME"</span>, &amp;build, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN408">408</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN409">409</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN410">410</td><td class="line">                <span class='keyword'>if</span> (proc)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path33" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">33</div></td><td><div class="PathNav"><a href="#Path32" title="Previous event (32)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path34" title="Next event (34)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN411">411</td><td class="line">                        rewinddir(proc);</td></tr>
 <tr><td class="num" id="LN412">412</td><td class="line">                <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN413">413</td><td class="line">                        proc = opendir(<span class='string_literal'>"/proc"</span>);</td></tr>
 <tr><td class="num" id="LN414">414</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN415">415</td><td class="line">                <span class='comment'>/* wait for /proc to become available, discarding samples */</span></td></tr>
-<tr><td class="num" id="LN416">416</td><td class="line">                <span class='keyword'>if</span> (proc) {</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange"><span class="mrange">proc</span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Assuming 'proc' is null</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path34" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">34</div></td><td><div class="PathNav"><a href="#Path33" title="Previous event (33)">&#x2190;</a></div></td></td><td>Assuming 'proc' is null</td><td><div class="PathNav"><a href="#Path35" title="Next event (35)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path35" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">35</div></td><td><div class="PathNav"><a href="#Path34" title="Previous event (34)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path36" title="Next event (36)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN417">417</td><td class="line">                        r = log_sample(proc, samples, ps_first, &amp;sampledata, &amp;pscount, &amp;n_cpus);</td></tr>
 <tr><td class="num" id="LN418">418</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN419">419</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
@@ -530,6 +560,8 @@
 <tr><td class="num" id="LN431">431</td><td class="line">                 <span class='comment'>* time</span></td></tr>
 <tr><td class="num" id="LN432">432</td><td class="line">                 <span class='comment'>*/</span></td></tr>
 <tr><td class="num" id="LN433">433</td><td class="line">                <span class='keyword'>if</span> (timeleft &gt; 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path24" title="Next event (24)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path36" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">36</div></td><td><div class="PathNav"><a href="#Path35" title="Previous event (35)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path37" title="Next event (37)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN434">434</td><td class="line">                        <span class='keyword'>struct</span> timespec req;</td></tr>
 <tr><td class="num" id="LN435">435</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN436">436</td><td class="line">                        req.tv_sec = (time_t)(timeleft / 1000000000.0);</td></tr>
@@ -555,7 +587,6 @@
 <tr><td class="num" id="LN456">456</td><td class="line">        <span class='comment'>/* do some cleanup, close fd's */</span></td></tr>
 <tr><td class="num" id="LN457">457</td><td class="line">        ps = ps_first;</td></tr>
 <tr><td class="num" id="LN458">458</td><td class="line">        <span class='keyword'>while</span> (ps-&gt;next_ps) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 468</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN459">459</td><td class="line">                ps = ps-&gt;next_ps;</td></tr>
 <tr><td class="num" id="LN460">460</td><td class="line">                ps-&gt;schedstat = safe_close(ps-&gt;schedstat);</td></tr>
 <tr><td class="num" id="LN461">461</td><td class="line">                ps-&gt;sched = safe_close(ps-&gt;sched);</td></tr>
@@ -566,7 +597,6 @@
 <tr><td class="num" id="LN466">466</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN467">467</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN468">468</td><td class="line">        <span class='keyword'>if</span> (!of) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN469">469</td><td class="line">                t = time(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN470">470</td><td class="line">                r = strftime(datestr, <span class='keyword'>sizeof</span>(datestr), <span class='string_literal'>"%Y%m%d-%H%M"</span>, localtime(&amp;t));</td></tr>
 <tr><td class="num" id="LN471">471</td><td class="line">                <span class='macro'>assert_se(r &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt; 0)),0))) log_assert_failed<br>("r &gt; 0", "src/bootchart/bootchart.c", 471, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
@@ -575,9 +605,7 @@
 <tr><td class="num" id="LN474">474</td><td class="line">                of = fopen(output_file, <span class='string_literal'>"we"</span>);</td></tr>
 <tr><td class="num" id="LN475">475</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN476">476</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN477">477</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!of</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'of' is non-null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">        <span class='keyword'>if</span> (!of) {</td></tr>
 <tr><td class="num" id="LN478">478</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Error opening output file '%s': %m\n"</span>, output_file)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 478, __func__, "Error opening output file '%s': %m\n", output_file<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN479">479</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN480">480</td><td class="line">        }</td></tr>
@@ -586,9 +614,7 @@
 <tr><td class="num" id="LN483">483</td><td class="line">                   samples, pscount, n_cpus, graph_start,</td></tr>
 <tr><td class="num" id="LN484">484</td><td class="line">                   log_start, interval, overrun);</td></tr>
 <tr><td class="num" id="LN485">485</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
 <tr><td class="num" id="LN487">487</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Error generating svg file: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 487, __func__, "Error generating svg file: %m") : -abs(_e);<br> })</span></span>;</td></tr>
 <tr><td class="num" id="LN488">488</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN489">489</td><td class="line">        }</td></tr>
@@ -596,15 +622,12 @@
 <tr><td class="num" id="LN491">491</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"systemd-bootchart wrote %s\n"</span>, output_file)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 491, __func__, "systemd-bootchart wrote %s\n", output_file)<br> : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN492">492</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN493">493</td><td class="line">        r = do_journal_append(output_file);</td></tr>
-<tr><td class="num" id="LN494">494</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN495">495</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN496">496</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN497">497</td><td class="line">        <span class='comment'>/* nitpic cleanups */</span></td></tr>
 <tr><td class="num" id="LN498">498</td><td class="line">        ps = ps_first-&gt;next_ps;</td></tr>
 <tr><td class="num" id="LN499">499</td><td class="line">        <span class='keyword'>while</span> (ps-&gt;next_ps) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 516</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN500">500</td><td class="line">                <span class='keyword'>struct</span> ps_struct *old;</td></tr>
 <tr><td class="num" id="LN501">501</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN502">502</td><td class="line">                old = ps;</td></tr>
@@ -625,10 +648,8 @@
 <tr><td class="num" id="LN517">517</td><td class="line">        free(ps-&gt;sample);</td></tr>
 <tr><td class="num" id="LN518">518</td><td class="line">        free(ps);</td></tr>
 <tr><td class="num" id="LN519">519</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line">        <span class="mrange">sampledata = head</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Null pointer value stored to 'sampledata'</td><td><div class="PathNav"><a href="#EndPath" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN521">521</td><td class="line">        <span class='keyword'>while</span> (<span class="mrange">sampledata</span>-&gt;link_prev) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:16ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Access to field 'link_prev' results in a dereference of a null pointer (loaded from variable 'sampledata')</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">        sampledata = head;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">        <span class='keyword'>while</span> (sampledata-&gt;link_prev) {</td></tr>
 <tr><td class="num" id="LN522">522</td><td class="line">                <span class='keyword'>struct</span> list_sample_data *old_sampledata = sampledata;</td></tr>
 <tr><td class="num" id="LN523">523</td><td class="line">                sampledata = sampledata-&gt;link_prev;</td></tr>
 <tr><td class="num" id="LN524">524</td><td class="line">                free(old_sampledata);</td></tr>

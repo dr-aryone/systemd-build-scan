@@ -1072,278 +1072,273 @@
 <tr><td class="num" id="LN975">975</td><td class="line">        client-&gt;retransmit_time = 0;</td></tr>
 <tr><td class="num" id="LN976">976</td><td class="line">        client-&gt;retransmit_count = 0;</td></tr>
 <tr><td class="num" id="LN977">977</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN978">978</td><td class="line">        <span class='keyword'>if</span> (client-&gt;state == DHCP6_STATE_STOPPED) {</td></tr>
-<tr><td class="num" id="LN979">979</td><td class="line">                time_now = now(clock_boottime_or_monotonic());</td></tr>
-<tr><td class="num" id="LN980">980</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN981">981</td><td class="line">                r = sd_event_now(client-&gt;event, clock_boottime_or_monotonic(),</td></tr>
-<tr><td class="num" id="LN982">982</td><td class="line">                                 &amp;time_now);</td></tr>
-<tr><td class="num" id="LN983">983</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN984">984</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN985">985</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN978">978</td><td class="line">        r = sd_event_now(client-&gt;event, clock_boottime_or_monotonic(), &amp;time_now);</td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN980">980</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN981">981</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN982">982</td><td class="line">        <span class='keyword'>switch</span> (state) {</td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_STOPPED:</td></tr>
+<tr><td class="num" id="LN984">984</td><td class="line">                <span class='keyword'>if</span> (client-&gt;state == DHCP6_STATE_INFORMATION_REQUEST) {</td></tr>
+<tr><td class="num" id="LN985">985</td><td class="line">                        client-&gt;state = DHCP6_STATE_STOPPED;</td></tr>
 <tr><td class="num" id="LN986">986</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN987">987</td><td class="line">        <span class='keyword'>switch</span> (state) {</td></tr>
-<tr><td class="num" id="LN988">988</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_STOPPED:</td></tr>
-<tr><td class="num" id="LN989">989</td><td class="line">                <span class='keyword'>if</span> (client-&gt;state == DHCP6_STATE_INFORMATION_REQUEST) {</td></tr>
-<tr><td class="num" id="LN990">990</td><td class="line">                        client-&gt;state = DHCP6_STATE_STOPPED;</td></tr>
-<tr><td class="num" id="LN991">991</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN992">992</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN993">993</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN994">994</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN995">995</td><td class="line">                <span class='comment'>/* fall through */</span></td></tr>
-<tr><td class="num" id="LN996">996</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_SOLICITATION:</td></tr>
-<tr><td class="num" id="LN997">997</td><td class="line">                client-&gt;state = DHCP6_STATE_SOLICITATION;</td></tr>
-<tr><td class="num" id="LN998">998</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN999">999</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN987">987</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN988">988</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN989">989</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN990">990</td><td class="line">                <span class='comment'>/* fall through */</span></td></tr>
+<tr><td class="num" id="LN991">991</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_SOLICITATION:</td></tr>
+<tr><td class="num" id="LN992">992</td><td class="line">                client-&gt;state = DHCP6_STATE_SOLICITATION;</td></tr>
+<tr><td class="num" id="LN993">993</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN994">994</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN995">995</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN996">996</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_INFORMATION_REQUEST:</td></tr>
+<tr><td class="num" id="LN997">997</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_REQUEST:</td></tr>
+<tr><td class="num" id="LN998">998</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_RENEW:</td></tr>
+<tr><td class="num" id="LN999">999</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_REBIND:</td></tr>
 <tr><td class="num" id="LN1000">1000</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1001">1001</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_INFORMATION_REQUEST:</td></tr>
-<tr><td class="num" id="LN1002">1002</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_REQUEST:</td></tr>
-<tr><td class="num" id="LN1003">1003</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_RENEW:</td></tr>
-<tr><td class="num" id="LN1004">1004</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_REBIND:</td></tr>
-<tr><td class="num" id="LN1005">1005</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1006">1006</td><td class="line">                client-&gt;state = state;</td></tr>
-<tr><td class="num" id="LN1007">1007</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1008">1008</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1001">1001</td><td class="line">                client-&gt;state = state;</td></tr>
+<tr><td class="num" id="LN1002">1002</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1003">1003</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1004">1004</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1005">1005</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_BOUND:</td></tr>
+<tr><td class="num" id="LN1006">1006</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1007">1007</td><td class="line">                <span class='keyword'>if</span> (client-&gt;lease-&gt;ia.lifetime_t1 == 0xffffffff ||</td></tr>
+<tr><td class="num" id="LN1008">1008</td><td class="line">                    client-&gt;lease-&gt;ia.lifetime_t2 == 0xffffffff) {</td></tr>
 <tr><td class="num" id="LN1009">1009</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1010">1010</td><td class="line">        <span class='keyword'>case</span> DHCP6_STATE_BOUND:</td></tr>
-<tr><td class="num" id="LN1011">1011</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1012">1012</td><td class="line">                <span class='keyword'>if</span> (client-&gt;lease-&gt;ia.lifetime_t1 == 0xffffffff ||</td></tr>
-<tr><td class="num" id="LN1013">1013</td><td class="line">                    client-&gt;lease-&gt;ia.lifetime_t2 == 0xffffffff) {</td></tr>
-<tr><td class="num" id="LN1014">1014</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1015">1015</td><td class="line">                        <span class='macro'>log_dhcp6_client(client, <span class='string_literal'>"infinite T1 0x%08x or T2 0x%08x"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1017, __func__, "DHCPv6 CLIENT: " "infinite T1 0x%08x or T2 0x%08x"<br>, be32toh(client-&gt;lease-&gt;ia.lifetime_t1), be32toh(client<br>-&gt;lease-&gt;ia.lifetime_t2))</span></span></td></tr>
-<tr><td class="num" id="LN1016">1016</td><td class="line">                                         <span class='macro'>be32toh(client-&gt;lease-&gt;ia.lifetime_t1),<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1017, __func__, "DHCPv6 CLIENT: " "infinite T1 0x%08x or T2 0x%08x"<br>, be32toh(client-&gt;lease-&gt;ia.lifetime_t1), be32toh(client<br>-&gt;lease-&gt;ia.lifetime_t2))</span></span></td></tr>
-<tr><td class="num" id="LN1017">1017</td><td class="line">                                         <span class='macro'>be32toh(client-&gt;lease-&gt;ia.lifetime_t2))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1017, __func__, "DHCPv6 CLIENT: " "infinite T1 0x%08x or T2 0x%08x"<br>, be32toh(client-&gt;lease-&gt;ia.lifetime_t1), be32toh(client<br>-&gt;lease-&gt;ia.lifetime_t2))</span></span>;</td></tr>
+<tr><td class="num" id="LN1010">1010</td><td class="line">                        <span class='macro'>log_dhcp6_client(client, <span class='string_literal'>"infinite T1 0x%08x or T2 0x%08x"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1012, __func__, "DHCPv6 CLIENT: " "infinite T1 0x%08x or T2 0x%08x"<br>, be32toh(client-&gt;lease-&gt;ia.lifetime_t1), be32toh(client<br>-&gt;lease-&gt;ia.lifetime_t2))</span></span></td></tr>
+<tr><td class="num" id="LN1011">1011</td><td class="line">                                         <span class='macro'>be32toh(client-&gt;lease-&gt;ia.lifetime_t1),<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1012, __func__, "DHCPv6 CLIENT: " "infinite T1 0x%08x or T2 0x%08x"<br>, be32toh(client-&gt;lease-&gt;ia.lifetime_t1), be32toh(client<br>-&gt;lease-&gt;ia.lifetime_t2))</span></span></td></tr>
+<tr><td class="num" id="LN1012">1012</td><td class="line">                                         <span class='macro'>be32toh(client-&gt;lease-&gt;ia.lifetime_t2))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1012, __func__, "DHCPv6 CLIENT: " "infinite T1 0x%08x or T2 0x%08x"<br>, be32toh(client-&gt;lease-&gt;ia.lifetime_t1), be32toh(client<br>-&gt;lease-&gt;ia.lifetime_t2))</span></span>;</td></tr>
+<tr><td class="num" id="LN1013">1013</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1014">1014</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1015">1015</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1016">1016</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1017">1017</td><td class="line">                timeout = client_timeout_compute_random(be32toh(client-&gt;lease-&gt;ia.lifetime_t1) * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
 <tr><td class="num" id="LN1018">1018</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1019">1019</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1020">1020</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1021">1021</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1022">1022</td><td class="line">                timeout = client_timeout_compute_random(be32toh(client-&gt;lease-&gt;ia.lifetime_t1) * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
+<tr><td class="num" id="LN1019">1019</td><td class="line">                <span class='macro'>log_dhcp6_client(client, <span class='string_literal'>"T1 expires in %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1022, __func__, "DHCPv6 CLIENT: " "T1 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
+<tr><td class="num" id="LN1020">1020</td><td class="line">                                 <span class='macro'>format_timespan(time_string,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1022, __func__, "DHCPv6 CLIENT: " "T1 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
+<tr><td class="num" id="LN1021">1021</td><td class="line">                                                 <span class='macro'>FORMAT_TIMESPAN_MAX,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1022, __func__, "DHCPv6 CLIENT: " "T1 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
+<tr><td class="num" id="LN1022">1022</td><td class="line">                                                 <span class='macro'>timeout, 0))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1022, __func__, "DHCPv6 CLIENT: " "T1 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span>;</td></tr>
 <tr><td class="num" id="LN1023">1023</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1024">1024</td><td class="line">                <span class='macro'>log_dhcp6_client(client, <span class='string_literal'>"T1 expires in %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1027, __func__, "DHCPv6 CLIENT: " "T1 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
-<tr><td class="num" id="LN1025">1025</td><td class="line">                                 <span class='macro'>format_timespan(time_string,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1027, __func__, "DHCPv6 CLIENT: " "T1 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
-<tr><td class="num" id="LN1026">1026</td><td class="line">                                                 <span class='macro'>FORMAT_TIMESPAN_MAX,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1027, __func__, "DHCPv6 CLIENT: " "T1 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
-<tr><td class="num" id="LN1027">1027</td><td class="line">                                                 <span class='macro'>timeout, 0))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1027, __func__, "DHCPv6 CLIENT: " "T1 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span>;</td></tr>
-<tr><td class="num" id="LN1028">1028</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1029">1029</td><td class="line">                r = sd_event_add_time(client-&gt;event,</td></tr>
-<tr><td class="num" id="LN1030">1030</td><td class="line">                                      &amp;client-&gt;lease-&gt;ia.timeout_t1,</td></tr>
-<tr><td class="num" id="LN1031">1031</td><td class="line">                                      clock_boottime_or_monotonic(), time_now + timeout,</td></tr>
-<tr><td class="num" id="LN1032">1032</td><td class="line">                                      10 * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>, client_timeout_t1,</td></tr>
-<tr><td class="num" id="LN1033">1033</td><td class="line">                                      client);</td></tr>
+<tr><td class="num" id="LN1024">1024</td><td class="line">                r = sd_event_add_time(client-&gt;event,</td></tr>
+<tr><td class="num" id="LN1025">1025</td><td class="line">                                      &amp;client-&gt;lease-&gt;ia.timeout_t1,</td></tr>
+<tr><td class="num" id="LN1026">1026</td><td class="line">                                      clock_boottime_or_monotonic(), time_now + timeout,</td></tr>
+<tr><td class="num" id="LN1027">1027</td><td class="line">                                      10 * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>, client_timeout_t1,</td></tr>
+<tr><td class="num" id="LN1028">1028</td><td class="line">                                      client);</td></tr>
+<tr><td class="num" id="LN1029">1029</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1030">1030</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1031">1031</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1032">1032</td><td class="line">                r = sd_event_source_set_priority(client-&gt;lease-&gt;ia.timeout_t1,</td></tr>
+<tr><td class="num" id="LN1033">1033</td><td class="line">                                                 client-&gt;event_priority);</td></tr>
 <tr><td class="num" id="LN1034">1034</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1035">1035</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1036">1036</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1037">1037</td><td class="line">                r = sd_event_source_set_priority(client-&gt;lease-&gt;ia.timeout_t1,</td></tr>
-<tr><td class="num" id="LN1038">1038</td><td class="line">                                                 client-&gt;event_priority);</td></tr>
-<tr><td class="num" id="LN1039">1039</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1040">1040</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1041">1041</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1042">1042</td><td class="line">                r = sd_event_source_set_description(client-&gt;lease-&gt;ia.timeout_t1, <span class='string_literal'>"dhcp6-t1-timeout"</span>);</td></tr>
-<tr><td class="num" id="LN1043">1043</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1044">1044</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1045">1045</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1046">1046</td><td class="line">                timeout = client_timeout_compute_random(be32toh(client-&gt;lease-&gt;ia.lifetime_t2) * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
+<tr><td class="num" id="LN1037">1037</td><td class="line">                r = sd_event_source_set_description(client-&gt;lease-&gt;ia.timeout_t1, <span class='string_literal'>"dhcp6-t1-timeout"</span>);</td></tr>
+<tr><td class="num" id="LN1038">1038</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1039">1039</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1040">1040</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1041">1041</td><td class="line">                timeout = client_timeout_compute_random(be32toh(client-&gt;lease-&gt;ia.lifetime_t2) * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
+<tr><td class="num" id="LN1042">1042</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1043">1043</td><td class="line">                <span class='macro'>log_dhcp6_client(client, <span class='string_literal'>"T2 expires in %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1046, __func__, "DHCPv6 CLIENT: " "T2 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
+<tr><td class="num" id="LN1044">1044</td><td class="line">                                 <span class='macro'>format_timespan(time_string,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1046, __func__, "DHCPv6 CLIENT: " "T2 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
+<tr><td class="num" id="LN1045">1045</td><td class="line">                                                 <span class='macro'>FORMAT_TIMESPAN_MAX,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1046, __func__, "DHCPv6 CLIENT: " "T2 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
+<tr><td class="num" id="LN1046">1046</td><td class="line">                                                 <span class='macro'>timeout, 0))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1046, __func__, "DHCPv6 CLIENT: " "T2 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span>;</td></tr>
 <tr><td class="num" id="LN1047">1047</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1048">1048</td><td class="line">                <span class='macro'>log_dhcp6_client(client, <span class='string_literal'>"T2 expires in %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1051, __func__, "DHCPv6 CLIENT: " "T2 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
-<tr><td class="num" id="LN1049">1049</td><td class="line">                                 <span class='macro'>format_timespan(time_string,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1051, __func__, "DHCPv6 CLIENT: " "T2 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
-<tr><td class="num" id="LN1050">1050</td><td class="line">                                                 <span class='macro'>FORMAT_TIMESPAN_MAX,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1051, __func__, "DHCPv6 CLIENT: " "T2 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span></td></tr>
-<tr><td class="num" id="LN1051">1051</td><td class="line">                                                 <span class='macro'>timeout, 0))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1051, __func__, "DHCPv6 CLIENT: " "T2 expires in %s", format_timespan<br>(time_string, 64, timeout, 0))</span></span>;</td></tr>
-<tr><td class="num" id="LN1052">1052</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1053">1053</td><td class="line">                r = sd_event_add_time(client-&gt;event,</td></tr>
-<tr><td class="num" id="LN1054">1054</td><td class="line">                                      &amp;client-&gt;lease-&gt;ia.timeout_t2,</td></tr>
-<tr><td class="num" id="LN1055">1055</td><td class="line">                                      clock_boottime_or_monotonic(), time_now + timeout,</td></tr>
-<tr><td class="num" id="LN1056">1056</td><td class="line">                                      10 * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>, client_timeout_t2,</td></tr>
-<tr><td class="num" id="LN1057">1057</td><td class="line">                                      client);</td></tr>
+<tr><td class="num" id="LN1048">1048</td><td class="line">                r = sd_event_add_time(client-&gt;event,</td></tr>
+<tr><td class="num" id="LN1049">1049</td><td class="line">                                      &amp;client-&gt;lease-&gt;ia.timeout_t2,</td></tr>
+<tr><td class="num" id="LN1050">1050</td><td class="line">                                      clock_boottime_or_monotonic(), time_now + timeout,</td></tr>
+<tr><td class="num" id="LN1051">1051</td><td class="line">                                      10 * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>, client_timeout_t2,</td></tr>
+<tr><td class="num" id="LN1052">1052</td><td class="line">                                      client);</td></tr>
+<tr><td class="num" id="LN1053">1053</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1054">1054</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1055">1055</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1056">1056</td><td class="line">                r = sd_event_source_set_priority(client-&gt;lease-&gt;ia.timeout_t2,</td></tr>
+<tr><td class="num" id="LN1057">1057</td><td class="line">                                                 client-&gt;event_priority);</td></tr>
 <tr><td class="num" id="LN1058">1058</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1059">1059</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1060">1060</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1061">1061</td><td class="line">                r = sd_event_source_set_priority(client-&gt;lease-&gt;ia.timeout_t2,</td></tr>
-<tr><td class="num" id="LN1062">1062</td><td class="line">                                                 client-&gt;event_priority);</td></tr>
-<tr><td class="num" id="LN1063">1063</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1064">1064</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1065">1065</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1066">1066</td><td class="line">                r = sd_event_source_set_description(client-&gt;lease-&gt;ia.timeout_t2, <span class='string_literal'>"dhcp6-t2-timeout"</span>);</td></tr>
-<tr><td class="num" id="LN1067">1067</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1068">1068</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1061">1061</td><td class="line">                r = sd_event_source_set_description(client-&gt;lease-&gt;ia.timeout_t2, <span class='string_literal'>"dhcp6-t2-timeout"</span>);</td></tr>
+<tr><td class="num" id="LN1062">1062</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1063">1063</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1064">1064</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1065">1065</td><td class="line">                client-&gt;state = state;</td></tr>
+<tr><td class="num" id="LN1066">1066</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1067">1067</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1068">1068</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1069">1069</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1070">1070</td><td class="line">                client-&gt;state = state;</td></tr>
-<tr><td class="num" id="LN1071">1071</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1072">1072</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1073">1073</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1074">1074</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1075">1075</td><td class="line">        client-&gt;transaction_id = random_u32() &amp; htobe32(0x00ffffff);</td></tr>
-<tr><td class="num" id="LN1076">1076</td><td class="line">        client-&gt;transaction_start = time_now;</td></tr>
-<tr><td class="num" id="LN1077">1077</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1078">1078</td><td class="line">        r = sd_event_add_time(client-&gt;event, &amp;client-&gt;timeout_resend,</td></tr>
-<tr><td class="num" id="LN1079">1079</td><td class="line">                              clock_boottime_or_monotonic(), 0, 0, client_timeout_resend,</td></tr>
-<tr><td class="num" id="LN1080">1080</td><td class="line">                              client);</td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line">        client-&gt;transaction_id = random_u32() &amp; htobe32(0x00ffffff);</td></tr>
+<tr><td class="num" id="LN1071">1071</td><td class="line">        client-&gt;transaction_start = time_now;</td></tr>
+<tr><td class="num" id="LN1072">1072</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1073">1073</td><td class="line">        r = sd_event_add_time(client-&gt;event, &amp;client-&gt;timeout_resend,</td></tr>
+<tr><td class="num" id="LN1074">1074</td><td class="line">                              clock_boottime_or_monotonic(), 0, 0, client_timeout_resend,</td></tr>
+<tr><td class="num" id="LN1075">1075</td><td class="line">                              client);</td></tr>
+<tr><td class="num" id="LN1076">1076</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1077">1077</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1078">1078</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1079">1079</td><td class="line">        r = sd_event_source_set_priority(client-&gt;timeout_resend,</td></tr>
+<tr><td class="num" id="LN1080">1080</td><td class="line">                                         client-&gt;event_priority);</td></tr>
 <tr><td class="num" id="LN1081">1081</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1082">1082</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1083">1083</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1084">1084</td><td class="line">        r = sd_event_source_set_priority(client-&gt;timeout_resend,</td></tr>
-<tr><td class="num" id="LN1085">1085</td><td class="line">                                         client-&gt;event_priority);</td></tr>
-<tr><td class="num" id="LN1086">1086</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1087">1087</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1088">1088</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1089">1089</td><td class="line">        r = sd_event_source_set_description(client-&gt;timeout_resend, <span class='string_literal'>"dhcp6-resend-timeout"</span>);</td></tr>
-<tr><td class="num" id="LN1090">1090</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1091">1091</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1092">1092</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1093">1093</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1094">1094</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1095">1095</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1096">1096</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_stop(sd_dhcp6_client *client)</td></tr>
-<tr><td class="num" id="LN1097">1097</td><td class="line">{</td></tr>
-<tr><td class="num" id="LN1098">1098</td><td class="line">        client_stop(client, DHCP6_EVENT_STOP);</td></tr>
-<tr><td class="num" id="LN1099">1099</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1100">1100</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1101">1101</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1084">1084</td><td class="line">        r = sd_event_source_set_description(client-&gt;timeout_resend, <span class='string_literal'>"dhcp6-resend-timeout"</span>);</td></tr>
+<tr><td class="num" id="LN1085">1085</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1086">1086</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1087">1087</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1088">1088</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1089">1089</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1090">1090</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1091">1091</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_stop(sd_dhcp6_client *client)</td></tr>
+<tr><td class="num" id="LN1092">1092</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN1093">1093</td><td class="line">        client_stop(client, DHCP6_EVENT_STOP);</td></tr>
+<tr><td class="num" id="LN1094">1094</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1095">1095</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1096">1096</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1097">1097</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1098">1098</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_start(sd_dhcp6_client *client)</td></tr>
+<tr><td class="num" id="LN1099">1099</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN1100">1100</td><td class="line">        <span class='keyword'>int</span> r = 0;</td></tr>
+<tr><td class="num" id="LN1101">1101</td><td class="line">        <span class='keyword'>enum</span> DHCP6State state = DHCP6_STATE_SOLICITATION;</td></tr>
 <tr><td class="num" id="LN1102">1102</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1103">1103</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_start(sd_dhcp6_client *client)</td></tr>
-<tr><td class="num" id="LN1104">1104</td><td class="line">{</td></tr>
-<tr><td class="num" id="LN1105">1105</td><td class="line">        <span class='keyword'>int</span> r = 0;</td></tr>
-<tr><td class="num" id="LN1106">1106</td><td class="line">        <span class='keyword'>enum</span> DHCP6State state = DHCP6_STATE_SOLICITATION;</td></tr>
-<tr><td class="num" id="LN1107">1107</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1108">1108</td><td class="line">        <span class='macro'>assert_return(client, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client),1))) ? (1) : (log_assert_failed_return<br>("client", "src/libsystemd-network/sd-dhcp6-client.c", 1108, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1109">1109</td><td class="line">        <span class='macro'>assert_return(client-&gt;event, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client-&gt;event),1))) ? (1)<br> : (log_assert_failed_return("client-&gt;event", "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1109, __PRETTY_FUNCTION__), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1110">1110</td><td class="line">        <span class='macro'>assert_return(client-&gt;index &gt; 0, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client-&gt;index &gt; 0),1))<br>) ? (1) : (log_assert_failed_return("client-&gt;index &gt; 0"<br>, "src/libsystemd-network/sd-dhcp6-client.c", 1110, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1111">1111</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1112">1112</td><td class="line">        r = client_reset(client);</td></tr>
-<tr><td class="num" id="LN1113">1113</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1114">1114</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1115">1115</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1116">1116</td><td class="line">        r = client_ensure_iaid(client);</td></tr>
-<tr><td class="num" id="LN1117">1117</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1118">1118</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1119">1119</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1120">1120</td><td class="line">        r = client_ensure_duid(client);</td></tr>
-<tr><td class="num" id="LN1121">1121</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1122">1122</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1123">1123</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1124">1124</td><td class="line">        r = dhcp6_network_bind_udp_socket(client-&gt;index, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN1125">1125</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1126">1126</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1127">1127</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1128">1128</td><td class="line">        client-&gt;fd = r;</td></tr>
-<tr><td class="num" id="LN1129">1129</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1130">1130</td><td class="line">        r = sd_event_add_io(client-&gt;event, &amp;client-&gt;receive_message,</td></tr>
-<tr><td class="num" id="LN1131">1131</td><td class="line">                            client-&gt;fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>, client_receive_message,</td></tr>
-<tr><td class="num" id="LN1132">1132</td><td class="line">                            client);</td></tr>
+<tr><td class="num" id="LN1103">1103</td><td class="line">        <span class='macro'>assert_return(client, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client),1))) ? (1) : (log_assert_failed_return<br>("client", "src/libsystemd-network/sd-dhcp6-client.c", 1103, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1104">1104</td><td class="line">        <span class='macro'>assert_return(client-&gt;event, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client-&gt;event),1))) ? (1)<br> : (log_assert_failed_return("client-&gt;event", "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1104, __PRETTY_FUNCTION__), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1105">1105</td><td class="line">        <span class='macro'>assert_return(client-&gt;index &gt; 0, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client-&gt;index &gt; 0),1))<br>) ? (1) : (log_assert_failed_return("client-&gt;index &gt; 0"<br>, "src/libsystemd-network/sd-dhcp6-client.c", 1105, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1106">1106</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1107">1107</td><td class="line">        r = client_reset(client);</td></tr>
+<tr><td class="num" id="LN1108">1108</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1109">1109</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1110">1110</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1111">1111</td><td class="line">        r = client_ensure_iaid(client);</td></tr>
+<tr><td class="num" id="LN1112">1112</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1113">1113</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1114">1114</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1115">1115</td><td class="line">        r = client_ensure_duid(client);</td></tr>
+<tr><td class="num" id="LN1116">1116</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1117">1117</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1118">1118</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1119">1119</td><td class="line">        r = dhcp6_network_bind_udp_socket(client-&gt;index, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN1120">1120</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1121">1121</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1122">1122</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1123">1123</td><td class="line">        client-&gt;fd = r;</td></tr>
+<tr><td class="num" id="LN1124">1124</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1125">1125</td><td class="line">        r = sd_event_add_io(client-&gt;event, &amp;client-&gt;receive_message,</td></tr>
+<tr><td class="num" id="LN1126">1126</td><td class="line">                            client-&gt;fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>, client_receive_message,</td></tr>
+<tr><td class="num" id="LN1127">1127</td><td class="line">                            client);</td></tr>
+<tr><td class="num" id="LN1128">1128</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1129">1129</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
+<tr><td class="num" id="LN1130">1130</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1131">1131</td><td class="line">        r = sd_event_source_set_priority(client-&gt;receive_message,</td></tr>
+<tr><td class="num" id="LN1132">1132</td><td class="line">                                         client-&gt;event_priority);</td></tr>
 <tr><td class="num" id="LN1133">1133</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1134">1134</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
 <tr><td class="num" id="LN1135">1135</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1136">1136</td><td class="line">        r = sd_event_source_set_priority(client-&gt;receive_message,</td></tr>
-<tr><td class="num" id="LN1137">1137</td><td class="line">                                         client-&gt;event_priority);</td></tr>
+<tr><td class="num" id="LN1136">1136</td><td class="line">        r = sd_event_source_set_description(client-&gt;receive_message,</td></tr>
+<tr><td class="num" id="LN1137">1137</td><td class="line">                                        <span class='string_literal'>"dhcp6-receive-message"</span>);</td></tr>
 <tr><td class="num" id="LN1138">1138</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1139">1139</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
 <tr><td class="num" id="LN1140">1140</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1141">1141</td><td class="line">        r = sd_event_source_set_description(client-&gt;receive_message,</td></tr>
-<tr><td class="num" id="LN1142">1142</td><td class="line">                                        <span class='string_literal'>"dhcp6-receive-message"</span>);</td></tr>
-<tr><td class="num" id="LN1143">1143</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1144">1144</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
-<tr><td class="num" id="LN1145">1145</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1146">1146</td><td class="line">        <span class='keyword'>if</span> (client-&gt;information_request)</td></tr>
-<tr><td class="num" id="LN1147">1147</td><td class="line">                state = DHCP6_STATE_INFORMATION_REQUEST;</td></tr>
-<tr><td class="num" id="LN1148">1148</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1149">1149</td><td class="line">        <span class='macro'>log_dhcp6_client(client, <span class='string_literal'>"Started in %s mode"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1151, __func__, "DHCPv6 CLIENT: " "Started in %s mode", client<br>-&gt;information_request? "Information request": "Managed")</span></span></td></tr>
-<tr><td class="num" id="LN1150">1150</td><td class="line">                        <span class='macro'>client-&gt;information_request? <span class='string_literal'>"Information request"</span>:<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1151, __func__, "DHCPv6 CLIENT: " "Started in %s mode", client<br>-&gt;information_request? "Information request": "Managed")</span></span></td></tr>
-<tr><td class="num" id="LN1151">1151</td><td class="line">                        <span class='string_literal'><span class='macro'>"Managed"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1151, __func__, "DHCPv6 CLIENT: " "Started in %s mode", client<br>-&gt;information_request? "Information request": "Managed")</span></span>;</td></tr>
-<tr><td class="num" id="LN1152">1152</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1153">1153</td><td class="line">        <span class='keyword'>return</span> client_start(client, state);</td></tr>
+<tr><td class="num" id="LN1141">1141</td><td class="line">        <span class='keyword'>if</span> (client-&gt;information_request)</td></tr>
+<tr><td class="num" id="LN1142">1142</td><td class="line">                state = DHCP6_STATE_INFORMATION_REQUEST;</td></tr>
+<tr><td class="num" id="LN1143">1143</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1144">1144</td><td class="line">        <span class='macro'>log_dhcp6_client(client, <span class='string_literal'>"Started in %s mode"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1146, __func__, "DHCPv6 CLIENT: " "Started in %s mode", client<br>-&gt;information_request? "Information request": "Managed")</span></span></td></tr>
+<tr><td class="num" id="LN1145">1145</td><td class="line">                        <span class='macro'>client-&gt;information_request? <span class='string_literal'>"Information request"</span>:<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1146, __func__, "DHCPv6 CLIENT: " "Started in %s mode", client<br>-&gt;information_request? "Information request": "Managed")</span></span></td></tr>
+<tr><td class="num" id="LN1146">1146</td><td class="line">                        <span class='string_literal'><span class='macro'>"Managed"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1146, __func__, "DHCPv6 CLIENT: " "Started in %s mode", client<br>-&gt;information_request? "Information request": "Managed")</span></span>;</td></tr>
+<tr><td class="num" id="LN1147">1147</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1148">1148</td><td class="line">        <span class='keyword'>return</span> client_start(client, state);</td></tr>
+<tr><td class="num" id="LN1149">1149</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1150">1150</td><td class="line">error:</td></tr>
+<tr><td class="num" id="LN1151">1151</td><td class="line">        client_reset(client);</td></tr>
+<tr><td class="num" id="LN1152">1152</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1153">1153</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1154">1154</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1155">1155</td><td class="line">error:</td></tr>
-<tr><td class="num" id="LN1156">1156</td><td class="line">        client_reset(client);</td></tr>
-<tr><td class="num" id="LN1157">1157</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1158">1158</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1155">1155</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_attach_event(sd_dhcp6_client *client, sd_event *event,</td></tr>
+<tr><td class="num" id="LN1156">1156</td><td class="line">                                 <span class='keyword'>int</span> priority)</td></tr>
+<tr><td class="num" id="LN1157">1157</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN1158">1158</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN1159">1159</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1160">1160</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_attach_event(sd_dhcp6_client *client, sd_event *event,</td></tr>
-<tr><td class="num" id="LN1161">1161</td><td class="line">                                 <span class='keyword'>int</span> priority)</td></tr>
-<tr><td class="num" id="LN1162">1162</td><td class="line">{</td></tr>
-<tr><td class="num" id="LN1163">1163</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN1164">1164</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1165">1165</td><td class="line">        <span class='macro'>assert_return(client, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client),1))) ? (1) : (log_assert_failed_return<br>("client", "src/libsystemd-network/sd-dhcp6-client.c", 1165, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1166">1166</td><td class="line">        <span class='macro'>assert_return(!client-&gt;event, -EBUSY)<span class='expansion'>do { if (!(((__builtin_expect(!!(!client-&gt;event),1))) ? (1<br>) : (log_assert_failed_return("!client-&gt;event", "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1166, __PRETTY_FUNCTION__), 0))) return (-16); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1167">1167</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1168">1168</td><td class="line">        <span class='keyword'>if</span> (event)</td></tr>
-<tr><td class="num" id="LN1169">1169</td><td class="line">                client-&gt;event = sd_event_ref(event);</td></tr>
-<tr><td class="num" id="LN1170">1170</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN1171">1171</td><td class="line">                r = sd_event_default(&amp;client-&gt;event);</td></tr>
-<tr><td class="num" id="LN1172">1172</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1173">1173</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1174">1174</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1160">1160</td><td class="line">        <span class='macro'>assert_return(client, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client),1))) ? (1) : (log_assert_failed_return<br>("client", "src/libsystemd-network/sd-dhcp6-client.c", 1160, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1161">1161</td><td class="line">        <span class='macro'>assert_return(!client-&gt;event, -EBUSY)<span class='expansion'>do { if (!(((__builtin_expect(!!(!client-&gt;event),1))) ? (1<br>) : (log_assert_failed_return("!client-&gt;event", "src/libsystemd-network/sd-dhcp6-client.c"<br>, 1161, __PRETTY_FUNCTION__), 0))) return (-16); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1162">1162</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1163">1163</td><td class="line">        <span class='keyword'>if</span> (event)</td></tr>
+<tr><td class="num" id="LN1164">1164</td><td class="line">                client-&gt;event = sd_event_ref(event);</td></tr>
+<tr><td class="num" id="LN1165">1165</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN1166">1166</td><td class="line">                r = sd_event_default(&amp;client-&gt;event);</td></tr>
+<tr><td class="num" id="LN1167">1167</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1168">1168</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1169">1169</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1170">1170</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1171">1171</td><td class="line">        client-&gt;event_priority = priority;</td></tr>
+<tr><td class="num" id="LN1172">1172</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1173">1173</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1174">1174</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1175">1175</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1176">1176</td><td class="line">        client-&gt;event_priority = priority;</td></tr>
-<tr><td class="num" id="LN1177">1177</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1178">1178</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1179">1179</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1176">1176</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_detach_event(sd_dhcp6_client *client) {</td></tr>
+<tr><td class="num" id="LN1177">1177</td><td class="line">        <span class='macro'>assert_return(client, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client),1))) ? (1) : (log_assert_failed_return<br>("client", "src/libsystemd-network/sd-dhcp6-client.c", 1177, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1178">1178</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1179">1179</td><td class="line">        client-&gt;event = sd_event_unref(client-&gt;event);</td></tr>
 <tr><td class="num" id="LN1180">1180</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1181">1181</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_detach_event(sd_dhcp6_client *client) {</td></tr>
-<tr><td class="num" id="LN1182">1182</td><td class="line">        <span class='macro'>assert_return(client, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(client),1))) ? (1) : (log_assert_failed_return<br>("client", "src/libsystemd-network/sd-dhcp6-client.c", 1182, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1181">1181</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1182">1182</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1183">1183</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1184">1184</td><td class="line">        client-&gt;event = sd_event_unref(client-&gt;event);</td></tr>
-<tr><td class="num" id="LN1185">1185</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1186">1186</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1187">1187</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1188">1188</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1189">1189</td><td class="line">sd_event *sd_dhcp6_client_get_event(sd_dhcp6_client *client) {</td></tr>
-<tr><td class="num" id="LN1190">1190</td><td class="line">        <span class='keyword'>if</span> (!client)</td></tr>
-<tr><td class="num" id="LN1191">1191</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1192">1192</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1193">1193</td><td class="line">        <span class='keyword'>return</span> client-&gt;event;</td></tr>
-<tr><td class="num" id="LN1194">1194</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1195">1195</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1196">1196</td><td class="line">sd_dhcp6_client *sd_dhcp6_client_ref(sd_dhcp6_client *client) {</td></tr>
-<tr><td class="num" id="LN1197">1197</td><td class="line">        <span class='keyword'>if</span> (client)</td></tr>
-<tr><td class="num" id="LN1198">1198</td><td class="line">                <span class='macro'>assert_se(REFCNT_INC(client-&gt;n_ref) &gt;= 2)<span class='expansion'>do { if ((__builtin_expect(!!(!((__sync_add_and_fetch(&amp;(client<br>-&gt;n_ref)._value, 1)) &gt;= 2)),0))) log_assert_failed("REFCNT_INC(client-&gt;n_ref) &gt;= 2"<br>, "src/libsystemd-network/sd-dhcp6-client.c", 1198, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1199">1199</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1200">1200</td><td class="line">        <span class='keyword'>return</span> client;</td></tr>
-<tr><td class="num" id="LN1201">1201</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1202">1202</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1203">1203</td><td class="line">sd_dhcp6_client *sd_dhcp6_client_unref(sd_dhcp6_client *client) {</td></tr>
-<tr><td class="num" id="LN1204">1204</td><td class="line">        <span class='keyword'>if</span> (client &amp;&amp; <span class='macro'>REFCNT_DEC(client-&gt;n_ref)<span class='expansion'>(__sync_sub_and_fetch(&amp;(client-&gt;n_ref)._value, 1))</span></span> == 0) {</td></tr>
-<tr><td class="num" id="LN1205">1205</td><td class="line">                client_reset(client);</td></tr>
-<tr><td class="num" id="LN1206">1206</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1207">1207</td><td class="line">                sd_dhcp6_client_detach_event(client);</td></tr>
-<tr><td class="num" id="LN1208">1208</td><td class="line">                sd_dhcp6_lease_unref(client-&gt;lease);</td></tr>
-<tr><td class="num" id="LN1209">1209</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1210">1210</td><td class="line">                free(client-&gt;req_opts);</td></tr>
-<tr><td class="num" id="LN1211">1211</td><td class="line">                free(client);</td></tr>
-<tr><td class="num" id="LN1212">1212</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1213">1213</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1214">1214</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1215">1215</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1216">1216</td><td class="line">        <span class='keyword'>return</span> client;</td></tr>
-<tr><td class="num" id="LN1217">1217</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1184">1184</td><td class="line">sd_event *sd_dhcp6_client_get_event(sd_dhcp6_client *client) {</td></tr>
+<tr><td class="num" id="LN1185">1185</td><td class="line">        <span class='keyword'>if</span> (!client)</td></tr>
+<tr><td class="num" id="LN1186">1186</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1187">1187</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1188">1188</td><td class="line">        <span class='keyword'>return</span> client-&gt;event;</td></tr>
+<tr><td class="num" id="LN1189">1189</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1190">1190</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1191">1191</td><td class="line">sd_dhcp6_client *sd_dhcp6_client_ref(sd_dhcp6_client *client) {</td></tr>
+<tr><td class="num" id="LN1192">1192</td><td class="line">        <span class='keyword'>if</span> (client)</td></tr>
+<tr><td class="num" id="LN1193">1193</td><td class="line">                <span class='macro'>assert_se(REFCNT_INC(client-&gt;n_ref) &gt;= 2)<span class='expansion'>do { if ((__builtin_expect(!!(!((__sync_add_and_fetch(&amp;(client<br>-&gt;n_ref)._value, 1)) &gt;= 2)),0))) log_assert_failed("REFCNT_INC(client-&gt;n_ref) &gt;= 2"<br>, "src/libsystemd-network/sd-dhcp6-client.c", 1193, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1194">1194</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1195">1195</td><td class="line">        <span class='keyword'>return</span> client;</td></tr>
+<tr><td class="num" id="LN1196">1196</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1197">1197</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1198">1198</td><td class="line">sd_dhcp6_client *sd_dhcp6_client_unref(sd_dhcp6_client *client) {</td></tr>
+<tr><td class="num" id="LN1199">1199</td><td class="line">        <span class='keyword'>if</span> (client &amp;&amp; <span class='macro'>REFCNT_DEC(client-&gt;n_ref)<span class='expansion'>(__sync_sub_and_fetch(&amp;(client-&gt;n_ref)._value, 1))</span></span> == 0) {</td></tr>
+<tr><td class="num" id="LN1200">1200</td><td class="line">                client_reset(client);</td></tr>
+<tr><td class="num" id="LN1201">1201</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1202">1202</td><td class="line">                sd_dhcp6_client_detach_event(client);</td></tr>
+<tr><td class="num" id="LN1203">1203</td><td class="line">                sd_dhcp6_lease_unref(client-&gt;lease);</td></tr>
+<tr><td class="num" id="LN1204">1204</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1205">1205</td><td class="line">                free(client-&gt;req_opts);</td></tr>
+<tr><td class="num" id="LN1206">1206</td><td class="line">                free(client);</td></tr>
+<tr><td class="num" id="LN1207">1207</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1208">1208</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1209">1209</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1210">1210</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1211">1211</td><td class="line">        <span class='keyword'>return</span> client;</td></tr>
+<tr><td class="num" id="LN1212">1212</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1213">1213</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1214">1214</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_new(sd_dhcp6_client **ret)</td></tr>
+<tr><td class="num" id="LN1215">1215</td><td class="line">{</td></tr>
+<tr><td class="num" id="LN1216">1216</td><td class="line">        <span class='macro'>_cleanup_dhcp6_client_unref_<span class='expansion'>__attribute__((cleanup(sd_dhcp6_client_unrefp)))</span></span> sd_dhcp6_client *client = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1217">1217</td><td class="line">        size_t t;</td></tr>
 <tr><td class="num" id="LN1218">1218</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1219">1219</td><td class="line"><span class='keyword'>int</span> sd_dhcp6_client_new(sd_dhcp6_client **ret)</td></tr>
-<tr><td class="num" id="LN1220">1220</td><td class="line">{</td></tr>
-<tr><td class="num" id="LN1221">1221</td><td class="line">        <span class='macro'>_cleanup_dhcp6_client_unref_<span class='expansion'>__attribute__((cleanup(sd_dhcp6_client_unrefp)))</span></span> sd_dhcp6_client *client = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1222">1222</td><td class="line">        size_t t;</td></tr>
-<tr><td class="num" id="LN1223">1223</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1224">1224</td><td class="line">        <span class='macro'>assert_return(ret, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(ret),1))) ? (1) : (log_assert_failed_return<br>("ret", "src/libsystemd-network/sd-dhcp6-client.c", 1224, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1225">1225</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1226">1226</td><td class="line">        client = <span class='macro'>new0(sd_dhcp6_client, 1)<span class='expansion'>((sd_dhcp6_client*) calloc((1), sizeof(sd_dhcp6_client)))</span></span>;</td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">        <span class='keyword'>if</span> (!client)</td></tr>
-<tr><td class="num" id="LN1228">1228</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1229">1229</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1230">1230</td><td class="line">        client-&gt;n_ref = <span class='macro'>REFCNT_INIT<span class='expansion'>((RefCount) { ._value = 1 })</span></span>;</td></tr>
-<tr><td class="num" id="LN1231">1231</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1232">1232</td><td class="line">        client-&gt;ia_na.type = DHCP6_OPTION_IA_NA;</td></tr>
-<tr><td class="num" id="LN1233">1233</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1234">1234</td><td class="line">        client-&gt;index = -1;</td></tr>
-<tr><td class="num" id="LN1235">1235</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1236">1236</td><td class="line">        client-&gt;fd = -1;</td></tr>
-<tr><td class="num" id="LN1237">1237</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1238">1238</td><td class="line">        client-&gt;req_opts_len = <span class='macro'>ELEMENTSOF(default_req_opts)<span class='expansion'>(sizeof(default_req_opts)/sizeof((default_req_opts)[0]))</span></span>;</td></tr>
-<tr><td class="num" id="LN1239">1239</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1240">1240</td><td class="line">        client-&gt;req_opts = <span class='macro'>new0(be16_t, client-&gt;req_opts_len)<span class='expansion'>((be16_t*) calloc((client-&gt;req_opts_len), sizeof(be16_t)))</span></span>;</td></tr>
-<tr><td class="num" id="LN1241">1241</td><td class="line">        <span class='keyword'>if</span> (!client-&gt;req_opts)</td></tr>
-<tr><td class="num" id="LN1242">1242</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1243">1243</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1244">1244</td><td class="line">        <span class='keyword'>for</span> (t = 0; t &lt; client-&gt;req_opts_len; t++)</td></tr>
-<tr><td class="num" id="LN1245">1245</td><td class="line">                client-&gt;req_opts[t] = htobe16(default_req_opts[t]);</td></tr>
-<tr><td class="num" id="LN1246">1246</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1247">1247</td><td class="line">        *ret = client;</td></tr>
-<tr><td class="num" id="LN1248">1248</td><td class="line">        client = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1249">1249</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1250">1250</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1251">1251</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1219">1219</td><td class="line">        <span class='macro'>assert_return(ret, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(ret),1))) ? (1) : (log_assert_failed_return<br>("ret", "src/libsystemd-network/sd-dhcp6-client.c", 1219, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1220">1220</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1221">1221</td><td class="line">        client = <span class='macro'>new0(sd_dhcp6_client, 1)<span class='expansion'>((sd_dhcp6_client*) calloc((1), sizeof(sd_dhcp6_client)))</span></span>;</td></tr>
+<tr><td class="num" id="LN1222">1222</td><td class="line">        <span class='keyword'>if</span> (!client)</td></tr>
+<tr><td class="num" id="LN1223">1223</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1224">1224</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1225">1225</td><td class="line">        client-&gt;n_ref = <span class='macro'>REFCNT_INIT<span class='expansion'>((RefCount) { ._value = 1 })</span></span>;</td></tr>
+<tr><td class="num" id="LN1226">1226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line">        client-&gt;ia_na.type = DHCP6_OPTION_IA_NA;</td></tr>
+<tr><td class="num" id="LN1228">1228</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1229">1229</td><td class="line">        client-&gt;index = -1;</td></tr>
+<tr><td class="num" id="LN1230">1230</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1231">1231</td><td class="line">        client-&gt;fd = -1;</td></tr>
+<tr><td class="num" id="LN1232">1232</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1233">1233</td><td class="line">        client-&gt;req_opts_len = <span class='macro'>ELEMENTSOF(default_req_opts)<span class='expansion'>(sizeof(default_req_opts)/sizeof((default_req_opts)[0]))</span></span>;</td></tr>
+<tr><td class="num" id="LN1234">1234</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1235">1235</td><td class="line">        client-&gt;req_opts = <span class='macro'>new0(be16_t, client-&gt;req_opts_len)<span class='expansion'>((be16_t*) calloc((client-&gt;req_opts_len), sizeof(be16_t)))</span></span>;</td></tr>
+<tr><td class="num" id="LN1236">1236</td><td class="line">        <span class='keyword'>if</span> (!client-&gt;req_opts)</td></tr>
+<tr><td class="num" id="LN1237">1237</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1238">1238</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1239">1239</td><td class="line">        <span class='keyword'>for</span> (t = 0; t &lt; client-&gt;req_opts_len; t++)</td></tr>
+<tr><td class="num" id="LN1240">1240</td><td class="line">                client-&gt;req_opts[t] = htobe16(default_req_opts[t]);</td></tr>
+<tr><td class="num" id="LN1241">1241</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1242">1242</td><td class="line">        *ret = client;</td></tr>
+<tr><td class="num" id="LN1243">1243</td><td class="line">        client = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1244">1244</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1245">1245</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1246">1246</td><td class="line">}</td></tr>
 </table></body></html>
