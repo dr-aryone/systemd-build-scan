@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'copy_fd' is never read -->
+<!-- BUGDESC Use of memory after it is freed -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Use-after-free -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/libsystemd/sd-bus/bus-message.c -->
 
 <!-- FILENAME bus-message.c -->
 
-<!-- FUNCTIONNAME sd_bus_message_append_array_memfd -->
+<!-- FUNCTIONNAME message_extend_fields -->
 
-<!-- BUGLINE 2744 -->
+<!-- BUGLINE 207 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 19 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 38 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/libsystemd/sd-bus/bus-message.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2744, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'copy_fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 207, column 19</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Use of memory after it is freed</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -251,6 +251,8 @@
 <tr><td class="num" id="LN166">166</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/libsystemd/sd-bus/bus-message.c", 166, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN167">167</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN168">168</td><td class="line">        <span class='keyword'>if</span> (m-&gt;poisoned)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path31" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN169">169</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN170">170</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN171">171</td><td class="line">        old_size = <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> bus_header) + m-&gt;fields_size;</td></tr>
@@ -258,23 +260,35 @@
 <tr><td class="num" id="LN173">173</td><td class="line">        new_size = start + sz;</td></tr>
 <tr><td class="num" id="LN174">174</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN175">175</td><td class="line">        <span class='keyword'>if</span> (new_size &lt; start ||</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path31" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path32" title="Next event (32)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN176">176</td><td class="line">            new_size &gt; (size_t) ((uint32_t) -1))</td></tr>
 <tr><td class="num" id="LN177">177</td><td class="line">                <span class='keyword'>goto</span> poison;</td></tr>
 <tr><td class="num" id="LN178">178</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN179">179</td><td class="line">        <span class='keyword'>if</span> (old_size == new_size)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path32" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">32</div></td><td><div class="PathNav"><a href="#Path31" title="Previous event (31)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path33" title="Next event (33)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN180">180</td><td class="line">                <span class='keyword'>return</span> (uint8_t*) m-&gt;header + old_size;</td></tr>
 <tr><td class="num" id="LN181">181</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN182">182</td><td class="line">        <span class='keyword'>if</span> (m-&gt;free_header) {</td></tr>
-<tr><td class="num" id="LN183">183</td><td class="line">                np = realloc(m-&gt;header, <span class='macro'>ALIGN8(new_size)<span class='expansion'>(((new_size) + 7) &amp; ~7)</span></span>);</td></tr>
-<tr><td class="num" id="LN184">184</td><td class="line">                <span class='keyword'>if</span> (!np)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path33" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">33</div></td><td><div class="PathNav"><a href="#Path32" title="Previous event (32)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path34" title="Next event (34)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">                np = <span class="mrange">realloc(m-&gt;header, <span class='macro'>ALIGN8(new_size)<span class='expansion'>(((new_size) + 7) &amp; ~7)</span></span>)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path34" class="msg msgEvent" style="margin-left:22ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">34</div></td><td><div class="PathNav"><a href="#Path33" title="Previous event (33)">&#x2190;</a></div></td></td><td>Memory is released</td><td><div class="PathNav"><a href="#Path35" title="Next event (35)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!np</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path35" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">35</div></td><td><div class="PathNav"><a href="#Path34" title="Previous event (34)">&#x2190;</a></div></td></td><td>Assuming 'np' is non-null</td><td><div class="PathNav"><a href="#Path36" title="Next event (36)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path36" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">36</div></td><td><div class="PathNav"><a href="#Path35" title="Previous event (35)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path37" title="Next event (37)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN185">185</td><td class="line">                        <span class='keyword'>goto</span> poison;</td></tr>
 <tr><td class="num" id="LN186">186</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN187">187</td><td class="line">                <span class='comment'>/* Initially, the header is allocated as part of of</span></td></tr>
 <tr><td class="num" id="LN188">188</td><td class="line">                 <span class='comment'>* the sd_bus_message itself, let's replace it by</span></td></tr>
 <tr><td class="num" id="LN189">189</td><td class="line">                 <span class='comment'>* dynamic data */</span></td></tr>
 <tr><td class="num" id="LN190">190</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN191">191</td><td class="line">                np = malloc(<span class='macro'>ALIGN8(new_size)<span class='expansion'>(((new_size) + 7) &amp; ~7)</span></span>);</td></tr>
-<tr><td class="num" id="LN192">192</td><td class="line">                <span class='keyword'>if</span> (!np)</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">                np = <span class="mrange">malloc(<span class='macro'>ALIGN8(new_size)<span class='expansion'>(((new_size) + 7) &amp; ~7)</span></span>)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:22ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!np</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'np' is non-null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN193">193</td><td class="line">                        <span class='keyword'>goto</span> poison;</td></tr>
 <tr><td class="num" id="LN194">194</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN195">195</td><td class="line">                memcpy(np, m-&gt;header, <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> bus_header));</td></tr>
@@ -282,6 +296,8 @@
 <tr><td class="num" id="LN197">197</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN198">198</td><td class="line">        <span class='comment'>/* Zero out padding */</span></td></tr>
 <tr><td class="num" id="LN199">199</td><td class="line">        <span class='keyword'>if</span> (start &gt; old_size)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path37" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">37</div></td><td><div class="PathNav"><a href="#Path36" title="Previous event (36)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (38)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN200">200</td><td class="line">                <span class='macro'>memzero((uint8_t*) np + old_size, start - old_size)<span class='expansion'>(memset(((uint8_t*) np + old_size), 0, (start - old_size)))</span></span>;</td></tr>
 <tr><td class="num" id="LN201">201</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN202">202</td><td class="line">        op = m-&gt;header;</td></tr>
@@ -289,7 +305,8 @@
 <tr><td class="num" id="LN204">204</td><td class="line">        m-&gt;fields_size = new_size - <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> bus_header);</td></tr>
 <tr><td class="num" id="LN205">205</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN206">206</td><td class="line">        <span class='comment'>/* Adjust quick access pointers */</span></td></tr>
-<tr><td class="num" id="LN207">207</td><td class="line">        m-&gt;path = adjust_pointer(m-&gt;path, op, old_size, m-&gt;header);</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">        m-&gt;path = adjust_pointer(m-&gt;path, <span class="mrange">op</span>, old_size, m-&gt;header);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">38</div></td><td><div class="PathNav"><a href="#Path37" title="Previous event (37)">&#x2190;</a></div></td></td><td>Use of memory after it is freed</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN208">208</td><td class="line">        m-&gt;interface = adjust_pointer(m-&gt;interface, op, old_size, m-&gt;header);</td></tr>
 <tr><td class="num" id="LN209">209</td><td class="line">        m-&gt;member = adjust_pointer(m-&gt;member, op, old_size, m-&gt;header);</td></tr>
 <tr><td class="num" id="LN210">210</td><td class="line">        m-&gt;destination = adjust_pointer(m-&gt;destination, op, old_size, m-&gt;header);</td></tr>
@@ -299,6 +316,7 @@
 <tr><td class="num" id="LN214">214</td><td class="line">        m-&gt;free_header = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN215">215</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN216">216</td><td class="line">        <span class='keyword'>if</span> (add_offset) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN217">217</td><td class="line">                <span class='keyword'>if</span> (m-&gt;n_header_offsets &gt;= <span class='macro'>ELEMENTSOF(m-&gt;header_offsets)<span class='expansion'>(sizeof(m-&gt;header_offsets)/sizeof((m-&gt;header_offsets)[0<br>]))</span></span>)</td></tr>
 <tr><td class="num" id="LN218">218</td><td class="line">                        <span class='keyword'>goto</span> poison;</td></tr>
 <tr><td class="num" id="LN219">219</td><td class="line"> </td></tr>
@@ -326,20 +344,24 @@
 <tr><td class="num" id="LN241">241</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN242">242</td><td class="line">        <span class='comment'>/* dbus1 only allows 8bit header field ids */</span></td></tr>
 <tr><td class="num" id="LN243">243</td><td class="line">        <span class='keyword'>if</span> (h &gt; 0xFF)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path27" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN244">244</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN245">245</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN246">246</td><td class="line">        <span class='comment'>/* dbus1 doesn't allow strings over 32bit, let's enforce this</span></td></tr>
 <tr><td class="num" id="LN247">247</td><td class="line">         <span class='comment'>* globally, to not risk convertability */</span></td></tr>
 <tr><td class="num" id="LN248">248</td><td class="line">        l = strlen(s);</td></tr>
 <tr><td class="num" id="LN249">249</td><td class="line">        <span class='keyword'>if</span> (l &gt; (size_t) (uint32_t) -1)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path27" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path28" title="Next event (28)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN250">250</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN251">251</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN252">252</td><td class="line">        <span class='comment'>/* Signature "(yv)" where the variant contains "s" */</span></td></tr>
 <tr><td class="num" id="LN253">253</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN254">254</td><td class="line">        <span class='keyword'>if</span> (BUS_MESSAGE_IS_GVARIANT(m)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN256">256</td><td class="line">                <span class='comment'>/* (field id 64bit, ((string + NUL) + NUL + signature string 's') */</span></td></tr>
-<tr><td class="num" id="LN257">257</td><td class="line">                p = message_extend_fields(m, 8, 8 + l + 1 + 1 + 1, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">                p = <span class="mrange">message_extend_fields(m, 8, 8 + l + 1 + 1 + 1, <span class='macro'>true<span class='expansion'>1</span></span>)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Calling 'message_extend_fields'</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN258">258</td><td class="line">                <span class='keyword'>if</span> (!p)</td></tr>
 <tr><td class="num" id="LN259">259</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN260">260</td><td class="line"> </td></tr>
@@ -426,9 +448,11 @@
 <tr><td class="num" id="LN341">341</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN342">342</td><td class="line">        <span class='comment'>/* dbus1 only allows 8bit header field ids */</span></td></tr>
 <tr><td class="num" id="LN343">343</td><td class="line">        <span class='keyword'>if</span> (h &gt; 0xFF)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN344">344</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN345">345</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN346">346</td><td class="line">        <span class='keyword'>if</span> (BUS_MESSAGE_IS_GVARIANT(m)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN347">347</td><td class="line">                <span class='comment'>/* (field id 64bit + ((value + NUL + signature string 'u') */</span></td></tr>
 <tr><td class="num" id="LN348">348</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN349">349</td><td class="line">                p = message_extend_fields(m, 8, 8 + 4 + 1 + 1, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
@@ -441,8 +465,11 @@
 <tr><td class="num" id="LN356">356</td><td class="line">                p[13] = 'u';</td></tr>
 <tr><td class="num" id="LN357">357</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN358">358</td><td class="line">                <span class='comment'>/* (field id byte + (signature length + signature 'u' + NUL) + value) */</span></td></tr>
-<tr><td class="num" id="LN359">359</td><td class="line">                p = message_extend_fields(m, 8, 4 + 4, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">                p = <span class="mrange"><span class="mrange">message_extend_fields(m, 8, 4 + 4, <span class='macro'>false<span class='expansion'>0</span></span>)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Calling 'message_extend_fields'</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Returned allocated memory</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN360">360</td><td class="line">                <span class='keyword'>if</span> (!p)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN361">361</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN362">362</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN363">363</td><td class="line">                p[0] = (uint8_t) h;</td></tr>
@@ -501,13 +528,17 @@
 <tr><td class="num" id="LN416">416</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/libsystemd/sd-bus/bus-message.c", 416, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN417">417</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN418">418</td><td class="line">        <span class='keyword'>if</span> (BUS_MESSAGE_IS_GVARIANT(m))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN419">419</td><td class="line">                <span class='keyword'>return</span> message_append_field_uint64(m, BUS_MESSAGE_HEADER_REPLY_SERIAL, cookie);</td></tr>
 <tr><td class="num" id="LN420">420</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN421">421</td><td class="line">                <span class='comment'>/* 64bit cookies are not supported on dbus1 */</span></td></tr>
 <tr><td class="num" id="LN422">422</td><td class="line">                <span class='keyword'>if</span> (cookie &gt; 0xffffffffUL)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN423">423</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EOPNOTSUPP<span class='expansion'>95</span></span>;</td></tr>
 <tr><td class="num" id="LN424">424</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN425">425</td><td class="line">                <span class='keyword'>return</span> message_append_field_uint32(m, BUS_MESSAGE_HEADER_REPLY_SERIAL, (uint32_t) cookie);</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">                <span class='keyword'>return</span> <span class="mrange"><span class="mrange">message_append_field_uint32(m, BUS_MESSAGE_HEADER_REPLY_SERIAL, (uint32_t) cookie)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Calling 'message_append_field_uint32'</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Returned allocated memory</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN426">426</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN427">427</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN428">428</td><td class="line"> </td></tr>
@@ -693,8 +724,8 @@
 <tr><td class="num" id="LN608">608</td><td class="line">        m-&gt;header = (<span class='keyword'>struct</span> bus_header*) ((uint8_t*) m + <span class='macro'>ALIGN(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> sd_bus_message))<span class='expansion'>(((sizeof(struct sd_bus_message)) + 7) &amp; ~7)</span></span>);</td></tr>
 <tr><td class="num" id="LN609">609</td><td class="line">        m-&gt;header-&gt;endian = BUS_NATIVE_ENDIAN;</td></tr>
 <tr><td class="num" id="LN610">610</td><td class="line">        m-&gt;header-&gt;type = type;</td></tr>
-<tr><td class="num" id="LN611">611</td><td class="line">        m-&gt;header-&gt;version = bus ? bus-&gt;message_version : 1;</td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line">        m-&gt;allow_fds = !bus || bus-&gt;can_fds || (bus-&gt;state != BUS_HELLO &amp;&amp; bus-&gt;state != BUS_RUNNING);</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">        m-&gt;header-&gt;version = bus-&gt;message_version;</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">        m-&gt;allow_fds = bus-&gt;can_fds || (bus-&gt;state != BUS_HELLO &amp;&amp; bus-&gt;state != BUS_RUNNING);</td></tr>
 <tr><td class="num" id="LN613">613</td><td class="line">        m-&gt;root_container.need_offsets = BUS_MESSAGE_IS_GVARIANT(m);</td></tr>
 <tr><td class="num" id="LN614">614</td><td class="line">        m-&gt;bus = sd_bus_ref(bus);</td></tr>
 <tr><td class="num" id="LN615">615</td><td class="line"> </td></tr>
@@ -811,19 +842,26 @@
 <tr><td class="num" id="LN726">726</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN727">727</td><td class="line">        t = message_new(call-&gt;bus, type);</td></tr>
 <tr><td class="num" id="LN728">728</td><td class="line">        <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN729">729</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN730">730</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN731">731</td><td class="line">        t-&gt;header-&gt;flags |= BUS_MESSAGE_NO_REPLY_EXPECTED;</td></tr>
 <tr><td class="num" id="LN732">732</td><td class="line">        t-&gt;reply_cookie = BUS_MESSAGE_COOKIE(call);</td></tr>
 <tr><td class="num" id="LN733">733</td><td class="line">        <span class='keyword'>if</span> (t-&gt;reply_cookie == 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN734">734</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EOPNOTSUPP<span class='expansion'>95</span></span>;</td></tr>
 <tr><td class="num" id="LN735">735</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line">        r = message_append_reply_cookie(t, t-&gt;reply_cookie);</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">        r = <span class="mrange"><span class="mrange">message_append_reply_cookie(t, t-&gt;reply_cookie)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Calling 'message_append_reply_cookie'</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Returned allocated memory</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN737">737</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path24" title="Next event (24)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN738">738</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
 <tr><td class="num" id="LN739">739</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN740">740</td><td class="line">        <span class='keyword'>if</span> (call-&gt;sender) {</td></tr>
-<tr><td class="num" id="LN741">741</td><td class="line">                r = message_append_field_string(t, BUS_MESSAGE_HEADER_DESTINATION, SD_BUS_TYPE_STRING, call-&gt;sender, &amp;t-&gt;destination);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">                r = <span class="mrange">message_append_field_string(t, BUS_MESSAGE_HEADER_DESTINATION, SD_BUS_TYPE_STRING, call-&gt;sender, &amp;t-&gt;destination)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Calling 'message_append_field_string'</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN742">742</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN743">743</td><td class="line">                        <span class='keyword'>goto</span> fail;</td></tr>
 <tr><td class="num" id="LN744">744</td><td class="line">        }</td></tr>
@@ -2829,8 +2867,7 @@
 <tr><td class="num" id="LN2741">2741</td><td class="line">        part-&gt;memfd_offset = offset;</td></tr>
 <tr><td class="num" id="LN2742">2742</td><td class="line">        part-&gt;sealed = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN2743">2743</td><td class="line">        part-&gt;size = size;</td></tr>
-<tr><td class="num" id="LN2744">2744</td><td class="line">        copy_fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'copy_fd' is never read</div></td></tr>
+<tr><td class="num" id="LN2744">2744</td><td class="line">        copy_fd = -1;</td></tr>
 <tr><td class="num" id="LN2745">2745</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2746">2746</td><td class="line">        m-&gt;body_size += size;</td></tr>
 <tr><td class="num" id="LN2747">2747</td><td class="line">        message_extend_containers(m, size);</td></tr>
