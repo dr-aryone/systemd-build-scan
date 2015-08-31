@@ -64,9 +64,9 @@
 
 <!-- FILENAME bus-message.c -->
 
-<!-- FUNCTIONNAME sd_bus_message_append_array_memfd -->
+<!-- FUNCTIONNAME sd_bus_message_append_string_memfd -->
 
-<!-- BUGLINE 2742 -->
+<!-- BUGLINE 2829 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/libsystemd/sd-bus/bus-message.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2742, column 9</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2829, column 9</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Value stored to 'copy_fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -557,7 +557,7 @@
 <tr><td class="num" id="LN472">472</td><td class="line">                a += label_sz + 1;</td></tr>
 <tr><td class="num" id="LN473">473</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN474">474</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN475">475</td><td class="line">        m = <span class='macro'>malloc0(a)<span class='expansion'>(calloc((a), 1))</span></span>;</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">        m = <span class='macro'>malloc0(a)<span class='expansion'>(calloc(1, (a)))</span></span>;</td></tr>
 <tr><td class="num" id="LN476">476</td><td class="line">        <span class='keyword'>if</span> (!m)</td></tr>
 <tr><td class="num" id="LN477">477</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN478">478</td><td class="line"> </td></tr>
@@ -681,7 +681,7 @@
 <tr><td class="num" id="LN596">596</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN597">597</td><td class="line">        <span class='macro'>assert(bus)<span class='expansion'>do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed(<br>"bus", "src/libsystemd/sd-bus/bus-message.c", 597, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN598">598</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line">        m = <span class='macro'>malloc0(ALIGN(<span class='keyword'>sizeof</span>(sd_bus_message)) + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> bus_header))<span class='expansion'>(calloc(((((sizeof(sd_bus_message)) + 7) &amp; ~7) + sizeof(struct<br> bus_header)), 1))</span></span>;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">        m = <span class='macro'>malloc0(ALIGN(<span class='keyword'>sizeof</span>(sd_bus_message)) + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> bus_header))<span class='expansion'>(calloc(1, ((((sizeof(sd_bus_message)) + 7) &amp; ~7) + sizeof<br>(struct bus_header))))</span></span>;</td></tr>
 <tr><td class="num" id="LN600">600</td><td class="line">        <span class='keyword'>if</span> (!m)</td></tr>
 <tr><td class="num" id="LN601">601</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN602">602</td><td class="line"> </td></tr>
@@ -2827,8 +2827,7 @@
 <tr><td class="num" id="LN2739">2739</td><td class="line">        part-&gt;memfd_offset = offset;</td></tr>
 <tr><td class="num" id="LN2740">2740</td><td class="line">        part-&gt;sealed = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN2741">2741</td><td class="line">        part-&gt;size = size;</td></tr>
-<tr><td class="num" id="LN2742">2742</td><td class="line">        copy_fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'copy_fd' is never read</div></td></tr>
+<tr><td class="num" id="LN2742">2742</td><td class="line">        copy_fd = -1;</td></tr>
 <tr><td class="num" id="LN2743">2743</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2744">2744</td><td class="line">        m-&gt;body_size += size;</td></tr>
 <tr><td class="num" id="LN2745">2745</td><td class="line">        message_extend_containers(m, size);</td></tr>
@@ -2915,7 +2914,8 @@
 <tr><td class="num" id="LN2826">2826</td><td class="line">        part-&gt;memfd_offset = offset;</td></tr>
 <tr><td class="num" id="LN2827">2827</td><td class="line">        part-&gt;sealed = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN2828">2828</td><td class="line">        part-&gt;size = size;</td></tr>
-<tr><td class="num" id="LN2829">2829</td><td class="line">        copy_fd = -1;</td></tr>
+<tr><td class="num" id="LN2829">2829</td><td class="line">        copy_fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'copy_fd' is never read</div></td></tr>
 <tr><td class="num" id="LN2830">2830</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2831">2831</td><td class="line">        m-&gt;body_size += size;</td></tr>
 <tr><td class="num" id="LN2832">2832</td><td class="line">        message_extend_containers(m, size);</td></tr>

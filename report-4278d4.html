@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 's' is never read -->
+<!-- BUGDESC Potential leak of memory pointed to by 'packet' -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/libsystemd-network/sd-pppoe.c -->
 
 <!-- FILENAME sd-pppoe.c -->
 
-<!-- FUNCTIONNAME sd_pppoe_start -->
+<!-- FUNCTIONNAME pppoe_send -->
 
-<!-- BUGLINE 785 -->
+<!-- BUGLINE 341 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 11 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 18 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/libsystemd-network/sd-pppoe.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 785, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 's' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 341, column 11</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'packet'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -392,31 +392,41 @@
 <tr><td class="num" id="LN307">307</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN308">308</td><td class="line">        link.ll.sll_ifindex = ppp-&gt;ifindex;</td></tr>
 <tr><td class="num" id="LN309">309</td><td class="line">        <span class='keyword'>if</span> (code == <span class='macro'>PADI_CODE<span class='expansion'>0x09</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN310">310</td><td class="line">                memset(&amp;link.ll.sll_addr, 0xff, <span class='macro'>ETH_ALEN<span class='expansion'>6</span></span>);</td></tr>
 <tr><td class="num" id="LN311">311</td><td class="line">        <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN312">312</td><td class="line">                memcpy(&amp;link.ll.sll_addr, &amp;ppp-&gt;peer_mac, <span class='macro'>ETH_ALEN<span class='expansion'>6</span></span>);</td></tr>
 <tr><td class="num" id="LN313">313</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN314">314</td><td class="line">        packet = <span class='macro'>malloc0(PPPOE_MAX_PACKET_SIZE)<span class='expansion'>(calloc((1484), 1))</span></span>;</td></tr>
-<tr><td class="num" id="LN315">315</td><td class="line">        <span class='keyword'>if</span> (!packet)</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">        packet = <span class='macro'>malloc0(PPPOE_MAX_PACKET_SIZE)<span class='expansion'>(calloc(1, (1484)))</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:18ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'malloc0':
+</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!packet</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Assuming 'packet' is non-null</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN316">316</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN317">317</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN318">318</td><td class="line">        packet-&gt;ver = 0x1;</td></tr>
 <tr><td class="num" id="LN319">319</td><td class="line">        packet-&gt;type = 0x1;</td></tr>
 <tr><td class="num" id="LN320">320</td><td class="line">        packet-&gt;code = code;</td></tr>
 <tr><td class="num" id="LN321">321</td><td class="line">        <span class='keyword'>if</span> (code == <span class='macro'>PADT_CODE<span class='expansion'>0xa7</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN322">322</td><td class="line">                packet-&gt;sid = ppp-&gt;session_id;</td></tr>
 <tr><td class="num" id="LN323">323</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN324">324</td><td class="line">        <span class='comment'>/* Service-Name */</span></td></tr>
 <tr><td class="num" id="LN325">325</td><td class="line">        pppoe_tag_append(packet, <span class='macro'>PPPOE_MAX_PACKET_SIZE<span class='expansion'>1484</span></span>, <span class='macro'>PTT_SRV_NAME<span class='expansion'>((__be16)(__builtin_constant_p((__u16)((0x0101))) ? ((__u16)(<br> (((__u16)((0x0101)) &amp; (__u16)0x00ffU) &lt;&lt; 8) | (((__u16<br>)((0x0101)) &amp; (__u16)0xff00U) &gt;&gt; 8))) : __fswab16((<br>0x0101))))</span></span>,</td></tr>
 <tr><td class="num" id="LN326">326</td><td class="line">                         ppp-&gt;service_name, ppp-&gt;service_name ? strlen(ppp-&gt;service_name) : 0);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:45ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>'?' condition is false</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN328">328</td><td class="line">        <span class='comment'>/* AC-Cookie */</span></td></tr>
 <tr><td class="num" id="LN329">329</td><td class="line">        <span class='keyword'>if</span> (code == <span class='macro'>PADR_CODE<span class='expansion'>0x19</span></span> &amp;&amp; ppp-&gt;tags.cookie)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN330">330</td><td class="line">                pppoe_tag_append(packet, <span class='macro'>PPPOE_MAX_PACKET_SIZE<span class='expansion'>1484</span></span>, <span class='macro'>PTT_AC_COOKIE<span class='expansion'>((__be16)(__builtin_constant_p((__u16)((0x0104))) ? ((__u16)(<br> (((__u16)((0x0104)) &amp; (__u16)0x00ffU) &lt;&lt; 8) | (((__u16<br>)((0x0104)) &amp; (__u16)0xff00U) &gt;&gt; 8))) : __fswab16((<br>0x0104))))</span></span>,</td></tr>
 <tr><td class="num" id="LN331">331</td><td class="line">                                 ppp-&gt;tags.cookie, ppp-&gt;tags.cookie_len);</td></tr>
 <tr><td class="num" id="LN332">332</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN333">333</td><td class="line">        <span class='comment'>/* Host-Uniq */</span></td></tr>
 <tr><td class="num" id="LN334">334</td><td class="line">        <span class='keyword'>if</span> (code != <span class='macro'>PADT_CODE<span class='expansion'>0xa7</span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN335">335</td><td class="line">                ppp-&gt;host_uniq = random_u64();</td></tr>
 <tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN337">337</td><td class="line">                pppoe_tag_append(packet, <span class='macro'>PPPOE_MAX_PACKET_SIZE<span class='expansion'>1484</span></span>, <span class='macro'>PTT_HOST_UNIQ<span class='expansion'>((__be16)(__builtin_constant_p((__u16)((0x0103))) ? ((__u16)(<br> (((__u16)((0x0103)) &amp; (__u16)0x00ffU) &lt;&lt; 8) | (((__u16<br>)((0x0103)) &amp; (__u16)0xff00U) &gt;&gt; 8))) : __fswab16((<br>0x0103))))</span></span>,</td></tr>
@@ -424,6 +434,7 @@
 <tr><td class="num" id="LN339">339</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN340">340</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN341">341</td><td class="line">        r = sendto(ppp-&gt;fd, packet, <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> pppoe_hdr) + <span class='macro'>PPPOE_PACKET_LENGTH(packet)<span class='expansion'>be16toh((packet)-&gt;length)</span></span>,</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:11ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'packet'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN342">342</td><td class="line">                   0, &amp;link.sa, <span class='keyword'>sizeof</span>(link.ll));</td></tr>
 <tr><td class="num" id="LN343">343</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN344">344</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
@@ -480,7 +491,8 @@
 <tr><td class="num" id="LN395">395</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> pppoe_send_request(sd_pppoe *ppp) {</td></tr>
 <tr><td class="num" id="LN396">396</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN397">397</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">        r = pppoe_send(ppp, <span class='macro'>PADR_CODE<span class='expansion'>0x19</span></span>);</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">        r = <span class="mrange">pppoe_send(ppp, <span class='macro'>PADR_CODE<span class='expansion'>0x19</span></span>)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Calling 'pppoe_send'</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN399">399</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN400">400</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN401">401</td><td class="line"> </td></tr>
@@ -686,18 +698,24 @@
 <tr><td class="num" id="LN601">601</td><td class="line">        <span class='macro'>assert(packet)<span class='expansion'>do { if ((__builtin_expect(!!(!(packet)),0))) log_assert_failed<br>("packet", "src/libsystemd-network/sd-pppoe.c", 601, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN602">602</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN603">603</td><td class="line">        <span class='keyword'>if</span> (packet-&gt;ver != 0x1 || packet-&gt;type != 0x1)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN604">604</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN605">605</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN606">606</td><td class="line">        r = pppoe_payload_parse(&amp;ppp-&gt;tags, packet);</td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN608">608</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN609">609</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN610">610</td><td class="line">        <span class='keyword'>switch</span> (ppp-&gt;state) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Control jumps to 'case PPPOE_STATE_INITIALIZING:'  at line 611</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN611">611</td><td class="line">        <span class='keyword'>case</span> PPPOE_STATE_INITIALIZING:</td></tr>
 <tr><td class="num" id="LN612">612</td><td class="line">                <span class='keyword'>if</span> (packet-&gt;code != <span class='macro'>PADO_CODE<span class='expansion'>0x07</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN613">613</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN614">614</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN615">615</td><td class="line">                <span class='keyword'>if</span> (ppp-&gt;tags.host_uniq_len != <span class='keyword'>sizeof</span>(ppp-&gt;host_uniq) ||</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN616">616</td><td class="line">                    memcmp(ppp-&gt;tags.host_uniq, &amp;ppp-&gt;host_uniq, <span class='keyword'>sizeof</span>(ppp-&gt;host_uniq)) != 0)</td></tr>
 <tr><td class="num" id="LN617">617</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN618">618</td><td class="line"> </td></tr>
@@ -717,11 +735,13 @@
 <tr><td class="num" id="LN632">632</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN633">633</td><td class="line">                r = pppoe_open_pppoe_socket(ppp);</td></tr>
 <tr><td class="num" id="LN634">634</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN635">635</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"PPPoE: could not open socket"</span>)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/libsystemd-network/sd-pppoe.c"<br>, 635, __func__, "PPPoE: could not open socket") : -abs(_e); }<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN636">636</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN637">637</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN638">638</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line">                r = pppoe_send_request(ppp);</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">                r = <span class="mrange">pppoe_send_request(ppp)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Calling 'pppoe_send_request'</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN640">640</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN641">641</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN642">642</td><td class="line"> </td></tr>
@@ -803,7 +823,7 @@
 <tr><td class="num" id="LN718">718</td><td class="line">                <span class='comment'>/* this can't be right */</span></td></tr>
 <tr><td class="num" id="LN719">719</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
 <tr><td class="num" id="LN720">720</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line">        packet = <span class='macro'>malloc0(buflen)<span class='expansion'>(calloc((buflen), 1))</span></span>;</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">        packet = <span class='macro'>malloc0(buflen)<span class='expansion'>(calloc(1, (buflen)))</span></span>;</td></tr>
 <tr><td class="num" id="LN722">722</td><td class="line">        <span class='keyword'>if</span> (!packet)</td></tr>
 <tr><td class="num" id="LN723">723</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN724">724</td><td class="line"> </td></tr>
@@ -867,8 +887,7 @@
 <tr><td class="num" id="LN782">782</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN783">783</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN784">784</td><td class="line">        ppp-&gt;fd = s;</td></tr>
-<tr><td class="num" id="LN785">785</td><td class="line">        s = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 's' is never read</div></td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">        s = -1;</td></tr>
 <tr><td class="num" id="LN786">786</td><td class="line">        ppp-&gt;io = io;</td></tr>
 <tr><td class="num" id="LN787">787</td><td class="line">        io = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN788">788</td><td class="line"> </td></tr>
