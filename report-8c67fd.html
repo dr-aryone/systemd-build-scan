@@ -64,20 +64,20 @@
 
 <!-- FILENAME transaction.c -->
 
-<!-- FUNCTIONNAME transaction_verify_order_one -->
+<!-- FUNCTIONNAME delete_one_unmergeable_job -->
 
-<!-- BUGLINE 371 -->
+<!-- BUGLINE 196 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 33 -->
 
-<!-- BUGPATHLENGTH 4 -->
+<!-- BUGPATHLENGTH 3 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/core/transaction.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 371, column 17</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 196, column 33</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Access to field 'id' results in a dereference of a null pointer (loaded from field 'unit')</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -259,11 +259,13 @@
 <tr><td class="num" id="LN174">174</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN175">175</td><td class="line">                        <span class='comment'>/* Is this one mergeable? Then skip it */</span></td></tr>
 <tr><td class="num" id="LN176">176</td><td class="line">                        <span class='keyword'>if</span> (job_type_is_mergeable(j-&gt;type, k-&gt;type))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN177">177</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN178">178</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN179">179</td><td class="line">                        <span class='comment'>/* Ok, we found two that conflict, let's see if we can</span></td></tr>
 <tr><td class="num" id="LN180">180</td><td class="line">                         <span class='comment'>* drop one of them */</span></td></tr>
 <tr><td class="num" id="LN181">181</td><td class="line">                        <span class='keyword'>if</span> (!j-&gt;matters_to_anchor &amp;&amp; !k-&gt;matters_to_anchor) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN182">182</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN183">183</td><td class="line">                                <span class='comment'>/* Both jobs don't matter, so let's</span></td></tr>
 <tr><td class="num" id="LN184">184</td><td class="line">                                 <span class='comment'>* find the one that is smarter to</span></td></tr>
@@ -279,6 +281,10 @@
 <tr><td class="num" id="LN194">194</td><td class="line">                                               <span class='macro'>j-&gt;unit-&gt;id, job_type_to_string(j-&gt;type),<span class='expansion'>({ Unit *_u = (j-&gt;unit); _u ? log_object_internal(7, 0, "src/core/transaction.c"<br>, 195, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Looking at job %s/%s conflicted_by=%s", j-&gt;unit-&gt;id,<br> job_type_to_string(j-&gt;type), yes_no(j-&gt;type == JOB_STOP<br> &amp;&amp; job_is_conflicted_by(j))) : log_internal(7, 0, "src/core/transaction.c"<br>, 195, __func__, "Looking at job %s/%s conflicted_by=%s", j-&gt;<br>unit-&gt;id, job_type_to_string(j-&gt;type), yes_no(j-&gt;type<br> == JOB_STOP &amp;&amp; job_is_conflicted_by(j))); })</span></span></td></tr>
 <tr><td class="num" id="LN195">195</td><td class="line">                                               <span class='macro'>yes_no(j-&gt;type == JOB_STOP &amp;&amp; job_is_conflicted_by(j)))<span class='expansion'>({ Unit *_u = (j-&gt;unit); _u ? log_object_internal(7, 0, "src/core/transaction.c"<br>, 195, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Looking at job %s/%s conflicted_by=%s", j-&gt;unit-&gt;id,<br> job_type_to_string(j-&gt;type), yes_no(j-&gt;type == JOB_STOP<br> &amp;&amp; job_is_conflicted_by(j))) : log_internal(7, 0, "src/core/transaction.c"<br>, 195, __func__, "Looking at job %s/%s conflicted_by=%s", j-&gt;<br>unit-&gt;id, job_type_to_string(j-&gt;type), yes_no(j-&gt;type<br> == JOB_STOP &amp;&amp; job_is_conflicted_by(j))); })</span></span>;</td></tr>
 <tr><td class="num" id="LN196">196</td><td class="line">                                <span class='macro'>log_unit_debug(k-&gt;unit,<span class='expansion'>({ Unit *_u = (k-&gt;unit); _u ? log_object_internal(7, 0, "src/core/transaction.c"<br>, 199, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Looking at job %s/%s conflicted_by=%s", k-&gt;unit-&gt;id,<br> job_type_to_string(k-&gt;type), yes_no(k-&gt;type == JOB_STOP<br> &amp;&amp; job_is_conflicted_by(k))) : log_internal(7, 0, "src/core/transaction.c"<br>, 199, __func__, "Looking at job %s/%s conflicted_by=%s", k-&gt;<br>unit-&gt;id, job_type_to_string(k-&gt;type), yes_no(k-&gt;type<br> == JOB_STOP &amp;&amp; job_is_conflicted_by(k))); })</span></span></td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:33ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_unit_debug':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming '_u' is null</td></tr></table></div>
+<div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">b</div></td><td valign="top">Access to field 'id' results in a dereference of a null pointer (loaded from field 'unit')</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN197">197</td><td class="line">                                               <span class='string_literal'><span class='macro'>"Looking at job %s/%s conflicted_by=%s"</span>,<span class='expansion'>({ Unit *_u = (k-&gt;unit); _u ? log_object_internal(7, 0, "src/core/transaction.c"<br>, 199, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Looking at job %s/%s conflicted_by=%s", k-&gt;unit-&gt;id,<br> job_type_to_string(k-&gt;type), yes_no(k-&gt;type == JOB_STOP<br> &amp;&amp; job_is_conflicted_by(k))) : log_internal(7, 0, "src/core/transaction.c"<br>, 199, __func__, "Looking at job %s/%s conflicted_by=%s", k-&gt;<br>unit-&gt;id, job_type_to_string(k-&gt;type), yes_no(k-&gt;type<br> == JOB_STOP &amp;&amp; job_is_conflicted_by(k))); })</span></span></td></tr>
 <tr><td class="num" id="LN198">198</td><td class="line">                                               <span class='macro'>k-&gt;unit-&gt;id, job_type_to_string(k-&gt;type),<span class='expansion'>({ Unit *_u = (k-&gt;unit); _u ? log_object_internal(7, 0, "src/core/transaction.c"<br>, 199, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Looking at job %s/%s conflicted_by=%s", k-&gt;unit-&gt;id,<br> job_type_to_string(k-&gt;type), yes_no(k-&gt;type == JOB_STOP<br> &amp;&amp; job_is_conflicted_by(k))) : log_internal(7, 0, "src/core/transaction.c"<br>, 199, __func__, "Looking at job %s/%s conflicted_by=%s", k-&gt;<br>unit-&gt;id, job_type_to_string(k-&gt;type), yes_no(k-&gt;type<br> == JOB_STOP &amp;&amp; job_is_conflicted_by(k))); })</span></span></td></tr>
 <tr><td class="num" id="LN199">199</td><td class="line">                                               <span class='macro'>yes_no(k-&gt;type == JOB_STOP &amp;&amp; job_is_conflicted_by(k)))<span class='expansion'>({ Unit *_u = (k-&gt;unit); _u ? log_object_internal(7, 0, "src/core/transaction.c"<br>, 199, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Looking at job %s/%s conflicted_by=%s", k-&gt;unit-&gt;id,<br> job_type_to_string(k-&gt;type), yes_no(k-&gt;type == JOB_STOP<br> &amp;&amp; job_is_conflicted_by(k))) : log_internal(7, 0, "src/core/transaction.c"<br>, 199, __func__, "Looking at job %s/%s conflicted_by=%s", k-&gt;<br>unit-&gt;id, job_type_to_string(k-&gt;type), yes_no(k-&gt;type<br> == JOB_STOP &amp;&amp; job_is_conflicted_by(k))); })</span></span>;</td></tr>
@@ -432,9 +438,6 @@
 <tr><td class="num" id="LN347">347</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN348">348</td><td class="line">        <span class='macro'>assert(tr)<span class='expansion'>do { if ((__builtin_expect(!!(!(tr)),0))) log_assert_failed("tr"<br>, "src/core/transaction.c", 348, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN349">349</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/transaction.c", 349, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming 'j' is non-null</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN350">350</td><td class="line">        <span class='macro'>assert(!j-&gt;transaction_prev)<span class='expansion'>do { if ((__builtin_expect(!!(!(!j-&gt;transaction_prev)),0))<br>) log_assert_failed("!j-&gt;transaction_prev", "src/core/transaction.c"<br>, 350, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN351">351</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN352">352</td><td class="line">        <span class='comment'>/* Does a recursive sweep through the ordering graph, looking</span></td></tr>
@@ -442,14 +445,12 @@
 <tr><td class="num" id="LN354">354</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN355">355</td><td class="line">        <span class='comment'>/* Have we seen this before? */</span></td></tr>
 <tr><td class="num" id="LN356">356</td><td class="line">        <span class='keyword'>if</span> (j-&gt;generation == generation) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN357">357</td><td class="line">                Job *k, *delete;</td></tr>
 <tr><td class="num" id="LN358">358</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN359">359</td><td class="line">                <span class='comment'>/* If the marker is NULL we have been here already and</span></td></tr>
 <tr><td class="num" id="LN360">360</td><td class="line">                 <span class='comment'>* decided the job was loop-free from here. Hence</span></td></tr>
 <tr><td class="num" id="LN361">361</td><td class="line">                 <span class='comment'>* shortcut things and return right-away. */</span></td></tr>
 <tr><td class="num" id="LN362">362</td><td class="line">                <span class='keyword'>if</span> (!j-&gt;marker)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN363">363</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN364">364</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN365">365</td><td class="line">                <span class='comment'>/* So, the marker is not NULL and we already have been</span></td></tr>
@@ -459,10 +460,6 @@
 <tr><td class="num" id="LN369">369</td><td class="line">                 <span class='comment'>* back, since smart how we are we stored our way back</span></td></tr>
 <tr><td class="num" id="LN370">370</td><td class="line">                 <span class='comment'>* in there. */</span></td></tr>
 <tr><td class="num" id="LN371">371</td><td class="line">                <span class='macro'>log_unit_warning(j-&gt;unit,<span class='expansion'>({ Unit *_u = (j-&gt;unit); _u ? log_object_internal(4, 0, "src/core/transaction.c"<br>, 373, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Found ordering cycle on %s/%s", j-&gt;unit-&gt;id, job_type_to_string<br>(j-&gt;type)) : log_internal(4, 0, "src/core/transaction.c", 373<br>, __func__, "Found ordering cycle on %s/%s", j-&gt;unit-&gt;id<br>, job_type_to_string(j-&gt;type)); })</span></span></td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_unit_warning':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming '_u' is null</td></tr></table></div>
-<div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">b</div></td><td valign="top">Access to field 'id' results in a dereference of a null pointer (loaded from field 'unit')</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN372">372</td><td class="line">                                 <span class='string_literal'><span class='macro'>"Found ordering cycle on %s/%s"</span>,<span class='expansion'>({ Unit *_u = (j-&gt;unit); _u ? log_object_internal(4, 0, "src/core/transaction.c"<br>, 373, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Found ordering cycle on %s/%s", j-&gt;unit-&gt;id, job_type_to_string<br>(j-&gt;type)) : log_internal(4, 0, "src/core/transaction.c", 373<br>, __func__, "Found ordering cycle on %s/%s", j-&gt;unit-&gt;id<br>, job_type_to_string(j-&gt;type)); })</span></span></td></tr>
 <tr><td class="num" id="LN373">373</td><td class="line">                                 <span class='macro'>j-&gt;unit-&gt;id, job_type_to_string(j-&gt;type))<span class='expansion'>({ Unit *_u = (j-&gt;unit); _u ? log_object_internal(4, 0, "src/core/transaction.c"<br>, 373, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Found ordering cycle on %s/%s", j-&gt;unit-&gt;id, job_type_to_string<br>(j-&gt;type)) : log_internal(4, 0, "src/core/transaction.c", 373<br>, __func__, "Found ordering cycle on %s/%s", j-&gt;unit-&gt;id<br>, job_type_to_string(j-&gt;type)); })</span></span>;</td></tr>
 <tr><td class="num" id="LN374">374</td><td class="line"> </td></tr>
@@ -830,8 +827,8 @@
 <tr><td class="num" id="LN736">736</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN737">737</td><td class="line">                <span class='keyword'>if</span> (m-&gt;idle_pipe[0] &lt; 0 &amp;&amp; m-&gt;idle_pipe[1] &lt; 0 &amp;&amp;</td></tr>
 <tr><td class="num" id="LN738">738</td><td class="line">                    m-&gt;idle_pipe[2] &lt; 0 &amp;&amp; m-&gt;idle_pipe[3] &lt; 0) {</td></tr>
-<tr><td class="num" id="LN739">739</td><td class="line">                        pipe2(m-&gt;idle_pipe, <span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line">                        pipe2(m-&gt;idle_pipe + 2, <span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">                        (<span class='keyword'>void</span>) pipe2(m-&gt;idle_pipe, <span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">                        (<span class='keyword'>void</span>) pipe2(m-&gt;idle_pipe + 2, <span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
 <tr><td class="num" id="LN741">741</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN742">742</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN743">743</td><td class="line"> </td></tr>
