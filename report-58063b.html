@@ -64,20 +64,20 @@
 
 <!-- FILENAME sysv-generator.c -->
 
-<!-- FUNCTIONNAME handle_provides -->
+<!-- FUNCTIONNAME handle_dependencies -->
 
-<!-- BUGLINE 350 -->
+<!-- BUGLINE 407 -->
 
-<!-- BUGCOLUMN 19 -->
+<!-- BUGCOLUMN 21 -->
 
-<!-- BUGPATHLENGTH 33 -->
+<!-- BUGPATHLENGTH 36 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/sysv-generator/sysv-generator.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 350, column 19</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 407, column 21</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'n'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -428,15 +428,11 @@
 <tr><td class="num" id="LN343">343</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *m = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN344">344</td><td class="line">                UnitType t;</td></tr>
 <tr><td class="num" id="LN345">345</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN346">346</td><td class="line">                n = <span class="mrange">strndup(word, z)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path31" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN347">347</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!n</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path31" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Assuming 'n' is non-null</td><td><div class="PathNav"><a href="#Path32" title="Next event (32)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path32" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">32</div></td><td><div class="PathNav"><a href="#Path31" title="Previous event (31)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (33)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">                n = strndup(word, z);</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">                <span class='keyword'>if</span> (!n)</td></tr>
 <tr><td class="num" id="LN348">348</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/sysv-generator/sysv-generator.c", 348, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN349">349</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN350">350</td><td class="line">                r = sysv_translate_facility(n, basename(s-&gt;path), &amp;m);</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">33</div></td><td><div class="PathNav"><a href="#Path32" title="Previous event (32)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'n'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN351">351</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN352">352</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN353">353</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
@@ -484,16 +480,22 @@
 <tr><td class="num" id="LN395">395</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *m = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN396">396</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> is_before;</td></tr>
 <tr><td class="num" id="LN397">397</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">                n = strndup(word, z);</td></tr>
-<tr><td class="num" id="LN399">399</td><td class="line">                <span class='keyword'>if</span> (!n)</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">                n = <span class="mrange">strndup(word, z)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path31" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path32" title="Next event (32)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!n</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path32" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">32</div></td><td><div class="PathNav"><a href="#Path31" title="Previous event (31)">&#x2190;</a></div></td></td><td>Assuming 'n' is non-null</td><td><div class="PathNav"><a href="#Path33" title="Next event (33)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path33" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">33</div></td><td><div class="PathNav"><a href="#Path32" title="Previous event (32)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path34" title="Next event (34)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN400">400</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/sysv-generator/sysv-generator.c", 400, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN401">401</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN402">402</td><td class="line">                r = sysv_translate_facility(n, basename(s-&gt;path), &amp;m);</td></tr>
-<tr><td class="num" id="LN403">403</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path34" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">34</div></td><td><div class="PathNav"><a href="#Path33" title="Previous event (33)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path35" title="Next event (35)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path35" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">35</div></td><td><div class="PathNav"><a href="#Path34" title="Previous event (34)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (36)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN404">404</td><td class="line">                        <span class='macro'>log_warning_errno(r, <span class='string_literal'>"[%s:%u] Failed to translate LSB dependency %s, ignoring: %m"</span>, s-&gt;path, line, n)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/sysv-generator/sysv-generator.c"<br>, 404, __func__, "[%s:%u] Failed to translate LSB dependency %s, ignoring: %m"<br>, s-&gt;path, line, n) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN405">405</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN406">406</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN407">407</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">36</div></td><td><div class="PathNav"><a href="#Path35" title="Previous event (35)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'n'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN408">408</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN409">409</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN410">410</td><td class="line">                is_before = startswith_no_case(full_text, <span class='string_literal'>"X-Start-Before:"</span>);</td></tr>
@@ -688,21 +690,22 @@
 <tr><td class="num" id="LN572">572</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (state == LSB || state == LSB_DESCRIPTION) {</td></tr>
 <tr><td class="num" id="LN573">573</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN574">574</td><td class="line">                        <span class='keyword'>if</span> (startswith_no_case(t, <span class='string_literal'>"Provides:"</span>)) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN575">575</td><td class="line">                                state = LSB;</td></tr>
 <tr><td class="num" id="LN576">576</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line">                                r = <span class="mrange">handle_provides(s, line, t, t + 9)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Calling 'handle_provides'</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">                                r = handle_provides(s, line, t, t + 9);</td></tr>
 <tr><td class="num" id="LN578">578</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN579">579</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN580">580</td><td class="line">                        } <span class='keyword'>else</span> <span class='keyword'>if</span> (startswith_no_case(t, <span class='string_literal'>"Required-Start:"</span>) ||</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgControl" style="margin-left:32ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN581">581</td><td class="line">                                   startswith_no_case(t, <span class='string_literal'>"Should-Start:"</span>) ||</td></tr>
 <tr><td class="num" id="LN582">582</td><td class="line">                                   startswith_no_case(t, <span class='string_literal'>"X-Start-Before:"</span>) ||</td></tr>
 <tr><td class="num" id="LN583">583</td><td class="line">                                   startswith_no_case(t, <span class='string_literal'>"X-Start-After:"</span>)) {</td></tr>
 <tr><td class="num" id="LN584">584</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN585">585</td><td class="line">                                state = LSB;</td></tr>
 <tr><td class="num" id="LN586">586</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">                                r = handle_dependencies(s, line, t, strchr(t, ':') + 1);</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                                r = <span class="mrange">handle_dependencies(s, line, t, strchr(t, ':') + 1)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Calling 'handle_dependencies'</td><td><div class="PathNav"><a href="#Path31" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN588">588</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN589">589</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN590">590</td><td class="line"> </td></tr>
@@ -857,7 +860,7 @@
 <tr><td class="num" id="LN739">739</td><td class="line">                        <span class='keyword'>if</span> (hidden_file(de-&gt;d_name))</td></tr>
 <tr><td class="num" id="LN740">740</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN741">741</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">                        <span class='keyword'>if</span> (fstatat(dirfd(d), de-&gt;d_name, &amp;st, <span class='macro'>AT_SYMLINK_NOFOLLOW<span class='expansion'>0x100</span></span>) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">                        <span class='keyword'>if</span> (fstatat(dirfd(d), de-&gt;d_name, &amp;st, 0) &lt; 0) {</td></tr>
 <tr><td class="num" id="LN743">743</td><td class="line">                                <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"stat() failed on %s/%s: %m"</span>, *path, de-&gt;d_name)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/sysv-generator/sysv-generator.c"<br>, 743, __func__, "stat() failed on %s/%s: %m", *path, de-&gt;<br>d_name) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN744">744</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN745">745</td><td class="line">                        }</td></tr>
@@ -979,7 +982,7 @@
 <tr><td class="num" id="LN861">861</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN862">862</td><td class="line">                                        <span class='keyword'>if</span> (rcnd_table[i].type == RUNLEVEL_UP) {</td></tr>
 <tr><td class="num" id="LN863">863</td><td class="line">                                                service-&gt;sysv_start_priority =</td></tr>
-<tr><td class="num" id="LN864">864</td><td class="line">                                                        <span class='macro'>MAX(a*10 + b, service-&gt;sysv_start_priority)<span class='expansion'>__extension__ ({ const typeof((a*10 + b)) __unique_prefix_A6 =<br> ((a*10 + b)); const typeof((service-&gt;sysv_start_priority)<br>) __unique_prefix_B7 = ((service-&gt;sysv_start_priority)); __unique_prefix_A6<br> &gt; __unique_prefix_B7 ? __unique_prefix_A6 : __unique_prefix_B7<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line">                                                        <span class='macro'>MAX(a*10 + b, service-&gt;sysv_start_priority)<span class='expansion'>__extension__ ({ const typeof((a*10 + b)) __unique_prefix_A8 =<br> ((a*10 + b)); const typeof((service-&gt;sysv_start_priority)<br>) __unique_prefix_B9 = ((service-&gt;sysv_start_priority)); __unique_prefix_A8<br> &gt; __unique_prefix_B9 ? __unique_prefix_A8 : __unique_prefix_B9<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN865">865</td><td class="line">                                        }</td></tr>
 <tr><td class="num" id="LN866">866</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN867">867</td><td class="line">                                        r = <span class='macro'>set_ensure_allocated(&amp;runlevel_services[i], NULL)<span class='expansion'>internal_set_ensure_allocated(&amp;runlevel_services[i], ((void<br>*)0) )</span></span>;</td></tr>
