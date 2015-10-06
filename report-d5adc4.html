@@ -168,31 +168,4 @@
 <tr><td class="num" id="LN82">82</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN83">83</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN84">84</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN85">85</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN86">86</td><td class="line"><span class='keyword'>int</span> lldp_receive_packet(sd_event_source *s, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN87">87</td><td class="line">        <span class='macro'>_cleanup_tlv_packet_free_<span class='expansion'>__attribute__((cleanup(tlv_packet_freep)))</span></span> tlv_packet *packet = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN88">88</td><td class="line">        tlv_packet *p;</td></tr>
-<tr><td class="num" id="LN89">89</td><td class="line">        uint16_t length;</td></tr>
-<tr><td class="num" id="LN90">90</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN92">92</td><td class="line">        <span class='macro'>assert(fd)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd)),0))) log_assert_failed("fd"<br>, "src/libsystemd-network/lldp-network.c", 92, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN93">93</td><td class="line">        <span class='macro'>assert(userdata)<span class='expansion'>do { if ((__builtin_expect(!!(!(userdata)),0))) log_assert_failed<br>("userdata", "src/libsystemd-network/lldp-network.c", 93, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN94">94</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN95">95</td><td class="line">        r = tlv_packet_new(&amp;packet);</td></tr>
-<tr><td class="num" id="LN96">96</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN97">97</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN98">98</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN99">99</td><td class="line">        length = read(fd, &amp;packet-&gt;pdu, <span class='keyword'>sizeof</span>(packet-&gt;pdu));</td></tr>
-<tr><td class="num" id="LN100">100</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN101">101</td><td class="line">        <span class='comment'>/* Silently drop the packet */</span></td></tr>
-<tr><td class="num" id="LN102">102</td><td class="line">        <span class='keyword'>if</span> ((size_t) length &gt; <span class='macro'>ETHER_MAX_LEN<span class='expansion'>(1514 + 4)</span></span>)</td></tr>
-<tr><td class="num" id="LN103">103</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN104">104</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN105">105</td><td class="line">        packet-&gt;userdata = userdata;</td></tr>
-<tr><td class="num" id="LN106">106</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN107">107</td><td class="line">        p = packet;</td></tr>
-<tr><td class="num" id="LN108">108</td><td class="line">        packet = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN109">109</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN110">110</td><td class="line">        <span class='keyword'>return</span> lldp_handle_packet(p, (uint16_t) length);</td></tr>
-<tr><td class="num" id="LN111">111</td><td class="line">}</td></tr>
 </table></body></html>

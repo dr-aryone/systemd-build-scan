@@ -54,11 +54,11 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Access to field 'event' results in a dereference of a null pointer (loaded from variable 'source') -->
+<!-- BUGDESC Potential leak of memory pointed to by 'name' -->
 
-<!-- BUGTYPE Dereference of null pointer -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Logic error -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/journal-remote/journal-remote.c -->
 
@@ -66,19 +66,19 @@
 
 <!-- FUNCTIONNAME add_source -->
 
-<!-- BUGLINE 401 -->
+<!-- BUGLINE 396 -->
 
-<!-- BUGCOLUMN 45 -->
+<!-- BUGCOLUMN 17 -->
 
-<!-- BUGPATHLENGTH 36 -->
+<!-- BUGPATHLENGTH 31 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/journal-remote/journal-remote.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 401, column 45</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Access to field 'event' results in a dereference of a null pointer (loaded from variable 'source')</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 396, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'name'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -394,14 +394,9 @@
 <tr><td class="num" id="LN309">309</td><td class="line">        <span class='comment'>/* This takes ownership of name, but only on success. */</span></td></tr>
 <tr><td class="num" id="LN310">310</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN311">311</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal-remote/journal-remote.c", 311, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN312">312</td><td class="line">        <span class='macro'>assert(source)<span class='expansion'>do { if ((__builtin_expect(!!(!(source)),0))) log_assert_failed<br>("source", "src/journal-remote/journal-remote.c", 312, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path27" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN313">313</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN314">314</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC0(s-&gt;sources, s-&gt;sources_size, fd + 1)<span class='expansion'>greedy_realloc0((void**) &amp;(s-&gt;sources), &amp;(s-&gt;sources_size<br>), (fd + 1), sizeof((s-&gt;sources)[0]))</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path27" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path28" title="Next event (28)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN315">315</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal-remote/journal-remote.c", 315, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN316">316</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN317">317</td><td class="line">        r = get_writer(s, name, &amp;writer);</td></tr>
@@ -442,8 +437,7 @@
 <tr><td class="num" id="LN352">352</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN353">353</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> add_source(RemoteServer *s, <span class='keyword'>int</span> fd, <span class='keyword'>char</span>* name, <span class='macro'>bool<span class='expansion'>_Bool</span></span> own_name) {</td></tr>
 <tr><td class="num" id="LN354">354</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN355">355</td><td class="line">        <span class="mrange">RemoteSource *source</span> = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>'source' initialized to a null pointer value</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">        RemoteSource *source = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN356">356</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN357">357</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN358">358</td><td class="line">        <span class='comment'>/* This takes ownership of name, even on failure, if own_name is true. */</span></td></tr>
@@ -453,20 +447,19 @@
 <tr><td class="num" id="LN362">362</td><td class="line">        <span class='macro'>assert(name)<span class='expansion'>do { if ((__builtin_expect(!!(!(name)),0))) log_assert_failed<br>("name", "src/journal-remote/journal-remote.c", 362, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN363">363</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN364">364</td><td class="line">        <span class='keyword'>if</span> (!own_name) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN365">365</td><td class="line">                name = strdup(name);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">                name = <span class="mrange">strdup(name)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN366">366</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!name</span>)</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Assuming 'name' is non-null</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path24" title="Next event (24)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN367">367</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal-remote/journal-remote.c", 367, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN368">368</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN369">369</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN370">370</td><td class="line">        r = <span class="mrange"><span class="mrange">get_source_for_fd(s, fd, name, &amp;source)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Calling 'get_source_for_fd'</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Returning from 'get_source_for_fd'</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        r = get_source_for_fd(s, fd, name, &amp;source);</td></tr>
 <tr><td class="num" id="LN371">371</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path31" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN372">372</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to create source for fd:%d (%s): %m"</span>,<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 373, __func__, "Failed to create source for fd:%d (%s): %m"<br>, fd, name) : -abs(_e); })</span></span></td></tr>
 <tr><td class="num" id="LN373">373</td><td class="line">                                <span class='macro'>fd, name)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 373, __func__, "Failed to create source for fd:%d (%s): %m"<br>, fd, name) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN374">374</td><td class="line">                free(name);</td></tr>
@@ -477,8 +470,8 @@
 <tr><td class="num" id="LN379">379</td><td class="line">                            fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>|<span class='macro'>EPOLLRDHUP<span class='expansion'>EPOLLRDHUP</span></span>|<span class='macro'>EPOLLPRI<span class='expansion'>EPOLLPRI</span></span>,</td></tr>
 <tr><td class="num" id="LN380">380</td><td class="line">                            dispatch_raw_source_event, source);</td></tr>
 <tr><td class="num" id="LN381">381</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r == 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path31" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Assuming 'r' is not equal to 0</td><td><div class="PathNav"><a href="#Path32" title="Next event (32)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path32" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">32</div></td><td><div class="PathNav"><a href="#Path31" title="Previous event (31)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path33" title="Next event (33)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Assuming 'r' is not equal to 0</td><td><div class="PathNav"><a href="#Path27" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path27" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path28" title="Next event (28)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN382">382</td><td class="line">                <span class='comment'>/* Add additional source for buffer processing. It will be</span></td></tr>
 <tr><td class="num" id="LN383">383</td><td class="line">                 <span class='comment'>* enabled later. */</span></td></tr>
 <tr><td class="num" id="LN384">384</td><td class="line">                r = sd_event_add_defer(s-&gt;events, &amp;source-&gt;buffer_event,</td></tr>
@@ -486,7 +479,7 @@
 <tr><td class="num" id="LN386">386</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
 <tr><td class="num" id="LN387">387</td><td class="line">                        sd_event_source_set_enabled(source-&gt;buffer_event, SD_EVENT_OFF);</td></tr>
 <tr><td class="num" id="LN388">388</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (r == -<span class='macro'>EPERM<span class='expansion'>1</span></span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path33" class="msg msgControl" style="margin-left:16ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">33</div></td><td><div class="PathNav"><a href="#Path32" title="Previous event (32)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path34" title="Next event (34)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgControl" style="margin-left:16ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN389">389</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Falling back to sd_event_add_defer for fd:%d (%s)"</span>, fd, name)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 389, __func__, "Falling back to sd_event_add_defer for fd:%d (%s)"<br>, fd, name) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN390">390</td><td class="line">                r = sd_event_add_defer(s-&gt;events, &amp;source-&gt;event,</td></tr>
 <tr><td class="num" id="LN391">391</td><td class="line">                                       dispatch_blocking_source_event, source);</td></tr>
@@ -494,15 +487,17 @@
 <tr><td class="num" id="LN393">393</td><td class="line">                        sd_event_source_set_enabled(source-&gt;event, SD_EVENT_ON);</td></tr>
 <tr><td class="num" id="LN394">394</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN395">395</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path34" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">34</div></td><td><div class="PathNav"><a href="#Path33" title="Previous event (33)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path35" title="Next event (35)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path35" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">35</div></td><td><div class="PathNav"><a href="#Path34" title="Previous event (34)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (36)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN396">396</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to register event source for fd:%d: %m"</span>,<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 397, __func__, "Failed to register event source for fd:%d: %m"<br>, fd) : -abs(_e); })</span></span></td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error_errno':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'name'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN397">397</td><td class="line">                                <span class='macro'>fd)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 397, __func__, "Failed to register event source for fd:%d: %m"<br>, fd) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN398">398</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
 <tr><td class="num" id="LN399">399</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN400">400</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN401">401</td><td class="line">        r = sd_event_source_set_description(<span class="mrange">source</span>-&gt;event, name);</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:45ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">36</div></td><td><div class="PathNav"><a href="#Path35" title="Previous event (35)">&#x2190;</a></div></td></td><td>Access to field 'event' results in a dereference of a null pointer (loaded from variable 'source')</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">        r = sd_event_source_set_description(source-&gt;event, name);</td></tr>
 <tr><td class="num" id="LN402">402</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
 <tr><td class="num" id="LN403">403</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to set source name for fd:%d: %m"</span>, fd)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 403, __func__, "Failed to set source name for fd:%d: %m", fd<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN404">404</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
@@ -960,7 +955,7 @@
 <tr><td class="num" id="LN851">851</td><td class="line">        <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN852">852</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Received %d descriptors"</span>, n)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 852, __func__, "Received %d descriptors", n) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN853">853</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN854">854</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>MAX(http_socket, https_socket)<span class='expansion'>__extension__ ({ const typeof((http_socket)) __unique_prefix_A12<br> = ((http_socket)); const typeof((https_socket)) __unique_prefix_B13<br> = ((https_socket)); __unique_prefix_A12 &gt; __unique_prefix_B13<br> ? __unique_prefix_A12 : __unique_prefix_B13; })</span></span> &gt;= <span class='macro'>SD_LISTEN_FDS_START<span class='expansion'>3</span></span> + n) {</td></tr>
+<tr><td class="num" id="LN854">854</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>MAX(http_socket, https_socket)<span class='expansion'>__extension__ ({ const typeof((http_socket)) __unique_prefix_A10<br> = ((http_socket)); const typeof((https_socket)) __unique_prefix_B11<br> = ((https_socket)); __unique_prefix_A10 &gt; __unique_prefix_B11<br> ? __unique_prefix_A10 : __unique_prefix_B11; })</span></span> &gt;= <span class='macro'>SD_LISTEN_FDS_START<span class='expansion'>3</span></span> + n) {</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN855">855</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Received fewer sockets than expected"</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 855, __func__, "Received fewer sockets than expected") : -abs<br>(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN856">856</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EBADFD<span class='expansion'>77</span></span>;</td></tr>
@@ -1077,7 +1072,7 @@
 <tr><td class="num" id="LN954">954</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN955">955</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN956">956</td><td class="line">        <span class='keyword'>if</span> (s-&gt;active == 0) {</td></tr>
-<tr><td class="num" id="LN957">957</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Zarro sources specified"</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 957, __func__, "Zarro sources specified") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN957">957</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Zero sources specified"</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal-remote/journal-remote.c"<br>, 957, __func__, "Zero sources specified") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN958">958</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN959">959</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN960">960</td><td class="line"> </td></tr>
