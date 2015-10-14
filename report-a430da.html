@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Undefined or garbage value returned to caller -->
+<!-- BUGDESC Potential leak of memory pointed to by 'word' -->
 
-<!-- BUGTYPE Garbage return value -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Logic error -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/journal/journald-server.c -->
 
 <!-- FILENAME journald-server.c -->
 
-<!-- FUNCTIONNAME system_journal_open -->
+<!-- FUNCTIONNAME server_parse_proc_cmdline -->
 
-<!-- BUGLINE 1004 -->
+<!-- BUGLINE 1300 -->
 
 <!-- BUGCOLUMN 9 -->
 
-<!-- BUGPATHLENGTH 2 -->
+<!-- BUGPATHLENGTH 11 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/journal/journald-server.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1004, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Undefined or garbage value returned to caller</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1300, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'word'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -220,13 +220,13 @@
 <tr><td class="num" id="LN135">135</td><td class="line">         <span class='comment'>* journald will make it reset this value. */</span></td></tr>
 <tr><td class="num" id="LN136">136</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN137">137</td><td class="line">        <span class='keyword'>if</span> (patch_min_use)</td></tr>
-<tr><td class="num" id="LN138">138</td><td class="line">                metrics-&gt;min_use = <span class='macro'>MAX(metrics-&gt;min_use, sum)<span class='expansion'>__extension__ ({ const typeof((metrics-&gt;min_use)) __unique_prefix_A16<br> = ((metrics-&gt;min_use)); const typeof((sum)) __unique_prefix_B17<br> = ((sum)); __unique_prefix_A16 &gt; __unique_prefix_B17 ? __unique_prefix_A16<br> : __unique_prefix_B17; })</span></span>;</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">                metrics-&gt;min_use = <span class='macro'>MAX(metrics-&gt;min_use, sum)<span class='expansion'>__extension__ ({ const typeof((metrics-&gt;min_use)) __unique_prefix_A30<br> = ((metrics-&gt;min_use)); const typeof((sum)) __unique_prefix_B31<br> = ((sum)); __unique_prefix_A30 &gt; __unique_prefix_B31 ? __unique_prefix_A30<br> : __unique_prefix_B31; })</span></span>;</td></tr>
 <tr><td class="num" id="LN139">139</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN140">140</td><td class="line">        ss_avail = ss.f_bsize * ss.f_bavail;</td></tr>
-<tr><td class="num" id="LN141">141</td><td class="line">        avail = <span class='macro'>LESS_BY(ss_avail, metrics-&gt;keep_free)<span class='expansion'>__extension__ ({ const typeof((ss_avail)) __unique_prefix_A18<br> = ((ss_avail)); const typeof((metrics-&gt;keep_free)) __unique_prefix_B19<br> = ((metrics-&gt;keep_free)); __unique_prefix_A18 &gt; __unique_prefix_B19<br> ? __unique_prefix_A18 - __unique_prefix_B19 : 0; })</span></span>;</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">        avail = <span class='macro'>LESS_BY(ss_avail, metrics-&gt;keep_free)<span class='expansion'>__extension__ ({ const typeof((ss_avail)) __unique_prefix_A32<br> = ((ss_avail)); const typeof((metrics-&gt;keep_free)) __unique_prefix_B33<br> = ((metrics-&gt;keep_free)); __unique_prefix_A32 &gt; __unique_prefix_B33<br> ? __unique_prefix_A32 - __unique_prefix_B33 : 0; })</span></span>;</td></tr>
 <tr><td class="num" id="LN142">142</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN143">143</td><td class="line">        s-&gt;cached_space_limit = <span class='macro'>MIN(MAX(sum + avail, metrics-&gt;min_use), metrics-&gt;max_use)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>(sum + avail)) __unique_prefix_A20 = ((sum + avail)); const typeof<br>((metrics-&gt;min_use)) __unique_prefix_B21 = ((metrics-&gt;min_use<br>)); __unique_prefix_A20 &gt; __unique_prefix_B21 ? __unique_prefix_A20<br> : __unique_prefix_B21; }))) __unique_prefix_A22 = ((__extension__<br> ({ const typeof((sum + avail)) __unique_prefix_A20 = ((sum +<br> avail)); const typeof((metrics-&gt;min_use)) __unique_prefix_B21<br> = ((metrics-&gt;min_use)); __unique_prefix_A20 &gt; __unique_prefix_B21<br> ? __unique_prefix_A20 : __unique_prefix_B21; }))); const typeof<br>((metrics-&gt;max_use)) __unique_prefix_B23 = ((metrics-&gt;max_use<br>)); __unique_prefix_A22 &lt; __unique_prefix_B23 ? __unique_prefix_A22<br> : __unique_prefix_B23; })</span></span>;</td></tr>
-<tr><td class="num" id="LN144">144</td><td class="line">        s-&gt;cached_space_available = <span class='macro'>LESS_BY(s-&gt;cached_space_limit, sum)<span class='expansion'>__extension__ ({ const typeof((s-&gt;cached_space_limit)) __unique_prefix_A24<br> = ((s-&gt;cached_space_limit)); const typeof((sum)) __unique_prefix_B25<br> = ((sum)); __unique_prefix_A24 &gt; __unique_prefix_B25 ? __unique_prefix_A24<br> - __unique_prefix_B25 : 0; })</span></span>;</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">        s-&gt;cached_space_limit = <span class='macro'>MIN(MAX(sum + avail, metrics-&gt;min_use), metrics-&gt;max_use)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>(sum + avail)) __unique_prefix_A34 = ((sum + avail)); const typeof<br>((metrics-&gt;min_use)) __unique_prefix_B35 = ((metrics-&gt;min_use<br>)); __unique_prefix_A34 &gt; __unique_prefix_B35 ? __unique_prefix_A34<br> : __unique_prefix_B35; }))) __unique_prefix_A36 = ((__extension__<br> ({ const typeof((sum + avail)) __unique_prefix_A34 = ((sum +<br> avail)); const typeof((metrics-&gt;min_use)) __unique_prefix_B35<br> = ((metrics-&gt;min_use)); __unique_prefix_A34 &gt; __unique_prefix_B35<br> ? __unique_prefix_A34 : __unique_prefix_B35; }))); const typeof<br>((metrics-&gt;max_use)) __unique_prefix_B37 = ((metrics-&gt;max_use<br>)); __unique_prefix_A36 &lt; __unique_prefix_B37 ? __unique_prefix_A36<br> : __unique_prefix_B37; })</span></span>;</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">        s-&gt;cached_space_available = <span class='macro'>LESS_BY(s-&gt;cached_space_limit, sum)<span class='expansion'>__extension__ ({ const typeof((s-&gt;cached_space_limit)) __unique_prefix_A38<br> = ((s-&gt;cached_space_limit)); const typeof((sum)) __unique_prefix_B39<br> = ((sum)); __unique_prefix_A38 &gt; __unique_prefix_B39 ? __unique_prefix_A38<br> - __unique_prefix_B39 : 0; })</span></span>;</td></tr>
 <tr><td class="num" id="LN145">145</td><td class="line">        s-&gt;cached_space_timestamp = ts;</td></tr>
 <tr><td class="num" id="LN146">146</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN147">147</td><td class="line">        <span class='keyword'>if</span> (verbose) {</td></tr>
@@ -1015,8 +1015,7 @@
 <tr><td class="num" id="LN930">930</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN931">931</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> system_journal_open(Server *s, <span class='macro'>bool<span class='expansion'>_Bool</span></span> flush_requested) {</td></tr>
 <tr><td class="num" id="LN932">932</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *fn;</td></tr>
-<tr><td class="num" id="LN933">933</td><td class="line">        <span class="mrange"><span class='keyword'>int</span> r</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>'r' declared without an initial value</td><td><div class="PathNav"><a href="#EndPath" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN934">934</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN935">935</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;system_journal &amp;&amp;</td></tr>
 <tr><td class="num" id="LN936">936</td><td class="line">            (s-&gt;storage == STORAGE_PERSISTENT || s-&gt;storage == STORAGE_AUTO) &amp;&amp;</td></tr>
@@ -1087,8 +1086,7 @@
 <tr><td class="num" id="LN1001">1001</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1002">1002</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1003">1003</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1004">1004</td><td class="line">        <span class='keyword'>return</span> <span class="mrange">r</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Undefined or garbage value returned to caller</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1004">1004</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1005">1005</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1006">1006</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1007">1007</td><td class="line"><span class='keyword'>int</span> server_flush_to_var(Server *s) {</td></tr>
@@ -1238,9 +1236,9 @@
 <tr><td class="num" id="LN1151">1151</td><td class="line">        (<span class='keyword'>void</span>) ioctl(fd, <span class='macro'>SIOCINQ<span class='expansion'>0x541B</span></span>, &amp;v);</td></tr>
 <tr><td class="num" id="LN1152">1152</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1153">1153</td><td class="line">        <span class='comment'>/* Fix it up, if it is too small. We use the same fixed value as auditd here. Awful! */</span></td></tr>
-<tr><td class="num" id="LN1154">1154</td><td class="line">        m = <span class='macro'>PAGE_ALIGN(MAX3((size_t) v + 1,<span class='expansion'>ALIGN_TO((__extension__ ({ const typeof((size_t) v + 1) _c = __extension__<br> ({ const typeof(((size_t) v + 1)) __unique_prefix_A26 = (((size_t<br>) v + 1)); const typeof(((size_t) 2048)) __unique_prefix_B27 =<br> (((size_t) 2048)); __unique_prefix_A26 &gt; __unique_prefix_B27<br> ? __unique_prefix_A26 : __unique_prefix_B27; }); __extension__<br> ({ const typeof((_c)) __unique_prefix_A28 = ((_c)); const typeof<br>(((((sizeof(struct nlmsghdr)) + 7) &amp; ~7) + ((((size_t) 8970<br>) + 7) &amp; ~7))) __unique_prefix_B29 = (((((sizeof(struct nlmsghdr<br>)) + 7) &amp; ~7) + ((((size_t) 8970) + 7) &amp; ~7))); __unique_prefix_A28<br> &gt; __unique_prefix_B29 ? __unique_prefix_A28 : __unique_prefix_B29<br>; }); }) + 1), page_size())</span></span></td></tr>
-<tr><td class="num" id="LN1155">1155</td><td class="line">                            <span class='macro'>(size_t) LINE_MAX,<span class='expansion'>ALIGN_TO((__extension__ ({ const typeof((size_t) v + 1) _c = __extension__<br> ({ const typeof(((size_t) v + 1)) __unique_prefix_A26 = (((size_t<br>) v + 1)); const typeof(((size_t) 2048)) __unique_prefix_B27 =<br> (((size_t) 2048)); __unique_prefix_A26 &gt; __unique_prefix_B27<br> ? __unique_prefix_A26 : __unique_prefix_B27; }); __extension__<br> ({ const typeof((_c)) __unique_prefix_A28 = ((_c)); const typeof<br>(((((sizeof(struct nlmsghdr)) + 7) &amp; ~7) + ((((size_t) 8970<br>) + 7) &amp; ~7))) __unique_prefix_B29 = (((((sizeof(struct nlmsghdr<br>)) + 7) &amp; ~7) + ((((size_t) 8970) + 7) &amp; ~7))); __unique_prefix_A28<br> &gt; __unique_prefix_B29 ? __unique_prefix_A28 : __unique_prefix_B29<br>; }); }) + 1), page_size())</span></span></td></tr>
-<tr><td class="num" id="LN1156">1156</td><td class="line">                            <span class='macro'>ALIGN(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> nlmsghdr)) + ALIGN((size_t) MAX_AUDIT_MESSAGE_LENGTH)) + 1)<span class='expansion'>ALIGN_TO((__extension__ ({ const typeof((size_t) v + 1) _c = __extension__<br> ({ const typeof(((size_t) v + 1)) __unique_prefix_A26 = (((size_t<br>) v + 1)); const typeof(((size_t) 2048)) __unique_prefix_B27 =<br> (((size_t) 2048)); __unique_prefix_A26 &gt; __unique_prefix_B27<br> ? __unique_prefix_A26 : __unique_prefix_B27; }); __extension__<br> ({ const typeof((_c)) __unique_prefix_A28 = ((_c)); const typeof<br>(((((sizeof(struct nlmsghdr)) + 7) &amp; ~7) + ((((size_t) 8970<br>) + 7) &amp; ~7))) __unique_prefix_B29 = (((((sizeof(struct nlmsghdr<br>)) + 7) &amp; ~7) + ((((size_t) 8970) + 7) &amp; ~7))); __unique_prefix_A28<br> &gt; __unique_prefix_B29 ? __unique_prefix_A28 : __unique_prefix_B29<br>; }); }) + 1), page_size())</span></span>;</td></tr>
+<tr><td class="num" id="LN1154">1154</td><td class="line">        m = <span class='macro'>PAGE_ALIGN(MAX3((size_t) v + 1,<span class='expansion'>ALIGN_TO((__extension__ ({ const typeof((size_t) v + 1) _c = __extension__<br> ({ const typeof(((size_t) v + 1)) __unique_prefix_A40 = (((size_t<br>) v + 1)); const typeof(((size_t) 2048)) __unique_prefix_B41 =<br> (((size_t) 2048)); __unique_prefix_A40 &gt; __unique_prefix_B41<br> ? __unique_prefix_A40 : __unique_prefix_B41; }); __extension__<br> ({ const typeof((_c)) __unique_prefix_A42 = ((_c)); const typeof<br>(((((sizeof(struct nlmsghdr)) + 7) &amp; ~7) + ((((size_t) 8970<br>) + 7) &amp; ~7))) __unique_prefix_B43 = (((((sizeof(struct nlmsghdr<br>)) + 7) &amp; ~7) + ((((size_t) 8970) + 7) &amp; ~7))); __unique_prefix_A42<br> &gt; __unique_prefix_B43 ? __unique_prefix_A42 : __unique_prefix_B43<br>; }); }) + 1), page_size())</span></span></td></tr>
+<tr><td class="num" id="LN1155">1155</td><td class="line">                            <span class='macro'>(size_t) LINE_MAX,<span class='expansion'>ALIGN_TO((__extension__ ({ const typeof((size_t) v + 1) _c = __extension__<br> ({ const typeof(((size_t) v + 1)) __unique_prefix_A40 = (((size_t<br>) v + 1)); const typeof(((size_t) 2048)) __unique_prefix_B41 =<br> (((size_t) 2048)); __unique_prefix_A40 &gt; __unique_prefix_B41<br> ? __unique_prefix_A40 : __unique_prefix_B41; }); __extension__<br> ({ const typeof((_c)) __unique_prefix_A42 = ((_c)); const typeof<br>(((((sizeof(struct nlmsghdr)) + 7) &amp; ~7) + ((((size_t) 8970<br>) + 7) &amp; ~7))) __unique_prefix_B43 = (((((sizeof(struct nlmsghdr<br>)) + 7) &amp; ~7) + ((((size_t) 8970) + 7) &amp; ~7))); __unique_prefix_A42<br> &gt; __unique_prefix_B43 ? __unique_prefix_A42 : __unique_prefix_B43<br>; }); }) + 1), page_size())</span></span></td></tr>
+<tr><td class="num" id="LN1156">1156</td><td class="line">                            <span class='macro'>ALIGN(<span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> nlmsghdr)) + ALIGN((size_t) MAX_AUDIT_MESSAGE_LENGTH)) + 1)<span class='expansion'>ALIGN_TO((__extension__ ({ const typeof((size_t) v + 1) _c = __extension__<br> ({ const typeof(((size_t) v + 1)) __unique_prefix_A40 = (((size_t<br>) v + 1)); const typeof(((size_t) 2048)) __unique_prefix_B41 =<br> (((size_t) 2048)); __unique_prefix_A40 &gt; __unique_prefix_B41<br> ? __unique_prefix_A40 : __unique_prefix_B41; }); __extension__<br> ({ const typeof((_c)) __unique_prefix_A42 = ((_c)); const typeof<br>(((((sizeof(struct nlmsghdr)) + 7) &amp; ~7) + ((((size_t) 8970<br>) + 7) &amp; ~7))) __unique_prefix_B43 = (((((sizeof(struct nlmsghdr<br>)) + 7) &amp; ~7) + ((((size_t) 8970) + 7) &amp; ~7))); __unique_prefix_A42<br> &gt; __unique_prefix_B43 ? __unique_prefix_A42 : __unique_prefix_B43<br>; }); }) + 1), page_size())</span></span>;</td></tr>
 <tr><td class="num" id="LN1157">1157</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1158">1158</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(s-&gt;buffer, s-&gt;buffer_size, m)<span class='expansion'>greedy_realloc((void**) &amp;(s-&gt;buffer), &amp;(s-&gt;buffer_size<br>), (m), sizeof((s-&gt;buffer)[0]))</span></span>)</td></tr>
 <tr><td class="num" id="LN1159">1159</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1159, __func__<br>)</span></span>;</td></tr>
@@ -1379,43 +1377,56 @@
 <tr><td class="num" id="LN1292">1292</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN1293">1293</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1294">1294</td><td class="line">        r = proc_cmdline(&amp;line);</td></tr>
-<tr><td class="num" id="LN1295">1295</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1295">1295</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1296">1296</td><td class="line">                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to read /proc/cmdline, ignoring: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1296, __func__, "Failed to read /proc/cmdline, ignoring: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1297">1297</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1298">1298</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1299">1299</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1300">1300</td><td class="line">        <span class='macro'>FOREACH_WORD_QUOTED(w, l, line, state)<span class='expansion'>for ((state) = (line), (w) = split(&amp;(state), &amp;(l), (" \t\n\r"<br>), (1)); (w); (w) = split(&amp;(state), &amp;(l), (" \t\n\r")<br>, (1)))</span></span> {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'FOREACH_WORD_QUOTED':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'word'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN1301">1301</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *word;</td></tr>
 <tr><td class="num" id="LN1302">1302</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1303">1303</td><td class="line">                word = strndup(w, l);</td></tr>
-<tr><td class="num" id="LN1304">1304</td><td class="line">                <span class='keyword'>if</span> (!word)</td></tr>
+<tr><td class="num" id="LN1303">1303</td><td class="line">                word = <span class="mrange">strndup(w, l)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1304">1304</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!word</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 'word' is non-null</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1305">1305</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1306">1306</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1307">1307</td><td class="line">                <span class='keyword'>if</span> (startswith(word, <span class='string_literal'>"systemd.journald.forward_to_syslog="</span>)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1308">1308</td><td class="line">                        r = parse_boolean(word + 35);</td></tr>
 <tr><td class="num" id="LN1309">1309</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1310">1310</td><td class="line">                                <span class='macro'>log_warning(<span class='string_literal'>"Failed to parse forward to syslog switch %s. Ignoring."</span>, word + 35)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1310, __func__, "Failed to parse forward to syslog switch %s. Ignoring."<br>, word + 35) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1311">1311</td><td class="line">                        <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN1312">1312</td><td class="line">                                s-&gt;forward_to_syslog = r;</td></tr>
 <tr><td class="num" id="LN1313">1313</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (startswith(word, <span class='string_literal'>"systemd.journald.forward_to_kmsg="</span>)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1314">1314</td><td class="line">                        r = parse_boolean(word + 33);</td></tr>
 <tr><td class="num" id="LN1315">1315</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1316">1316</td><td class="line">                                <span class='macro'>log_warning(<span class='string_literal'>"Failed to parse forward to kmsg switch %s. Ignoring."</span>, word + 33)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1316, __func__, "Failed to parse forward to kmsg switch %s. Ignoring."<br>, word + 33) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1317">1317</td><td class="line">                        <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN1318">1318</td><td class="line">                                s-&gt;forward_to_kmsg = r;</td></tr>
 <tr><td class="num" id="LN1319">1319</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (startswith(word, <span class='string_literal'>"systemd.journald.forward_to_console="</span>)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1320">1320</td><td class="line">                        r = parse_boolean(word + 36);</td></tr>
 <tr><td class="num" id="LN1321">1321</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1322">1322</td><td class="line">                                <span class='macro'>log_warning(<span class='string_literal'>"Failed to parse forward to console switch %s. Ignoring."</span>, word + 36)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1322, __func__, "Failed to parse forward to console switch %s. Ignoring."<br>, word + 36) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1323">1323</td><td class="line">                        <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN1324">1324</td><td class="line">                                s-&gt;forward_to_console = r;</td></tr>
 <tr><td class="num" id="LN1325">1325</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (startswith(word, <span class='string_literal'>"systemd.journald.forward_to_wall="</span>)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1326">1326</td><td class="line">                        r = parse_boolean(word + 33);</td></tr>
 <tr><td class="num" id="LN1327">1327</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1328">1328</td><td class="line">                                <span class='macro'>log_warning(<span class='string_literal'>"Failed to parse forward to wall switch %s. Ignoring."</span>, word + 33)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1328, __func__, "Failed to parse forward to wall switch %s. Ignoring."<br>, word + 33) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1329">1329</td><td class="line">                        <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN1330">1330</td><td class="line">                                s-&gt;forward_to_wall = r;</td></tr>
 <tr><td class="num" id="LN1331">1331</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (startswith(word, <span class='string_literal'>"systemd.journald"</span>))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1332">1332</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"Invalid systemd.journald parameter. Ignoring."</span>)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1332, __func__, "Invalid systemd.journald parameter. Ignoring."<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1333">1333</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1334">1334</td><td class="line"> </td></tr>
@@ -1533,258 +1544,273 @@
 <tr><td class="num" id="LN1446">1446</td><td class="line"><span class='keyword'>int</span> server_init(Server *s) {</td></tr>
 <tr><td class="num" id="LN1447">1447</td><td class="line">        <span class='macro'>_cleanup_fdset_free_<span class='expansion'>__attribute__((cleanup(fdset_freep)))</span></span> FDSet *fds = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1448">1448</td><td class="line">        <span class='keyword'>int</span> n, r, fd;</td></tr>
-<tr><td class="num" id="LN1449">1449</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1450">1450</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-server.c", 1450, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1451">1451</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1452">1452</td><td class="line">        <span class='macro'>zero(*s)<span class='expansion'>((memset((&amp;(*s)), 0, (sizeof(*s)))))</span></span>;</td></tr>
-<tr><td class="num" id="LN1453">1453</td><td class="line">        s-&gt;syslog_fd = s-&gt;native_fd = s-&gt;stdout_fd = s-&gt;dev_kmsg_fd = s-&gt;audit_fd = s-&gt;hostname_fd = -1;</td></tr>
-<tr><td class="num" id="LN1454">1454</td><td class="line">        s-&gt;compress = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1455">1455</td><td class="line">        s-&gt;seal = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1456">1456</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1457">1457</td><td class="line">        s-&gt;sync_interval_usec = <span class='macro'>DEFAULT_SYNC_INTERVAL_USEC<span class='expansion'>(5*((usec_t) (60ULL*((usec_t) 1000000ULL))))</span></span>;</td></tr>
-<tr><td class="num" id="LN1458">1458</td><td class="line">        s-&gt;sync_scheduled = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN1459">1459</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1460">1460</td><td class="line">        s-&gt;rate_limit_interval = <span class='macro'>DEFAULT_RATE_LIMIT_INTERVAL<span class='expansion'>(30*((usec_t) 1000000ULL))</span></span>;</td></tr>
-<tr><td class="num" id="LN1461">1461</td><td class="line">        s-&gt;rate_limit_burst = <span class='macro'>DEFAULT_RATE_LIMIT_BURST<span class='expansion'>1000</span></span>;</td></tr>
-<tr><td class="num" id="LN1462">1462</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1463">1463</td><td class="line">        s-&gt;forward_to_wall = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1464">1464</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1465">1465</td><td class="line">        s-&gt;max_file_usec = <span class='macro'>DEFAULT_MAX_FILE_USEC<span class='expansion'>((usec_t) (2629800ULL*((usec_t) 1000000ULL)))</span></span>;</td></tr>
-<tr><td class="num" id="LN1466">1466</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1467">1467</td><td class="line">        s-&gt;max_level_store = <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>;</td></tr>
-<tr><td class="num" id="LN1468">1468</td><td class="line">        s-&gt;max_level_syslog = <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>;</td></tr>
-<tr><td class="num" id="LN1469">1469</td><td class="line">        s-&gt;max_level_kmsg = <span class='macro'>LOG_NOTICE<span class='expansion'>5</span></span>;</td></tr>
-<tr><td class="num" id="LN1470">1470</td><td class="line">        s-&gt;max_level_console = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>;</td></tr>
-<tr><td class="num" id="LN1471">1471</td><td class="line">        s-&gt;max_level_wall = <span class='macro'>LOG_EMERG<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN1472">1472</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1473">1473</td><td class="line">        journal_reset_metrics(&amp;s-&gt;system_metrics);</td></tr>
-<tr><td class="num" id="LN1474">1474</td><td class="line">        journal_reset_metrics(&amp;s-&gt;runtime_metrics);</td></tr>
-<tr><td class="num" id="LN1475">1475</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1476">1476</td><td class="line">        server_parse_config_file(s);</td></tr>
-<tr><td class="num" id="LN1477">1477</td><td class="line">        server_parse_proc_cmdline(s);</td></tr>
-<tr><td class="num" id="LN1478">1478</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1479">1479</td><td class="line">        <span class='keyword'>if</span> (!!s-&gt;rate_limit_interval ^ !!s-&gt;rate_limit_burst) {</td></tr>
-<tr><td class="num" id="LN1480">1480</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Setting both rate limit interval and burst from "</span>USEC_FMT<span class='string_literal'>",%u to 0,0"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1481, __func__, "Setting both rate limit interval and burst from "<br>"%" "l" "u"",%u to 0,0", s-&gt;rate_limit_interval, s-&gt;rate_limit_burst<br>) : -abs(_e); })</span></span></td></tr>
-<tr><td class="num" id="LN1481">1481</td><td class="line">                          <span class='macro'>s-&gt;rate_limit_interval, s-&gt;rate_limit_burst)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1481, __func__, "Setting both rate limit interval and burst from "<br>"%" "l" "u"",%u to 0,0", s-&gt;rate_limit_interval, s-&gt;rate_limit_burst<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1482">1482</td><td class="line">                s-&gt;rate_limit_interval = s-&gt;rate_limit_burst = 0;</td></tr>
-<tr><td class="num" id="LN1483">1483</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1484">1484</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1485">1485</td><td class="line">        (<span class='keyword'>void</span>) mkdir_p(<span class='string_literal'>"/run/systemd/journal"</span>, 0755);</td></tr>
-<tr><td class="num" id="LN1486">1486</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1487">1487</td><td class="line">        s-&gt;user_journals = <span class='macro'>ordered_hashmap_new(NULL)<span class='expansion'>internal_ordered_hashmap_new(((void*)0) )</span></span>;</td></tr>
-<tr><td class="num" id="LN1488">1488</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;user_journals)</td></tr>
-<tr><td class="num" id="LN1489">1489</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1489, __func__<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1490">1490</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1491">1491</td><td class="line">        s-&gt;mmap = mmap_cache_new();</td></tr>
-<tr><td class="num" id="LN1492">1492</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;mmap)</td></tr>
-<tr><td class="num" id="LN1493">1493</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1493, __func__<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1494">1494</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1495">1495</td><td class="line">        r = sd_event_default(&amp;s-&gt;event);</td></tr>
-<tr><td class="num" id="LN1496">1496</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1497">1497</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to create event loop: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1497, __func__, "Failed to create event loop: %m") : -abs(_e<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1498">1498</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1499">1499</td><td class="line">        sd_event_set_watchdog(s-&gt;event, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN1500">1500</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1501">1501</td><td class="line">        n = sd_listen_fds(<span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN1502">1502</td><td class="line">        <span class='keyword'>if</span> (n &lt; 0)</td></tr>
-<tr><td class="num" id="LN1503">1503</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(n, <span class='string_literal'>"Failed to read listening file descriptors from environment: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (n); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1503, __func__, "Failed to read listening file descriptors from environment: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1504">1504</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1505">1505</td><td class="line">        <span class='keyword'>for</span> (fd = <span class='macro'>SD_LISTEN_FDS_START<span class='expansion'>3</span></span>; fd &lt; <span class='macro'>SD_LISTEN_FDS_START<span class='expansion'>3</span></span> + n; fd++) {</td></tr>
-<tr><td class="num" id="LN1506">1506</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1507">1507</td><td class="line">                <span class='keyword'>if</span> (sd_is_socket_unix(fd, <span class='macro'>SOCK_DGRAM<span class='expansion'>SOCK_DGRAM</span></span>, -1, <span class='string_literal'>"/run/systemd/journal/socket"</span>, 0) &gt; 0) {</td></tr>
-<tr><td class="num" id="LN1508">1508</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1509">1509</td><td class="line">                        <span class='keyword'>if</span> (s-&gt;native_fd &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN1510">1510</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Too many native sockets passed."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1510, __func__, "Too many native sockets passed.") : -abs(_e<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1511">1511</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN1512">1512</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1513">1513</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1514">1514</td><td class="line">                        s-&gt;native_fd = fd;</td></tr>
-<tr><td class="num" id="LN1515">1515</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1516">1516</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (sd_is_socket_unix(fd, <span class='macro'>SOCK_STREAM<span class='expansion'>SOCK_STREAM</span></span>, 1, <span class='string_literal'>"/run/systemd/journal/stdout"</span>, 0) &gt; 0) {</td></tr>
-<tr><td class="num" id="LN1517">1517</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1518">1518</td><td class="line">                        <span class='keyword'>if</span> (s-&gt;stdout_fd &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN1519">1519</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Too many stdout sockets passed."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1519, __func__, "Too many stdout sockets passed.") : -abs(_e<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1520">1520</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN1521">1521</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1522">1522</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1523">1523</td><td class="line">                        s-&gt;stdout_fd = fd;</td></tr>
-<tr><td class="num" id="LN1524">1524</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1525">1525</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (sd_is_socket_unix(fd, <span class='macro'>SOCK_DGRAM<span class='expansion'>SOCK_DGRAM</span></span>, -1, <span class='string_literal'>"/dev/log"</span>, 0) &gt; 0 ||</td></tr>
-<tr><td class="num" id="LN1526">1526</td><td class="line">                           sd_is_socket_unix(fd, <span class='macro'>SOCK_DGRAM<span class='expansion'>SOCK_DGRAM</span></span>, -1, <span class='string_literal'>"/run/systemd/journal/dev-log"</span>, 0) &gt; 0) {</td></tr>
-<tr><td class="num" id="LN1527">1527</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1528">1528</td><td class="line">                        <span class='keyword'>if</span> (s-&gt;syslog_fd &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN1529">1529</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Too many /dev/log sockets passed."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1529, __func__, "Too many /dev/log sockets passed.") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1530">1530</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN1531">1531</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1532">1532</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1533">1533</td><td class="line">                        s-&gt;syslog_fd = fd;</td></tr>
-<tr><td class="num" id="LN1534">1534</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1535">1535</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (sd_is_socket(fd, <span class='macro'>AF_NETLINK<span class='expansion'>16</span></span>, <span class='macro'>SOCK_RAW<span class='expansion'>SOCK_RAW</span></span>, -1) &gt; 0) {</td></tr>
-<tr><td class="num" id="LN1536">1536</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1537">1537</td><td class="line">                        <span class='keyword'>if</span> (s-&gt;audit_fd &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN1538">1538</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Too many audit sockets passed."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1538, __func__, "Too many audit sockets passed.") : -abs(_e<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1539">1539</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN1540">1540</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1541">1541</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1542">1542</td><td class="line">                        s-&gt;audit_fd = fd;</td></tr>
-<tr><td class="num" id="LN1543">1543</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1544">1544</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN1545">1545</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1546">1546</td><td class="line">                        <span class='keyword'>if</span> (!fds) {</td></tr>
-<tr><td class="num" id="LN1547">1547</td><td class="line">                                fds = fdset_new();</td></tr>
-<tr><td class="num" id="LN1548">1548</td><td class="line">                                <span class='keyword'>if</span> (!fds)</td></tr>
-<tr><td class="num" id="LN1549">1549</td><td class="line">                                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1549, __func__<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1550">1550</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1551">1551</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1552">1552</td><td class="line">                        r = fdset_put(fds, fd);</td></tr>
-<tr><td class="num" id="LN1553">1553</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1554">1554</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1554, __func__<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1555">1555</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1556">1556</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1557">1557</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1558">1558</td><td class="line">        r = server_open_stdout_socket(s, fds);</td></tr>
-<tr><td class="num" id="LN1559">1559</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1560">1560</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1449">1449</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> no_sockets;</td></tr>
+<tr><td class="num" id="LN1450">1450</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1451">1451</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-server.c", 1451, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1452">1452</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1453">1453</td><td class="line">        <span class='macro'>zero(*s)<span class='expansion'>((memset((&amp;(*s)), 0, (sizeof(*s)))))</span></span>;</td></tr>
+<tr><td class="num" id="LN1454">1454</td><td class="line">        s-&gt;syslog_fd = s-&gt;native_fd = s-&gt;stdout_fd = s-&gt;dev_kmsg_fd = s-&gt;audit_fd = s-&gt;hostname_fd = -1;</td></tr>
+<tr><td class="num" id="LN1455">1455</td><td class="line">        s-&gt;compress = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1456">1456</td><td class="line">        s-&gt;seal = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1457">1457</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1458">1458</td><td class="line">        s-&gt;sync_interval_usec = <span class='macro'>DEFAULT_SYNC_INTERVAL_USEC<span class='expansion'>(5*((usec_t) (60ULL*((usec_t) 1000000ULL))))</span></span>;</td></tr>
+<tr><td class="num" id="LN1459">1459</td><td class="line">        s-&gt;sync_scheduled = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1460">1460</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1461">1461</td><td class="line">        s-&gt;rate_limit_interval = <span class='macro'>DEFAULT_RATE_LIMIT_INTERVAL<span class='expansion'>(30*((usec_t) 1000000ULL))</span></span>;</td></tr>
+<tr><td class="num" id="LN1462">1462</td><td class="line">        s-&gt;rate_limit_burst = <span class='macro'>DEFAULT_RATE_LIMIT_BURST<span class='expansion'>1000</span></span>;</td></tr>
+<tr><td class="num" id="LN1463">1463</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1464">1464</td><td class="line">        s-&gt;forward_to_wall = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1465">1465</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1466">1466</td><td class="line">        s-&gt;max_file_usec = <span class='macro'>DEFAULT_MAX_FILE_USEC<span class='expansion'>((usec_t) (2629800ULL*((usec_t) 1000000ULL)))</span></span>;</td></tr>
+<tr><td class="num" id="LN1467">1467</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1468">1468</td><td class="line">        s-&gt;max_level_store = <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>;</td></tr>
+<tr><td class="num" id="LN1469">1469</td><td class="line">        s-&gt;max_level_syslog = <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>;</td></tr>
+<tr><td class="num" id="LN1470">1470</td><td class="line">        s-&gt;max_level_kmsg = <span class='macro'>LOG_NOTICE<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN1471">1471</td><td class="line">        s-&gt;max_level_console = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>;</td></tr>
+<tr><td class="num" id="LN1472">1472</td><td class="line">        s-&gt;max_level_wall = <span class='macro'>LOG_EMERG<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1473">1473</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1474">1474</td><td class="line">        journal_reset_metrics(&amp;s-&gt;system_metrics);</td></tr>
+<tr><td class="num" id="LN1475">1475</td><td class="line">        journal_reset_metrics(&amp;s-&gt;runtime_metrics);</td></tr>
+<tr><td class="num" id="LN1476">1476</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1477">1477</td><td class="line">        server_parse_config_file(s);</td></tr>
+<tr><td class="num" id="LN1478">1478</td><td class="line">        server_parse_proc_cmdline(s);</td></tr>
+<tr><td class="num" id="LN1479">1479</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1480">1480</td><td class="line">        <span class='keyword'>if</span> (!!s-&gt;rate_limit_interval ^ !!s-&gt;rate_limit_burst) {</td></tr>
+<tr><td class="num" id="LN1481">1481</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Setting both rate limit interval and burst from "</span>USEC_FMT<span class='string_literal'>",%u to 0,0"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1482, __func__, "Setting both rate limit interval and burst from "<br>"%" "l" "u"",%u to 0,0", s-&gt;rate_limit_interval, s-&gt;rate_limit_burst<br>) : -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN1482">1482</td><td class="line">                          <span class='macro'>s-&gt;rate_limit_interval, s-&gt;rate_limit_burst)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1482, __func__, "Setting both rate limit interval and burst from "<br>"%" "l" "u"",%u to 0,0", s-&gt;rate_limit_interval, s-&gt;rate_limit_burst<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1483">1483</td><td class="line">                s-&gt;rate_limit_interval = s-&gt;rate_limit_burst = 0;</td></tr>
+<tr><td class="num" id="LN1484">1484</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1485">1485</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1486">1486</td><td class="line">        (<span class='keyword'>void</span>) mkdir_p(<span class='string_literal'>"/run/systemd/journal"</span>, 0755);</td></tr>
+<tr><td class="num" id="LN1487">1487</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1488">1488</td><td class="line">        s-&gt;user_journals = <span class='macro'>ordered_hashmap_new(NULL)<span class='expansion'>internal_ordered_hashmap_new(((void*)0) )</span></span>;</td></tr>
+<tr><td class="num" id="LN1489">1489</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;user_journals)</td></tr>
+<tr><td class="num" id="LN1490">1490</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1490, __func__<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1491">1491</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1492">1492</td><td class="line">        s-&gt;mmap = mmap_cache_new();</td></tr>
+<tr><td class="num" id="LN1493">1493</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;mmap)</td></tr>
+<tr><td class="num" id="LN1494">1494</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1494, __func__<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1495">1495</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1496">1496</td><td class="line">        r = sd_event_default(&amp;s-&gt;event);</td></tr>
+<tr><td class="num" id="LN1497">1497</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1498">1498</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to create event loop: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1498, __func__, "Failed to create event loop: %m") : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1499">1499</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1500">1500</td><td class="line">        sd_event_set_watchdog(s-&gt;event, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN1501">1501</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1502">1502</td><td class="line">        n = sd_listen_fds(<span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN1503">1503</td><td class="line">        <span class='keyword'>if</span> (n &lt; 0)</td></tr>
+<tr><td class="num" id="LN1504">1504</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(n, <span class='string_literal'>"Failed to read listening file descriptors from environment: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (n); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1504, __func__, "Failed to read listening file descriptors from environment: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1505">1505</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1506">1506</td><td class="line">        <span class='keyword'>for</span> (fd = <span class='macro'>SD_LISTEN_FDS_START<span class='expansion'>3</span></span>; fd &lt; <span class='macro'>SD_LISTEN_FDS_START<span class='expansion'>3</span></span> + n; fd++) {</td></tr>
+<tr><td class="num" id="LN1507">1507</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1508">1508</td><td class="line">                <span class='keyword'>if</span> (sd_is_socket_unix(fd, <span class='macro'>SOCK_DGRAM<span class='expansion'>SOCK_DGRAM</span></span>, -1, <span class='string_literal'>"/run/systemd/journal/socket"</span>, 0) &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1509">1509</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1510">1510</td><td class="line">                        <span class='keyword'>if</span> (s-&gt;native_fd &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN1511">1511</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Too many native sockets passed."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1511, __func__, "Too many native sockets passed.") : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1512">1512</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN1513">1513</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1514">1514</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1515">1515</td><td class="line">                        s-&gt;native_fd = fd;</td></tr>
+<tr><td class="num" id="LN1516">1516</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1517">1517</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (sd_is_socket_unix(fd, <span class='macro'>SOCK_STREAM<span class='expansion'>SOCK_STREAM</span></span>, 1, <span class='string_literal'>"/run/systemd/journal/stdout"</span>, 0) &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1518">1518</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1519">1519</td><td class="line">                        <span class='keyword'>if</span> (s-&gt;stdout_fd &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN1520">1520</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Too many stdout sockets passed."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1520, __func__, "Too many stdout sockets passed.") : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1521">1521</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN1522">1522</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1523">1523</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1524">1524</td><td class="line">                        s-&gt;stdout_fd = fd;</td></tr>
+<tr><td class="num" id="LN1525">1525</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1526">1526</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (sd_is_socket_unix(fd, <span class='macro'>SOCK_DGRAM<span class='expansion'>SOCK_DGRAM</span></span>, -1, <span class='string_literal'>"/dev/log"</span>, 0) &gt; 0 ||</td></tr>
+<tr><td class="num" id="LN1527">1527</td><td class="line">                           sd_is_socket_unix(fd, <span class='macro'>SOCK_DGRAM<span class='expansion'>SOCK_DGRAM</span></span>, -1, <span class='string_literal'>"/run/systemd/journal/dev-log"</span>, 0) &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1528">1528</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1529">1529</td><td class="line">                        <span class='keyword'>if</span> (s-&gt;syslog_fd &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN1530">1530</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Too many /dev/log sockets passed."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1530, __func__, "Too many /dev/log sockets passed.") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1531">1531</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN1532">1532</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1533">1533</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1534">1534</td><td class="line">                        s-&gt;syslog_fd = fd;</td></tr>
+<tr><td class="num" id="LN1535">1535</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1536">1536</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (sd_is_socket(fd, <span class='macro'>AF_NETLINK<span class='expansion'>16</span></span>, <span class='macro'>SOCK_RAW<span class='expansion'>SOCK_RAW</span></span>, -1) &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1537">1537</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1538">1538</td><td class="line">                        <span class='keyword'>if</span> (s-&gt;audit_fd &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN1539">1539</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Too many audit sockets passed."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1539, __func__, "Too many audit sockets passed.") : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1540">1540</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN1541">1541</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1542">1542</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1543">1543</td><td class="line">                        s-&gt;audit_fd = fd;</td></tr>
+<tr><td class="num" id="LN1544">1544</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1545">1545</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN1546">1546</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1547">1547</td><td class="line">                        <span class='keyword'>if</span> (!fds) {</td></tr>
+<tr><td class="num" id="LN1548">1548</td><td class="line">                                fds = fdset_new();</td></tr>
+<tr><td class="num" id="LN1549">1549</td><td class="line">                                <span class='keyword'>if</span> (!fds)</td></tr>
+<tr><td class="num" id="LN1550">1550</td><td class="line">                                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1550, __func__<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1551">1551</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1552">1552</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1553">1553</td><td class="line">                        r = fdset_put(fds, fd);</td></tr>
+<tr><td class="num" id="LN1554">1554</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1555">1555</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-server.c", 1555, __func__<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1556">1556</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1557">1557</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1558">1558</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1559">1559</td><td class="line">        <span class='comment'>/* Try to restore streams, but don't bother if this fails */</span></td></tr>
+<tr><td class="num" id="LN1560">1560</td><td class="line">        (<span class='keyword'>void</span>) server_restore_streams(s, fds);</td></tr>
 <tr><td class="num" id="LN1561">1561</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1562">1562</td><td class="line">        <span class='keyword'>if</span> (fdset_size(fds) &gt; 0) {</td></tr>
 <tr><td class="num" id="LN1563">1563</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"%u unknown file descriptors passed, closing."</span>, fdset_size(fds))<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-server.c"<br>, 1563, __func__, "%u unknown file descriptors passed, closing."<br>, fdset_size(fds)) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1564">1564</td><td class="line">                fds = fdset_free(fds);</td></tr>
 <tr><td class="num" id="LN1565">1565</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1566">1566</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1567">1567</td><td class="line">        r = server_open_syslog_socket(s);</td></tr>
-<tr><td class="num" id="LN1568">1568</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1569">1569</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1567">1567</td><td class="line">        no_sockets = s-&gt;native_fd &lt; 0 &amp;&amp; s-&gt;stdout_fd &lt; 0 &amp;&amp; s-&gt;syslog_fd &lt; 0 &amp;&amp; s-&gt;audit_fd &lt; 0;</td></tr>
+<tr><td class="num" id="LN1568">1568</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1569">1569</td><td class="line">        <span class='comment'>/* always open stdout, syslog, native, and kmsg sockets */</span></td></tr>
 <tr><td class="num" id="LN1570">1570</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1571">1571</td><td class="line">        r = server_open_native_socket(s);</td></tr>
-<tr><td class="num" id="LN1572">1572</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1573">1573</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1574">1574</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1575">1575</td><td class="line">        r = server_open_dev_kmsg(s);</td></tr>
-<tr><td class="num" id="LN1576">1576</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1577">1577</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1578">1578</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1579">1579</td><td class="line">        r = server_open_audit(s);</td></tr>
-<tr><td class="num" id="LN1580">1580</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1581">1581</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1582">1582</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1583">1583</td><td class="line">        r = server_open_kernel_seqnum(s);</td></tr>
-<tr><td class="num" id="LN1584">1584</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1585">1585</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1586">1586</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1587">1587</td><td class="line">        r = server_open_hostname(s);</td></tr>
+<tr><td class="num" id="LN1571">1571</td><td class="line">        <span class='comment'>/* systemd-journald.socket: /run/systemd/journal/stdout */</span></td></tr>
+<tr><td class="num" id="LN1572">1572</td><td class="line">        r = server_open_stdout_socket(s);</td></tr>
+<tr><td class="num" id="LN1573">1573</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1574">1574</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1575">1575</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1576">1576</td><td class="line">        <span class='comment'>/* systemd-journald-dev-log.socket: /run/systemd/journal/dev-log */</span></td></tr>
+<tr><td class="num" id="LN1577">1577</td><td class="line">        r = server_open_syslog_socket(s);</td></tr>
+<tr><td class="num" id="LN1578">1578</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1579">1579</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1580">1580</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1581">1581</td><td class="line">        <span class='comment'>/* systemd-journald.socket: /run/systemd/journal/socket */</span></td></tr>
+<tr><td class="num" id="LN1582">1582</td><td class="line">        r = server_open_native_socket(s);</td></tr>
+<tr><td class="num" id="LN1583">1583</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1584">1584</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1585">1585</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1586">1586</td><td class="line">        <span class='comment'>/* /dev/ksmg */</span></td></tr>
+<tr><td class="num" id="LN1587">1587</td><td class="line">        r = server_open_dev_kmsg(s);</td></tr>
 <tr><td class="num" id="LN1588">1588</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1589">1589</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1590">1590</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1591">1591</td><td class="line">        r = setup_signals(s);</td></tr>
-<tr><td class="num" id="LN1592">1592</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1593">1593</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1594">1594</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1595">1595</td><td class="line">        s-&gt;udev = udev_new();</td></tr>
-<tr><td class="num" id="LN1596">1596</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;udev)</td></tr>
-<tr><td class="num" id="LN1597">1597</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1598">1598</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1599">1599</td><td class="line">        s-&gt;rate_limit = journal_rate_limit_new(s-&gt;rate_limit_interval, s-&gt;rate_limit_burst);</td></tr>
-<tr><td class="num" id="LN1600">1600</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;rate_limit)</td></tr>
-<tr><td class="num" id="LN1601">1601</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1602">1602</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1603">1603</td><td class="line">        r = cg_get_root_path(&amp;s-&gt;cgroup_root);</td></tr>
-<tr><td class="num" id="LN1604">1604</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1605">1605</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1606">1606</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1607">1607</td><td class="line">        server_cache_hostname(s);</td></tr>
-<tr><td class="num" id="LN1608">1608</td><td class="line">        server_cache_boot_id(s);</td></tr>
-<tr><td class="num" id="LN1609">1609</td><td class="line">        server_cache_machine_id(s);</td></tr>
-<tr><td class="num" id="LN1610">1610</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1611">1611</td><td class="line">        <span class='keyword'>return</span> system_journal_open(s, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN1612">1612</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1591">1591</td><td class="line">        <span class='comment'>/* Unless we got *some* sockets and not audit, open audit socket */</span></td></tr>
+<tr><td class="num" id="LN1592">1592</td><td class="line">        <span class='keyword'>if</span> (s-&gt;audit_fd &gt;= 0 || no_sockets) {</td></tr>
+<tr><td class="num" id="LN1593">1593</td><td class="line">                r = server_open_audit(s);</td></tr>
+<tr><td class="num" id="LN1594">1594</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1595">1595</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1596">1596</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1597">1597</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1598">1598</td><td class="line">        r = server_open_kernel_seqnum(s);</td></tr>
+<tr><td class="num" id="LN1599">1599</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1600">1600</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1601">1601</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1602">1602</td><td class="line">        r = server_open_hostname(s);</td></tr>
+<tr><td class="num" id="LN1603">1603</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1604">1604</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1605">1605</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1606">1606</td><td class="line">        r = setup_signals(s);</td></tr>
+<tr><td class="num" id="LN1607">1607</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1608">1608</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1609">1609</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1610">1610</td><td class="line">        s-&gt;udev = udev_new();</td></tr>
+<tr><td class="num" id="LN1611">1611</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;udev)</td></tr>
+<tr><td class="num" id="LN1612">1612</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1613">1613</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1614">1614</td><td class="line"><span class='keyword'>void</span> server_maybe_append_tags(Server *s) {</td></tr>
-<tr><td class="num" id="LN1615">1615</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_GCRYPT<span class='expansion'>1</span></span></span></td></tr>
-<tr><td class="num" id="LN1616">1616</td><td class="line">        JournalFile *f;</td></tr>
-<tr><td class="num" id="LN1617">1617</td><td class="line">        Iterator i;</td></tr>
-<tr><td class="num" id="LN1618">1618</td><td class="line">        usec_t n;</td></tr>
-<tr><td class="num" id="LN1619">1619</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1620">1620</td><td class="line">        n = now(<span class='macro'>CLOCK_REALTIME<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN1614">1614</td><td class="line">        s-&gt;rate_limit = journal_rate_limit_new(s-&gt;rate_limit_interval, s-&gt;rate_limit_burst);</td></tr>
+<tr><td class="num" id="LN1615">1615</td><td class="line">        <span class='keyword'>if</span> (!s-&gt;rate_limit)</td></tr>
+<tr><td class="num" id="LN1616">1616</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1617">1617</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1618">1618</td><td class="line">        r = cg_get_root_path(&amp;s-&gt;cgroup_root);</td></tr>
+<tr><td class="num" id="LN1619">1619</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1620">1620</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1621">1621</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1622">1622</td><td class="line">        <span class='keyword'>if</span> (s-&gt;system_journal)</td></tr>
-<tr><td class="num" id="LN1623">1623</td><td class="line">                journal_file_maybe_append_tag(s-&gt;system_journal, n);</td></tr>
-<tr><td class="num" id="LN1624">1624</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1625">1625</td><td class="line">        <span class='macro'>ORDERED_HASHMAP_FOREACH(f, s-&gt;user_journals, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); ordered_hashmap_iterate((s-&gt;user_journals<br>), &amp;(i), (void**)&amp;(f), ((void*)0)); )</span></span></td></tr>
-<tr><td class="num" id="LN1626">1626</td><td class="line">                journal_file_maybe_append_tag(f, n);</td></tr>
-<tr><td class="num" id="LN1627">1627</td><td class="line"><span class='directive'>#endif</span></td></tr>
-<tr><td class="num" id="LN1628">1628</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1629">1629</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1630">1630</td><td class="line"><span class='keyword'>void</span> server_done(Server *s) {</td></tr>
+<tr><td class="num" id="LN1622">1622</td><td class="line">        server_cache_hostname(s);</td></tr>
+<tr><td class="num" id="LN1623">1623</td><td class="line">        server_cache_boot_id(s);</td></tr>
+<tr><td class="num" id="LN1624">1624</td><td class="line">        server_cache_machine_id(s);</td></tr>
+<tr><td class="num" id="LN1625">1625</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1626">1626</td><td class="line">        <span class='keyword'>return</span> system_journal_open(s, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN1627">1627</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1628">1628</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1629">1629</td><td class="line"><span class='keyword'>void</span> server_maybe_append_tags(Server *s) {</td></tr>
+<tr><td class="num" id="LN1630">1630</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_GCRYPT<span class='expansion'>1</span></span></span></td></tr>
 <tr><td class="num" id="LN1631">1631</td><td class="line">        JournalFile *f;</td></tr>
-<tr><td class="num" id="LN1632">1632</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-server.c", 1632, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1633">1633</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1634">1634</td><td class="line">        <span class='keyword'>while</span> (s-&gt;stdout_streams)</td></tr>
-<tr><td class="num" id="LN1635">1635</td><td class="line">                stdout_stream_free(s-&gt;stdout_streams);</td></tr>
+<tr><td class="num" id="LN1632">1632</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN1633">1633</td><td class="line">        usec_t n;</td></tr>
+<tr><td class="num" id="LN1634">1634</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1635">1635</td><td class="line">        n = now(<span class='macro'>CLOCK_REALTIME<span class='expansion'>0</span></span>);</td></tr>
 <tr><td class="num" id="LN1636">1636</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1637">1637</td><td class="line">        <span class='keyword'>if</span> (s-&gt;system_journal)</td></tr>
-<tr><td class="num" id="LN1638">1638</td><td class="line">                journal_file_close(s-&gt;system_journal);</td></tr>
+<tr><td class="num" id="LN1638">1638</td><td class="line">                journal_file_maybe_append_tag(s-&gt;system_journal, n);</td></tr>
 <tr><td class="num" id="LN1639">1639</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1640">1640</td><td class="line">        <span class='keyword'>if</span> (s-&gt;runtime_journal)</td></tr>
-<tr><td class="num" id="LN1641">1641</td><td class="line">                journal_file_close(s-&gt;runtime_journal);</td></tr>
-<tr><td class="num" id="LN1642">1642</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1643">1643</td><td class="line">        <span class='keyword'>while</span> ((f = ordered_hashmap_steal_first(s-&gt;user_journals)))</td></tr>
-<tr><td class="num" id="LN1644">1644</td><td class="line">                journal_file_close(f);</td></tr>
-<tr><td class="num" id="LN1645">1645</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1646">1646</td><td class="line">        ordered_hashmap_free(s-&gt;user_journals);</td></tr>
-<tr><td class="num" id="LN1647">1647</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1648">1648</td><td class="line">        sd_event_source_unref(s-&gt;syslog_event_source);</td></tr>
-<tr><td class="num" id="LN1649">1649</td><td class="line">        sd_event_source_unref(s-&gt;native_event_source);</td></tr>
-<tr><td class="num" id="LN1650">1650</td><td class="line">        sd_event_source_unref(s-&gt;stdout_event_source);</td></tr>
-<tr><td class="num" id="LN1651">1651</td><td class="line">        sd_event_source_unref(s-&gt;dev_kmsg_event_source);</td></tr>
-<tr><td class="num" id="LN1652">1652</td><td class="line">        sd_event_source_unref(s-&gt;audit_event_source);</td></tr>
-<tr><td class="num" id="LN1653">1653</td><td class="line">        sd_event_source_unref(s-&gt;sync_event_source);</td></tr>
-<tr><td class="num" id="LN1654">1654</td><td class="line">        sd_event_source_unref(s-&gt;sigusr1_event_source);</td></tr>
-<tr><td class="num" id="LN1655">1655</td><td class="line">        sd_event_source_unref(s-&gt;sigusr2_event_source);</td></tr>
-<tr><td class="num" id="LN1656">1656</td><td class="line">        sd_event_source_unref(s-&gt;sigterm_event_source);</td></tr>
-<tr><td class="num" id="LN1657">1657</td><td class="line">        sd_event_source_unref(s-&gt;sigint_event_source);</td></tr>
-<tr><td class="num" id="LN1658">1658</td><td class="line">        sd_event_source_unref(s-&gt;hostname_event_source);</td></tr>
-<tr><td class="num" id="LN1659">1659</td><td class="line">        sd_event_unref(s-&gt;event);</td></tr>
+<tr><td class="num" id="LN1640">1640</td><td class="line">        <span class='macro'>ORDERED_HASHMAP_FOREACH(f, s-&gt;user_journals, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); ordered_hashmap_iterate((s-&gt;user_journals<br>), &amp;(i), (void**)&amp;(f), ((void*)0)); )</span></span></td></tr>
+<tr><td class="num" id="LN1641">1641</td><td class="line">                journal_file_maybe_append_tag(f, n);</td></tr>
+<tr><td class="num" id="LN1642">1642</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN1643">1643</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1644">1644</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1645">1645</td><td class="line"><span class='keyword'>void</span> server_done(Server *s) {</td></tr>
+<tr><td class="num" id="LN1646">1646</td><td class="line">        JournalFile *f;</td></tr>
+<tr><td class="num" id="LN1647">1647</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-server.c", 1647, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1648">1648</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1649">1649</td><td class="line">        <span class='keyword'>while</span> (s-&gt;stdout_streams)</td></tr>
+<tr><td class="num" id="LN1650">1650</td><td class="line">                stdout_stream_free(s-&gt;stdout_streams);</td></tr>
+<tr><td class="num" id="LN1651">1651</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1652">1652</td><td class="line">        <span class='keyword'>if</span> (s-&gt;system_journal)</td></tr>
+<tr><td class="num" id="LN1653">1653</td><td class="line">                journal_file_close(s-&gt;system_journal);</td></tr>
+<tr><td class="num" id="LN1654">1654</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1655">1655</td><td class="line">        <span class='keyword'>if</span> (s-&gt;runtime_journal)</td></tr>
+<tr><td class="num" id="LN1656">1656</td><td class="line">                journal_file_close(s-&gt;runtime_journal);</td></tr>
+<tr><td class="num" id="LN1657">1657</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1658">1658</td><td class="line">        <span class='keyword'>while</span> ((f = ordered_hashmap_steal_first(s-&gt;user_journals)))</td></tr>
+<tr><td class="num" id="LN1659">1659</td><td class="line">                journal_file_close(f);</td></tr>
 <tr><td class="num" id="LN1660">1660</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1661">1661</td><td class="line">        safe_close(s-&gt;syslog_fd);</td></tr>
-<tr><td class="num" id="LN1662">1662</td><td class="line">        safe_close(s-&gt;native_fd);</td></tr>
-<tr><td class="num" id="LN1663">1663</td><td class="line">        safe_close(s-&gt;stdout_fd);</td></tr>
-<tr><td class="num" id="LN1664">1664</td><td class="line">        safe_close(s-&gt;dev_kmsg_fd);</td></tr>
-<tr><td class="num" id="LN1665">1665</td><td class="line">        safe_close(s-&gt;audit_fd);</td></tr>
-<tr><td class="num" id="LN1666">1666</td><td class="line">        safe_close(s-&gt;hostname_fd);</td></tr>
-<tr><td class="num" id="LN1667">1667</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1668">1668</td><td class="line">        <span class='keyword'>if</span> (s-&gt;rate_limit)</td></tr>
-<tr><td class="num" id="LN1669">1669</td><td class="line">                journal_rate_limit_free(s-&gt;rate_limit);</td></tr>
-<tr><td class="num" id="LN1670">1670</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1671">1671</td><td class="line">        <span class='keyword'>if</span> (s-&gt;kernel_seqnum)</td></tr>
-<tr><td class="num" id="LN1672">1672</td><td class="line">                munmap(s-&gt;kernel_seqnum, <span class='keyword'>sizeof</span>(uint64_t));</td></tr>
-<tr><td class="num" id="LN1673">1673</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1674">1674</td><td class="line">        free(s-&gt;buffer);</td></tr>
-<tr><td class="num" id="LN1675">1675</td><td class="line">        free(s-&gt;tty_path);</td></tr>
-<tr><td class="num" id="LN1676">1676</td><td class="line">        free(s-&gt;cgroup_root);</td></tr>
-<tr><td class="num" id="LN1677">1677</td><td class="line">        free(s-&gt;hostname_field);</td></tr>
-<tr><td class="num" id="LN1678">1678</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1679">1679</td><td class="line">        <span class='keyword'>if</span> (s-&gt;mmap)</td></tr>
-<tr><td class="num" id="LN1680">1680</td><td class="line">                mmap_cache_unref(s-&gt;mmap);</td></tr>
-<tr><td class="num" id="LN1681">1681</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1682">1682</td><td class="line">        udev_unref(s-&gt;udev);</td></tr>
-<tr><td class="num" id="LN1683">1683</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1684">1684</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1685">1685</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> storage_table[_STORAGE_MAX] = {</td></tr>
-<tr><td class="num" id="LN1686">1686</td><td class="line">        [STORAGE_AUTO] = <span class='string_literal'>"auto"</span>,</td></tr>
-<tr><td class="num" id="LN1687">1687</td><td class="line">        [STORAGE_VOLATILE] = <span class='string_literal'>"volatile"</span>,</td></tr>
-<tr><td class="num" id="LN1688">1688</td><td class="line">        [STORAGE_PERSISTENT] = <span class='string_literal'>"persistent"</span>,</td></tr>
-<tr><td class="num" id="LN1689">1689</td><td class="line">        [STORAGE_NONE] = <span class='string_literal'>"none"</span></td></tr>
-<tr><td class="num" id="LN1690">1690</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1691">1691</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1692">1692</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(storage, Storage)<span class='expansion'>const char *storage_to_string(Storage i) { if (i &lt; 0 || i &gt;=<br> (Storage) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(storage_table), typeof(&amp;*(storage_table))), sizeof<br>(storage_table)/sizeof((storage_table)[0]), (void)0))) return<br> ((void*)0); return storage_table[i]; } Storage storage_from_string<br>(const char *s) { return (Storage) string_table_lookup(storage_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(storage_table), typeof(&amp;*(storage_table))), sizeof<br>(storage_table)/sizeof((storage_table)[0]), (void)0)), s); } struct<br> __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN1693">1693</td><td class="line"><span class='macro'>DEFINE_CONFIG_PARSE_ENUM(config_parse_storage, storage, Storage, <span class='string_literal'>"Failed to parse storage setting"</span>)<span class='expansion'>int config_parse_storage(const char *unit, const char *filename<br>, unsigned line, const char *section, unsigned section_line, const<br> char *lvalue, int ltype, const char *rvalue, void *data, void<br> *userdata) { Storage *i = data, x; do { if ((__builtin_expect<br>(!!(!(filename)),0))) log_assert_failed("filename", "src/journal/journald-server.c"<br>, 1693, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(lvalue)),0))) log_assert_failed("lvalue", "src/journal/journald-server.c"<br>, 1693, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(rvalue)),0))) log_assert_failed("rvalue", "src/journal/journald-server.c"<br>, 1693, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(data)),0))) log_assert_failed("data", "src/journal/journald-server.c"<br>, 1693, __PRETTY_FUNCTION__); } while (0); if ((x = storage_from_string<br>(rvalue)) &lt; 0) { ({ int _level = (3), _e = (-x); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_syntax_internal(unit, _level<br>, filename, line, _e, "src/journal/journald-server.c", 1693, __func__<br>, "Failed to parse storage setting" ", ignoring: %s", rvalue)<br> : -abs(_e); }); return 0; } *i = x; return 0; }</span></span>;</td></tr>
-<tr><td class="num" id="LN1694">1694</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1695">1695</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> split_mode_table[_SPLIT_MAX] = {</td></tr>
-<tr><td class="num" id="LN1696">1696</td><td class="line">        [SPLIT_LOGIN] = <span class='string_literal'>"login"</span>,</td></tr>
-<tr><td class="num" id="LN1697">1697</td><td class="line">        [SPLIT_UID] = <span class='string_literal'>"uid"</span>,</td></tr>
-<tr><td class="num" id="LN1698">1698</td><td class="line">        [SPLIT_NONE] = <span class='string_literal'>"none"</span>,</td></tr>
-<tr><td class="num" id="LN1699">1699</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1700">1700</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1701">1701</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(split_mode, SplitMode)<span class='expansion'>const char *split_mode_to_string(SplitMode i) { if (i &lt; 0 ||<br> i &gt;= (SplitMode) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(split_mode_table), typeof(&amp;*(split_mode_table))),<br> sizeof(split_mode_table)/sizeof((split_mode_table)[0]), (void<br>)0))) return ((void*)0); return split_mode_table[i]; } SplitMode<br> split_mode_from_string(const char *s) { return (SplitMode) string_table_lookup<br>(split_mode_table, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(split_mode_table), typeof(&amp;*(split_mode_table))),<br> sizeof(split_mode_table)/sizeof((split_mode_table)[0]), (void<br>)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN1702">1702</td><td class="line"><span class='macro'>DEFINE_CONFIG_PARSE_ENUM(config_parse_split_mode, split_mode, SplitMode, <span class='string_literal'>"Failed to parse split mode setting"</span>)<span class='expansion'>int config_parse_split_mode(const char *unit, const char *filename<br>, unsigned line, const char *section, unsigned section_line, const<br> char *lvalue, int ltype, const char *rvalue, void *data, void<br> *userdata) { SplitMode *i = data, x; do { if ((__builtin_expect<br>(!!(!(filename)),0))) log_assert_failed("filename", "src/journal/journald-server.c"<br>, 1702, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(lvalue)),0))) log_assert_failed("lvalue", "src/journal/journald-server.c"<br>, 1702, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(rvalue)),0))) log_assert_failed("rvalue", "src/journal/journald-server.c"<br>, 1702, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(data)),0))) log_assert_failed("data", "src/journal/journald-server.c"<br>, 1702, __PRETTY_FUNCTION__); } while (0); if ((x = split_mode_from_string<br>(rvalue)) &lt; 0) { ({ int _level = (3), _e = (-x); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_syntax_internal(unit, _level<br>, filename, line, _e, "src/journal/journald-server.c", 1702, __func__<br>, "Failed to parse split mode setting" ", ignoring: %s", rvalue<br>) : -abs(_e); }); return 0; } *i = x; return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN1661">1661</td><td class="line">        ordered_hashmap_free(s-&gt;user_journals);</td></tr>
+<tr><td class="num" id="LN1662">1662</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1663">1663</td><td class="line">        sd_event_source_unref(s-&gt;syslog_event_source);</td></tr>
+<tr><td class="num" id="LN1664">1664</td><td class="line">        sd_event_source_unref(s-&gt;native_event_source);</td></tr>
+<tr><td class="num" id="LN1665">1665</td><td class="line">        sd_event_source_unref(s-&gt;stdout_event_source);</td></tr>
+<tr><td class="num" id="LN1666">1666</td><td class="line">        sd_event_source_unref(s-&gt;dev_kmsg_event_source);</td></tr>
+<tr><td class="num" id="LN1667">1667</td><td class="line">        sd_event_source_unref(s-&gt;audit_event_source);</td></tr>
+<tr><td class="num" id="LN1668">1668</td><td class="line">        sd_event_source_unref(s-&gt;sync_event_source);</td></tr>
+<tr><td class="num" id="LN1669">1669</td><td class="line">        sd_event_source_unref(s-&gt;sigusr1_event_source);</td></tr>
+<tr><td class="num" id="LN1670">1670</td><td class="line">        sd_event_source_unref(s-&gt;sigusr2_event_source);</td></tr>
+<tr><td class="num" id="LN1671">1671</td><td class="line">        sd_event_source_unref(s-&gt;sigterm_event_source);</td></tr>
+<tr><td class="num" id="LN1672">1672</td><td class="line">        sd_event_source_unref(s-&gt;sigint_event_source);</td></tr>
+<tr><td class="num" id="LN1673">1673</td><td class="line">        sd_event_source_unref(s-&gt;hostname_event_source);</td></tr>
+<tr><td class="num" id="LN1674">1674</td><td class="line">        sd_event_unref(s-&gt;event);</td></tr>
+<tr><td class="num" id="LN1675">1675</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1676">1676</td><td class="line">        safe_close(s-&gt;syslog_fd);</td></tr>
+<tr><td class="num" id="LN1677">1677</td><td class="line">        safe_close(s-&gt;native_fd);</td></tr>
+<tr><td class="num" id="LN1678">1678</td><td class="line">        safe_close(s-&gt;stdout_fd);</td></tr>
+<tr><td class="num" id="LN1679">1679</td><td class="line">        safe_close(s-&gt;dev_kmsg_fd);</td></tr>
+<tr><td class="num" id="LN1680">1680</td><td class="line">        safe_close(s-&gt;audit_fd);</td></tr>
+<tr><td class="num" id="LN1681">1681</td><td class="line">        safe_close(s-&gt;hostname_fd);</td></tr>
+<tr><td class="num" id="LN1682">1682</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1683">1683</td><td class="line">        <span class='keyword'>if</span> (s-&gt;rate_limit)</td></tr>
+<tr><td class="num" id="LN1684">1684</td><td class="line">                journal_rate_limit_free(s-&gt;rate_limit);</td></tr>
+<tr><td class="num" id="LN1685">1685</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1686">1686</td><td class="line">        <span class='keyword'>if</span> (s-&gt;kernel_seqnum)</td></tr>
+<tr><td class="num" id="LN1687">1687</td><td class="line">                munmap(s-&gt;kernel_seqnum, <span class='keyword'>sizeof</span>(uint64_t));</td></tr>
+<tr><td class="num" id="LN1688">1688</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1689">1689</td><td class="line">        free(s-&gt;buffer);</td></tr>
+<tr><td class="num" id="LN1690">1690</td><td class="line">        free(s-&gt;tty_path);</td></tr>
+<tr><td class="num" id="LN1691">1691</td><td class="line">        free(s-&gt;cgroup_root);</td></tr>
+<tr><td class="num" id="LN1692">1692</td><td class="line">        free(s-&gt;hostname_field);</td></tr>
+<tr><td class="num" id="LN1693">1693</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1694">1694</td><td class="line">        <span class='keyword'>if</span> (s-&gt;mmap)</td></tr>
+<tr><td class="num" id="LN1695">1695</td><td class="line">                mmap_cache_unref(s-&gt;mmap);</td></tr>
+<tr><td class="num" id="LN1696">1696</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1697">1697</td><td class="line">        udev_unref(s-&gt;udev);</td></tr>
+<tr><td class="num" id="LN1698">1698</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1699">1699</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1700">1700</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> storage_table[_STORAGE_MAX] = {</td></tr>
+<tr><td class="num" id="LN1701">1701</td><td class="line">        [STORAGE_AUTO] = <span class='string_literal'>"auto"</span>,</td></tr>
+<tr><td class="num" id="LN1702">1702</td><td class="line">        [STORAGE_VOLATILE] = <span class='string_literal'>"volatile"</span>,</td></tr>
+<tr><td class="num" id="LN1703">1703</td><td class="line">        [STORAGE_PERSISTENT] = <span class='string_literal'>"persistent"</span>,</td></tr>
+<tr><td class="num" id="LN1704">1704</td><td class="line">        [STORAGE_NONE] = <span class='string_literal'>"none"</span></td></tr>
+<tr><td class="num" id="LN1705">1705</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1706">1706</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1707">1707</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(storage, Storage)<span class='expansion'>const char *storage_to_string(Storage i) { if (i &lt; 0 || i &gt;=<br> (Storage) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(storage_table), typeof(&amp;*(storage_table))), sizeof<br>(storage_table)/sizeof((storage_table)[0]), (void)0))) return<br> ((void*)0); return storage_table[i]; } Storage storage_from_string<br>(const char *s) { return (Storage) string_table_lookup(storage_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(storage_table), typeof(&amp;*(storage_table))), sizeof<br>(storage_table)/sizeof((storage_table)[0]), (void)0)), s); } struct<br> __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1708">1708</td><td class="line"><span class='macro'>DEFINE_CONFIG_PARSE_ENUM(config_parse_storage, storage, Storage, <span class='string_literal'>"Failed to parse storage setting"</span>)<span class='expansion'>int config_parse_storage(const char *unit, const char *filename<br>, unsigned line, const char *section, unsigned section_line, const<br> char *lvalue, int ltype, const char *rvalue, void *data, void<br> *userdata) { Storage *i = data, x; do { if ((__builtin_expect<br>(!!(!(filename)),0))) log_assert_failed("filename", "src/journal/journald-server.c"<br>, 1708, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(lvalue)),0))) log_assert_failed("lvalue", "src/journal/journald-server.c"<br>, 1708, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(rvalue)),0))) log_assert_failed("rvalue", "src/journal/journald-server.c"<br>, 1708, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(data)),0))) log_assert_failed("data", "src/journal/journald-server.c"<br>, 1708, __PRETTY_FUNCTION__); } while (0); if ((x = storage_from_string<br>(rvalue)) &lt; 0) { ({ int _level = (3), _e = (-x); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_syntax_internal(unit, _level<br>, filename, line, _e, "src/journal/journald-server.c", 1708, __func__<br>, "Failed to parse storage setting" ", ignoring: %s", rvalue)<br> : -abs(_e); }); return 0; } *i = x; return 0; }</span></span>;</td></tr>
+<tr><td class="num" id="LN1709">1709</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1710">1710</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> split_mode_table[_SPLIT_MAX] = {</td></tr>
+<tr><td class="num" id="LN1711">1711</td><td class="line">        [SPLIT_LOGIN] = <span class='string_literal'>"login"</span>,</td></tr>
+<tr><td class="num" id="LN1712">1712</td><td class="line">        [SPLIT_UID] = <span class='string_literal'>"uid"</span>,</td></tr>
+<tr><td class="num" id="LN1713">1713</td><td class="line">        [SPLIT_NONE] = <span class='string_literal'>"none"</span>,</td></tr>
+<tr><td class="num" id="LN1714">1714</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1715">1715</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1716">1716</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(split_mode, SplitMode)<span class='expansion'>const char *split_mode_to_string(SplitMode i) { if (i &lt; 0 ||<br> i &gt;= (SplitMode) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(split_mode_table), typeof(&amp;*(split_mode_table))),<br> sizeof(split_mode_table)/sizeof((split_mode_table)[0]), (void<br>)0))) return ((void*)0); return split_mode_table[i]; } SplitMode<br> split_mode_from_string(const char *s) { return (SplitMode) string_table_lookup<br>(split_mode_table, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(split_mode_table), typeof(&amp;*(split_mode_table))),<br> sizeof(split_mode_table)/sizeof((split_mode_table)[0]), (void<br>)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1717">1717</td><td class="line"><span class='macro'>DEFINE_CONFIG_PARSE_ENUM(config_parse_split_mode, split_mode, SplitMode, <span class='string_literal'>"Failed to parse split mode setting"</span>)<span class='expansion'>int config_parse_split_mode(const char *unit, const char *filename<br>, unsigned line, const char *section, unsigned section_line, const<br> char *lvalue, int ltype, const char *rvalue, void *data, void<br> *userdata) { SplitMode *i = data, x; do { if ((__builtin_expect<br>(!!(!(filename)),0))) log_assert_failed("filename", "src/journal/journald-server.c"<br>, 1717, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(lvalue)),0))) log_assert_failed("lvalue", "src/journal/journald-server.c"<br>, 1717, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(rvalue)),0))) log_assert_failed("rvalue", "src/journal/journald-server.c"<br>, 1717, __PRETTY_FUNCTION__); } while (0); do { if ((__builtin_expect<br>(!!(!(data)),0))) log_assert_failed("data", "src/journal/journald-server.c"<br>, 1717, __PRETTY_FUNCTION__); } while (0); if ((x = split_mode_from_string<br>(rvalue)) &lt; 0) { ({ int _level = (3), _e = (-x); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_syntax_internal(unit, _level<br>, filename, line, _e, "src/journal/journald-server.c", 1717, __func__<br>, "Failed to parse split mode setting" ", ignoring: %s", rvalue<br>) : -abs(_e); }); return 0; } *i = x; return 0; }</span></span>;</td></tr>
 </table></body></html>
