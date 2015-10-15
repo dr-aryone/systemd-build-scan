@@ -64,9 +64,9 @@
 
 <!-- FILENAME sd-icmp6-nd.c -->
 
-<!-- FUNCTIONNAME sd_icmp6_nd_unref -->
+<!-- FUNCTIONNAME icmp6_ra_prefix_timeout -->
 
-<!-- BUGLINE 221 -->
+<!-- BUGLINE 288 -->
 
 <!-- BUGCOLUMN 17 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/libsystemd-network/sd-icmp6-nd.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 221, column 17</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 288, column 17</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Value stored to 'prefix' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -303,8 +303,7 @@
 <tr><td class="num" id="LN218">218</td><td class="line">        <span class='macro'>LIST_FOREACH_SAFE(prefixes, prefix, p, nd-&gt;prefixes)<span class='expansion'>for ((prefix) = (nd-&gt;prefixes); (prefix) &amp;&amp; (((p) =<br> (prefix)-&gt;prefixes_next), 1); (prefix) = (p))</span></span> {</td></tr>
 <tr><td class="num" id="LN219">219</td><td class="line">                <span class='macro'>LIST_REMOVE(prefixes, nd-&gt;prefixes, prefix)<span class='expansion'>do { typeof(*(nd-&gt;prefixes)) **_head = &amp;(nd-&gt;prefixes<br>), *_item = (prefix); do { if ((__builtin_expect(!!(!(_item))<br>,0))) log_assert_failed("_item", "src/libsystemd-network/sd-icmp6-nd.c"<br>, 219, __PRETTY_FUNCTION__); } while (0); if (_item-&gt;prefixes_next<br>) _item-&gt;prefixes_next-&gt;prefixes_prev = _item-&gt;prefixes_prev<br>; if (_item-&gt;prefixes_prev) _item-&gt;prefixes_prev-&gt;prefixes_next<br> = _item-&gt;prefixes_next; else { do { if ((__builtin_expect<br>(!!(!(*_head == _item)),0))) log_assert_failed("*_head == _item"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 219, __PRETTY_FUNCTION__<br>); } while (0); *_head = _item-&gt;prefixes_next; } _item-&gt;<br>prefixes_next = _item-&gt;prefixes_prev = ((void*)0); } while<br>(0)</span></span>;</td></tr>
 <tr><td class="num" id="LN220">220</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN221">221</td><td class="line">                prefix = <span class="mrange">icmp6_prefix_unref(prefix)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'prefix' is never read</div></td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">                prefix = icmp6_prefix_unref(prefix);</td></tr>
 <tr><td class="num" id="LN222">222</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN223">223</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN224">224</td><td class="line">        free(nd);</td></tr>
@@ -371,7 +370,8 @@
 <tr><td class="num" id="LN285">285</td><td class="line">                                SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_PREFIX_EXPIRED);</td></tr>
 <tr><td class="num" id="LN286">286</td><td class="line">                nd-&gt;expired_prefix = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN287">287</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN288">288</td><td class="line">                prefix = icmp6_prefix_unref(prefix);</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">                prefix = <span class="mrange">icmp6_prefix_unref(prefix)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'prefix' is never read</div></td></tr>
 <tr><td class="num" id="LN289">289</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN290">290</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN291">291</td><td class="line">        }</td></tr>
@@ -423,7 +423,7 @@
 <tr><td class="num" id="LN337">337</td><td class="line">        <span class='macro'>assert_return(prefix, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(prefix),1))) ? (1) : (log_assert_failed_return<br>("prefix", "src/libsystemd-network/sd-icmp6-nd.c", 337, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN338">338</td><td class="line">        <span class='macro'>assert_return(addr, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(addr),1))) ? (1) : (log_assert_failed_return<br>("addr", "src/libsystemd-network/sd-icmp6-nd.c", 338, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN339">339</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN340">340</td><td class="line">        len = <span class='macro'>MIN(prefixlen, addr_prefixlen)<span class='expansion'>__extension__ ({ const typeof((prefixlen)) __unique_prefix_A8<br> = ((prefixlen)); const typeof((addr_prefixlen)) __unique_prefix_B9<br> = ((addr_prefixlen)); __unique_prefix_A8 &lt; __unique_prefix_B9<br> ? __unique_prefix_A8 : __unique_prefix_B9; })</span></span>;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">        len = <span class='macro'>MIN(prefixlen, addr_prefixlen)<span class='expansion'>__extension__ ({ const typeof((prefixlen)) __unique_prefix_A14<br> = ((prefixlen)); const typeof((addr_prefixlen)) __unique_prefix_B15<br> = ((addr_prefixlen)); __unique_prefix_A14 &lt; __unique_prefix_B15<br> ? __unique_prefix_A14 : __unique_prefix_B15; })</span></span>;</td></tr>
 <tr><td class="num" id="LN341">341</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN342">342</td><td class="line">        bytes = len / 8;</td></tr>
 <tr><td class="num" id="LN343">343</td><td class="line">        mask = 0xff &lt;&lt; (8 - len % 8);</td></tr>
@@ -527,283 +527,281 @@
 <tr><td class="num" id="LN441">441</td><td class="line">                memcpy(&amp;prefix-&gt;addr, &amp;prefix_opt-&gt;nd_opt_pi_prefix,</td></tr>
 <tr><td class="num" id="LN442">442</td><td class="line">                        <span class='keyword'>sizeof</span>(prefix-&gt;addr));</td></tr>
 <tr><td class="num" id="LN443">443</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN444">444</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"New prefix "</span>SD_ICMP6_ND_ADDRESS_FORMAT_STR<span class='string_literal'>"/%d lifetime %d expires in %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 448<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span></td></tr>
-<tr><td class="num" id="LN445">445</td><td class="line">                             <span class='macro'>SD_ICMP6_ND_ADDRESS_FORMAT_VAL(prefix-&gt;addr),<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 448<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span></td></tr>
-<tr><td class="num" id="LN446">446</td><td class="line">                             <span class='macro'>prefix-&gt;len, lifetime,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 448<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span></td></tr>
-<tr><td class="num" id="LN447">447</td><td class="line">                             <span class='macro'>format_timespan(time_string, FORMAT_TIMESPAN_MAX,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 448<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span></td></tr>
-<tr><td class="num" id="LN448">448</td><td class="line">                                             <span class='macro'>lifetime * USEC_PER_SEC, 0))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 448<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span>;</td></tr>
-<tr><td class="num" id="LN449">449</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN450">450</td><td class="line">                <span class='macro'>LIST_PREPEND(prefixes, nd-&gt;prefixes, prefix)<span class='expansion'>do { typeof(*(nd-&gt;prefixes)) **_head = &amp;(nd-&gt;prefixes<br>), *_item = (prefix); do { if ((__builtin_expect(!!(!(_item))<br>,0))) log_assert_failed("_item", "src/libsystemd-network/sd-icmp6-nd.c"<br>, 450, __PRETTY_FUNCTION__); } while (0); if ((_item-&gt;prefixes_next<br> = *_head)) _item-&gt;prefixes_next-&gt;prefixes_prev = _item<br>; _item-&gt;prefixes_prev = ((void*)0); *_head = _item; } while<br>(0)</span></span>;</td></tr>
-<tr><td class="num" id="LN451">451</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN452">452</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN453">453</td><td class="line">                <span class='keyword'>if</span> (prefix-&gt;len != prefix_opt-&gt;nd_opt_pi_prefix_len) {</td></tr>
-<tr><td class="num" id="LN454">454</td><td class="line">                        uint8_t prefixlen;</td></tr>
-<tr><td class="num" id="LN455">455</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN456">456</td><td class="line">                        prefixlen = <span class='macro'>MIN(prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len)<span class='expansion'>__extension__ ({ const typeof((prefix-&gt;len)) __unique_prefix_A10<br> = ((prefix-&gt;len)); const typeof((prefix_opt-&gt;nd_opt_pi_prefix_len<br>)) __unique_prefix_B11 = ((prefix_opt-&gt;nd_opt_pi_prefix_len<br>)); __unique_prefix_A10 &lt; __unique_prefix_B11 ? __unique_prefix_A10<br> : __unique_prefix_B11; })</span></span>;</td></tr>
-<tr><td class="num" id="LN457">457</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN458">458</td><td class="line">                        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Prefix length mismatch %d/%d using %d"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 461<br>, __func__, "ICMPv6 CLIENT: " "Prefix length mismatch %d/%d using %d"<br>, prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len, prefixlen<br>)</span></span></td></tr>
-<tr><td class="num" id="LN459">459</td><td class="line">                                     <span class='macro'>prefix-&gt;len,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 461<br>, __func__, "ICMPv6 CLIENT: " "Prefix length mismatch %d/%d using %d"<br>, prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len, prefixlen<br>)</span></span></td></tr>
-<tr><td class="num" id="LN460">460</td><td class="line">                                     <span class='macro'>prefix_opt-&gt;nd_opt_pi_prefix_len,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 461<br>, __func__, "ICMPv6 CLIENT: " "Prefix length mismatch %d/%d using %d"<br>, prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len, prefixlen<br>)</span></span></td></tr>
-<tr><td class="num" id="LN461">461</td><td class="line">                                     <span class='macro'>prefixlen)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 461<br>, __func__, "ICMPv6 CLIENT: " "Prefix length mismatch %d/%d using %d"<br>, prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len, prefixlen<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN462">462</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN463">463</td><td class="line">                        prefix-&gt;len = prefixlen;</td></tr>
-<tr><td class="num" id="LN464">464</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN465">465</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN466">466</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Update prefix "</span>SD_ICMP6_ND_ADDRESS_FORMAT_STR<span class='string_literal'>"/%d lifetime %d expires in %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 470<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span></td></tr>
-<tr><td class="num" id="LN467">467</td><td class="line">                             <span class='macro'>SD_ICMP6_ND_ADDRESS_FORMAT_VAL(prefix-&gt;addr),<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 470<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span></td></tr>
-<tr><td class="num" id="LN468">468</td><td class="line">                             <span class='macro'>prefix-&gt;len, lifetime,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 470<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span></td></tr>
-<tr><td class="num" id="LN469">469</td><td class="line">                             <span class='macro'>format_timespan(time_string, FORMAT_TIMESPAN_MAX,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 470<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span></td></tr>
-<tr><td class="num" id="LN470">470</td><td class="line">                                             <span class='macro'>lifetime * USEC_PER_SEC, 0))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 470<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), 0))</span></span>;</td></tr>
-<tr><td class="num" id="LN471">471</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"New prefix "</span>SD_ICMP6_ND_ADDRESS_FORMAT_STR<span class='string_literal'>"/%d lifetime %d expires in %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 447<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), ((usec_t) 1000000ULL)))</span></span></td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">                             <span class='macro'>SD_ICMP6_ND_ADDRESS_FORMAT_VAL(prefix-&gt;addr),<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 447<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), ((usec_t) 1000000ULL)))</span></span></td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">                             <span class='macro'>prefix-&gt;len, lifetime,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 447<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), ((usec_t) 1000000ULL)))</span></span></td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">                             <span class='macro'>format_timespan(time_string, FORMAT_TIMESPAN_MAX, lifetime * USEC_PER_SEC, USEC_PER_SEC))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 447<br>, __func__, "ICMPv6 CLIENT: " "New prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), ((usec_t) 1000000ULL)))</span></span>;</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">                <span class='macro'>LIST_PREPEND(prefixes, nd-&gt;prefixes, prefix)<span class='expansion'>do { typeof(*(nd-&gt;prefixes)) **_head = &amp;(nd-&gt;prefixes<br>), *_item = (prefix); do { if ((__builtin_expect(!!(!(_item))<br>,0))) log_assert_failed("_item", "src/libsystemd-network/sd-icmp6-nd.c"<br>, 449, __PRETTY_FUNCTION__); } while (0); if ((_item-&gt;prefixes_next<br> = *_head)) _item-&gt;prefixes_next-&gt;prefixes_prev = _item<br>; _item-&gt;prefixes_prev = ((void*)0); *_head = _item; } while<br>(0)</span></span>;</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">                <span class='keyword'>if</span> (prefix-&gt;len != prefix_opt-&gt;nd_opt_pi_prefix_len) {</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">                        uint8_t prefixlen;</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">                        prefixlen = <span class='macro'>MIN(prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len)<span class='expansion'>__extension__ ({ const typeof((prefix-&gt;len)) __unique_prefix_A16<br> = ((prefix-&gt;len)); const typeof((prefix_opt-&gt;nd_opt_pi_prefix_len<br>)) __unique_prefix_B17 = ((prefix_opt-&gt;nd_opt_pi_prefix_len<br>)); __unique_prefix_A16 &lt; __unique_prefix_B17 ? __unique_prefix_A16<br> : __unique_prefix_B17; })</span></span>;</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">                        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Prefix length mismatch %d/%d using %d"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 460<br>, __func__, "ICMPv6 CLIENT: " "Prefix length mismatch %d/%d using %d"<br>, prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len, prefixlen<br>)</span></span></td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">                                     <span class='macro'>prefix-&gt;len,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 460<br>, __func__, "ICMPv6 CLIENT: " "Prefix length mismatch %d/%d using %d"<br>, prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len, prefixlen<br>)</span></span></td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">                                     <span class='macro'>prefix_opt-&gt;nd_opt_pi_prefix_len,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 460<br>, __func__, "ICMPv6 CLIENT: " "Prefix length mismatch %d/%d using %d"<br>, prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len, prefixlen<br>)</span></span></td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">                                     <span class='macro'>prefixlen)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 460<br>, __func__, "ICMPv6 CLIENT: " "Prefix length mismatch %d/%d using %d"<br>, prefix-&gt;len, prefix_opt-&gt;nd_opt_pi_prefix_len, prefixlen<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">                        prefix-&gt;len = prefixlen;</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Update prefix "</span>SD_ICMP6_ND_ADDRESS_FORMAT_STR<span class='string_literal'>"/%d lifetime %d expires in %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 468<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), ((usec_t) 1000000ULL)))</span></span></td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">                             <span class='macro'>SD_ICMP6_ND_ADDRESS_FORMAT_VAL(prefix-&gt;addr),<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 468<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), ((usec_t) 1000000ULL)))</span></span></td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">                             <span class='macro'>prefix-&gt;len, lifetime,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 468<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), ((usec_t) 1000000ULL)))</span></span></td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">                             <span class='macro'>format_timespan(time_string, FORMAT_TIMESPAN_MAX, lifetime * USEC_PER_SEC, USEC_PER_SEC))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 468<br>, __func__, "ICMPv6 CLIENT: " "Update prefix ""%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x"<br>"/%d lifetime %d expires in %s", be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[0]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[1]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[2]), be16toh<br>((prefix-&gt;addr).__in6_u.__u6_addr16[3]), be16toh((prefix-&gt;<br>addr).__in6_u.__u6_addr16[4]), be16toh((prefix-&gt;addr).__in6_u<br>.__u6_addr16[5]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16<br>[6]), be16toh((prefix-&gt;addr).__in6_u.__u6_addr16[7]), prefix<br>-&gt;len, lifetime, format_timespan(time_string, 64, lifetime<br> * ((usec_t) 1000000ULL), ((usec_t) 1000000ULL)))</span></span>;</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">        r = icmp6_ra_prefix_set_timeout(nd, prefix, lifetime * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
 <tr><td class="num" id="LN472">472</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN473">473</td><td class="line">        r = icmp6_ra_prefix_set_timeout(nd, prefix, lifetime * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
-<tr><td class="num" id="LN474">474</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN475">475</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN476">476</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN477">477</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN478">478</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> icmp6_ra_parse(sd_icmp6_nd *nd, <span class='keyword'>struct</span> nd_router_advert *ra,</td></tr>
-<tr><td class="num" id="LN479">479</td><td class="line">                          ssize_t len) {</td></tr>
-<tr><td class="num" id="LN480">480</td><td class="line">        <span class='keyword'>void</span> *opt;</td></tr>
-<tr><td class="num" id="LN481">481</td><td class="line">        <span class='keyword'>struct</span> nd_opt_hdr *opt_hdr;</td></tr>
-<tr><td class="num" id="LN482">482</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN483">483</td><td class="line">        <span class='macro'>assert_return(nd, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(nd),1))) ? (1) : (log_assert_failed_return<br>("nd", "src/libsystemd-network/sd-icmp6-nd.c", 483, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN484">484</td><td class="line">        <span class='macro'>assert_return(ra, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(ra),1))) ? (1) : (log_assert_failed_return<br>("ra", "src/libsystemd-network/sd-icmp6-nd.c", 484, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN485">485</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line">        len -= <span class='keyword'>sizeof</span>(*ra);</td></tr>
-<tr><td class="num" id="LN487">487</td><td class="line">        <span class='keyword'>if</span> (len &lt; <span class='macro'>ICMP6_OPT_LEN_UNITS<span class='expansion'>8</span></span>) {</td></tr>
-<tr><td class="num" id="LN488">488</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Router Advertisement below minimum length"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 488<br>, __func__, "ICMPv6 CLIENT: " "Router Advertisement below minimum length"<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN489">489</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN490">490</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMSG<span class='expansion'>42</span></span>;</td></tr>
-<tr><td class="num" id="LN491">491</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN492">492</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN493">493</td><td class="line">        opt = ra + 1;</td></tr>
-<tr><td class="num" id="LN494">494</td><td class="line">        opt_hdr = opt;</td></tr>
-<tr><td class="num" id="LN495">495</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN496">496</td><td class="line">        <span class='keyword'>while</span> (len != 0 &amp;&amp; len &gt;= opt_hdr-&gt;nd_opt_len * <span class='macro'>ICMP6_OPT_LEN_UNITS<span class='expansion'>8</span></span>) {</td></tr>
-<tr><td class="num" id="LN497">497</td><td class="line">                <span class='keyword'>struct</span> nd_opt_mtu *opt_mtu;</td></tr>
-<tr><td class="num" id="LN498">498</td><td class="line">                uint32_t mtu;</td></tr>
-<tr><td class="num" id="LN499">499</td><td class="line">                <span class='keyword'>struct</span> nd_opt_prefix_info *opt_prefix;</td></tr>
-<tr><td class="num" id="LN500">500</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN501">501</td><td class="line">                <span class='keyword'>if</span> (opt_hdr-&gt;nd_opt_len == 0)</td></tr>
-<tr><td class="num" id="LN502">502</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMSG<span class='expansion'>42</span></span>;</td></tr>
-<tr><td class="num" id="LN503">503</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN504">504</td><td class="line">                <span class='keyword'>switch</span> (opt_hdr-&gt;nd_opt_type) {</td></tr>
-<tr><td class="num" id="LN505">505</td><td class="line">                <span class='keyword'>case</span> <span class='macro'>ND_OPT_MTU<span class='expansion'>5</span></span>:</td></tr>
-<tr><td class="num" id="LN506">506</td><td class="line">                        opt_mtu = opt;</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> icmp6_ra_parse(sd_icmp6_nd *nd, <span class='keyword'>struct</span> nd_router_advert *ra,</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">                          ssize_t len) {</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">        <span class='keyword'>void</span> *opt;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">        <span class='keyword'>struct</span> nd_opt_hdr *opt_hdr;</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        <span class='macro'>assert_return(nd, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(nd),1))) ? (1) : (log_assert_failed_return<br>("nd", "src/libsystemd-network/sd-icmp6-nd.c", 481, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">        <span class='macro'>assert_return(ra, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(ra),1))) ? (1) : (log_assert_failed_return<br>("ra", "src/libsystemd-network/sd-icmp6-nd.c", 482, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        len -= <span class='keyword'>sizeof</span>(*ra);</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">        <span class='keyword'>if</span> (len &lt; <span class='macro'>ICMP6_OPT_LEN_UNITS<span class='expansion'>8</span></span>) {</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Router Advertisement below minimum length"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 486<br>, __func__, "ICMPv6 CLIENT: " "Router Advertisement below minimum length"<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMSG<span class='expansion'>42</span></span>;</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">        opt = ra + 1;</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">        opt_hdr = opt;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        <span class='keyword'>while</span> (len != 0 &amp;&amp; len &gt;= opt_hdr-&gt;nd_opt_len * <span class='macro'>ICMP6_OPT_LEN_UNITS<span class='expansion'>8</span></span>) {</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">                <span class='keyword'>struct</span> nd_opt_mtu *opt_mtu;</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">                uint32_t mtu;</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">                <span class='keyword'>struct</span> nd_opt_prefix_info *opt_prefix;</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">                <span class='keyword'>if</span> (opt_hdr-&gt;nd_opt_len == 0)</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMSG<span class='expansion'>42</span></span>;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">                <span class='keyword'>switch</span> (opt_hdr-&gt;nd_opt_type) {</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">                <span class='keyword'>case</span> <span class='macro'>ND_OPT_MTU<span class='expansion'>5</span></span>:</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">                        opt_mtu = opt;</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">                        mtu = be32toh(opt_mtu-&gt;nd_opt_mtu_mtu);</td></tr>
 <tr><td class="num" id="LN507">507</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN508">508</td><td class="line">                        mtu = be32toh(opt_mtu-&gt;nd_opt_mtu_mtu);</td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN510">510</td><td class="line">                        <span class='keyword'>if</span> (mtu != nd-&gt;mtu) {</td></tr>
-<tr><td class="num" id="LN511">511</td><td class="line">                                nd-&gt;mtu = <span class='macro'>MAX(mtu, IP6_MIN_MTU)<span class='expansion'>__extension__ ({ const typeof((mtu)) __unique_prefix_A12 = ((<br>mtu)); const typeof(((unsigned)1280)) __unique_prefix_B13 = (<br>((unsigned)1280)); __unique_prefix_A12 &gt; __unique_prefix_B13<br> ? __unique_prefix_A12 : __unique_prefix_B13; })</span></span>;</td></tr>
-<tr><td class="num" id="LN512">512</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line">                                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Router Advertisement link MTU %d using %d"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 514<br>, __func__, "ICMPv6 CLIENT: " "Router Advertisement link MTU %d using %d"<br>, mtu, nd-&gt;mtu)</span></span></td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line">                                             <span class='macro'>mtu, nd-&gt;mtu)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 514<br>, __func__, "ICMPv6 CLIENT: " "Router Advertisement link MTU %d using %d"<br>, mtu, nd-&gt;mtu)</span></span>;</td></tr>
-<tr><td class="num" id="LN515">515</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">                        <span class='keyword'>if</span> (mtu != nd-&gt;mtu) {</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                                nd-&gt;mtu = <span class='macro'>MAX(mtu, IP6_MIN_MTU)<span class='expansion'>__extension__ ({ const typeof((mtu)) __unique_prefix_A18 = ((<br>mtu)); const typeof(((unsigned)1280)) __unique_prefix_B19 = (<br>((unsigned)1280)); __unique_prefix_A18 &gt; __unique_prefix_B19<br> ? __unique_prefix_A18 : __unique_prefix_B19; })</span></span>;</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">                                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Router Advertisement link MTU %d using %d"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 512<br>, __func__, "ICMPv6 CLIENT: " "Router Advertisement link MTU %d using %d"<br>, mtu, nd-&gt;mtu)</span></span></td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">                                             <span class='macro'>mtu, nd-&gt;mtu)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 512<br>, __func__, "ICMPv6 CLIENT: " "Router Advertisement link MTU %d using %d"<br>, mtu, nd-&gt;mtu)</span></span>;</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN516">516</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN517">517</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN519">519</td><td class="line">                <span class='keyword'>case</span> <span class='macro'>ND_OPT_PREFIX_INFORMATION<span class='expansion'>3</span></span>:</td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line">                        opt_prefix = opt;</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">                <span class='keyword'>case</span> <span class='macro'>ND_OPT_PREFIX_INFORMATION<span class='expansion'>3</span></span>:</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">                        opt_prefix = opt;</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">                        icmp6_ra_prefix_update(nd, len, opt_prefix);</td></tr>
 <tr><td class="num" id="LN521">521</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN522">522</td><td class="line">                        icmp6_ra_prefix_update(nd, len, opt_prefix);</td></tr>
-<tr><td class="num" id="LN523">523</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN524">524</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN525">525</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN526">526</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN527">527</td><td class="line">                len -= opt_hdr-&gt;nd_opt_len * <span class='macro'>ICMP6_OPT_LEN_UNITS<span class='expansion'>8</span></span>;</td></tr>
-<tr><td class="num" id="LN528">528</td><td class="line">                opt = (<span class='keyword'>void</span> *)((<span class='keyword'>char</span> *)opt +</td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line">                        opt_hdr-&gt;nd_opt_len * <span class='macro'>ICMP6_OPT_LEN_UNITS<span class='expansion'>8</span></span>);</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line">                opt_hdr = opt;</td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN532">532</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">        <span class='keyword'>if</span> (len &gt; 0)</td></tr>
-<tr><td class="num" id="LN534">534</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Router Advertisement contains %zd bytes of trailing garbage"</span>, len)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 534<br>, __func__, "ICMPv6 CLIENT: " "Router Advertisement contains %zd bytes of trailing garbage"<br>, len)</span></span>;</td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN539">539</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> icmp6_router_advertisment_recv(sd_event_source *s, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line">        sd_icmp6_nd *nd = userdata;</td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">        <span class='keyword'>int</span> r, buflen = 0;</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line">        ssize_t len;</td></tr>
-<tr><td class="num" id="LN543">543</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>struct</span> nd_router_advert *ra = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line">        <span class='keyword'>int</span> event = SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_NONE;</td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 546, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN547">547</td><td class="line">        <span class='macro'>assert(nd)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd)),0))) log_assert_failed("nd"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 547, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line">        <span class='macro'>assert(nd-&gt;event)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd-&gt;event)),0))) log_assert_failed<br>("nd-&gt;event", "src/libsystemd-network/sd-icmp6-nd.c", 548,<br> __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line">        r = ioctl(fd, <span class='macro'>FIONREAD<span class='expansion'>0x541B</span></span>, &amp;buflen);</td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0 || buflen &lt;= 0)</td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">                buflen = <span class='macro'>ICMP6_ND_RECV_SIZE<span class='expansion'>((unsigned)1280 - sizeof(struct ip6_hdr))</span></span>;</td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line">        ra = malloc(buflen);</td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">        <span class='keyword'>if</span> (!ra)</td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line">        len = read(fd, ra, buflen);</td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">        <span class='keyword'>if</span> (len &lt; 0) {</td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Could not receive message from UDP socket: %m"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 560<br>, __func__, "ICMPv6 CLIENT: " "Could not receive message from UDP socket: %m"<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line">        <span class='keyword'>if</span> (ra-&gt;<span class='macro'>nd_ra_type<span class='expansion'>nd_ra_hdr.icmp6_type</span></span> != <span class='macro'>ND_ROUTER_ADVERT<span class='expansion'>134</span></span>)</td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN566">566</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">        <span class='keyword'>if</span> (ra-&gt;<span class='macro'>nd_ra_code<span class='expansion'>nd_ra_hdr.icmp6_code</span></span> != 0)</td></tr>
-<tr><td class="num" id="LN568">568</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">                len -= opt_hdr-&gt;nd_opt_len * <span class='macro'>ICMP6_OPT_LEN_UNITS<span class='expansion'>8</span></span>;</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">                opt = (<span class='keyword'>void</span> *)((<span class='keyword'>char</span> *)opt +</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">                        opt_hdr-&gt;nd_opt_len * <span class='macro'>ICMP6_OPT_LEN_UNITS<span class='expansion'>8</span></span>);</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                opt_hdr = opt;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>if</span> (len &gt; 0)</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Router Advertisement contains %zd bytes of trailing garbage"</span>, len)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 532<br>, __func__, "ICMPv6 CLIENT: " "Router Advertisement contains %zd bytes of trailing garbage"<br>, len)</span></span>;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> icmp6_router_advertisment_recv(sd_event_source *s, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">        sd_icmp6_nd *nd = userdata;</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">        <span class='keyword'>int</span> r, buflen = 0;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">        ssize_t len;</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>struct</span> nd_router_advert *ra = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">        <span class='keyword'>int</span> event = SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_NONE;</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 544, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">        <span class='macro'>assert(nd)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd)),0))) log_assert_failed("nd"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 545, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">        <span class='macro'>assert(nd-&gt;event)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd-&gt;event)),0))) log_assert_failed<br>("nd-&gt;event", "src/libsystemd-network/sd-icmp6-nd.c", 546,<br> __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">        r = ioctl(fd, <span class='macro'>FIONREAD<span class='expansion'>0x541B</span></span>, &amp;buflen);</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0 || buflen &lt;= 0)</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">                buflen = <span class='macro'>ICMP6_ND_RECV_SIZE<span class='expansion'>((unsigned)1280 - sizeof(struct ip6_hdr))</span></span>;</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">        ra = malloc(buflen);</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">        <span class='keyword'>if</span> (!ra)</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">        len = read(fd, ra, buflen);</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">        <span class='keyword'>if</span> (len &lt; 0) {</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">                <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Could not receive message from UDP socket: %m"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 558<br>, __func__, "ICMPv6 CLIENT: " "Could not receive message from UDP socket: %m"<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">        <span class='keyword'>if</span> (ra-&gt;<span class='macro'>nd_ra_type<span class='expansion'>nd_ra_hdr.icmp6_type</span></span> != <span class='macro'>ND_ROUTER_ADVERT<span class='expansion'>134</span></span>)</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">        <span class='keyword'>if</span> (ra-&gt;<span class='macro'>nd_ra_code<span class='expansion'>nd_ra_hdr.icmp6_code</span></span> != 0)</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">        nd-&gt;timeout = sd_event_source_unref(nd-&gt;timeout);</td></tr>
 <tr><td class="num" id="LN569">569</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line">        nd-&gt;timeout = sd_event_source_unref(nd-&gt;timeout);</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">        nd-&gt;state = ICMP6_ROUTER_ADVERTISMENT_LISTEN;</td></tr>
 <tr><td class="num" id="LN571">571</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line">        nd-&gt;state = ICMP6_ROUTER_ADVERTISMENT_LISTEN;</td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line">        <span class='keyword'>if</span> (ra-&gt;<span class='macro'>nd_ra_flags_reserved<span class='expansion'>nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1]</span></span> &amp; <span class='macro'>ND_RA_FLAG_OTHER<span class='expansion'>0x40</span></span> )</td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line">                event = SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_OTHER;</td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line">        <span class='keyword'>if</span> (ra-&gt;<span class='macro'>nd_ra_flags_reserved<span class='expansion'>nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1]</span></span> &amp; <span class='macro'>ND_RA_FLAG_MANAGED<span class='expansion'>0x80</span></span>)</td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">                event = SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_MANAGED;</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Received Router Advertisement flags %s/%s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 582<br>, __func__, "ICMPv6 CLIENT: " "Received Router Advertisement flags %s/%s"<br>, ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1] &amp; 0x80?<br> "MANAGED": "none", ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8<br>[1] &amp; 0x40? "OTHER": "none")</span></span></td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line">                     <span class='macro'>ra-&gt;nd_ra_flags_reserved &amp; ND_RA_FLAG_MANAGED? <span class='string_literal'>"MANAGED"</span>: <span class='string_literal'>"none"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 582<br>, __func__, "ICMPv6 CLIENT: " "Received Router Advertisement flags %s/%s"<br>, ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1] &amp; 0x80?<br> "MANAGED": "none", ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8<br>[1] &amp; 0x40? "OTHER": "none")</span></span></td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">                     <span class='macro'>ra-&gt;nd_ra_flags_reserved &amp; ND_RA_FLAG_OTHER? <span class='string_literal'>"OTHER"</span>: <span class='string_literal'>"none"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 582<br>, __func__, "ICMPv6 CLIENT: " "Received Router Advertisement flags %s/%s"<br>, ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1] &amp; 0x80?<br> "MANAGED": "none", ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8<br>[1] &amp; 0x40? "OTHER": "none")</span></span>;</td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN584">584</td><td class="line">        <span class='keyword'>if</span> (event != SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_NONE) {</td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line">                r = icmp6_ra_parse(nd, ra, len);</td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">                        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Could not parse Router Advertisement: %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 588<br>, __func__, "ICMPv6 CLIENT: " "Could not parse Router Advertisement: %s"<br>, strerror(-r))</span></span></td></tr>
-<tr><td class="num" id="LN588">588</td><td class="line">                                     <span class='macro'>strerror(-r))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 588<br>, __func__, "ICMPv6 CLIENT: " "Could not parse Router Advertisement: %s"<br>, strerror(-r))</span></span>;</td></tr>
-<tr><td class="num" id="LN589">589</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN590">590</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">        <span class='keyword'>if</span> (ra-&gt;<span class='macro'>nd_ra_flags_reserved<span class='expansion'>nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1]</span></span> &amp; <span class='macro'>ND_RA_FLAG_OTHER<span class='expansion'>0x40</span></span> )</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">                event = SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_OTHER;</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">        <span class='keyword'>if</span> (ra-&gt;<span class='macro'>nd_ra_flags_reserved<span class='expansion'>nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1]</span></span> &amp; <span class='macro'>ND_RA_FLAG_MANAGED<span class='expansion'>0x80</span></span>)</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">                event = SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_MANAGED;</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Received Router Advertisement flags %s/%s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 580<br>, __func__, "ICMPv6 CLIENT: " "Received Router Advertisement flags %s/%s"<br>, ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1] &amp; 0x80?<br> "MANAGED": "none", ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8<br>[1] &amp; 0x40? "OTHER": "none")</span></span></td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">                     <span class='macro'>ra-&gt;nd_ra_flags_reserved &amp; ND_RA_FLAG_MANAGED? <span class='string_literal'>"MANAGED"</span>: <span class='string_literal'>"none"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 580<br>, __func__, "ICMPv6 CLIENT: " "Received Router Advertisement flags %s/%s"<br>, ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1] &amp; 0x80?<br> "MANAGED": "none", ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8<br>[1] &amp; 0x40? "OTHER": "none")</span></span></td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">                     <span class='macro'>ra-&gt;nd_ra_flags_reserved &amp; ND_RA_FLAG_OTHER? <span class='string_literal'>"OTHER"</span>: <span class='string_literal'>"none"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 580<br>, __func__, "ICMPv6 CLIENT: " "Received Router Advertisement flags %s/%s"<br>, ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8[1] &amp; 0x80?<br> "MANAGED": "none", ra-&gt;nd_ra_hdr.icmp6_dataun.icmp6_un_data8<br>[1] &amp; 0x40? "OTHER": "none")</span></span>;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">        <span class='keyword'>if</span> (event != SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_NONE) {</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">                r = icmp6_ra_parse(nd, ra, len);</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">                        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Could not parse Router Advertisement: %s"</span>,<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 586<br>, __func__, "ICMPv6 CLIENT: " "Could not parse Router Advertisement: %s"<br>, strerror(-r))</span></span></td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">                                     <span class='macro'>strerror(-r))<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 586<br>, __func__, "ICMPv6 CLIENT: " "Could not parse Router Advertisement: %s"<br>, strerror(-r))</span></span>;</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">        icmp6_nd_notify(nd, event);</td></tr>
 <tr><td class="num" id="LN592">592</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN593">593</td><td class="line">        icmp6_nd_notify(nd, event);</td></tr>
-<tr><td class="num" id="LN594">594</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN596">596</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN598">598</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> icmp6_router_solicitation_timeout(sd_event_source *s, uint64_t usec, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line">        sd_icmp6_nd *nd = userdata;</td></tr>
-<tr><td class="num" id="LN600">600</td><td class="line">        uint64_t time_now, next_timeout;</td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">        <span class='keyword'>struct</span> ether_addr unset = { };</td></tr>
-<tr><td class="num" id="LN602">602</td><td class="line">        <span class='keyword'>struct</span> ether_addr *addr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN603">603</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN604">604</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN605">605</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 605, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line">        <span class='macro'>assert(nd)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd)),0))) log_assert_failed("nd"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 606, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line">        <span class='macro'>assert(nd-&gt;event)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd-&gt;event)),0))) log_assert_failed<br>("nd-&gt;event", "src/libsystemd-network/sd-icmp6-nd.c", 607,<br> __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> icmp6_router_solicitation_timeout(sd_event_source *s, uint64_t usec, <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">        sd_icmp6_nd *nd = userdata;</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">        uint64_t time_now, next_timeout;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">        <span class='keyword'>struct</span> ether_addr unset = { };</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">        <span class='keyword'>struct</span> ether_addr *addr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 603, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">        <span class='macro'>assert(nd)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd)),0))) log_assert_failed("nd"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 604, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">        <span class='macro'>assert(nd-&gt;event)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd-&gt;event)),0))) log_assert_failed<br>("nd-&gt;event", "src/libsystemd-network/sd-icmp6-nd.c", 605,<br> __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">        nd-&gt;timeout = sd_event_source_unref(nd-&gt;timeout);</td></tr>
 <tr><td class="num" id="LN608">608</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN609">609</td><td class="line">        nd-&gt;timeout = sd_event_source_unref(nd-&gt;timeout);</td></tr>
-<tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN611">611</td><td class="line">        <span class='keyword'>if</span> (nd-&gt;nd_sent &gt;= <span class='macro'>ICMP6_MAX_ROUTER_SOLICITATIONS<span class='expansion'>3</span></span>) {</td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line">                icmp6_nd_notify(nd, SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_TIMEOUT);</td></tr>
-<tr><td class="num" id="LN613">613</td><td class="line">                nd-&gt;state = ICMP6_ROUTER_ADVERTISMENT_LISTEN;</td></tr>
-<tr><td class="num" id="LN614">614</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN615">615</td><td class="line">                <span class='keyword'>if</span> (memcmp(&amp;nd-&gt;mac_addr, &amp;unset, <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> ether_addr)))</td></tr>
-<tr><td class="num" id="LN616">616</td><td class="line">                        addr = &amp;nd-&gt;mac_addr;</td></tr>
-<tr><td class="num" id="LN617">617</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN618">618</td><td class="line">                r = dhcp_network_icmp6_send_router_solicitation(nd-&gt;fd, addr);</td></tr>
-<tr><td class="num" id="LN619">619</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN620">620</td><td class="line">                        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Error sending Router Solicitation"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 620<br>, __func__, "ICMPv6 CLIENT: " "Error sending Router Solicitation"<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN621">621</td><td class="line">                <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN622">622</td><td class="line">                        nd-&gt;state = ICMP6_ROUTER_SOLICITATION_SENT;</td></tr>
-<tr><td class="num" id="LN623">623</td><td class="line">                        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Sent Router Solicitation"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 623<br>, __func__, "ICMPv6 CLIENT: " "Sent Router Solicitation")</span></span>;</td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">        <span class='keyword'>if</span> (nd-&gt;nd_sent &gt;= <span class='macro'>ICMP6_MAX_ROUTER_SOLICITATIONS<span class='expansion'>3</span></span>) {</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">                icmp6_nd_notify(nd, SD_ICMP6_ND_EVENT_ROUTER_ADVERTISMENT_TIMEOUT);</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">                nd-&gt;state = ICMP6_ROUTER_ADVERTISMENT_LISTEN;</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">                <span class='keyword'>if</span> (memcmp(&amp;nd-&gt;mac_addr, &amp;unset, <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> ether_addr)))</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">                        addr = &amp;nd-&gt;mac_addr;</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">                r = dhcp_network_icmp6_send_router_solicitation(nd-&gt;fd, addr);</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">                        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Error sending Router Solicitation"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 618<br>, __func__, "ICMPv6 CLIENT: " "Error sending Router Solicitation"<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">                <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">                        nd-&gt;state = ICMP6_ROUTER_SOLICITATION_SENT;</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">                        <span class='macro'>log_icmp6_nd(nd, <span class='string_literal'>"Sent Router Solicitation"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 621<br>, __func__, "ICMPv6 CLIENT: " "Sent Router Solicitation")</span></span>;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">                nd-&gt;nd_sent++;</td></tr>
 <tr><td class="num" id="LN625">625</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN626">626</td><td class="line">                nd-&gt;nd_sent++;</td></tr>
-<tr><td class="num" id="LN627">627</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line">                r = sd_event_now(nd-&gt;event, clock_boottime_or_monotonic(), &amp;time_now);</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN630">630</td><td class="line">                        icmp6_nd_notify(nd, r);</td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">                r = sd_event_now(nd-&gt;event, clock_boottime_or_monotonic(), &amp;time_now);</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">                        icmp6_nd_notify(nd, r);</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">                next_timeout = time_now + <span class='macro'>ICMP6_ROUTER_SOLICITATION_INTERVAL<span class='expansion'>4 * ((usec_t) 1000000ULL)</span></span>;</td></tr>
 <tr><td class="num" id="LN633">633</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line">                next_timeout = time_now + <span class='macro'>ICMP6_ROUTER_SOLICITATION_INTERVAL<span class='expansion'>4 * ((usec_t) 1000000ULL)</span></span>;</td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN636">636</td><td class="line">                r = sd_event_add_time(nd-&gt;event, &amp;nd-&gt;timeout, clock_boottime_or_monotonic(),</td></tr>
-<tr><td class="num" id="LN637">637</td><td class="line">                                      next_timeout, 0,</td></tr>
-<tr><td class="num" id="LN638">638</td><td class="line">                                      icmp6_router_solicitation_timeout, nd);</td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN640">640</td><td class="line">                        icmp6_nd_notify(nd, r);</td></tr>
-<tr><td class="num" id="LN641">641</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN642">642</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN643">643</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN644">644</td><td class="line">                r = sd_event_source_set_priority(nd-&gt;timeout,</td></tr>
-<tr><td class="num" id="LN645">645</td><td class="line">                                                 nd-&gt;event_priority);</td></tr>
-<tr><td class="num" id="LN646">646</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN647">647</td><td class="line">                        icmp6_nd_notify(nd, r);</td></tr>
-<tr><td class="num" id="LN648">648</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN649">649</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN650">650</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN651">651</td><td class="line">                r = sd_event_source_set_description(nd-&gt;timeout, <span class='string_literal'>"icmp6-timeout"</span>);</td></tr>
-<tr><td class="num" id="LN652">652</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN653">653</td><td class="line">                        icmp6_nd_notify(nd, r);</td></tr>
-<tr><td class="num" id="LN654">654</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN655">655</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN656">656</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN657">657</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN658">658</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN659">659</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN661">661</td><td class="line"><span class='keyword'>int</span> sd_icmp6_nd_stop(sd_icmp6_nd *nd) {</td></tr>
-<tr><td class="num" id="LN662">662</td><td class="line">        <span class='macro'>assert_return(nd, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(nd),1))) ? (1) : (log_assert_failed_return<br>("nd", "src/libsystemd-network/sd-icmp6-nd.c", 662, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN663">663</td><td class="line">        <span class='macro'>assert_return(nd-&gt;event, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(nd-&gt;event),1))) ? (1) : (<br>log_assert_failed_return("nd-&gt;event", "src/libsystemd-network/sd-icmp6-nd.c"<br>, 663, __PRETTY_FUNCTION__), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">                r = sd_event_add_time(nd-&gt;event, &amp;nd-&gt;timeout, clock_boottime_or_monotonic(),</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">                                      next_timeout, 0,</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">                                      icmp6_router_solicitation_timeout, nd);</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">                        icmp6_nd_notify(nd, r);</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">                r = sd_event_source_set_priority(nd-&gt;timeout,</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">                                                 nd-&gt;event_priority);</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">                        icmp6_nd_notify(nd, r);</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">                r = sd_event_source_set_description(nd-&gt;timeout, <span class='string_literal'>"icmp6-timeout"</span>);</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">                        icmp6_nd_notify(nd, r);</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line"><span class='keyword'>int</span> sd_icmp6_nd_stop(sd_icmp6_nd *nd) {</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">        <span class='macro'>assert_return(nd, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(nd),1))) ? (1) : (log_assert_failed_return<br>("nd", "src/libsystemd-network/sd-icmp6-nd.c", 660, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">        <span class='macro'>assert_return(nd-&gt;event, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(nd-&gt;event),1))) ? (1) : (<br>log_assert_failed_return("nd-&gt;event", "src/libsystemd-network/sd-icmp6-nd.c"<br>, 661, __PRETTY_FUNCTION__), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">        <span class='macro'>log_icmp6_nd(client, <span class='string_literal'>"Stop ICMPv6"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 663<br>, __func__, "ICMPv6 CLIENT: " "Stop ICMPv6")</span></span>;</td></tr>
 <tr><td class="num" id="LN664">664</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN665">665</td><td class="line">        <span class='macro'>log_icmp6_nd(client, <span class='string_literal'>"Stop ICMPv6"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 665<br>, __func__, "ICMPv6 CLIENT: " "Stop ICMPv6")</span></span>;</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">        icmp6_nd_init(nd);</td></tr>
 <tr><td class="num" id="LN666">666</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN667">667</td><td class="line">        icmp6_nd_init(nd);</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">        nd-&gt;state = ICMP6_NEIGHBOR_DISCOVERY_IDLE;</td></tr>
 <tr><td class="num" id="LN668">668</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN669">669</td><td class="line">        nd-&gt;state = ICMP6_NEIGHBOR_DISCOVERY_IDLE;</td></tr>
-<tr><td class="num" id="LN670">670</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN671">671</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN672">672</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN673">673</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN674">674</td><td class="line"><span class='keyword'>int</span> sd_icmp6_router_solicitation_start(sd_icmp6_nd *nd) {</td></tr>
-<tr><td class="num" id="LN675">675</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN676">676</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN677">677</td><td class="line">        <span class='macro'>assert(nd)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd)),0))) log_assert_failed("nd"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 677, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN678">678</td><td class="line">        <span class='macro'>assert(nd-&gt;event)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd-&gt;event)),0))) log_assert_failed<br>("nd-&gt;event", "src/libsystemd-network/sd-icmp6-nd.c", 678,<br> __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN679">679</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN680">680</td><td class="line">        <span class='keyword'>if</span> (nd-&gt;state != ICMP6_NEIGHBOR_DISCOVERY_IDLE)</td></tr>
-<tr><td class="num" id="LN681">681</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN682">682</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN683">683</td><td class="line">        <span class='keyword'>if</span> (nd-&gt;index &lt; 1)</td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN685">685</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN686">686</td><td class="line">        r = dhcp_network_icmp6_bind_router_solicitation(nd-&gt;index);</td></tr>
-<tr><td class="num" id="LN687">687</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN688">688</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line"><span class='keyword'>int</span> sd_icmp6_router_solicitation_start(sd_icmp6_nd *nd) {</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">        <span class='macro'>assert(nd)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd)),0))) log_assert_failed("nd"<br>, "src/libsystemd-network/sd-icmp6-nd.c", 675, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">        <span class='macro'>assert(nd-&gt;event)<span class='expansion'>do { if ((__builtin_expect(!!(!(nd-&gt;event)),0))) log_assert_failed<br>("nd-&gt;event", "src/libsystemd-network/sd-icmp6-nd.c", 676,<br> __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">        <span class='keyword'>if</span> (nd-&gt;state != ICMP6_NEIGHBOR_DISCOVERY_IDLE)</td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">        <span class='keyword'>if</span> (nd-&gt;index &lt; 1)</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">        r = dhcp_network_icmp6_bind_router_solicitation(nd-&gt;index);</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">        nd-&gt;fd = r;</td></tr>
 <tr><td class="num" id="LN689">689</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN690">690</td><td class="line">        nd-&gt;fd = r;</td></tr>
-<tr><td class="num" id="LN691">691</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN692">692</td><td class="line">        r = sd_event_add_io(nd-&gt;event, &amp;nd-&gt;recv, nd-&gt;fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>,</td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">                            icmp6_router_advertisment_recv, nd);</td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN695">695</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN697">697</td><td class="line">        r = sd_event_source_set_priority(nd-&gt;recv, nd-&gt;event_priority);</td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line">        r = sd_event_source_set_description(nd-&gt;recv, <span class='string_literal'>"icmp6-receive-message"</span>);</td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
-<tr><td class="num" id="LN704">704</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line">        r = sd_event_add_time(nd-&gt;event, &amp;nd-&gt;timeout, clock_boottime_or_monotonic(),</td></tr>
-<tr><td class="num" id="LN706">706</td><td class="line">                              0, 0, icmp6_router_solicitation_timeout, nd);</td></tr>
-<tr><td class="num" id="LN707">707</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN708">708</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN710">710</td><td class="line">        r = sd_event_source_set_priority(nd-&gt;timeout, nd-&gt;event_priority);</td></tr>
-<tr><td class="num" id="LN711">711</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN712">712</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN714">714</td><td class="line">        r = sd_event_source_set_description(nd-&gt;timeout, <span class='string_literal'>"icmp6-timeout"</span>);</td></tr>
-<tr><td class="num" id="LN715">715</td><td class="line">error:</td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line">                icmp6_nd_init(nd);</td></tr>
-<tr><td class="num" id="LN718">718</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line">                <span class='macro'>log_icmp6_nd(client, <span class='string_literal'>"Start Router Solicitation"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 719<br>, __func__, "ICMPv6 CLIENT: " "Start Router Solicitation")</span></span>;</td></tr>
-<tr><td class="num" id="LN720">720</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">        r = sd_event_add_io(nd-&gt;event, &amp;nd-&gt;recv, nd-&gt;fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>,</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">                            icmp6_router_advertisment_recv, nd);</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">        r = sd_event_source_set_priority(nd-&gt;recv, nd-&gt;event_priority);</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">        r = sd_event_source_set_description(nd-&gt;recv, <span class='string_literal'>"icmp6-receive-message"</span>);</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        r = sd_event_add_time(nd-&gt;event, &amp;nd-&gt;timeout, clock_boottime_or_monotonic(),</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">                              0, 0, icmp6_router_solicitation_timeout, nd);</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">        r = sd_event_source_set_priority(nd-&gt;timeout, nd-&gt;event_priority);</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">                <span class='keyword'>goto</span> error;</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">        r = sd_event_source_set_description(nd-&gt;timeout, <span class='string_literal'>"icmp6-timeout"</span>);</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">error:</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">                icmp6_nd_init(nd);</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">                <span class='macro'>log_icmp6_nd(client, <span class='string_literal'>"Start Router Solicitation"</span>)<span class='expansion'>log_internal(7, 0, "src/libsystemd-network/sd-icmp6-nd.c", 717<br>, __func__, "ICMPv6 CLIENT: " "Start Router Solicitation")</span></span>;</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">}</td></tr>
 </table></body></html>

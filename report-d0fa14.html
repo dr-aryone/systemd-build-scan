@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'tty_block_fd' is never read -->
+<!-- BUGDESC Potential leak of memory pointed to by 'packet' -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/tty-ask-password-agent/tty-ask-password-agent.c -->
 
 <!-- FILENAME tty-ask-password-agent.c -->
 
-<!-- FUNCTIONNAME watch_passwords -->
+<!-- FUNCTIONNAME ask_password_plymouth -->
 
-<!-- BUGLINE 486 -->
+<!-- BUGLINE 139 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 33 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 21 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/tty-ask-password-agent/tty-ask-password-agent.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 486, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'tty_block_fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 139, column 33</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'packet'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -162,7 +162,9 @@
 <tr><td class="num" id="LN77">77</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN78">78</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/tty-ask-password-agent/tty-ask-password-agent.c",<br> 78, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN79">79</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN80">80</td><td class="line">        <span class='keyword'>if</span> (flag_file) {</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">flag_file</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'flag_file' is null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN81">81</td><td class="line">                notify = inotify_init1(<span class='macro'>IN_CLOEXEC<span class='expansion'>IN_CLOEXEC</span></span>|<span class='macro'>IN_NONBLOCK<span class='expansion'>IN_NONBLOCK</span></span>);</td></tr>
 <tr><td class="num" id="LN82">82</td><td class="line">                <span class='keyword'>if</span> (notify &lt; 0)</td></tr>
 <tr><td class="num" id="LN83">83</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
@@ -173,23 +175,33 @@
 <tr><td class="num" id="LN88">88</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN89">89</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN90">90</td><td class="line">        fd = socket(<span class='macro'>AF_UNIX<span class='expansion'>1</span></span>, <span class='macro'>SOCK_STREAM<span class='expansion'>SOCK_STREAM</span></span>|<span class='macro'>SOCK_CLOEXEC<span class='expansion'>SOCK_CLOEXEC</span></span>|<span class='macro'>SOCK_NONBLOCK<span class='expansion'>SOCK_NONBLOCK</span></span>, 0);</td></tr>
-<tr><td class="num" id="LN91">91</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">fd &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'fd' is &gt;= 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN92">92</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN93">93</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN94">94</td><td class="line">        r = connect(fd, &amp;sa.sa, <span class='macro'>offsetof(<span class='keyword'>struct</span> sockaddr_un, sun_path)<span class='expansion'>__builtin_offsetof(struct sockaddr_un, sun_path)</span></span> + 1 + strlen(sa.un.sun_path+1));</td></tr>
-<tr><td class="num" id="LN95">95</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN96">96</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN97">97</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN98">98</td><td class="line">        <span class='keyword'>if</span> (flags &amp; ASK_PASSWORD_ACCEPT_CACHED) {</td></tr>
-<tr><td class="num" id="LN99">99</td><td class="line">                packet = strdup(<span class='string_literal'>"c"</span>);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">                packet = <span class="mrange">strdup(<span class='string_literal'>"c"</span>)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:26ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN100">100</td><td class="line">                n = 1;</td></tr>
 <tr><td class="num" id="LN101">101</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (asprintf(&amp;packet, <span class='string_literal'>"*\002%c%s%n"</span>, (<span class='keyword'>int</span>) (strlen(message) + 1), message, &amp;n) &lt; 0)</td></tr>
 <tr><td class="num" id="LN102">102</td><td class="line">                packet = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN103">103</td><td class="line">        <span class='keyword'>if</span> (!packet)</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!packet</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'packet' is non-null</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN104">104</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN105">105</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN106">106</td><td class="line">        r = loop_write(fd, packet, n + 1, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN107">107</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN108">108</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN109">109</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN110">110</td><td class="line">        pollfd[POLL_SOCKET].fd = fd;</td></tr>
@@ -198,9 +210,12 @@
 <tr><td class="num" id="LN113">113</td><td class="line">        pollfd[POLL_INOTIFY].events = <span class='macro'>POLLIN<span class='expansion'>0x001</span></span>;</td></tr>
 <tr><td class="num" id="LN114">114</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN115">115</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN116">116</td><td class="line">                <span class='keyword'>int</span> sleep_for = -1, j;</td></tr>
 <tr><td class="num" id="LN117">117</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN118">118</td><td class="line">                <span class='keyword'>if</span> (until &gt; 0) {</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">until &gt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Assuming 'until' is &lt;= 0</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN119">119</td><td class="line">                        usec_t y;</td></tr>
 <tr><td class="num" id="LN120">120</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN121">121</td><td class="line">                        y = now(<span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>);</td></tr>
@@ -215,13 +230,21 @@
 <tr><td class="num" id="LN130">130</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN131">131</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN132">132</td><td class="line">                j = poll(pollfd, notify &gt;= 0 ? 2 : 1, sleep_for);</td></tr>
-<tr><td class="num" id="LN133">133</td><td class="line">                <span class='keyword'>if</span> (j &lt; 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:34ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>'?' condition is false</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">j &lt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Assuming 'j' is &gt;= 0</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN134">134</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EINTR<span class='expansion'>4</span></span>)</td></tr>
 <tr><td class="num" id="LN135">135</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN136">136</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN137">137</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN138">138</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (j == 0)</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class="mrange">j == 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgEvent" style="margin-left:28ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Assuming 'j' is equal to 0</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN139">139</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ETIME<span class='expansion'>62</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:33ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ETIME':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'packet'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN140">140</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN141">141</td><td class="line">                <span class='keyword'>if</span> (notify &gt;= 0 &amp;&amp; pollfd[POLL_INOTIFY].revents != 0)</td></tr>
 <tr><td class="num" id="LN142">142</td><td class="line">                        flush_fd(notify);</td></tr>
@@ -466,7 +489,7 @@
 <tr><td class="num" id="LN381">381</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN382">382</td><td class="line">        fd = open(p, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
 <tr><td class="num" id="LN383">383</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN384">384</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to open %s: %m"</span>, p)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/tty-ask-password-agent/tty-ask-password-agent.c"<br>, 384, __func__, "Failed to open %s: %m", p) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_debug_errno(errno, <span class='string_literal'>"Failed to open %s: %m"</span>, p)<span class='expansion'>({ int _level = (7), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/tty-ask-password-agent/tty-ask-password-agent.c"<br>, 384, __func__, "Failed to open %s: %m", p) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN385">385</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN386">386</td><td class="line">        <span class='keyword'>return</span> fd;</td></tr>
 <tr><td class="num" id="LN387">387</td><td class="line">}</td></tr>
@@ -568,8 +591,7 @@
 <tr><td class="num" id="LN483">483</td><td class="line">        sigset_t mask;</td></tr>
 <tr><td class="num" id="LN484">484</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN485">485</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line">        tty_block_fd = <span class="mrange">wall_tty_block()</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'tty_block_fd' is never read</div></td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        tty_block_fd = wall_tty_block();</td></tr>
 <tr><td class="num" id="LN487">487</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN488">488</td><td class="line">        (<span class='keyword'>void</span>) mkdir_p_label(<span class='string_literal'>"/run/systemd/ask-password"</span>, 0755);</td></tr>
 <tr><td class="num" id="LN489">489</td><td class="line"> </td></tr>
