@@ -66,7 +66,7 @@
 
 <!-- FUNCTIONNAME subvol_snapshot_children -->
 
-<!-- BUGLINE 1030 -->
+<!-- BUGLINE 1073 -->
 
 <!-- BUGCOLUMN 42 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/basic/btrfs-util.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1030, column 42</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1073, column 42</a></td></tr>
 <tr><td class="rowname">Description:</td><td>The right operand of '==' is a garbage value</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -893,396 +893,439 @@
 <tr><td class="num" id="LN799">799</td><td class="line">        <span class='keyword'>return</span> btrfs_resize_loopback_fd(fd, new_size, grow_only);</td></tr>
 <tr><td class="num" id="LN800">800</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN801">801</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN802">802</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> subvol_remove_children(<span class='keyword'>int</span> fd, <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume, uint64_t subvol_id, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive) {</td></tr>
-<tr><td class="num" id="LN803">803</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_search_args args = {</td></tr>
-<tr><td class="num" id="LN804">804</td><td class="line">                .key.tree_id = <span class='macro'>BTRFS_ROOT_TREE_OBJECTID<span class='expansion'>1</span></span>,</td></tr>
-<tr><td class="num" id="LN805">805</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN806">806</td><td class="line">                .key.min_objectid = <span class='macro'>BTRFS_FIRST_FREE_OBJECTID<span class='expansion'>256</span></span>,</td></tr>
-<tr><td class="num" id="LN807">807</td><td class="line">                .key.max_objectid = <span class='macro'>BTRFS_LAST_FREE_OBJECTID<span class='expansion'>-256ULL</span></span>,</td></tr>
-<tr><td class="num" id="LN808">808</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN809">809</td><td class="line">                .key.min_type = <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>,</td></tr>
-<tr><td class="num" id="LN810">810</td><td class="line">                .key.max_type = <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>,</td></tr>
-<tr><td class="num" id="LN811">811</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN812">812</td><td class="line">                .key.min_transid = 0,</td></tr>
-<tr><td class="num" id="LN813">813</td><td class="line">                .key.max_transid = (uint64_t) -1,</td></tr>
-<tr><td class="num" id="LN814">814</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN815">815</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN816">816</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_vol_args vol_args = {};</td></tr>
-<tr><td class="num" id="LN817">817</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> subvol_fd = -1;</td></tr>
-<tr><td class="num" id="LN818">818</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
-<tr><td class="num" id="LN819">819</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> made_writable = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN820">820</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN821">821</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN822">822</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/basic/btrfs-util.c", 822, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN823">823</td><td class="line">        <span class='macro'>assert(subvolume)<span class='expansion'>do { if ((__builtin_expect(!!(!(subvolume)),0))) log_assert_failed<br>("subvolume", "src/basic/btrfs-util.c", 823, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN824">824</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN825">825</td><td class="line">        <span class='keyword'>if</span> (fstat(fd, &amp;st) &lt; 0)</td></tr>
-<tr><td class="num" id="LN826">826</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN827">827</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN828">828</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
-<tr><td class="num" id="LN829">829</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN830">830</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN831">831</td><td class="line">        <span class='comment'>/* First, try to remove the subvolume. If it happens to be</span></td></tr>
-<tr><td class="num" id="LN832">832</td><td class="line">         <span class='comment'>* already empty, this will just work. */</span></td></tr>
-<tr><td class="num" id="LN833">833</td><td class="line">        strncpy(vol_args.name, subvolume, <span class='keyword'>sizeof</span>(vol_args.name)-1);</td></tr>
-<tr><td class="num" id="LN834">834</td><td class="line">        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_SNAP_DESTROY<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((15)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_vol_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;vol_args) &gt;= 0)</td></tr>
-<tr><td class="num" id="LN835">835</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN836">836</td><td class="line">        <span class='keyword'>if</span> (!recursive || <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOTEMPTY<span class='expansion'>39</span></span>)</td></tr>
-<tr><td class="num" id="LN837">837</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN838">838</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN839">839</td><td class="line">        <span class='comment'>/* OK, the subvolume is not empty, let's look for child</span></td></tr>
-<tr><td class="num" id="LN840">840</td><td class="line">         <span class='comment'>* subvolumes, and remove them, first */</span></td></tr>
-<tr><td class="num" id="LN841">841</td><td class="line">        subvol_fd = openat(fd, subvolume, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN842">842</td><td class="line">        <span class='keyword'>if</span> (subvol_fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN843">843</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> make_qgroup_id(uint64_t level, uint64_t id, uint64_t *ret) {</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/basic/btrfs-util.c", 803, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">        <span class='keyword'>if</span> (level &gt;= (<span class='macro'>UINT64_C(1)<span class='expansion'>1UL</span></span> &lt;&lt; (64 - <span class='macro'>BTRFS_QGROUP_LEVEL_SHIFT<span class='expansion'>48</span></span>)))</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">        <span class='keyword'>if</span> (id &gt;= (<span class='macro'>UINT64_C(1)<span class='expansion'>1UL</span></span> &lt;&lt; <span class='macro'>BTRFS_QGROUP_LEVEL_SHIFT<span class='expansion'>48</span></span>))</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">        *ret = (level &lt;&lt; <span class='macro'>BTRFS_QGROUP_LEVEL_SHIFT<span class='expansion'>48</span></span>) | id;</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> qgroup_create_or_destroy(<span class='keyword'>int</span> fd, <span class='macro'>bool<span class='expansion'>_Bool</span></span> b, uint64_t level, uint64_t id) {</td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_qgroup_create_args args = {</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">                .create = b,</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">        r = make_qgroup_id(level, id, (uint64_t*) &amp;args.qgroupid);</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_QGROUP_CREATE<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((42)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_qgroup_create_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;args) &lt; 0)</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line"><span class='keyword'>int</span> btrfs_qgroup_create(<span class='keyword'>int</span> fd, uint64_t level, uint64_t id) {</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">        <span class='keyword'>return</span> qgroup_create_or_destroy(fd, <span class='macro'>true<span class='expansion'>1</span></span>, level, id);</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line"><span class='keyword'>int</span> btrfs_qgroup_destroy(<span class='keyword'>int</span> fd, uint64_t level, uint64_t id) {</td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">        <span class='keyword'>return</span> qgroup_create_or_destroy(fd, <span class='macro'>false<span class='expansion'>0</span></span>, level, id);</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> subvol_remove_children(<span class='keyword'>int</span> fd, <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume, uint64_t subvol_id, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive) {</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_search_args args = {</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">                .key.tree_id = <span class='macro'>BTRFS_ROOT_TREE_OBJECTID<span class='expansion'>1</span></span>,</td></tr>
 <tr><td class="num" id="LN844">844</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN845">845</td><td class="line">        <span class='keyword'>if</span> (subvol_id == 0) {</td></tr>
-<tr><td class="num" id="LN846">846</td><td class="line">                r = btrfs_subvol_get_id_fd(subvol_fd, &amp;subvol_id);</td></tr>
-<tr><td class="num" id="LN847">847</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN848">848</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN849">849</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">                .key.min_objectid = <span class='macro'>BTRFS_FIRST_FREE_OBJECTID<span class='expansion'>256</span></span>,</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line">                .key.max_objectid = <span class='macro'>BTRFS_LAST_FREE_OBJECTID<span class='expansion'>-256ULL</span></span>,</td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line">                .key.min_type = <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>,</td></tr>
+<tr><td class="num" id="LN849">849</td><td class="line">                .key.max_type = <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>,</td></tr>
 <tr><td class="num" id="LN850">850</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN851">851</td><td class="line">        args.key.min_offset = args.key.max_offset = subvol_id;</td></tr>
-<tr><td class="num" id="LN852">852</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN853">853</td><td class="line">        <span class='keyword'>while</span> (btrfs_ioctl_search_args_compare(&amp;args) &lt;= 0) {</td></tr>
-<tr><td class="num" id="LN854">854</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_ioctl_search_header *sh;</td></tr>
-<tr><td class="num" id="LN855">855</td><td class="line">                <span class='keyword'>unsigned</span> i;</td></tr>
-<tr><td class="num" id="LN856">856</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN857">857</td><td class="line">                args.key.nr_items = 256;</td></tr>
-<tr><td class="num" id="LN858">858</td><td class="line">                <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_TREE_SEARCH<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((17)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_search_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;args) &lt; 0)</td></tr>
-<tr><td class="num" id="LN859">859</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">                .key.min_transid = 0,</td></tr>
+<tr><td class="num" id="LN852">852</td><td class="line">                .key.max_transid = (uint64_t) -1,</td></tr>
+<tr><td class="num" id="LN853">853</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN854">854</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN855">855</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_vol_args vol_args = {};</td></tr>
+<tr><td class="num" id="LN856">856</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> subvol_fd = -1;</td></tr>
+<tr><td class="num" id="LN857">857</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
+<tr><td class="num" id="LN858">858</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> made_writable = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN859">859</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN860">860</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN861">861</td><td class="line">                <span class='keyword'>if</span> (args.key.nr_items &lt;= 0)</td></tr>
-<tr><td class="num" id="LN862">862</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN861">861</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/basic/btrfs-util.c", 861, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN862">862</td><td class="line">        <span class='macro'>assert(subvolume)<span class='expansion'>do { if ((__builtin_expect(!!(!(subvolume)),0))) log_assert_failed<br>("subvolume", "src/basic/btrfs-util.c", 862, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN863">863</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN864">864</td><td class="line">                <span class='macro'>FOREACH_BTRFS_IOCTL_SEARCH_HEADER(i, sh, args)<span class='expansion'>for ((i) = 0, (sh) = (const struct btrfs_ioctl_search_header*<br>) (args).buf; (i) &lt; (args).key.nr_items; (i)++, (sh) = (const<br> struct btrfs_ioctl_search_header*) ((uint8_t*) (sh) + sizeof<br>(struct btrfs_ioctl_search_header) + (sh)-&gt;len))</span></span> {</td></tr>
-<tr><td class="num" id="LN865">865</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN866">866</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_root_ref *ref;</td></tr>
-<tr><td class="num" id="LN867">867</td><td class="line">                        <span class='keyword'>struct</span> btrfs_ioctl_ino_lookup_args ino_args;</td></tr>
-<tr><td class="num" id="LN868">868</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN869">869</td><td class="line">                        btrfs_ioctl_search_args_set(&amp;args, sh);</td></tr>
-<tr><td class="num" id="LN870">870</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN871">871</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;type != <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>)</td></tr>
-<tr><td class="num" id="LN872">872</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN873">873</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;offset != subvol_id)</td></tr>
-<tr><td class="num" id="LN874">874</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN875">875</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN876">876</td><td class="line">                        ref = <span class='macro'>BTRFS_IOCTL_SEARCH_HEADER_BODY(sh)<span class='expansion'>((void*) ((uint8_t*) sh + sizeof(struct btrfs_ioctl_search_header<br>)))</span></span>;</td></tr>
-<tr><td class="num" id="LN877">877</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN878">878</td><td class="line">                        p = strndup((<span class='keyword'>char</span>*) ref + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> btrfs_root_ref), le64toh(ref-&gt;name_len));</td></tr>
-<tr><td class="num" id="LN879">879</td><td class="line">                        <span class='keyword'>if</span> (!p)</td></tr>
-<tr><td class="num" id="LN880">880</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN881">881</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN882">882</td><td class="line">                        <span class='macro'>zero(ino_args)<span class='expansion'>((memset((&amp;(ino_args)), 0, (sizeof(ino_args)))))</span></span>;</td></tr>
-<tr><td class="num" id="LN883">883</td><td class="line">                        ino_args.treeid = subvol_id;</td></tr>
-<tr><td class="num" id="LN884">884</td><td class="line">                        ino_args.objectid = htole64(ref-&gt;dirid);</td></tr>
-<tr><td class="num" id="LN885">885</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN886">886</td><td class="line">                        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_INO_LOOKUP<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((18)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_ino_lookup_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;ino_args) &lt; 0)</td></tr>
-<tr><td class="num" id="LN887">887</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN888">888</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN889">889</td><td class="line">                        <span class='keyword'>if</span> (!made_writable) {</td></tr>
-<tr><td class="num" id="LN890">890</td><td class="line">                                r = btrfs_subvol_set_read_only_fd(subvol_fd, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN891">891</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN892">892</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN893">893</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN894">894</td><td class="line">                                made_writable = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN895">895</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN896">896</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN897">897</td><td class="line">                        <span class='keyword'>if</span> (isempty(ino_args.name))</td></tr>
-<tr><td class="num" id="LN898">898</td><td class="line">                                <span class='comment'>/* Subvolume is in the top-level</span></td></tr>
-<tr><td class="num" id="LN899">899</td><td class="line">                                 <span class='comment'>* directory of the subvolume. */</span></td></tr>
-<tr><td class="num" id="LN900">900</td><td class="line">                                r = subvol_remove_children(subvol_fd, p, sh-&gt;objectid, recursive);</td></tr>
-<tr><td class="num" id="LN901">901</td><td class="line">                        <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN902">902</td><td class="line">                                <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> child_fd = -1;</td></tr>
-<tr><td class="num" id="LN903">903</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN904">904</td><td class="line">                                <span class='comment'>/* Subvolume is somewhere further down,</span></td></tr>
-<tr><td class="num" id="LN905">905</td><td class="line">                                 <span class='comment'>* hence we need to open the</span></td></tr>
-<tr><td class="num" id="LN906">906</td><td class="line">                                 <span class='comment'>* containing directory first */</span></td></tr>
-<tr><td class="num" id="LN907">907</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN908">908</td><td class="line">                                child_fd = openat(subvol_fd, ino_args.name, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN909">909</td><td class="line">                                <span class='keyword'>if</span> (child_fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN910">910</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN911">911</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN912">912</td><td class="line">                                r = subvol_remove_children(child_fd, p, sh-&gt;objectid, recursive);</td></tr>
-<tr><td class="num" id="LN913">913</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN914">914</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN915">915</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN916">916</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line">        <span class='keyword'>if</span> (fstat(fd, &amp;st) &lt; 0)</td></tr>
+<tr><td class="num" id="LN865">865</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN869">869</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line">        subvol_fd = openat(fd, subvolume, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN871">871</td><td class="line">        <span class='keyword'>if</span> (subvol_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN872">872</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN873">873</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN874">874</td><td class="line">        <span class='keyword'>if</span> (subvol_id == 0) {</td></tr>
+<tr><td class="num" id="LN875">875</td><td class="line">                r = btrfs_subvol_get_id_fd(subvol_fd, &amp;subvol_id);</td></tr>
+<tr><td class="num" id="LN876">876</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN877">877</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN878">878</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN879">879</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN880">880</td><td class="line">        <span class='comment'>/* First, try to remove the subvolume. If it happens to be</span></td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line">         <span class='comment'>* already empty, this will just work. */</span></td></tr>
+<tr><td class="num" id="LN882">882</td><td class="line">        strncpy(vol_args.name, subvolume, <span class='keyword'>sizeof</span>(vol_args.name)-1);</td></tr>
+<tr><td class="num" id="LN883">883</td><td class="line">        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_SNAP_DESTROY<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((15)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_vol_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;vol_args) &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN884">884</td><td class="line">                (<span class='keyword'>void</span>) btrfs_qgroup_destroy(fd, 0, subvol_id);</td></tr>
+<tr><td class="num" id="LN885">885</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN886">886</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN887">887</td><td class="line">        <span class='keyword'>if</span> (!recursive || <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOTEMPTY<span class='expansion'>39</span></span>)</td></tr>
+<tr><td class="num" id="LN888">888</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN889">889</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN890">890</td><td class="line">        <span class='comment'>/* OK, the subvolume is not empty, let's look for child</span></td></tr>
+<tr><td class="num" id="LN891">891</td><td class="line">         <span class='comment'>* subvolumes, and remove them, first */</span></td></tr>
+<tr><td class="num" id="LN892">892</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN893">893</td><td class="line">        args.key.min_offset = args.key.max_offset = subvol_id;</td></tr>
+<tr><td class="num" id="LN894">894</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN895">895</td><td class="line">        <span class='keyword'>while</span> (btrfs_ioctl_search_args_compare(&amp;args) &lt;= 0) {</td></tr>
+<tr><td class="num" id="LN896">896</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_ioctl_search_header *sh;</td></tr>
+<tr><td class="num" id="LN897">897</td><td class="line">                <span class='keyword'>unsigned</span> i;</td></tr>
+<tr><td class="num" id="LN898">898</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN899">899</td><td class="line">                args.key.nr_items = 256;</td></tr>
+<tr><td class="num" id="LN900">900</td><td class="line">                <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_TREE_SEARCH<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((17)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_search_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;args) &lt; 0)</td></tr>
+<tr><td class="num" id="LN901">901</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN902">902</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN903">903</td><td class="line">                <span class='keyword'>if</span> (args.key.nr_items &lt;= 0)</td></tr>
+<tr><td class="num" id="LN904">904</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN905">905</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN906">906</td><td class="line">                <span class='macro'>FOREACH_BTRFS_IOCTL_SEARCH_HEADER(i, sh, args)<span class='expansion'>for ((i) = 0, (sh) = (const struct btrfs_ioctl_search_header*<br>) (args).buf; (i) &lt; (args).key.nr_items; (i)++, (sh) = (const<br> struct btrfs_ioctl_search_header*) ((uint8_t*) (sh) + sizeof<br>(struct btrfs_ioctl_search_header) + (sh)-&gt;len))</span></span> {</td></tr>
+<tr><td class="num" id="LN907">907</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN908">908</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_root_ref *ref;</td></tr>
+<tr><td class="num" id="LN909">909</td><td class="line">                        <span class='keyword'>struct</span> btrfs_ioctl_ino_lookup_args ino_args;</td></tr>
+<tr><td class="num" id="LN910">910</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN911">911</td><td class="line">                        btrfs_ioctl_search_args_set(&amp;args, sh);</td></tr>
+<tr><td class="num" id="LN912">912</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN913">913</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;type != <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>)</td></tr>
+<tr><td class="num" id="LN914">914</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN915">915</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;offset != subvol_id)</td></tr>
+<tr><td class="num" id="LN916">916</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN917">917</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN918">918</td><td class="line">                <span class='comment'>/* Increase search key by one, to read the next item, if we can. */</span></td></tr>
-<tr><td class="num" id="LN919">919</td><td class="line">                <span class='keyword'>if</span> (!btrfs_ioctl_search_args_inc(&amp;args))</td></tr>
-<tr><td class="num" id="LN920">920</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN921">921</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN922">922</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN923">923</td><td class="line">        <span class='comment'>/* OK, the child subvolumes should all be gone now, let's try</span></td></tr>
-<tr><td class="num" id="LN924">924</td><td class="line">         <span class='comment'>* again to remove the subvolume */</span></td></tr>
-<tr><td class="num" id="LN925">925</td><td class="line">        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_SNAP_DESTROY<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((15)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_vol_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;vol_args) &lt; 0)</td></tr>
-<tr><td class="num" id="LN926">926</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">                        ref = <span class='macro'>BTRFS_IOCTL_SEARCH_HEADER_BODY(sh)<span class='expansion'>((void*) ((uint8_t*) sh + sizeof(struct btrfs_ioctl_search_header<br>)))</span></span>;</td></tr>
+<tr><td class="num" id="LN919">919</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN920">920</td><td class="line">                        p = strndup((<span class='keyword'>char</span>*) ref + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> btrfs_root_ref), le64toh(ref-&gt;name_len));</td></tr>
+<tr><td class="num" id="LN921">921</td><td class="line">                        <span class='keyword'>if</span> (!p)</td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN923">923</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN924">924</td><td class="line">                        <span class='macro'>zero(ino_args)<span class='expansion'>((memset((&amp;(ino_args)), 0, (sizeof(ino_args)))))</span></span>;</td></tr>
+<tr><td class="num" id="LN925">925</td><td class="line">                        ino_args.treeid = subvol_id;</td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">                        ino_args.objectid = htole64(ref-&gt;dirid);</td></tr>
 <tr><td class="num" id="LN927">927</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN928">928</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN929">929</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN928">928</td><td class="line">                        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_INO_LOOKUP<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((18)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_ino_lookup_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;ino_args) &lt; 0)</td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN930">930</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN931">931</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_remove(<span class='keyword'>const</span> <span class='keyword'>char</span> *path, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive) {</td></tr>
-<tr><td class="num" id="LN932">932</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
-<tr><td class="num" id="LN933">933</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume;</td></tr>
-<tr><td class="num" id="LN934">934</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN931">931</td><td class="line">                        <span class='keyword'>if</span> (!made_writable) {</td></tr>
+<tr><td class="num" id="LN932">932</td><td class="line">                                r = btrfs_subvol_set_read_only_fd(subvol_fd, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN934">934</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN935">935</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN936">936</td><td class="line">        <span class='macro'>assert(path)<span class='expansion'>do { if ((__builtin_expect(!!(!(path)),0))) log_assert_failed<br>("path", "src/basic/btrfs-util.c", 936, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN937">937</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN938">938</td><td class="line">        r = extract_subvolume_name(path, &amp;subvolume);</td></tr>
-<tr><td class="num" id="LN939">939</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN940">940</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN941">941</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN942">942</td><td class="line">        fd = open_parent(path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN943">943</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN944">944</td><td class="line">                <span class='keyword'>return</span> fd;</td></tr>
+<tr><td class="num" id="LN936">936</td><td class="line">                                made_writable = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN937">937</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN938">938</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN939">939</td><td class="line">                        <span class='keyword'>if</span> (isempty(ino_args.name))</td></tr>
+<tr><td class="num" id="LN940">940</td><td class="line">                                <span class='comment'>/* Subvolume is in the top-level</span></td></tr>
+<tr><td class="num" id="LN941">941</td><td class="line">                                 <span class='comment'>* directory of the subvolume. */</span></td></tr>
+<tr><td class="num" id="LN942">942</td><td class="line">                                r = subvol_remove_children(subvol_fd, p, sh-&gt;objectid, recursive);</td></tr>
+<tr><td class="num" id="LN943">943</td><td class="line">                        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN944">944</td><td class="line">                                <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> child_fd = -1;</td></tr>
 <tr><td class="num" id="LN945">945</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN946">946</td><td class="line">        <span class='keyword'>return</span> subvol_remove_children(fd, subvolume, 0, recursive);</td></tr>
-<tr><td class="num" id="LN947">947</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN948">948</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN949">949</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_remove_fd(<span class='keyword'>int</span> fd, <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive) {</td></tr>
-<tr><td class="num" id="LN950">950</td><td class="line">        <span class='keyword'>return</span> subvol_remove_children(fd, subvolume, 0, recursive);</td></tr>
-<tr><td class="num" id="LN951">951</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN952">952</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN953">953</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> subvol_snapshot_children(<span class='keyword'>int</span> old_fd, <span class='keyword'>int</span> new_fd, <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume, uint64_t old_subvol_id, BtrfsSnapshotFlags flags) {</td></tr>
-<tr><td class="num" id="LN954">954</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN955">955</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_search_args args = {</td></tr>
-<tr><td class="num" id="LN956">956</td><td class="line">                .key.tree_id = <span class='macro'>BTRFS_ROOT_TREE_OBJECTID<span class='expansion'>1</span></span>,</td></tr>
-<tr><td class="num" id="LN957">957</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN958">958</td><td class="line">                .key.min_objectid = <span class='macro'>BTRFS_FIRST_FREE_OBJECTID<span class='expansion'>256</span></span>,</td></tr>
-<tr><td class="num" id="LN959">959</td><td class="line">                .key.max_objectid = <span class='macro'>BTRFS_LAST_FREE_OBJECTID<span class='expansion'>-256ULL</span></span>,</td></tr>
-<tr><td class="num" id="LN960">960</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN961">961</td><td class="line">                .key.min_type = <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>,</td></tr>
-<tr><td class="num" id="LN962">962</td><td class="line">                .key.max_type = <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>,</td></tr>
-<tr><td class="num" id="LN963">963</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN964">964</td><td class="line">                .key.min_transid = 0,</td></tr>
-<tr><td class="num" id="LN965">965</td><td class="line">                .key.max_transid = (uint64_t) -1,</td></tr>
-<tr><td class="num" id="LN966">966</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN967">967</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN968">968</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_vol_args_v2 vol_args = {</td></tr>
-<tr><td class="num" id="LN969">969</td><td class="line">                .flags = flags &amp; BTRFS_SNAPSHOT_READ_ONLY ? <span class='macro'>BTRFS_SUBVOL_RDONLY<span class='expansion'>(1ULL &lt;&lt; 1)</span></span> : 0,</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:26ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>'?' condition is false</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN970">970</td><td class="line">                .fd = old_fd,</td></tr>
-<tr><td class="num" id="LN971">971</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN972">972</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> subvolume_fd = -1;</td></tr>
-<tr><td class="num" id="LN973">973</td><td class="line">        <span class="mrange">uint64_t new_subvol_id</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>'new_subvol_id' declared without an initial value</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN974">974</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN975">975</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN976">976</td><td class="line">        <span class='macro'>assert(old_fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(old_fd &gt;= 0)),0))) log_assert_failed<br>("old_fd &gt;= 0", "src/basic/btrfs-util.c", 976, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN977">977</td><td class="line">        <span class='macro'>assert(new_fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(new_fd &gt;= 0)),0))) log_assert_failed<br>("new_fd &gt;= 0", "src/basic/btrfs-util.c", 977, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN978">978</td><td class="line">        <span class='macro'>assert(subvolume)<span class='expansion'>do { if ((__builtin_expect(!!(!(subvolume)),0))) log_assert_failed<br>("subvolume", "src/basic/btrfs-util.c", 978, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN979">979</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN980">980</td><td class="line">        strncpy(vol_args.name, subvolume, <span class='keyword'>sizeof</span>(vol_args.name)-1);</td></tr>
-<tr><td class="num" id="LN981">981</td><td class="line">        vol_args.fd = old_fd;</td></tr>
-<tr><td class="num" id="LN982">982</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN983">983</td><td class="line">        <span class='keyword'>if</span> (ioctl(new_fd, <span class='macro'>BTRFS_IOC_SNAP_CREATE_V2<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((23)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_vol_args_v2<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;vol_args) &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN984">984</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN985">985</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN986">986</td><td class="line">        <span class='keyword'>if</span> (!(flags &amp; BTRFS_SNAPSHOT_RECURSIVE))</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN987">987</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN946">946</td><td class="line">                                <span class='comment'>/* Subvolume is somewhere further down,</span></td></tr>
+<tr><td class="num" id="LN947">947</td><td class="line">                                 <span class='comment'>* hence we need to open the</span></td></tr>
+<tr><td class="num" id="LN948">948</td><td class="line">                                 <span class='comment'>* containing directory first */</span></td></tr>
+<tr><td class="num" id="LN949">949</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN950">950</td><td class="line">                                child_fd = openat(subvol_fd, ino_args.name, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN951">951</td><td class="line">                                <span class='keyword'>if</span> (child_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN953">953</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN954">954</td><td class="line">                                r = subvol_remove_children(child_fd, p, sh-&gt;objectid, recursive);</td></tr>
+<tr><td class="num" id="LN955">955</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN956">956</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN957">957</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN958">958</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN959">959</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN960">960</td><td class="line">                <span class='comment'>/* Increase search key by one, to read the next item, if we can. */</span></td></tr>
+<tr><td class="num" id="LN961">961</td><td class="line">                <span class='keyword'>if</span> (!btrfs_ioctl_search_args_inc(&amp;args))</td></tr>
+<tr><td class="num" id="LN962">962</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN963">963</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN964">964</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN965">965</td><td class="line">        <span class='comment'>/* OK, the child subvolumes should all be gone now, let's try</span></td></tr>
+<tr><td class="num" id="LN966">966</td><td class="line">         <span class='comment'>* again to remove the subvolume */</span></td></tr>
+<tr><td class="num" id="LN967">967</td><td class="line">        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_SNAP_DESTROY<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((15)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_vol_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;vol_args) &lt; 0)</td></tr>
+<tr><td class="num" id="LN968">968</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN969">969</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN970">970</td><td class="line">        (<span class='keyword'>void</span>) btrfs_qgroup_destroy(fd, 0, subvol_id);</td></tr>
+<tr><td class="num" id="LN971">971</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN972">972</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN973">973</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN974">974</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_remove(<span class='keyword'>const</span> <span class='keyword'>char</span> *path, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive) {</td></tr>
+<tr><td class="num" id="LN975">975</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
+<tr><td class="num" id="LN976">976</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume;</td></tr>
+<tr><td class="num" id="LN977">977</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN978">978</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">        <span class='macro'>assert(path)<span class='expansion'>do { if ((__builtin_expect(!!(!(path)),0))) log_assert_failed<br>("path", "src/basic/btrfs-util.c", 979, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN980">980</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN981">981</td><td class="line">        r = extract_subvolume_name(path, &amp;subvolume);</td></tr>
+<tr><td class="num" id="LN982">982</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN984">984</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN985">985</td><td class="line">        fd = open_parent(path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN986">986</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN987">987</td><td class="line">                <span class='keyword'>return</span> fd;</td></tr>
 <tr><td class="num" id="LN988">988</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN989">989</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">old_subvol_id == 0</span>) {</td></tr>
+<tr><td class="num" id="LN989">989</td><td class="line">        <span class='keyword'>return</span> subvol_remove_children(fd, subvolume, 0, recursive);</td></tr>
+<tr><td class="num" id="LN990">990</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN991">991</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN992">992</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_remove_fd(<span class='keyword'>int</span> fd, <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive) {</td></tr>
+<tr><td class="num" id="LN993">993</td><td class="line">        <span class='keyword'>return</span> subvol_remove_children(fd, subvolume, 0, recursive);</td></tr>
+<tr><td class="num" id="LN994">994</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN995">995</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN996">996</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> subvol_snapshot_children(<span class='keyword'>int</span> old_fd, <span class='keyword'>int</span> new_fd, <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume, uint64_t old_subvol_id, BtrfsSnapshotFlags flags) {</td></tr>
+<tr><td class="num" id="LN997">997</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN998">998</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_search_args args = {</td></tr>
+<tr><td class="num" id="LN999">999</td><td class="line">                .key.tree_id = <span class='macro'>BTRFS_ROOT_TREE_OBJECTID<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN1000">1000</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1001">1001</td><td class="line">                .key.min_objectid = <span class='macro'>BTRFS_FIRST_FREE_OBJECTID<span class='expansion'>256</span></span>,</td></tr>
+<tr><td class="num" id="LN1002">1002</td><td class="line">                .key.max_objectid = <span class='macro'>BTRFS_LAST_FREE_OBJECTID<span class='expansion'>-256ULL</span></span>,</td></tr>
+<tr><td class="num" id="LN1003">1003</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1004">1004</td><td class="line">                .key.min_type = <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>,</td></tr>
+<tr><td class="num" id="LN1005">1005</td><td class="line">                .key.max_type = <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>,</td></tr>
+<tr><td class="num" id="LN1006">1006</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1007">1007</td><td class="line">                .key.min_transid = 0,</td></tr>
+<tr><td class="num" id="LN1008">1008</td><td class="line">                .key.max_transid = (uint64_t) -1,</td></tr>
+<tr><td class="num" id="LN1009">1009</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN1010">1010</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1011">1011</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_vol_args_v2 vol_args = {</td></tr>
+<tr><td class="num" id="LN1012">1012</td><td class="line">                .flags = flags &amp; BTRFS_SNAPSHOT_READ_ONLY ? <span class='macro'>BTRFS_SUBVOL_RDONLY<span class='expansion'>(1ULL &lt;&lt; 1)</span></span> : 0,</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:26ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>'?' condition is false</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1013">1013</td><td class="line">                .fd = old_fd,</td></tr>
+<tr><td class="num" id="LN1014">1014</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN1015">1015</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> subvolume_fd = -1;</td></tr>
+<tr><td class="num" id="LN1016">1016</td><td class="line">        <span class="mrange">uint64_t new_subvol_id</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>'new_subvol_id' declared without an initial value</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1017">1017</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN1018">1018</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1019">1019</td><td class="line">        <span class='macro'>assert(old_fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(old_fd &gt;= 0)),0))) log_assert_failed<br>("old_fd &gt;= 0", "src/basic/btrfs-util.c", 1019, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1020">1020</td><td class="line">        <span class='macro'>assert(new_fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(new_fd &gt;= 0)),0))) log_assert_failed<br>("new_fd &gt;= 0", "src/basic/btrfs-util.c", 1020, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1021">1021</td><td class="line">        <span class='macro'>assert(subvolume)<span class='expansion'>do { if ((__builtin_expect(!!(!(subvolume)),0))) log_assert_failed<br>("subvolume", "src/basic/btrfs-util.c", 1021, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1022">1022</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1023">1023</td><td class="line">        strncpy(vol_args.name, subvolume, <span class='keyword'>sizeof</span>(vol_args.name)-1);</td></tr>
+<tr><td class="num" id="LN1024">1024</td><td class="line">        vol_args.fd = old_fd;</td></tr>
+<tr><td class="num" id="LN1025">1025</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1026">1026</td><td class="line">        <span class='keyword'>if</span> (ioctl(new_fd, <span class='macro'>BTRFS_IOC_SNAP_CREATE_V2<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((23)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_vol_args_v2<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;vol_args) &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1027">1027</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1028">1028</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1029">1029</td><td class="line">        <span class='keyword'>if</span> (!(flags &amp; BTRFS_SNAPSHOT_RECURSIVE))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1030">1030</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1031">1031</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1032">1032</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">old_subvol_id == 0</span>) {</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'old_subvol_id' is not equal to 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN990">990</td><td class="line">                r = btrfs_subvol_get_id_fd(old_fd, &amp;old_subvol_id);</td></tr>
-<tr><td class="num" id="LN991">991</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN992">992</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN993">993</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN994">994</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN995">995</td><td class="line">        r = <span class="mrange"><span class="mrange">btrfs_subvol_get_id(new_fd, vol_args.name, &amp;new_subvol_id)</span></span>;</td></tr>
+<tr><td class="num" id="LN1033">1033</td><td class="line">                r = btrfs_subvol_get_id_fd(old_fd, &amp;old_subvol_id);</td></tr>
+<tr><td class="num" id="LN1034">1034</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1035">1035</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1036">1036</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1037">1037</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1038">1038</td><td class="line">        r = <span class="mrange"><span class="mrange">btrfs_subvol_get_id(new_fd, vol_args.name, &amp;new_subvol_id)</span></span>;</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Calling 'btrfs_subvol_get_id'</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Returning from 'btrfs_subvol_get_id'</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN996">996</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num" id="LN1039">1039</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN997">997</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN998">998</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN999">999</td><td class="line">        args.key.min_offset = args.key.max_offset = old_subvol_id;</td></tr>
-<tr><td class="num" id="LN1000">1000</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1001">1001</td><td class="line">        <span class='keyword'>while</span> (btrfs_ioctl_search_args_compare(&amp;args) &lt;= 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1002">1002</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_ioctl_search_header *sh;</td></tr>
-<tr><td class="num" id="LN1003">1003</td><td class="line">                <span class='keyword'>unsigned</span> i;</td></tr>
-<tr><td class="num" id="LN1004">1004</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1005">1005</td><td class="line">                args.key.nr_items = 256;</td></tr>
-<tr><td class="num" id="LN1006">1006</td><td class="line">                <span class='keyword'>if</span> (ioctl(old_fd, <span class='macro'>BTRFS_IOC_TREE_SEARCH<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((17)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_search_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;args) &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1007">1007</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1008">1008</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1009">1009</td><td class="line">                <span class='keyword'>if</span> (args.key.nr_items &lt;= 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1010">1010</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN1011">1011</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1012">1012</td><td class="line">                <span class='macro'>FOREACH_BTRFS_IOCTL_SEARCH_HEADER(i, sh, args)<span class='expansion'>for ((i) = 0, (sh) = (const struct btrfs_ioctl_search_header*<br>) (args).buf; (i) &lt; (args).key.nr_items; (i)++, (sh) = (const<br> struct btrfs_ioctl_search_header*) ((uint8_t*) (sh) + sizeof<br>(struct btrfs_ioctl_search_header) + (sh)-&gt;len))</span></span> {</td></tr>
-<tr><td class="num" id="LN1013">1013</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *c = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *np = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1014">1014</td><td class="line">                        <span class='keyword'>struct</span> btrfs_ioctl_ino_lookup_args ino_args;</td></tr>
-<tr><td class="num" id="LN1015">1015</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_root_ref *ref;</td></tr>
-<tr><td class="num" id="LN1016">1016</td><td class="line">                        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> old_child_fd = -1, new_child_fd = -1;</td></tr>
-<tr><td class="num" id="LN1017">1017</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1018">1018</td><td class="line">                        btrfs_ioctl_search_args_set(&amp;args, sh);</td></tr>
-<tr><td class="num" id="LN1019">1019</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1020">1020</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;type != <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1021">1021</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN1022">1022</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1023">1023</td><td class="line">                        <span class='comment'>/* Avoid finding the source subvolume a second</span></td></tr>
-<tr><td class="num" id="LN1024">1024</td><td class="line">                         <span class='comment'>* time */</span></td></tr>
-<tr><td class="num" id="LN1025">1025</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;offset != old_subvol_id)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1026">1026</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN1027">1027</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1028">1028</td><td class="line">                        <span class='comment'>/* Avoid running into loops if the new</span></td></tr>
-<tr><td class="num" id="LN1029">1029</td><td class="line">                         <span class='comment'>* subvolume is below the old one. */</span></td></tr>
-<tr><td class="num" id="LN1030">1030</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;objectid == <span class="mrange">new_subvol_id</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:42ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>The right operand of '==' is a garbage value</td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1031">1031</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN1032">1032</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1033">1033</td><td class="line">                        ref = <span class='macro'>BTRFS_IOCTL_SEARCH_HEADER_BODY(sh)<span class='expansion'>((void*) ((uint8_t*) sh + sizeof(struct btrfs_ioctl_search_header<br>)))</span></span>;</td></tr>
-<tr><td class="num" id="LN1034">1034</td><td class="line">                        p = strndup((<span class='keyword'>char</span>*) ref + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> btrfs_root_ref), le64toh(ref-&gt;name_len));</td></tr>
-<tr><td class="num" id="LN1035">1035</td><td class="line">                        <span class='keyword'>if</span> (!p)</td></tr>
-<tr><td class="num" id="LN1036">1036</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1037">1037</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1038">1038</td><td class="line">                        <span class='macro'>zero(ino_args)<span class='expansion'>((memset((&amp;(ino_args)), 0, (sizeof(ino_args)))))</span></span>;</td></tr>
-<tr><td class="num" id="LN1039">1039</td><td class="line">                        ino_args.treeid = old_subvol_id;</td></tr>
-<tr><td class="num" id="LN1040">1040</td><td class="line">                        ino_args.objectid = htole64(ref-&gt;dirid);</td></tr>
+<tr><td class="num" id="LN1040">1040</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1041">1041</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1042">1042</td><td class="line">                        <span class='keyword'>if</span> (ioctl(old_fd, <span class='macro'>BTRFS_IOC_INO_LOOKUP<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((18)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_ino_lookup_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;ino_args) &lt; 0)</td></tr>
-<tr><td class="num" id="LN1043">1043</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1044">1044</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1045">1045</td><td class="line">                        <span class='comment'>/* The kernel returns an empty name if the</span></td></tr>
-<tr><td class="num" id="LN1046">1046</td><td class="line">                         <span class='comment'>* subvolume is in the top-level directory,</span></td></tr>
-<tr><td class="num" id="LN1047">1047</td><td class="line">                         <span class='comment'>* and otherwise appends a slash, so that we</span></td></tr>
-<tr><td class="num" id="LN1048">1048</td><td class="line">                         <span class='comment'>* can just concatenate easily here, without</span></td></tr>
-<tr><td class="num" id="LN1049">1049</td><td class="line">                         <span class='comment'>* adding a slash. */</span></td></tr>
-<tr><td class="num" id="LN1050">1050</td><td class="line">                        c = strappend(ino_args.name, p);</td></tr>
-<tr><td class="num" id="LN1051">1051</td><td class="line">                        <span class='keyword'>if</span> (!c)</td></tr>
-<tr><td class="num" id="LN1052">1052</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1053">1053</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1054">1054</td><td class="line">                        old_child_fd = openat(old_fd, c, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN1055">1055</td><td class="line">                        <span class='keyword'>if</span> (old_child_fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN1056">1056</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1057">1057</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1058">1058</td><td class="line">                        np = strjoin(subvolume, <span class='string_literal'>"/"</span>, ino_args.name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN1059">1059</td><td class="line">                        <span class='keyword'>if</span> (!np)</td></tr>
-<tr><td class="num" id="LN1060">1060</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1061">1061</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1062">1062</td><td class="line">                        new_child_fd = openat(new_fd, np, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN1063">1063</td><td class="line">                        <span class='keyword'>if</span> (new_child_fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN1064">1064</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1042">1042</td><td class="line">        args.key.min_offset = args.key.max_offset = old_subvol_id;</td></tr>
+<tr><td class="num" id="LN1043">1043</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1044">1044</td><td class="line">        <span class='keyword'>while</span> (btrfs_ioctl_search_args_compare(&amp;args) &lt;= 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1045">1045</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_ioctl_search_header *sh;</td></tr>
+<tr><td class="num" id="LN1046">1046</td><td class="line">                <span class='keyword'>unsigned</span> i;</td></tr>
+<tr><td class="num" id="LN1047">1047</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1048">1048</td><td class="line">                args.key.nr_items = 256;</td></tr>
+<tr><td class="num" id="LN1049">1049</td><td class="line">                <span class='keyword'>if</span> (ioctl(old_fd, <span class='macro'>BTRFS_IOC_TREE_SEARCH<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((17)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_search_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;args) &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1050">1050</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1051">1051</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1052">1052</td><td class="line">                <span class='keyword'>if</span> (args.key.nr_items &lt;= 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1053">1053</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1054">1054</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1055">1055</td><td class="line">                <span class='macro'>FOREACH_BTRFS_IOCTL_SEARCH_HEADER(i, sh, args)<span class='expansion'>for ((i) = 0, (sh) = (const struct btrfs_ioctl_search_header*<br>) (args).buf; (i) &lt; (args).key.nr_items; (i)++, (sh) = (const<br> struct btrfs_ioctl_search_header*) ((uint8_t*) (sh) + sizeof<br>(struct btrfs_ioctl_search_header) + (sh)-&gt;len))</span></span> {</td></tr>
+<tr><td class="num" id="LN1056">1056</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *c = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *np = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1057">1057</td><td class="line">                        <span class='keyword'>struct</span> btrfs_ioctl_ino_lookup_args ino_args;</td></tr>
+<tr><td class="num" id="LN1058">1058</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_root_ref *ref;</td></tr>
+<tr><td class="num" id="LN1059">1059</td><td class="line">                        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> old_child_fd = -1, new_child_fd = -1;</td></tr>
+<tr><td class="num" id="LN1060">1060</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1061">1061</td><td class="line">                        btrfs_ioctl_search_args_set(&amp;args, sh);</td></tr>
+<tr><td class="num" id="LN1062">1062</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1063">1063</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;type != <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1064">1064</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN1065">1065</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1066">1066</td><td class="line">                        <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_READ_ONLY) {</td></tr>
-<tr><td class="num" id="LN1067">1067</td><td class="line">                                <span class='comment'>/* If the snapshot is read-only we</span></td></tr>
-<tr><td class="num" id="LN1068">1068</td><td class="line">                                 <span class='comment'>* need to mark it writable</span></td></tr>
-<tr><td class="num" id="LN1069">1069</td><td class="line">                                 <span class='comment'>* temporarily, to put the subsnapshot</span></td></tr>
-<tr><td class="num" id="LN1070">1070</td><td class="line">                                 <span class='comment'>* into place. */</span></td></tr>
-<tr><td class="num" id="LN1071">1071</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1072">1072</td><td class="line">                                <span class='keyword'>if</span> (subvolume_fd &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1073">1073</td><td class="line">                                        subvolume_fd = openat(new_fd, subvolume, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN1074">1074</td><td class="line">                                        <span class='keyword'>if</span> (subvolume_fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN1075">1075</td><td class="line">                                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1076">1076</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN1077">1077</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1078">1078</td><td class="line">                                r = btrfs_subvol_set_read_only_fd(subvolume_fd, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN1079">1079</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1080">1080</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1081">1081</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1082">1082</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1083">1083</td><td class="line">                        <span class='comment'>/* When btrfs clones the subvolumes, child</span></td></tr>
-<tr><td class="num" id="LN1084">1084</td><td class="line">                         <span class='comment'>* subvolumes appear as empty directories. Remove</span></td></tr>
-<tr><td class="num" id="LN1085">1085</td><td class="line">                         <span class='comment'>* them, so that we can create a new snapshot</span></td></tr>
-<tr><td class="num" id="LN1086">1086</td><td class="line">                         <span class='comment'>* in their place */</span></td></tr>
-<tr><td class="num" id="LN1087">1087</td><td class="line">                        <span class='keyword'>if</span> (unlinkat(new_child_fd, p, <span class='macro'>AT_REMOVEDIR<span class='expansion'>0x200</span></span>) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1088">1088</td><td class="line">                                <span class='keyword'>int</span> k = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1089">1089</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1090">1090</td><td class="line">                                <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_READ_ONLY)</td></tr>
-<tr><td class="num" id="LN1091">1091</td><td class="line">                                        (<span class='keyword'>void</span>) btrfs_subvol_set_read_only_fd(subvolume_fd, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN1092">1092</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1093">1093</td><td class="line">                                <span class='keyword'>return</span> k;</td></tr>
-<tr><td class="num" id="LN1094">1094</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1095">1095</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1096">1096</td><td class="line">                        r = subvol_snapshot_children(old_child_fd, new_child_fd, p, sh-&gt;objectid, flags &amp; ~BTRFS_SNAPSHOT_FALLBACK_COPY);</td></tr>
-<tr><td class="num" id="LN1097">1097</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1098">1098</td><td class="line">                        <span class='comment'>/* Restore the readonly flag */</span></td></tr>
-<tr><td class="num" id="LN1099">1099</td><td class="line">                        <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_READ_ONLY) {</td></tr>
-<tr><td class="num" id="LN1100">1100</td><td class="line">                                <span class='keyword'>int</span> k;</td></tr>
-<tr><td class="num" id="LN1101">1101</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1102">1102</td><td class="line">                                k = btrfs_subvol_set_read_only_fd(subvolume_fd, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN1103">1103</td><td class="line">                                <span class='keyword'>if</span> (r &gt;= 0 &amp;&amp; k &lt; 0)</td></tr>
-<tr><td class="num" id="LN1104">1104</td><td class="line">                                        <span class='keyword'>return</span> k;</td></tr>
-<tr><td class="num" id="LN1105">1105</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1106">1106</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1107">1107</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1108">1108</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1109">1109</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1110">1110</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1111">1111</td><td class="line">                <span class='comment'>/* Increase search key by one, to read the next item, if we can. */</span></td></tr>
-<tr><td class="num" id="LN1112">1112</td><td class="line">                <span class='keyword'>if</span> (!btrfs_ioctl_search_args_inc(&amp;args))</td></tr>
-<tr><td class="num" id="LN1113">1113</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN1114">1114</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1115">1115</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1116">1116</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1117">1117</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1118">1118</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1119">1119</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_snapshot_fd(<span class='keyword'>int</span> old_fd, <span class='keyword'>const</span> <span class='keyword'>char</span> *new_path, BtrfsSnapshotFlags flags) {</td></tr>
-<tr><td class="num" id="LN1120">1120</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> new_fd = -1;</td></tr>
-<tr><td class="num" id="LN1121">1121</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume;</td></tr>
-<tr><td class="num" id="LN1122">1122</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN1123">1123</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1124">1124</td><td class="line">        <span class='macro'>assert(old_fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(old_fd &gt;= 0)),0))) log_assert_failed<br>("old_fd &gt;= 0", "src/basic/btrfs-util.c", 1124, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1125">1125</td><td class="line">        <span class='macro'>assert(new_path)<span class='expansion'>do { if ((__builtin_expect(!!(!(new_path)),0))) log_assert_failed<br>("new_path", "src/basic/btrfs-util.c", 1125, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1126">1126</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1127">1127</td><td class="line">        r = btrfs_is_subvol(old_fd);</td></tr>
-<tr><td class="num" id="LN1128">1128</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1129">1129</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1130">1130</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
-<tr><td class="num" id="LN1131">1131</td><td class="line">                <span class='keyword'>if</span> (!(flags &amp; BTRFS_SNAPSHOT_FALLBACK_COPY))</td></tr>
-<tr><td class="num" id="LN1132">1132</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EISDIR<span class='expansion'>21</span></span>;</td></tr>
-<tr><td class="num" id="LN1133">1133</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1134">1134</td><td class="line">                r = btrfs_subvol_make(new_path);</td></tr>
-<tr><td class="num" id="LN1135">1135</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1136">1136</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1137">1137</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1138">1138</td><td class="line">                r = copy_directory_fd(old_fd, new_path, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN1139">1139</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1140">1140</td><td class="line">                        btrfs_subvol_remove(new_path, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN1141">1141</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1142">1142</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1143">1143</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1144">1144</td><td class="line">                <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_READ_ONLY) {</td></tr>
-<tr><td class="num" id="LN1145">1145</td><td class="line">                        r = btrfs_subvol_set_read_only(new_path, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN1146">1146</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1147">1147</td><td class="line">                                btrfs_subvol_remove(new_path, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN1148">1148</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1149">1149</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1150">1150</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1151">1151</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1152">1152</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1153">1153</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1154">1154</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1155">1155</td><td class="line">        r = extract_subvolume_name(new_path, &amp;subvolume);</td></tr>
-<tr><td class="num" id="LN1156">1156</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1157">1157</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1066">1066</td><td class="line">                        <span class='comment'>/* Avoid finding the source subvolume a second</span></td></tr>
+<tr><td class="num" id="LN1067">1067</td><td class="line">                         <span class='comment'>* time */</span></td></tr>
+<tr><td class="num" id="LN1068">1068</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;offset != old_subvol_id)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1069">1069</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1071">1071</td><td class="line">                        <span class='comment'>/* Avoid running into loops if the new</span></td></tr>
+<tr><td class="num" id="LN1072">1072</td><td class="line">                         <span class='comment'>* subvolume is below the old one. */</span></td></tr>
+<tr><td class="num" id="LN1073">1073</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;objectid == <span class="mrange">new_subvol_id</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:42ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>The right operand of '==' is a garbage value</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1074">1074</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1075">1075</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1076">1076</td><td class="line">                        ref = <span class='macro'>BTRFS_IOCTL_SEARCH_HEADER_BODY(sh)<span class='expansion'>((void*) ((uint8_t*) sh + sizeof(struct btrfs_ioctl_search_header<br>)))</span></span>;</td></tr>
+<tr><td class="num" id="LN1077">1077</td><td class="line">                        p = strndup((<span class='keyword'>char</span>*) ref + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> btrfs_root_ref), le64toh(ref-&gt;name_len));</td></tr>
+<tr><td class="num" id="LN1078">1078</td><td class="line">                        <span class='keyword'>if</span> (!p)</td></tr>
+<tr><td class="num" id="LN1079">1079</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1080">1080</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1081">1081</td><td class="line">                        <span class='macro'>zero(ino_args)<span class='expansion'>((memset((&amp;(ino_args)), 0, (sizeof(ino_args)))))</span></span>;</td></tr>
+<tr><td class="num" id="LN1082">1082</td><td class="line">                        ino_args.treeid = old_subvol_id;</td></tr>
+<tr><td class="num" id="LN1083">1083</td><td class="line">                        ino_args.objectid = htole64(ref-&gt;dirid);</td></tr>
+<tr><td class="num" id="LN1084">1084</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1085">1085</td><td class="line">                        <span class='keyword'>if</span> (ioctl(old_fd, <span class='macro'>BTRFS_IOC_INO_LOOKUP<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((18)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_ino_lookup_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;ino_args) &lt; 0)</td></tr>
+<tr><td class="num" id="LN1086">1086</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1087">1087</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1088">1088</td><td class="line">                        <span class='comment'>/* The kernel returns an empty name if the</span></td></tr>
+<tr><td class="num" id="LN1089">1089</td><td class="line">                         <span class='comment'>* subvolume is in the top-level directory,</span></td></tr>
+<tr><td class="num" id="LN1090">1090</td><td class="line">                         <span class='comment'>* and otherwise appends a slash, so that we</span></td></tr>
+<tr><td class="num" id="LN1091">1091</td><td class="line">                         <span class='comment'>* can just concatenate easily here, without</span></td></tr>
+<tr><td class="num" id="LN1092">1092</td><td class="line">                         <span class='comment'>* adding a slash. */</span></td></tr>
+<tr><td class="num" id="LN1093">1093</td><td class="line">                        c = strappend(ino_args.name, p);</td></tr>
+<tr><td class="num" id="LN1094">1094</td><td class="line">                        <span class='keyword'>if</span> (!c)</td></tr>
+<tr><td class="num" id="LN1095">1095</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1096">1096</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1097">1097</td><td class="line">                        old_child_fd = openat(old_fd, c, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN1098">1098</td><td class="line">                        <span class='keyword'>if</span> (old_child_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN1099">1099</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1100">1100</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1101">1101</td><td class="line">                        np = strjoin(subvolume, <span class='string_literal'>"/"</span>, ino_args.name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN1102">1102</td><td class="line">                        <span class='keyword'>if</span> (!np)</td></tr>
+<tr><td class="num" id="LN1103">1103</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1104">1104</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1105">1105</td><td class="line">                        new_child_fd = openat(new_fd, np, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN1106">1106</td><td class="line">                        <span class='keyword'>if</span> (new_child_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN1107">1107</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1108">1108</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1109">1109</td><td class="line">                        <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_READ_ONLY) {</td></tr>
+<tr><td class="num" id="LN1110">1110</td><td class="line">                                <span class='comment'>/* If the snapshot is read-only we</span></td></tr>
+<tr><td class="num" id="LN1111">1111</td><td class="line">                                 <span class='comment'>* need to mark it writable</span></td></tr>
+<tr><td class="num" id="LN1112">1112</td><td class="line">                                 <span class='comment'>* temporarily, to put the subsnapshot</span></td></tr>
+<tr><td class="num" id="LN1113">1113</td><td class="line">                                 <span class='comment'>* into place. */</span></td></tr>
+<tr><td class="num" id="LN1114">1114</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1115">1115</td><td class="line">                                <span class='keyword'>if</span> (subvolume_fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1116">1116</td><td class="line">                                        subvolume_fd = openat(new_fd, subvolume, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN1117">1117</td><td class="line">                                        <span class='keyword'>if</span> (subvolume_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN1118">1118</td><td class="line">                                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1119">1119</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN1120">1120</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1121">1121</td><td class="line">                                r = btrfs_subvol_set_read_only_fd(subvolume_fd, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN1122">1122</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1123">1123</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1124">1124</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1125">1125</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1126">1126</td><td class="line">                        <span class='comment'>/* When btrfs clones the subvolumes, child</span></td></tr>
+<tr><td class="num" id="LN1127">1127</td><td class="line">                         <span class='comment'>* subvolumes appear as empty directories. Remove</span></td></tr>
+<tr><td class="num" id="LN1128">1128</td><td class="line">                         <span class='comment'>* them, so that we can create a new snapshot</span></td></tr>
+<tr><td class="num" id="LN1129">1129</td><td class="line">                         <span class='comment'>* in their place */</span></td></tr>
+<tr><td class="num" id="LN1130">1130</td><td class="line">                        <span class='keyword'>if</span> (unlinkat(new_child_fd, p, <span class='macro'>AT_REMOVEDIR<span class='expansion'>0x200</span></span>) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1131">1131</td><td class="line">                                <span class='keyword'>int</span> k = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1132">1132</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1133">1133</td><td class="line">                                <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_READ_ONLY)</td></tr>
+<tr><td class="num" id="LN1134">1134</td><td class="line">                                        (<span class='keyword'>void</span>) btrfs_subvol_set_read_only_fd(subvolume_fd, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN1135">1135</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1136">1136</td><td class="line">                                <span class='keyword'>return</span> k;</td></tr>
+<tr><td class="num" id="LN1137">1137</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1138">1138</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1139">1139</td><td class="line">                        r = subvol_snapshot_children(old_child_fd, new_child_fd, p, sh-&gt;objectid, flags &amp; ~BTRFS_SNAPSHOT_FALLBACK_COPY);</td></tr>
+<tr><td class="num" id="LN1140">1140</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1141">1141</td><td class="line">                        <span class='comment'>/* Restore the readonly flag */</span></td></tr>
+<tr><td class="num" id="LN1142">1142</td><td class="line">                        <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_READ_ONLY) {</td></tr>
+<tr><td class="num" id="LN1143">1143</td><td class="line">                                <span class='keyword'>int</span> k;</td></tr>
+<tr><td class="num" id="LN1144">1144</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1145">1145</td><td class="line">                                k = btrfs_subvol_set_read_only_fd(subvolume_fd, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN1146">1146</td><td class="line">                                <span class='keyword'>if</span> (r &gt;= 0 &amp;&amp; k &lt; 0)</td></tr>
+<tr><td class="num" id="LN1147">1147</td><td class="line">                                        <span class='keyword'>return</span> k;</td></tr>
+<tr><td class="num" id="LN1148">1148</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1149">1149</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1150">1150</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1151">1151</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1152">1152</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1153">1153</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1154">1154</td><td class="line">                <span class='comment'>/* Increase search key by one, to read the next item, if we can. */</span></td></tr>
+<tr><td class="num" id="LN1155">1155</td><td class="line">                <span class='keyword'>if</span> (!btrfs_ioctl_search_args_inc(&amp;args))</td></tr>
+<tr><td class="num" id="LN1156">1156</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1157">1157</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1158">1158</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1159">1159</td><td class="line">        new_fd = open_parent(new_path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN1160">1160</td><td class="line">        <span class='keyword'>if</span> (new_fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN1161">1161</td><td class="line">                <span class='keyword'>return</span> new_fd;</td></tr>
-<tr><td class="num" id="LN1162">1162</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1163">1163</td><td class="line">        <span class='keyword'>return</span> subvol_snapshot_children(old_fd, new_fd, subvolume, 0, flags);</td></tr>
-<tr><td class="num" id="LN1164">1164</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1165">1165</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1166">1166</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_snapshot(<span class='keyword'>const</span> <span class='keyword'>char</span> *old_path, <span class='keyword'>const</span> <span class='keyword'>char</span> *new_path, BtrfsSnapshotFlags flags) {</td></tr>
-<tr><td class="num" id="LN1167">1167</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> old_fd = -1;</td></tr>
-<tr><td class="num" id="LN1168">1168</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1169">1169</td><td class="line">        <span class='macro'>assert(old_path)<span class='expansion'>do { if ((__builtin_expect(!!(!(old_path)),0))) log_assert_failed<br>("old_path", "src/basic/btrfs-util.c", 1169, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1170">1170</td><td class="line">        <span class='macro'>assert(new_path)<span class='expansion'>do { if ((__builtin_expect(!!(!(new_path)),0))) log_assert_failed<br>("new_path", "src/basic/btrfs-util.c", 1170, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1171">1171</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1172">1172</td><td class="line">        old_fd = open(old_path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN1173">1173</td><td class="line">        <span class='keyword'>if</span> (old_fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN1174">1174</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1175">1175</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1176">1176</td><td class="line">        <span class='keyword'>return</span> btrfs_subvol_snapshot_fd(old_fd, new_path, flags);</td></tr>
-<tr><td class="num" id="LN1177">1177</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1159">1159</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1160">1160</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1161">1161</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1162">1162</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_snapshot_fd(<span class='keyword'>int</span> old_fd, <span class='keyword'>const</span> <span class='keyword'>char</span> *new_path, BtrfsSnapshotFlags flags) {</td></tr>
+<tr><td class="num" id="LN1163">1163</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> new_fd = -1;</td></tr>
+<tr><td class="num" id="LN1164">1164</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *subvolume;</td></tr>
+<tr><td class="num" id="LN1165">1165</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN1166">1166</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1167">1167</td><td class="line">        <span class='macro'>assert(old_fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(old_fd &gt;= 0)),0))) log_assert_failed<br>("old_fd &gt;= 0", "src/basic/btrfs-util.c", 1167, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1168">1168</td><td class="line">        <span class='macro'>assert(new_path)<span class='expansion'>do { if ((__builtin_expect(!!(!(new_path)),0))) log_assert_failed<br>("new_path", "src/basic/btrfs-util.c", 1168, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1169">1169</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1170">1170</td><td class="line">        r = btrfs_is_subvol(old_fd);</td></tr>
+<tr><td class="num" id="LN1171">1171</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1172">1172</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1173">1173</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
+<tr><td class="num" id="LN1174">1174</td><td class="line">                <span class='keyword'>if</span> (!(flags &amp; BTRFS_SNAPSHOT_FALLBACK_COPY))</td></tr>
+<tr><td class="num" id="LN1175">1175</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EISDIR<span class='expansion'>21</span></span>;</td></tr>
+<tr><td class="num" id="LN1176">1176</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1177">1177</td><td class="line">                r = btrfs_subvol_make(new_path);</td></tr>
+<tr><td class="num" id="LN1178">1178</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1179">1179</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1180">1180</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1181">1181</td><td class="line">                r = copy_directory_fd(old_fd, new_path, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN1182">1182</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1183">1183</td><td class="line">                        btrfs_subvol_remove(new_path, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN1184">1184</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1185">1185</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1186">1186</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1187">1187</td><td class="line">                <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_READ_ONLY) {</td></tr>
+<tr><td class="num" id="LN1188">1188</td><td class="line">                        r = btrfs_subvol_set_read_only(new_path, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN1189">1189</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1190">1190</td><td class="line">                                btrfs_subvol_remove(new_path, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN1191">1191</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1192">1192</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1193">1193</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1194">1194</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1195">1195</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1196">1196</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1197">1197</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1198">1198</td><td class="line">        r = extract_subvolume_name(new_path, &amp;subvolume);</td></tr>
+<tr><td class="num" id="LN1199">1199</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1200">1200</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1201">1201</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1202">1202</td><td class="line">        new_fd = open_parent(new_path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN1203">1203</td><td class="line">        <span class='keyword'>if</span> (new_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN1204">1204</td><td class="line">                <span class='keyword'>return</span> new_fd;</td></tr>
+<tr><td class="num" id="LN1205">1205</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1206">1206</td><td class="line">        <span class='keyword'>return</span> subvol_snapshot_children(old_fd, new_fd, subvolume, 0, flags);</td></tr>
+<tr><td class="num" id="LN1207">1207</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1208">1208</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1209">1209</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_snapshot(<span class='keyword'>const</span> <span class='keyword'>char</span> *old_path, <span class='keyword'>const</span> <span class='keyword'>char</span> *new_path, BtrfsSnapshotFlags flags) {</td></tr>
+<tr><td class="num" id="LN1210">1210</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> old_fd = -1;</td></tr>
+<tr><td class="num" id="LN1211">1211</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1212">1212</td><td class="line">        <span class='macro'>assert(old_path)<span class='expansion'>do { if ((__builtin_expect(!!(!(old_path)),0))) log_assert_failed<br>("old_path", "src/basic/btrfs-util.c", 1212, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1213">1213</td><td class="line">        <span class='macro'>assert(new_path)<span class='expansion'>do { if ((__builtin_expect(!!(!(new_path)),0))) log_assert_failed<br>("new_path", "src/basic/btrfs-util.c", 1213, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1214">1214</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1215">1215</td><td class="line">        old_fd = open(old_path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN1216">1216</td><td class="line">        <span class='keyword'>if</span> (old_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN1217">1217</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1218">1218</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1219">1219</td><td class="line">        <span class='keyword'>return</span> btrfs_subvol_snapshot_fd(old_fd, new_path, flags);</td></tr>
+<tr><td class="num" id="LN1220">1220</td><td class="line">}</td></tr>
 </table></body></html>
