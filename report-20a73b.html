@@ -474,7 +474,7 @@
 <tr><td class="num" id="LN370">370</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN371">371</td><td class="line">        sd_ipv4ll_unref(link-&gt;ipv4ll);</td></tr>
 <tr><td class="num" id="LN372">372</td><td class="line">        sd_dhcp6_client_unref(link-&gt;dhcp6_client);</td></tr>
-<tr><td class="num" id="LN373">373</td><td class="line">        sd_icmp6_nd_unref(link-&gt;icmp6_router_discovery);</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">        sd_ndisc_unref(link-&gt;ndisc_router_discovery);</td></tr>
 <tr><td class="num" id="LN374">374</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN375">375</td><td class="line">        <span class='keyword'>if</span> (link-&gt;manager)</td></tr>
 <tr><td class="num" id="LN376">376</td><td class="line">                hashmap_remove(link-&gt;manager-&gt;links, <span class='macro'>INT_TO_PTR(link-&gt;ifindex)<span class='expansion'>((void *) ((intptr_t) (link-&gt;ifindex)))</span></span>);</td></tr>
@@ -585,16 +585,16 @@
 <tr><td class="num" id="LN481">481</td><td class="line">                        r = <span class='macro'>log_link_warning_errno(link, r, <span class='string_literal'>"Could not stop IPv4 link-local: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, r, "src/network/networkd-link.c"<br>, 481, __func__, "INTERFACE=", _l-&gt;ifname, "Could not stop IPv4 link-local: %m"<br>) : log_internal(4, r, "src/network/networkd-link.c", 481, __func__<br>, "Could not stop IPv4 link-local: %m"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN482">482</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN483">483</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN484">484</td><td class="line">        <span class='keyword'>if</span>(link-&gt;icmp6_router_discovery) {</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='keyword'>if</span>(link-&gt;ndisc_router_discovery) {</td></tr>
 <tr><td class="num" id="LN485">485</td><td class="line">                <span class='keyword'>if</span> (link-&gt;dhcp6_client) {</td></tr>
 <tr><td class="num" id="LN486">486</td><td class="line">                        k = sd_dhcp6_client_stop(link-&gt;dhcp6_client);</td></tr>
 <tr><td class="num" id="LN487">487</td><td class="line">                        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
 <tr><td class="num" id="LN488">488</td><td class="line">                                r = <span class='macro'>log_link_warning_errno(link, r, <span class='string_literal'>"Could not stop DHCPv6 client: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, r, "src/network/networkd-link.c"<br>, 488, __func__, "INTERFACE=", _l-&gt;ifname, "Could not stop DHCPv6 client: %m"<br>) : log_internal(4, r, "src/network/networkd-link.c", 488, __func__<br>, "Could not stop DHCPv6 client: %m"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN489">489</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN490">490</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN491">491</td><td class="line">                k = sd_icmp6_nd_stop(link-&gt;icmp6_router_discovery);</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">                k = sd_ndisc_stop(link-&gt;ndisc_router_discovery);</td></tr>
 <tr><td class="num" id="LN492">492</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN493">493</td><td class="line">                        r = <span class='macro'>log_link_warning_errno(link, r, <span class='string_literal'>"Could not stop ICMPv6 router discovery: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, r, "src/network/networkd-link.c"<br>, 493, __func__, "INTERFACE=", _l-&gt;ifname, "Could not stop ICMPv6 router discovery: %m"<br>) : log_internal(4, r, "src/network/networkd-link.c", 493, __func__<br>, "Could not stop ICMPv6 router discovery: %m"); })</span></span>;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">                        r = <span class='macro'>log_link_warning_errno(link, r, <span class='string_literal'>"Could not stop IPv6 Router Discovery: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, r, "src/network/networkd-link.c"<br>, 493, __func__, "INTERFACE=", _l-&gt;ifname, "Could not stop IPv6 Router Discovery: %m"<br>) : log_internal(4, r, "src/network/networkd-link.c", 493, __func__<br>, "Could not stop IPv6 Router Discovery: %m"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN494">494</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN495">495</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN496">496</td><td class="line">        <span class='keyword'>if</span> (link-&gt;lldp) {</td></tr>
@@ -1342,13 +1342,13 @@
 <tr><td class="num" id="LN1238">1238</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1239">1239</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1240">1240</td><td class="line">        <span class='keyword'>if</span> (link_dhcp6_enabled(link)) {</td></tr>
-<tr><td class="num" id="LN1241">1241</td><td class="line">                <span class='macro'>assert(link-&gt;icmp6_router_discovery)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;icmp6_router_discovery<br>)),0))) log_assert_failed("link-&gt;icmp6_router_discovery", "src/network/networkd-link.c"<br>, 1241, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1241">1241</td><td class="line">                <span class='macro'>assert(link-&gt;ndisc_router_discovery)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;ndisc_router_discovery<br>)),0))) log_assert_failed("link-&gt;ndisc_router_discovery", "src/network/networkd-link.c"<br>, 1241, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1242">1242</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1243">1243</td><td class="line">                <span class='macro'>log_link_debug(link, <span class='string_literal'>"Discovering IPv6 routers"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(7, 0, "src/network/networkd-link.c"<br>, 1243, __func__, "INTERFACE=", _l-&gt;ifname, "Discovering IPv6 routers"<br>) : log_internal(7, 0, "src/network/networkd-link.c", 1243, __func__<br>, "Discovering IPv6 routers"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1244">1244</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1245">1245</td><td class="line">                r = sd_icmp6_router_solicitation_start(link-&gt;icmp6_router_discovery);</td></tr>
+<tr><td class="num" id="LN1245">1245</td><td class="line">                r = sd_ndisc_router_discovery_start(link-&gt;ndisc_router_discovery);</td></tr>
 <tr><td class="num" id="LN1246">1246</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1247">1247</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_link_warning_errno(link, r, <span class='string_literal'>"Could not start IPv6 router discovery: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, r, "src/network/networkd-link.c"<br>, 1247, __func__, "INTERFACE=", _l-&gt;ifname, "Could not start IPv6 router discovery: %m"<br>) : log_internal(4, r, "src/network/networkd-link.c", 1247, __func__<br>, "Could not start IPv6 router discovery: %m"); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1247">1247</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_link_warning_errno(link, r, <span class='string_literal'>"Could not start IPv6 Router Discovery: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, r, "src/network/networkd-link.c"<br>, 1247, __func__, "INTERFACE=", _l-&gt;ifname, "Could not start IPv6 Router Discovery: %m"<br>) : log_internal(4, r, "src/network/networkd-link.c", 1247, __func__<br>, "Could not start IPv6 Router Discovery: %m"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1248">1248</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1249">1249</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1250">1250</td><td class="line">        <span class='keyword'>if</span> (link_lldp_enabled(link)) {</td></tr>
@@ -2106,7 +2106,7 @@
 <tr><td class="num" id="LN2002">2002</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN2003">2003</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2004">2004</td><td class="line">        <span class='keyword'>if</span> (link_dhcp6_enabled(link)) {</td></tr>
-<tr><td class="num" id="LN2005">2005</td><td class="line">                r = icmp6_configure(link);</td></tr>
+<tr><td class="num" id="LN2005">2005</td><td class="line">                r = ndisc_configure(link);</td></tr>
 <tr><td class="num" id="LN2006">2006</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN2007">2007</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN2008">2008</td><td class="line">        }</td></tr>
