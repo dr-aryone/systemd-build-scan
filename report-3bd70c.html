@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'runtime_path' -->
+<!-- BUGDESC Value stored to 'fd' is never read -->
 
-<!-- BUGTYPE Memory leak -->
+<!-- BUGTYPE Dead assignment -->
 
-<!-- BUGCATEGORY Memory Error -->
+<!-- BUGCATEGORY Dead store -->
 
 <!-- BUGFILE /home/runner/systemd/src/shared/install.c -->
 
 <!-- FILENAME install.c -->
 
-<!-- FUNCTIONNAME find_symlinks_in_scope -->
+<!-- FUNCTIONNAME unit_file_load -->
 
-<!-- BUGLINE 672 -->
+<!-- BUGLINE 956 -->
 
-<!-- BUGCOLUMN 11 -->
+<!-- BUGCOLUMN 9 -->
 
-<!-- BUGPATHLENGTH 16 -->
+<!-- BUGPATHLENGTH 1 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/shared/install.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 672, column 11</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'runtime_path'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 956, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -173,7 +173,6 @@
 <tr><td class="num" id="LN88">88</td><td class="line">         <span class='comment'>* installation ("configuration") symlinks */</span></td></tr>
 <tr><td class="num" id="LN89">89</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN90">90</td><td class="line">        <span class='keyword'>switch</span> (scope) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Control jumps to 'case UNIT_FILE_GLOBAL:'  at line 100</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN92">92</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_SYSTEM:</td></tr>
 <tr><td class="num" id="LN93">93</td><td class="line"> </td></tr>
@@ -186,17 +185,13 @@
 <tr><td class="num" id="LN100">100</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_GLOBAL:</td></tr>
 <tr><td class="num" id="LN101">101</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN102">102</td><td class="line">                <span class='keyword'>if</span> (root_dir)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN103">103</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN104">104</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN105">105</td><td class="line">                <span class='keyword'>if</span> (runtime)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN106">106</td><td class="line">                        p = <span class="mrange">strdup(<span class='string_literal'>"/run/systemd/user"</span>)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">                        p = strdup(<span class='string_literal'>"/run/systemd/user"</span>);</td></tr>
 <tr><td class="num" id="LN107">107</td><td class="line">                <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN108">108</td><td class="line">                        p = strdup(<span class='macro'>USER_CONFIG_UNIT_PATH<span class='expansion'>"/usr/etc/systemd/user"</span></span>);</td></tr>
 <tr><td class="num" id="LN109">109</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td> Execution continues on line 131</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN110">110</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN111">111</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_USER:</td></tr>
 <tr><td class="num" id="LN112">112</td><td class="line"> </td></tr>
@@ -218,9 +213,7 @@
 <tr><td class="num" id="LN128">128</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Bad scope"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Bad scope", "src/shared/install.c"<br>, 128, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN129">129</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN130">130</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN131">131</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!p</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Assuming 'p' is non-null</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">        <span class='keyword'>if</span> (!p)</td></tr>
 <tr><td class="num" id="LN132">132</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN133">133</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN134">134</td><td class="line">        *ret = p;</td></tr>
@@ -746,31 +739,22 @@
 <tr><td class="num" id="LN654">654</td><td class="line">        <span class='comment'>/* First look in the normal config path */</span></td></tr>
 <tr><td class="num" id="LN655">655</td><td class="line">        r = get_config_path(scope, <span class='macro'>false<span class='expansion'>0</span></span>, root_dir, &amp;normal_path);</td></tr>
 <tr><td class="num" id="LN656">656</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN657">657</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN658">658</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN659">659</td><td class="line">        r = find_symlinks(root_dir, name, normal_path, &amp;same_name_link);</td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN661">661</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN662">662</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &gt; 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt;= 0</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">        <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
 <tr><td class="num" id="LN663">663</td><td class="line">                *state = UNIT_FILE_ENABLED;</td></tr>
 <tr><td class="num" id="LN664">664</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN665">665</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN666">666</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN667">667</td><td class="line">        <span class='comment'>/* Then look in runtime config path */</span></td></tr>
-<tr><td class="num" id="LN668">668</td><td class="line">        r = <span class="mrange"><span class="mrange">get_config_path(scope, <span class='macro'>true<span class='expansion'>1</span></span>, root_dir, &amp;runtime_path)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Calling 'get_config_path'</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Returned allocated memory via 4th parameter</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">        r = get_config_path(scope, <span class='macro'>true<span class='expansion'>1</span></span>, root_dir, &amp;runtime_path);</td></tr>
 <tr><td class="num" id="LN669">669</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN670">670</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN671">671</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN672">672</td><td class="line">        r = find_symlinks(root_dir, name, runtime_path, &amp;same_name_link_runtime);</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:11ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'runtime_path'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN673">673</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN674">674</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN675">675</td><td class="line">        <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
@@ -1043,7 +1027,7 @@
 <tr><td class="num" id="LN942">942</td><td class="line">        <span class='keyword'>if</span> (fstat(fd, &amp;st) &lt; 0)</td></tr>
 <tr><td class="num" id="LN943">943</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN944">944</td><td class="line">        <span class='keyword'>if</span> (null_or_empty(&amp;st)) {</td></tr>
-<tr><td class="num" id="LN945">945</td><td class="line">                info-&gt;type = UNIT_FILE_MASKED;</td></tr>
+<tr><td class="num" id="LN945">945</td><td class="line">                info-&gt;type = UNIT_FILE_TYPE_MASKED;</td></tr>
 <tr><td class="num" id="LN946">946</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN947">947</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN948">948</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
@@ -1054,7 +1038,8 @@
 <tr><td class="num" id="LN953">953</td><td class="line">        f = fdopen(fd, <span class='string_literal'>"re"</span>);</td></tr>
 <tr><td class="num" id="LN954">954</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
 <tr><td class="num" id="LN955">955</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN956">956</td><td class="line">        fd = -1;</td></tr>
+<tr><td class="num" id="LN956">956</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
 <tr><td class="num" id="LN957">957</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN958">958</td><td class="line">        r = config_parse(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, path, f,</td></tr>
 <tr><td class="num" id="LN959">959</td><td class="line">                         <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
