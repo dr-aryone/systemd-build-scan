@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Array access (from variable 'qgroups') results in a null pointer dereference -->
+<!-- BUGDESC Potential leak of memory pointed to by 'p' -->
 
-<!-- BUGTYPE Dereference of null pointer -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Logic error -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/basic/btrfs-util.c -->
 
 <!-- FILENAME btrfs-util.c -->
 
-<!-- FUNCTIONNAME btrfs_subvol_find_subtree_qgroup -->
+<!-- FUNCTIONNAME subvol_remove_children -->
 
-<!-- BUGLINE 719 -->
+<!-- BUGLINE 1268 -->
 
-<!-- BUGCOLUMN 42 -->
+<!-- BUGCOLUMN 41 -->
 
-<!-- BUGPATHLENGTH 52 -->
+<!-- BUGPATHLENGTH 18 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/basic/btrfs-util.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 719, column 42</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Array access (from variable 'qgroups') results in a null pointer dereference</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1268, column 41</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'p'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -134,9 +134,9 @@
 <tr><td class="num" id="LN49">49</td><td class="line"><span class='directive'>#include "selinux-util.h"</span></td></tr>
 <tr><td class="num" id="LN50">50</td><td class="line"><span class='directive'>#include "smack-util.h"</span></td></tr>
 <tr><td class="num" id="LN51">51</td><td class="line"><span class='directive'>#include "sparse-endian.h"</span></td></tr>
-<tr><td class="num" id="LN52">52</td><td class="line"><span class='directive'>#include "time-util.h"</span></td></tr>
-<tr><td class="num" id="LN53">53</td><td class="line"><span class='directive'>#include "stat-util.h"</span></td></tr>
-<tr><td class="num" id="LN54">54</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line"><span class='directive'>#include "stat-util.h"</span></td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line"><span class='directive'>#include "time-util.h"</span></td></tr>
 <tr><td class="num" id="LN55">55</td><td class="line"><span class='directive'>#include "util.h"</span></td></tr>
 <tr><td class="num" id="LN56">56</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN57">57</td><td class="line"><span class='comment'>/* WARNING: Be careful with file system ioctls! When we get an fd, we</span></td></tr>
@@ -196,11 +196,8 @@
 <tr><td class="num" id="LN111">111</td><td class="line">        <span class='keyword'>struct</span> statfs sfs;</td></tr>
 <tr><td class="num" id="LN112">112</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN113">113</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/basic/btrfs-util.c", 113, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path24" title="Next event (24)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN114">114</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN115">115</td><td class="line">        <span class='keyword'>if</span> (fstatfs(fd, &amp;sfs) &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN116">116</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN117">117</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN118">118</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>F_TYPE_EQUAL(sfs.f_type, BTRFS_SUPER_MAGIC)<span class='expansion'>(sfs.f_type == (typeof(sfs.f_type)) 0x9123683E)</span></span>;</td></tr>
@@ -483,8 +480,6 @@
 <tr><td class="num" id="LN395">395</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN396">396</td><td class="line"><span class='keyword'>static</span> <span class='macro'>bool<span class='expansion'>_Bool</span></span> btrfs_ioctl_search_args_inc(<span class='keyword'>struct</span> btrfs_ioctl_search_args *args) {</td></tr>
 <tr><td class="num" id="LN397">397</td><td class="line">        <span class='macro'>assert(args)<span class='expansion'>do { if ((__builtin_expect(!!(!(args)),0))) log_assert_failed<br>("args", "src/basic/btrfs-util.c", 397, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path40" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">40</div></td><td><div class="PathNav"><a href="#Path39" title="Previous event (39)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path41" title="Next event (41)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN398">398</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN399">399</td><td class="line">        <span class='comment'>/* the objectid, type, offset together make up the btrfs key,</span></td></tr>
 <tr><td class="num" id="LN400">400</td><td class="line">         <span class='comment'>* which is considered a single 136byte integer when</span></td></tr>
@@ -492,7 +487,6 @@
 <tr><td class="num" id="LN402">402</td><td class="line">         <span class='comment'>* with the overflow between the overflows */</span></td></tr>
 <tr><td class="num" id="LN403">403</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN404">404</td><td class="line">        <span class='keyword'>if</span> (args-&gt;key.min_offset &lt; (uint64_t) -1) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path41" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">41</div></td><td><div class="PathNav"><a href="#Path40" title="Previous event (40)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path42" title="Next event (42)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN405">405</td><td class="line">                args-&gt;key.min_offset++;</td></tr>
 <tr><td class="num" id="LN406">406</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN407">407</td><td class="line">        }</td></tr>
@@ -515,11 +509,7 @@
 <tr><td class="num" id="LN424">424</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN425">425</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> btrfs_ioctl_search_args_set(<span class='keyword'>struct</span> btrfs_ioctl_search_args *args, <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_ioctl_search_header *h) {</td></tr>
 <tr><td class="num" id="LN426">426</td><td class="line">        <span class='macro'>assert(args)<span class='expansion'>do { if ((__builtin_expect(!!(!(args)),0))) log_assert_failed<br>("args", "src/basic/btrfs-util.c", 426, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path33" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">33</div></td><td><div class="PathNav"><a href="#Path32" title="Previous event (32)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path34" title="Next event (34)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN427">427</td><td class="line">        <span class='macro'>assert(h)<span class='expansion'>do { if ((__builtin_expect(!!(!(h)),0))) log_assert_failed("h"<br>, "src/basic/btrfs-util.c", 427, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path34" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">34</div></td><td><div class="PathNav"><a href="#Path33" title="Previous event (33)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path35" title="Next event (35)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN428">428</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN429">429</td><td class="line">        args-&gt;key.min_objectid = h-&gt;objectid;</td></tr>
 <tr><td class="num" id="LN430">430</td><td class="line">        args-&gt;key.min_type = h-&gt;type;</td></tr>
@@ -781,9 +771,6 @@
 <tr><td class="num" id="LN683">683</td><td class="line"><span class='keyword'>int</span> btrfs_subvol_find_subtree_qgroup(<span class='keyword'>int</span> fd, uint64_t subvol_id, uint64_t *ret) {</td></tr>
 <tr><td class="num" id="LN684">684</td><td class="line">        uint64_t level, lowest = (uint64_t) -1, lowest_qgroupid = 0;</td></tr>
 <tr><td class="num" id="LN685">685</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> uint64_t *qgroups = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Within the expansion of the macro '_cleanup_free_':
-</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">'qgroups' initialized to a null pointer value</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN686">686</td><td class="line">        <span class='keyword'>int</span> r, n, i;</td></tr>
 <tr><td class="num" id="LN687">687</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN688">688</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/basic/btrfs-util.c", 688, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
@@ -799,7 +786,6 @@
 <tr><td class="num" id="LN698">698</td><td class="line">         <span class='comment'>* otherwise. */</span></td></tr>
 <tr><td class="num" id="LN699">699</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN700">700</td><td class="line">        <span class='keyword'>if</span> (subvol_id == 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN701">701</td><td class="line">                r = btrfs_subvol_get_id_fd(fd, &amp;subvol_id);</td></tr>
 <tr><td class="num" id="LN702">702</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN703">703</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
@@ -807,28 +793,18 @@
 <tr><td class="num" id="LN705">705</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN706">706</td><td class="line">        r = btrfs_qgroupid_split(subvol_id, &amp;level, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN707">707</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN708">708</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">level != 0</span>) <span class='comment'>/* Input must be a leaf qgroup */</span></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Assuming 'level' is equal to 0</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">        <span class='keyword'>if</span> (level != 0) <span class='comment'>/* Input must be a leaf qgroup */</span></td></tr>
 <tr><td class="num" id="LN710">710</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN711">711</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN712">712</td><td class="line">        n = <span class="mrange"><span class="mrange">btrfs_qgroup_find_parents(fd, subvol_id, &amp;qgroups)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Calling 'btrfs_qgroup_find_parents'</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path47" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">47</div></td><td><div class="PathNav"><a href="#Path46" title="Previous event (46)">&#x2190;</a></div></td></td><td>Returning from 'btrfs_qgroup_find_parents'</td><td><div class="PathNav"><a href="#Path48" title="Next event (48)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">n &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path48" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">48</div></td><td><div class="PathNav"><a href="#Path47" title="Previous event (47)">&#x2190;</a></div></td></td><td>Assuming 'n' is &gt;= 0</td><td><div class="PathNav"><a href="#Path49" title="Next event (49)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path49" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">49</div></td><td><div class="PathNav"><a href="#Path48" title="Previous event (48)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path50" title="Next event (50)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">        n = btrfs_qgroup_find_parents(fd, subvol_id, &amp;qgroups);</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">        <span class='keyword'>if</span> (n &lt; 0)</td></tr>
 <tr><td class="num" id="LN714">714</td><td class="line">                <span class='keyword'>return</span> n;</td></tr>
 <tr><td class="num" id="LN715">715</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line">        <span class='keyword'>for</span> (i = 0; <span class="mrange">i &lt; n</span>; i++) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path50" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">50</div></td><td><div class="PathNav"><a href="#Path49" title="Previous event (49)">&#x2190;</a></div></td></td><td>Assuming 'i' is &lt; 'n'</td><td><div class="PathNav"><a href="#Path51" title="Next event (51)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path51" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">51</div></td><td><div class="PathNav"><a href="#Path50" title="Previous event (50)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#EndPath" title="Next event (52)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">        <span class='keyword'>for</span> (i = 0; i &lt; n; i++) {</td></tr>
 <tr><td class="num" id="LN717">717</td><td class="line">                uint64_t id;</td></tr>
 <tr><td class="num" id="LN718">718</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line">                r = btrfs_qgroupid_split(<span class="mrange">qgroups</span>[i], &amp;level, &amp;id);</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:42ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">52</div></td><td><div class="PathNav"><a href="#Path51" title="Previous event (51)">&#x2190;</a></div></td></td><td>Array access (from variable 'qgroups') results in a null pointer dereference</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">                r = btrfs_qgroupid_split(qgroups[i], &amp;level, &amp;id);</td></tr>
 <tr><td class="num" id="LN720">720</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN721">721</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN722">722</td><td class="line"> </td></tr>
@@ -1313,16 +1289,22 @@
 <tr><td class="num" id="LN1201">1201</td><td class="line">        <span class='macro'>assert(subvolume)<span class='expansion'>do { if ((__builtin_expect(!!(!(subvolume)),0))) log_assert_failed<br>("subvolume", "src/basic/btrfs-util.c", 1201, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1202">1202</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1203">1203</td><td class="line">        <span class='keyword'>if</span> (fstat(fd, &amp;st) &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1204">1204</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN1205">1205</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1206">1206</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1207">1207</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN1208">1208</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1209">1209</td><td class="line">        subvol_fd = openat(fd, subvolume, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
-<tr><td class="num" id="LN1210">1210</td><td class="line">        <span class='keyword'>if</span> (subvol_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN1210">1210</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">subvol_fd &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'subvol_fd' is &gt;= 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1211">1211</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN1212">1212</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1213">1213</td><td class="line">        <span class='keyword'>if</span> (subvol_id == 0) {</td></tr>
+<tr><td class="num" id="LN1213">1213</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">subvol_id == 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'subvol_id' is not equal to 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1214">1214</td><td class="line">                r = btrfs_subvol_get_id_fd(subvol_fd, &amp;subvol_id);</td></tr>
 <tr><td class="num" id="LN1215">1215</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1216">1216</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
@@ -1332,10 +1314,12 @@
 <tr><td class="num" id="LN1220">1220</td><td class="line">         <span class='comment'>* already empty, this will just work. */</span></td></tr>
 <tr><td class="num" id="LN1221">1221</td><td class="line">        strncpy(vol_args.name, subvolume, <span class='keyword'>sizeof</span>(vol_args.name)-1);</td></tr>
 <tr><td class="num" id="LN1222">1222</td><td class="line">        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_SNAP_DESTROY<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((15)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_vol_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;vol_args) &gt;= 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1223">1223</td><td class="line">                (<span class='keyword'>void</span>) btrfs_qgroup_destroy_recursive(fd, subvol_id); <span class='comment'>/* for the leaf subvolumes, the qgroup id is identical to the subvol id */</span></td></tr>
 <tr><td class="num" id="LN1224">1224</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1225">1225</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1226">1226</td><td class="line">        <span class='keyword'>if</span> (!(flags &amp; BTRFS_REMOVE_RECURSIVE) || <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOTEMPTY<span class='expansion'>39</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1227">1227</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN1228">1228</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1229">1229</td><td class="line">        <span class='comment'>/* OK, the subvolume is not empty, let's look for child</span></td></tr>
@@ -1344,14 +1328,17 @@
 <tr><td class="num" id="LN1232">1232</td><td class="line">        args.key.min_offset = args.key.max_offset = subvol_id;</td></tr>
 <tr><td class="num" id="LN1233">1233</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1234">1234</td><td class="line">        <span class='keyword'>while</span> (btrfs_ioctl_search_args_compare(&amp;args) &lt;= 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1235">1235</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_ioctl_search_header *sh;</td></tr>
 <tr><td class="num" id="LN1236">1236</td><td class="line">                <span class='keyword'>unsigned</span> i;</td></tr>
 <tr><td class="num" id="LN1237">1237</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1238">1238</td><td class="line">                args.key.nr_items = 256;</td></tr>
 <tr><td class="num" id="LN1239">1239</td><td class="line">                <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_TREE_SEARCH<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((17)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_search_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;args) &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1240">1240</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN1241">1241</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1242">1242</td><td class="line">                <span class='keyword'>if</span> (args.key.nr_items &lt;= 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1243">1243</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1244">1244</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1245">1245</td><td class="line">                <span class='macro'>FOREACH_BTRFS_IOCTL_SEARCH_HEADER(i, sh, args)<span class='expansion'>for ((i) = 0, (sh) = (const struct btrfs_ioctl_search_header*<br>) (args).buf; (i) &lt; (args).key.nr_items; (i)++, (sh) = (const<br> struct btrfs_ioctl_search_header*) ((uint8_t*) (sh) + sizeof<br>(struct btrfs_ioctl_search_header) + (sh)-&gt;len))</span></span> {</td></tr>
@@ -1362,14 +1349,19 @@
 <tr><td class="num" id="LN1250">1250</td><td class="line">                        btrfs_ioctl_search_args_set(&amp;args, sh);</td></tr>
 <tr><td class="num" id="LN1251">1251</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1252">1252</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;type != <span class='macro'>BTRFS_ROOT_BACKREF_KEY<span class='expansion'>144</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1253">1253</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN1254">1254</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;offset != subvol_id)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1255">1255</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN1256">1256</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1257">1257</td><td class="line">                        ref = <span class='macro'>BTRFS_IOCTL_SEARCH_HEADER_BODY(sh)<span class='expansion'>((void*) ((uint8_t*) sh + sizeof(struct btrfs_ioctl_search_header<br>)))</span></span>;</td></tr>
 <tr><td class="num" id="LN1258">1258</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1259">1259</td><td class="line">                        p = strndup((<span class='keyword'>char</span>*) ref + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> btrfs_root_ref), le64toh(ref-&gt;name_len));</td></tr>
-<tr><td class="num" id="LN1260">1260</td><td class="line">                        <span class='keyword'>if</span> (!p)</td></tr>
+<tr><td class="num" id="LN1259">1259</td><td class="line">                        p = <span class="mrange">strndup((<span class='keyword'>char</span>*) ref + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> btrfs_root_ref), le64toh(ref-&gt;name_len))</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1260">1260</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!p</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'p' is non-null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1261">1261</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1262">1262</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1263">1263</td><td class="line">                        <span class='macro'>zero(ino_args)<span class='expansion'>((memset((&amp;(ino_args)), 0, (sizeof(ino_args)))))</span></span>;</td></tr>
@@ -1377,7 +1369,11 @@
 <tr><td class="num" id="LN1265">1265</td><td class="line">                        ino_args.objectid = htole64(ref-&gt;dirid);</td></tr>
 <tr><td class="num" id="LN1266">1266</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1267">1267</td><td class="line">                        <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_INO_LOOKUP<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((18)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_ino_lookup_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;ino_args) &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1268">1268</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:41ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'errno':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'p'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN1269">1269</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1270">1270</td><td class="line">                        <span class='keyword'>if</span> (!made_writable) {</td></tr>
 <tr><td class="num" id="LN1271">1271</td><td class="line">                                r = btrfs_subvol_set_read_only_fd(subvol_fd, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
@@ -1612,13 +1608,11 @@
 <tr><td class="num" id="LN1500">1500</td><td class="line">        <span class='comment'>/* First copy the leaf limits */</span></td></tr>
 <tr><td class="num" id="LN1501">1501</td><td class="line">        r = btrfs_qgroup_copy_limits(fd, old_subvol, new_subvol);</td></tr>
 <tr><td class="num" id="LN1502">1502</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1503">1503</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1504">1504</td><td class="line">        changed = r &gt; 0;</td></tr>
 <tr><td class="num" id="LN1505">1505</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1506">1506</td><td class="line">        <span class='comment'>/* Then, try to copy the subtree limits, if there are any. */</span></td></tr>
-<tr><td class="num" id="LN1507">1507</td><td class="line">        r = <span class="mrange">btrfs_subvol_find_subtree_qgroup(fd, old_subvol, &amp;old_subtree_qgroup)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Calling 'btrfs_subvol_find_subtree_qgroup'</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1507">1507</td><td class="line">        r = btrfs_subvol_find_subtree_qgroup(fd, old_subvol, &amp;old_subtree_qgroup);</td></tr>
 <tr><td class="num" id="LN1508">1508</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1509">1509</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1510">1510</td><td class="line">        <span class='keyword'>if</span> (r == 0)</td></tr>
@@ -1654,7 +1648,6 @@
 <tr><td class="num" id="LN1540">1540</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1541">1541</td><td class="line">        <span class='keyword'>struct</span> btrfs_ioctl_vol_args_v2 vol_args = {</td></tr>
 <tr><td class="num" id="LN1542">1542</td><td class="line">                .flags = flags &amp; BTRFS_SNAPSHOT_READ_ONLY ? <span class='macro'>BTRFS_SUBVOL_RDONLY<span class='expansion'>(1ULL &lt;&lt; 1)</span></span> : 0,</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:26ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>'?' condition is false</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1543">1543</td><td class="line">                .fd = old_fd,</td></tr>
 <tr><td class="num" id="LN1544">1544</td><td class="line">        };</td></tr>
 <tr><td class="num" id="LN1545">1545</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> subvolume_fd = -1;</td></tr>
@@ -1668,16 +1661,13 @@
 <tr><td class="num" id="LN1553">1553</td><td class="line">        strncpy(vol_args.name, subvolume, <span class='keyword'>sizeof</span>(vol_args.name)-1);</td></tr>
 <tr><td class="num" id="LN1554">1554</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1555">1555</td><td class="line">        <span class='keyword'>if</span> (ioctl(new_fd, <span class='macro'>BTRFS_IOC_SNAP_CREATE_V2<span class='expansion'>(((1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +8))<br> | (((23)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_vol_args_v2<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;vol_args) &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1556">1556</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN1557">1557</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1558">1558</td><td class="line">        <span class='keyword'>if</span> (!(flags &amp; BTRFS_SNAPSHOT_RECURSIVE) &amp;&amp;</td></tr>
 <tr><td class="num" id="LN1559">1559</td><td class="line">            !(flags &amp; BTRFS_SNAPSHOT_QUOTA))</td></tr>
 <tr><td class="num" id="LN1560">1560</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1561">1561</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1562">1562</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">old_subvol_id == 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'old_subvol_id' is not equal to 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1562">1562</td><td class="line">        <span class='keyword'>if</span> (old_subvol_id == 0) {</td></tr>
 <tr><td class="num" id="LN1563">1563</td><td class="line">                r = btrfs_subvol_get_id_fd(old_fd, &amp;old_subvol_id);</td></tr>
 <tr><td class="num" id="LN1564">1564</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1565">1565</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
@@ -1685,15 +1675,12 @@
 <tr><td class="num" id="LN1567">1567</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1568">1568</td><td class="line">        r = btrfs_subvol_get_id(new_fd, vol_args.name, &amp;new_subvol_id);</td></tr>
 <tr><td class="num" id="LN1569">1569</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1570">1570</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1571">1571</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1572">1572</td><td class="line">        <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_QUOTA)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1573">1573</td><td class="line">                (<span class='keyword'>void</span>) copy_quota_hierarchy(new_fd, old_subvol_id, new_subvol_id);</td></tr>
 <tr><td class="num" id="LN1574">1574</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1575">1575</td><td class="line">        <span class='keyword'>if</span> (!(flags &amp; BTRFS_SNAPSHOT_RECURSIVE)) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1576">1576</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1577">1577</td><td class="line">                <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_QUOTA)</td></tr>
 <tr><td class="num" id="LN1578">1578</td><td class="line">                        (<span class='keyword'>void</span>) copy_subtree_quota_limits(new_fd, old_subvol_id, new_subvol_id);</td></tr>
@@ -1704,7 +1691,6 @@
 <tr><td class="num" id="LN1583">1583</td><td class="line">        args.key.min_offset = args.key.max_offset = old_subvol_id;</td></tr>
 <tr><td class="num" id="LN1584">1584</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1585">1585</td><td class="line">        <span class='keyword'>while</span> (btrfs_ioctl_search_args_compare(&amp;args) &lt;= 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 1700</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1586">1586</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_ioctl_search_header *sh;</td></tr>
 <tr><td class="num" id="LN1587">1587</td><td class="line">                <span class='keyword'>unsigned</span> i;</td></tr>
 <tr><td class="num" id="LN1588">1588</td><td class="line"> </td></tr>
@@ -1820,9 +1806,7 @@
 <tr><td class="num" id="LN1698">1698</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1699">1699</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1700">1700</td><td class="line">        <span class='keyword'>if</span> (flags &amp; BTRFS_SNAPSHOT_QUOTA)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1701">1701</td><td class="line">                (<span class='keyword'>void</span>) <span class="mrange">copy_subtree_quota_limits(new_fd, old_subvol_id, new_subvol_id)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Calling 'copy_subtree_quota_limits'</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1701">1701</td><td class="line">                (<span class='keyword'>void</span>) copy_subtree_quota_limits(new_fd, old_subvol_id, new_subvol_id);</td></tr>
 <tr><td class="num" id="LN1702">1702</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1703">1703</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1704">1704</td><td class="line">}</td></tr>
@@ -1910,67 +1894,44 @@
 <tr><td class="num" id="LN1786">1786</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN1787">1787</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1788">1788</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/basic/btrfs-util.c", 1788, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1789">1789</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/basic/btrfs-util.c", 1789, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1790">1790</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1791">1791</td><td class="line">        <span class='keyword'>if</span> (qgroupid == 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1792">1792</td><td class="line">                r = btrfs_subvol_get_id_fd(fd, &amp;qgroupid);</td></tr>
 <tr><td class="num" id="LN1793">1793</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1794">1794</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1795">1795</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN1796">1796</td><td class="line">                r = <span class="mrange"><span class="mrange">btrfs_is_filesystem(fd)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Calling 'btrfs_is_filesystem'</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Returning from 'btrfs_is_filesystem'</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1796">1796</td><td class="line">                r = btrfs_is_filesystem(fd);</td></tr>
 <tr><td class="num" id="LN1797">1797</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path27" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1798">1798</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1799">1799</td><td class="line">                <span class='keyword'>if</span> (!r)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path27" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path28" title="Next event (28)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1800">1800</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOTTY<span class='expansion'>25</span></span>;</td></tr>
 <tr><td class="num" id="LN1801">1801</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1802">1802</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1803">1803</td><td class="line">        args.key.min_objectid = args.key.max_objectid = qgroupid;</td></tr>
 <tr><td class="num" id="LN1804">1804</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1805">1805</td><td class="line">        <span class='keyword'>while</span> (btrfs_ioctl_search_args_compare(&amp;args) &lt;= 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path44" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">44</div></td><td><div class="PathNav"><a href="#Path43" title="Previous event (43)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path45" title="Next event (45)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1806">1806</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> btrfs_ioctl_search_header *sh;</td></tr>
 <tr><td class="num" id="LN1807">1807</td><td class="line">                <span class='keyword'>unsigned</span> i;</td></tr>
 <tr><td class="num" id="LN1808">1808</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1809">1809</td><td class="line">                args.key.nr_items = 256;</td></tr>
 <tr><td class="num" id="LN1810">1810</td><td class="line">                <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>BTRFS_IOC_TREE_SEARCH<span class='expansion'>(((2U|1U) &lt;&lt; (((0 +8)+8)+14)) | (((0x94)) &lt;&lt; (0 +<br>8)) | (((17)) &lt;&lt; 0) | ((((sizeof(struct btrfs_ioctl_search_args<br>)))) &lt;&lt; ((0 +8)+8)))</span></span>, &amp;args) &lt; 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path45" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">45</div></td><td><div class="PathNav"><a href="#Path44" title="Previous event (44)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path46" title="Next event (46)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1811">1811</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>) <span class='comment'>/* quota tree missing: quota is disabled */</span></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path46" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">46</div></td><td><div class="PathNav"><a href="#Path45" title="Previous event (45)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path47" title="Next event (47)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1812">1812</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1813">1813</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1814">1814</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN1815">1815</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1816">1816</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1817">1817</td><td class="line">                <span class='keyword'>if</span> (args.key.nr_items &lt;= 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path31" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1818">1818</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1819">1819</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1820">1820</td><td class="line">                <span class='macro'>FOREACH_BTRFS_IOCTL_SEARCH_HEADER(i, sh, args)<span class='expansion'>for ((i) = 0, (sh) = (const struct btrfs_ioctl_search_header*<br>) (args).buf; (i) &lt; (args).key.nr_items; (i)++, (sh) = (const<br> struct btrfs_ioctl_search_header*) ((uint8_t*) (sh) + sizeof<br>(struct btrfs_ioctl_search_header) + (sh)-&gt;len))</span></span> {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path31" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'FOREACH_BTRFS_IOCTL_SEARCH_HEADER':
-</td><td><div class="PathNav"><a href="#Path32" title="Next event (32)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path38" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">38</div></td><td><div class="PathNav"><a href="#Path37" title="Previous event (37)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'FOREACH_BTRFS_IOCTL_SEARCH_HEADER':
-</td><td><div class="PathNav"><a href="#Path39" title="Next event (39)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1821">1821</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1822">1822</td><td class="line">                        <span class='comment'>/* Make sure we start the next search at least from this entry */</span></td></tr>
-<tr><td class="num" id="LN1823">1823</td><td class="line">                        <span class="mrange"><span class="mrange">btrfs_ioctl_search_args_set(&amp;args, sh)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path32" class="msg msgEvent" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">32</div></td><td><div class="PathNav"><a href="#Path31" title="Previous event (31)">&#x2190;</a></div></td></td><td>Calling 'btrfs_ioctl_search_args_set'</td><td><div class="PathNav"><a href="#Path33" title="Next event (33)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path35" class="msg msgEvent" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">35</div></td><td><div class="PathNav"><a href="#Path34" title="Previous event (34)">&#x2190;</a></div></td></td><td>Returning from 'btrfs_ioctl_search_args_set'</td><td><div class="PathNav"><a href="#Path36" title="Next event (36)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1823">1823</td><td class="line">                        btrfs_ioctl_search_args_set(&amp;args, sh);</td></tr>
 <tr><td class="num" id="LN1824">1824</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1825">1825</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;type != <span class='macro'>BTRFS_QGROUP_RELATION_KEY<span class='expansion'>246</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path36" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">36</div></td><td><div class="PathNav"><a href="#Path35" title="Previous event (35)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path37" title="Next event (37)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1826">1826</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path37" class="msg msgControl" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">37</div></td><td><div class="PathNav"><a href="#Path36" title="Previous event (36)">&#x2190;</a></div></td></td><td> Execution continues on line 1820</td><td><div class="PathNav"><a href="#Path38" title="Next event (38)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1827">1827</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;offset &lt; sh-&gt;objectid)</td></tr>
 <tr><td class="num" id="LN1828">1828</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN1829">1829</td><td class="line">                        <span class='keyword'>if</span> (sh-&gt;objectid != qgroupid)</td></tr>
@@ -1983,10 +1944,7 @@
 <tr><td class="num" id="LN1836">1836</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1837">1837</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1838">1838</td><td class="line">                <span class='comment'>/* Increase search key by one, to read the next item, if we can. */</span></td></tr>
-<tr><td class="num" id="LN1839">1839</td><td class="line">                <span class='keyword'>if</span> (!<span class="mrange"><span class="mrange">btrfs_ioctl_search_args_inc(&amp;args)</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path39" class="msg msgEvent" style="margin-left:22ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">39</div></td><td><div class="PathNav"><a href="#Path38" title="Previous event (38)">&#x2190;</a></div></td></td><td>Calling 'btrfs_ioctl_search_args_inc'</td><td><div class="PathNav"><a href="#Path40" title="Next event (40)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path42" class="msg msgEvent" style="margin-left:22ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">42</div></td><td><div class="PathNav"><a href="#Path41" title="Previous event (41)">&#x2190;</a></div></td></td><td>Returning from 'btrfs_ioctl_search_args_inc'</td><td><div class="PathNav"><a href="#Path43" title="Next event (43)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path43" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">43</div></td><td><div class="PathNav"><a href="#Path42" title="Previous event (42)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path44" title="Next event (44)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1839">1839</td><td class="line">                <span class='keyword'>if</span> (!btrfs_ioctl_search_args_inc(&amp;args))</td></tr>
 <tr><td class="num" id="LN1840">1840</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1841">1841</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1842">1842</td><td class="line"> </td></tr>
