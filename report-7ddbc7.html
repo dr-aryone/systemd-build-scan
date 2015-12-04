@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Value stored to 'pid_socket' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME setup_image -->
+<!-- FUNCTIONNAME outer_child -->
 
-<!-- BUGLINE 1678 -->
+<!-- BUGLINE 2771 -->
 
 <!-- BUGCOLUMN 17 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1678, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2771, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'pid_socket' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1384,7 +1384,7 @@
 <tr><td class="num" id="LN1299">1299</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1300">1300</td><td class="line">        <span class='comment'>/* Store away the fd in the socket, so that it stays open as</span></td></tr>
 <tr><td class="num" id="LN1301">1301</td><td class="line">         <span class='comment'>* long as we run the child */</span></td></tr>
-<tr><td class="num" id="LN1302">1302</td><td class="line">        r = send_one_fd(kmsg_socket, fd, 0);</td></tr>
+<tr><td class="num" id="LN1302">1302</td><td class="line">        r = <span class='macro'>send_one_fd(kmsg_socket, fd, 0)<span class='expansion'>send_one_fd_sa(kmsg_socket, fd, ((void*)0), 0, 0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1303">1303</td><td class="line">        safe_close(fd);</td></tr>
 <tr><td class="num" id="LN1304">1304</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1305">1305</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
@@ -1760,8 +1760,7 @@
 <tr><td class="num" id="LN1675">1675</td><td class="line">                *loop_nr = -1;</td></tr>
 <tr><td class="num" id="LN1676">1676</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1677">1677</td><td class="line">                r = fd;</td></tr>
-<tr><td class="num" id="LN1678">1678</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN1678">1678</td><td class="line">                fd = -1;</td></tr>
 <tr><td class="num" id="LN1679">1679</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1680">1680</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1681">1681</td><td class="line">        }</td></tr>
@@ -2854,7 +2853,8 @@
 <tr><td class="num" id="LN2768">2768</td><td class="line">        <span class='keyword'>if</span> (pid &lt; 0)</td></tr>
 <tr><td class="num" id="LN2769">2769</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to fork inner child: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 2769, __func__, "Failed to fork inner child: %m") : -abs(_e<br>); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2770">2770</td><td class="line">        <span class='keyword'>if</span> (pid == 0) {</td></tr>
-<tr><td class="num" id="LN2771">2771</td><td class="line">                pid_socket = safe_close(pid_socket);</td></tr>
+<tr><td class="num" id="LN2771">2771</td><td class="line">                pid_socket = <span class="mrange">safe_close(pid_socket)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'pid_socket' is never read</div></td></tr>
 <tr><td class="num" id="LN2772">2772</td><td class="line">                uid_shift_socket = safe_close(uid_shift_socket);</td></tr>
 <tr><td class="num" id="LN2773">2773</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2774">2774</td><td class="line">                <span class='comment'>/* The inner child has all namespaces that are</span></td></tr>

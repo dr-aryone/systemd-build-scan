@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'pid_socket' is never read -->
+<!-- BUGDESC Value stored to 'kmsg_socket' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME outer_child -->
+<!-- FUNCTIONNAME inner_child -->
 
-<!-- BUGLINE 2793 -->
+<!-- BUGLINE 2483 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2793, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'pid_socket' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2483, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'kmsg_socket' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1384,7 +1384,7 @@
 <tr><td class="num" id="LN1299">1299</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1300">1300</td><td class="line">        <span class='comment'>/* Store away the fd in the socket, so that it stays open as</span></td></tr>
 <tr><td class="num" id="LN1301">1301</td><td class="line">         <span class='comment'>* long as we run the child */</span></td></tr>
-<tr><td class="num" id="LN1302">1302</td><td class="line">        r = send_one_fd(kmsg_socket, fd, 0);</td></tr>
+<tr><td class="num" id="LN1302">1302</td><td class="line">        r = <span class='macro'>send_one_fd(kmsg_socket, fd, 0)<span class='expansion'>send_one_fd_sa(kmsg_socket, fd, ((void*)0), 0, 0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1303">1303</td><td class="line">        safe_close(fd);</td></tr>
 <tr><td class="num" id="LN1304">1304</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1305">1305</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
@@ -2565,7 +2565,8 @@
 <tr><td class="num" id="LN2480">2480</td><td class="line">        r = setup_kmsg(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, kmsg_socket);</td></tr>
 <tr><td class="num" id="LN2481">2481</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN2482">2482</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN2483">2483</td><td class="line">        kmsg_socket = safe_close(kmsg_socket);</td></tr>
+<tr><td class="num" id="LN2483">2483</td><td class="line">        kmsg_socket = <span class="mrange">safe_close(kmsg_socket)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'kmsg_socket' is never read</div></td></tr>
 <tr><td class="num" id="LN2484">2484</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2485">2485</td><td class="line">        umask(0022);</td></tr>
 <tr><td class="num" id="LN2486">2486</td><td class="line"> </td></tr>
@@ -2875,8 +2876,7 @@
 <tr><td class="num" id="LN2790">2790</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
 <tr><td class="num" id="LN2791">2791</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN2792">2792</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2793">2793</td><td class="line">        pid_socket = <span class="mrange">safe_close(pid_socket)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'pid_socket' is never read</div></td></tr>
+<tr><td class="num" id="LN2793">2793</td><td class="line">        pid_socket = safe_close(pid_socket);</td></tr>
 <tr><td class="num" id="LN2794">2794</td><td class="line">        kmsg_socket = safe_close(kmsg_socket);</td></tr>
 <tr><td class="num" id="LN2795">2795</td><td class="line">        rtnl_socket = safe_close(rtnl_socket);</td></tr>
 <tr><td class="num" id="LN2796">2796</td><td class="line"> </td></tr>
