@@ -66,7 +66,7 @@
 
 <!-- FUNCTIONNAME dns_transaction_emit -->
 
-<!-- BUGLINE 544 -->
+<!-- BUGLINE 553 -->
 
 <!-- BUGCOLUMN 17 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/resolve/resolved-dns-transaction.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 544, column 17</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 553, column 17</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -566,343 +566,368 @@
 <tr><td class="num" id="LN481">481</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN482">482</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN483">483</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN484">484</td><td class="line">        <span class='comment'>/* Install the answer as answer to the transaction */</span></td></tr>
-<tr><td class="num" id="LN485">485</td><td class="line">        dns_answer_unref(t-&gt;answer);</td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line">        t-&gt;answer = dns_answer_ref(p-&gt;answer);</td></tr>
-<tr><td class="num" id="LN487">487</td><td class="line">        t-&gt;answer_rcode = <span class='macro'>DNS_PACKET_RCODE(p)<span class='expansion'>(be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags) &amp;<br> 15)</span></span>;</td></tr>
-<tr><td class="num" id="LN488">488</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN489">489</td><td class="line">        <span class='comment'>/* Only consider responses with equivalent query section to the request */</span></td></tr>
-<tr><td class="num" id="LN490">490</td><td class="line">        <span class='keyword'>if</span> (p-&gt;question-&gt;n_keys != 1 || dns_resource_key_equal(p-&gt;question-&gt;keys[0], t-&gt;key) &lt;= 0) {</td></tr>
-<tr><td class="num" id="LN491">491</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_INVALID_REPLY);</td></tr>
-<tr><td class="num" id="LN492">492</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN493">493</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN494">494</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN495">495</td><td class="line">        <span class='comment'>/* According to RFC 4795, section 2.9. only the RRs from the answer section shall be cached */</span></td></tr>
-<tr><td class="num" id="LN496">496</td><td class="line">        <span class='keyword'>if</span> (DNS_PACKET_SHALL_CACHE(p))</td></tr>
-<tr><td class="num" id="LN497">497</td><td class="line">                dns_cache_put(&amp;t-&gt;scope-&gt;cache, t-&gt;key, <span class='macro'>DNS_PACKET_RCODE(p)<span class='expansion'>(be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags) &amp;<br> 15)</span></span>, p-&gt;answer, <span class='macro'>DNS_PACKET_ANCOUNT(p)<span class='expansion'>be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;ancount)</span></span>, 0, p-&gt;family, &amp;p-&gt;sender);</td></tr>
-<tr><td class="num" id="LN498">498</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN499">499</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>DNS_PACKET_RCODE(p)<span class='expansion'>(be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags) &amp;<br> 15)</span></span> == DNS_RCODE_SUCCESS)</td></tr>
-<tr><td class="num" id="LN500">500</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_SUCCESS);</td></tr>
-<tr><td class="num" id="LN501">501</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN502">502</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_FAILURE);</td></tr>
-<tr><td class="num" id="LN503">503</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN504">504</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN505">505</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> on_dns_packet(sd_event_source *s, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN506">506</td><td class="line">        <span class='macro'>_cleanup_(dns_packet_unrefp)<span class='expansion'>__attribute__((cleanup(dns_packet_unrefp)))</span></span> DnsPacket *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN507">507</td><td class="line">        DnsTransaction *t = userdata;</td></tr>
-<tr><td class="num" id="LN508">508</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN510">510</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 510, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN511">511</td><td class="line">        <span class='macro'>assert(t-&gt;scope)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;scope)),0))) log_assert_failed<br>("t-&gt;scope", "src/resolve/resolved-dns-transaction.c", 511<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN512">512</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line">        r = manager_recv(t-&gt;scope-&gt;manager, fd, DNS_PROTOCOL_DNS, &amp;p);</td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
-<tr><td class="num" id="LN515">515</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN516">516</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN517">517</td><td class="line">        <span class='keyword'>if</span> (dns_packet_validate_reply(p) &gt; 0 &amp;&amp;</td></tr>
-<tr><td class="num" id="LN518">518</td><td class="line">            <span class='macro'>DNS_PACKET_ID(p)<span class='expansion'>((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;id</span></span> == t-&gt;id)</td></tr>
-<tr><td class="num" id="LN519">519</td><td class="line">                dns_transaction_process_reply(t, p);</td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN521">521</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Invalid DNS packet."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 521, __func__, "Invalid DNS packet.") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN522">522</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN523">523</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN524">524</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='comment'>/* Only consider responses with equivalent query section to the request */</span></td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">        <span class='keyword'>if</span> (p-&gt;question-&gt;n_keys != 1 || dns_resource_key_equal(p-&gt;question-&gt;keys[0], t-&gt;key) &lt;= 0) {</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_INVALID_REPLY);</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">        <span class='comment'>/* Install the answer as answer to the transaction */</span></td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">        dns_answer_unref(t-&gt;answer);</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">        t-&gt;answer = dns_answer_ref(p-&gt;answer);</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">        t-&gt;answer_rcode = <span class='macro'>DNS_PACKET_RCODE(p)<span class='expansion'>(be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags) &amp;<br> 15)</span></span>;</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        t-&gt;answer_authenticated = t-&gt;scope-&gt;dnssec_mode == DNSSEC_TRUST &amp;&amp; <span class='macro'>DNS_PACKET_AD(p)<span class='expansion'>((be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags) &gt;&gt;<br> 5) &amp; 1)</span></span>;</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">        <span class='comment'>/* According to RFC 4795, section 2.9. only the RRs from the answer section shall be cached */</span></td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">        <span class='keyword'>if</span> (DNS_PACKET_SHALL_CACHE(p))</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">                dns_cache_put(&amp;t-&gt;scope-&gt;cache,</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">                              t-&gt;key,</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">                              <span class='macro'>DNS_PACKET_RCODE(p)<span class='expansion'>(be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags) &amp;<br> 15)</span></span>,</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">                              p-&gt;answer,</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">                              <span class='macro'>DNS_PACKET_ANCOUNT(p)<span class='expansion'>be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;ancount)</span></span>,</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">                              t-&gt;answer_authenticated,</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">                              0,</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">                              p-&gt;family,</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">                              &amp;p-&gt;sender);</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>DNS_PACKET_RCODE(p)<span class='expansion'>(be16toh(((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;flags) &amp;<br> 15)</span></span> == DNS_RCODE_SUCCESS)</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_SUCCESS);</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_FAILURE);</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> on_dns_packet(sd_event_source *s, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">        <span class='macro'>_cleanup_(dns_packet_unrefp)<span class='expansion'>__attribute__((cleanup(dns_packet_unrefp)))</span></span> DnsPacket *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">        DnsTransaction *t = userdata;</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 519, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">        <span class='macro'>assert(t-&gt;scope)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;scope)),0))) log_assert_failed<br>("t-&gt;scope", "src/resolve/resolved-dns-transaction.c", 520<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">        r = manager_recv(t-&gt;scope-&gt;manager, fd, DNS_PROTOCOL_DNS, &amp;p);</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN526">526</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_transaction_emit(DnsTransaction *t) {</td></tr>
-<tr><td class="num" id="LN527">527</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN528">528</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 529, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_DNS &amp;&amp; !t-&gt;server) {</td></tr>
-<tr><td class="num" id="LN532">532</td><td class="line">                DnsServer *server = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">                <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">        <span class='keyword'>if</span> (dns_packet_validate_reply(p) &gt; 0 &amp;&amp;</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">            <span class='macro'>DNS_PACKET_ID(p)<span class='expansion'>((DnsPacketHeader*) DNS_PACKET_DATA(p))-&gt;id</span></span> == t-&gt;id)</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                dns_transaction_process_reply(t, p);</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Invalid DNS packet."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 530, __func__, "Invalid DNS packet.") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN534">534</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line">                fd = dns_scope_udp_dns_socket(t-&gt;scope, &amp;server);</td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line">                <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">                        <span class='keyword'>return</span> fd;</td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN539">539</td><td class="line">                r = sd_event_add_io(t-&gt;scope-&gt;manager-&gt;event, &amp;t-&gt;dns_udp_event_source, fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>, on_dns_packet, t);</td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN543">543</td><td class="line">                t-&gt;dns_udp_fd = fd;</td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line">                t-&gt;server = dns_server_ref(server);</td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_transaction_emit(DnsTransaction *t) {</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 538, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_DNS &amp;&amp; !t-&gt;server) {</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">                DnsServer *server = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">                <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">                fd = dns_scope_udp_dns_socket(t-&gt;scope, &amp;server);</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">                <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">                        <span class='keyword'>return</span> fd;</td></tr>
 <tr><td class="num" id="LN547">547</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line">        r = dns_scope_emit(t-&gt;scope, t-&gt;dns_udp_fd, t-&gt;server, t-&gt;sent);</td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">                r = sd_event_add_io(t-&gt;scope-&gt;manager-&gt;event, &amp;t-&gt;dns_udp_event_source, fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>, on_dns_packet, t);</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN551">551</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">        <span class='keyword'>if</span> (t-&gt;server)</td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line">                t-&gt;current_features = t-&gt;server-&gt;possible_features;</td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> on_transaction_timeout(sd_event_source *s, usec_t usec, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">        DnsTransaction *t = userdata;</td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/resolve/resolved-dns-transaction.c", 562, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 563, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line">        <span class='comment'>/* Timeout reached? Increase the timeout for the server used */</span></td></tr>
-<tr><td class="num" id="LN566">566</td><td class="line">        <span class='keyword'>switch</span> (t-&gt;scope-&gt;protocol) {</td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_DNS:</td></tr>
-<tr><td class="num" id="LN568">568</td><td class="line">                <span class='macro'>assert(t-&gt;server)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;server)),0))) log_assert_failed<br>("t-&gt;server", "src/resolve/resolved-dns-transaction.c", 568<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN569">569</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line">                dns_server_packet_lost(t-&gt;server, t-&gt;current_features, usec - t-&gt;start_usec);</td></tr>
-<tr><td class="num" id="LN571">571</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_LLMNR:</td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_MDNS:</td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line">                dns_scope_packet_lost(t-&gt;scope, usec - t-&gt;start_usec);</td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Invalid DNS protocol."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Invalid DNS protocol.", "src/resolve/resolved-dns-transaction.c"<br>, 579, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">        <span class='comment'>/* ...and try again with a new server */</span></td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line">        dns_transaction_next_dns_server(t);</td></tr>
-<tr><td class="num" id="LN584">584</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line">        r = dns_transaction_go(t);</td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_RESOURCES);</td></tr>
-<tr><td class="num" id="LN588">588</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN589">589</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN590">590</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN592">592</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_transaction_make_packet(DnsTransaction *t) {</td></tr>
-<tr><td class="num" id="LN593">593</td><td class="line">        <span class='macro'>_cleanup_(dns_packet_unrefp)<span class='expansion'>__attribute__((cleanup(dns_packet_unrefp)))</span></span> DnsPacket *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN594">594</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN596">596</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 596, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">                t-&gt;dns_udp_fd = fd;</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                t-&gt;server = dns_server_ref(server);</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">        r = dns_scope_emit(t-&gt;scope, t-&gt;dns_udp_fd, t-&gt;server, t-&gt;sent);</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">        <span class='keyword'>if</span> (t-&gt;server)</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">                t-&gt;current_features = t-&gt;server-&gt;possible_features;</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> on_transaction_timeout(sd_event_source *s, usec_t usec, <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">        DnsTransaction *t = userdata;</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/resolve/resolved-dns-transaction.c", 571, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 572, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">        <span class='comment'>/* Timeout reached? Increase the timeout for the server used */</span></td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">        <span class='keyword'>switch</span> (t-&gt;scope-&gt;protocol) {</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_DNS:</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">                <span class='macro'>assert(t-&gt;server)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;server)),0))) log_assert_failed<br>("t-&gt;server", "src/resolve/resolved-dns-transaction.c", 577<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">                dns_server_packet_lost(t-&gt;server, t-&gt;current_features, usec - t-&gt;start_usec);</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_LLMNR:</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_MDNS:</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">                dns_scope_packet_lost(t-&gt;scope, usec - t-&gt;start_usec);</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Invalid DNS protocol."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Invalid DNS protocol.", "src/resolve/resolved-dns-transaction.c"<br>, 588, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">        <span class='comment'>/* ...and try again with a new server */</span></td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">        dns_transaction_next_dns_server(t);</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">        r = dns_transaction_go(t);</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_RESOURCES);</td></tr>
 <tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN598">598</td><td class="line">        <span class='keyword'>if</span> (t-&gt;sent)</td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN600">600</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">        r = dns_packet_new_query(&amp;p, t-&gt;scope-&gt;protocol, 0);</td></tr>
-<tr><td class="num" id="LN602">602</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN603">603</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_transaction_make_packet(DnsTransaction *t) {</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">        <span class='macro'>_cleanup_(dns_packet_unrefp)<span class='expansion'>__attribute__((cleanup(dns_packet_unrefp)))</span></span> DnsPacket *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN604">604</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN605">605</td><td class="line">        r = dns_scope_good_key(t-&gt;scope, t-&gt;key);</td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN608">608</td><td class="line">        <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN609">609</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EDOM<span class='expansion'>33</span></span>;</td></tr>
-<tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN611">611</td><td class="line">        r = dns_packet_append_key(p, t-&gt;key, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN613">613</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN614">614</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN615">615</td><td class="line">        <span class='macro'>DNS_PACKET_HEADER(p)<span class='expansion'>((DnsPacketHeader*) DNS_PACKET_DATA(p))</span></span>-&gt;qdcount = htobe16(1);</td></tr>
-<tr><td class="num" id="LN616">616</td><td class="line">        <span class='macro'>DNS_PACKET_HEADER(p)<span class='expansion'>((DnsPacketHeader*) DNS_PACKET_DATA(p))</span></span>-&gt;id = t-&gt;id;</td></tr>
-<tr><td class="num" id="LN617">617</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN618">618</td><td class="line">        t-&gt;sent = p;</td></tr>
-<tr><td class="num" id="LN619">619</td><td class="line">        p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN620">620</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN621">621</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN622">622</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 605, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">        <span class='keyword'>if</span> (t-&gt;sent)</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">        r = dns_packet_new_query(&amp;p, t-&gt;scope-&gt;protocol, 0, t-&gt;scope-&gt;dnssec_mode == DNSSEC_YES);</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">        r = dns_scope_good_key(t-&gt;scope, t-&gt;key);</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">        <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EDOM<span class='expansion'>33</span></span>;</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">        r = dns_packet_append_key(p, t-&gt;key, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN623">623</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line"><span class='keyword'>static</span> usec_t transaction_get_resend_timeout(DnsTransaction *t) {</td></tr>
-<tr><td class="num" id="LN625">625</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 625, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN626">626</td><td class="line">        <span class='macro'>assert(t-&gt;scope)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;scope)),0))) log_assert_failed<br>("t-&gt;scope", "src/resolve/resolved-dns-transaction.c", 626<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN627">627</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line">        <span class='keyword'>switch</span> (t-&gt;scope-&gt;protocol) {</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_DNS:</td></tr>
-<tr><td class="num" id="LN630">630</td><td class="line">                <span class='macro'>assert(t-&gt;server)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;server)),0))) log_assert_failed<br>("t-&gt;server", "src/resolve/resolved-dns-transaction.c", 630<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line">                <span class='keyword'>return</span> t-&gt;server-&gt;resend_timeout;</td></tr>
-<tr><td class="num" id="LN633">633</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_LLMNR:</td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_MDNS:</td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line">                <span class='keyword'>return</span> t-&gt;scope-&gt;resend_timeout;</td></tr>
-<tr><td class="num" id="LN636">636</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN637">637</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Invalid DNS protocol."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Invalid DNS protocol.", "src/resolve/resolved-dns-transaction.c"<br>, 637, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN638">638</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        <span class='macro'>DNS_PACKET_HEADER(p)<span class='expansion'>((DnsPacketHeader*) DNS_PACKET_DATA(p))</span></span>-&gt;qdcount = htobe16(1);</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">        <span class='macro'>DNS_PACKET_HEADER(p)<span class='expansion'>((DnsPacketHeader*) DNS_PACKET_DATA(p))</span></span>-&gt;id = t-&gt;id;</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">        t-&gt;sent = p;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">        p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line"><span class='keyword'>static</span> usec_t transaction_get_resend_timeout(DnsTransaction *t) {</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 634, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">        <span class='macro'>assert(t-&gt;scope)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;scope)),0))) log_assert_failed<br>("t-&gt;scope", "src/resolve/resolved-dns-transaction.c", 635<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">        <span class='keyword'>switch</span> (t-&gt;scope-&gt;protocol) {</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_DNS:</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">                <span class='macro'>assert(t-&gt;server)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;server)),0))) log_assert_failed<br>("t-&gt;server", "src/resolve/resolved-dns-transaction.c", 639<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN640">640</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN641">641</td><td class="line"><span class='keyword'>int</span> dns_transaction_go(DnsTransaction *t) {</td></tr>
-<tr><td class="num" id="LN642">642</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> had_stream;</td></tr>
-<tr><td class="num" id="LN643">643</td><td class="line">        usec_t ts;</td></tr>
-<tr><td class="num" id="LN644">644</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN645">645</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN646">646</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 646, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN647">647</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN648">648</td><td class="line">        had_stream = !!t-&gt;stream;</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">                <span class='keyword'>return</span> t-&gt;server-&gt;resend_timeout;</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_LLMNR:</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">        <span class='keyword'>case</span> DNS_PROTOCOL_MDNS:</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">                <span class='keyword'>return</span> t-&gt;scope-&gt;resend_timeout;</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Invalid DNS protocol."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Invalid DNS protocol.", "src/resolve/resolved-dns-transaction.c"<br>, 646, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN649">649</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN650">650</td><td class="line">        dns_transaction_stop(t);</td></tr>
-<tr><td class="num" id="LN651">651</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN652">652</td><td class="line">        <span class='macro'>log_debug(<span class='string_literal'>"Excercising transaction on scope %s on %s/%s"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 655, __func__, "Excercising transaction on scope %s on %s/%s"<br>, dns_protocol_to_string(t-&gt;scope-&gt;protocol), t-&gt;scope<br>-&gt;link ? t-&gt;scope-&gt;link-&gt;name : "*", t-&gt;scope-&gt;<br>family == 0 ? "*" : af_to_name(t-&gt;scope-&gt;family)) : -abs<br>(_e); })</span></span></td></tr>
-<tr><td class="num" id="LN653">653</td><td class="line">                  <span class='macro'>dns_protocol_to_string(t-&gt;scope-&gt;protocol),<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 655, __func__, "Excercising transaction on scope %s on %s/%s"<br>, dns_protocol_to_string(t-&gt;scope-&gt;protocol), t-&gt;scope<br>-&gt;link ? t-&gt;scope-&gt;link-&gt;name : "*", t-&gt;scope-&gt;<br>family == 0 ? "*" : af_to_name(t-&gt;scope-&gt;family)) : -abs<br>(_e); })</span></span></td></tr>
-<tr><td class="num" id="LN654">654</td><td class="line">                  <span class='macro'>t-&gt;scope-&gt;link ? t-&gt;scope-&gt;link-&gt;name : <span class='string_literal'>"*"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 655, __func__, "Excercising transaction on scope %s on %s/%s"<br>, dns_protocol_to_string(t-&gt;scope-&gt;protocol), t-&gt;scope<br>-&gt;link ? t-&gt;scope-&gt;link-&gt;name : "*", t-&gt;scope-&gt;<br>family == 0 ? "*" : af_to_name(t-&gt;scope-&gt;family)) : -abs<br>(_e); })</span></span></td></tr>
-<tr><td class="num" id="LN655">655</td><td class="line">                  <span class='macro'>t-&gt;scope-&gt;family == AF_UNSPEC ? <span class='string_literal'>"*"</span> : af_to_name(t-&gt;scope-&gt;family))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 655, __func__, "Excercising transaction on scope %s on %s/%s"<br>, dns_protocol_to_string(t-&gt;scope-&gt;protocol), t-&gt;scope<br>-&gt;link ? t-&gt;scope-&gt;link-&gt;name : "*", t-&gt;scope-&gt;<br>family == 0 ? "*" : af_to_name(t-&gt;scope-&gt;family)) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line"><span class='keyword'>int</span> dns_transaction_go(DnsTransaction *t) {</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> had_stream;</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">        usec_t ts;</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 655, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN656">656</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN657">657</td><td class="line">        <span class='keyword'>if</span> (t-&gt;n_attempts &gt;= <span class='macro'>TRANSACTION_ATTEMPTS_MAX(t-&gt;scope-&gt;protocol)<span class='expansion'>((t-&gt;scope-&gt;protocol) == DNS_PROTOCOL_LLMNR ? 3 : 16)</span></span>) {</td></tr>
-<tr><td class="num" id="LN658">658</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_ATTEMPTS_MAX_REACHED);</td></tr>
-<tr><td class="num" id="LN659">659</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN661">661</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN662">662</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_LLMNR &amp;&amp; had_stream) {</td></tr>
-<tr><td class="num" id="LN663">663</td><td class="line">                <span class='comment'>/* If we already tried via a stream, then we don't</span></td></tr>
-<tr><td class="num" id="LN664">664</td><td class="line">                 <span class='comment'>* retry on LLMNR. See RFC 4795, Section 2.7. */</span></td></tr>
-<tr><td class="num" id="LN665">665</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_ATTEMPTS_MAX_REACHED);</td></tr>
-<tr><td class="num" id="LN666">666</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN667">667</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN668">668</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN669">669</td><td class="line">        <span class='macro'>assert_se(sd_event_now(t-&gt;scope-&gt;manager-&gt;event, clock_boottime_or_monotonic(), &amp;ts) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(sd_event_now(t-&gt;scope-&gt;<br>manager-&gt;event, clock_boottime_or_monotonic(), &amp;ts) &gt;=<br> 0)),0))) log_assert_failed("sd_event_now(t-&gt;scope-&gt;manager-&gt;event, clock_boottime_or_monotonic(), &amp;ts) &gt;= 0"<br>, "src/resolve/resolved-dns-transaction.c", 669, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">        had_stream = !!t-&gt;stream;</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">        dns_transaction_stop(t);</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">        <span class='macro'>log_debug(<span class='string_literal'>"Excercising transaction on scope %s on %s/%s"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 664, __func__, "Excercising transaction on scope %s on %s/%s"<br>, dns_protocol_to_string(t-&gt;scope-&gt;protocol), t-&gt;scope<br>-&gt;link ? t-&gt;scope-&gt;link-&gt;name : "*", t-&gt;scope-&gt;<br>family == 0 ? "*" : af_to_name(t-&gt;scope-&gt;family)) : -abs<br>(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">                  <span class='macro'>dns_protocol_to_string(t-&gt;scope-&gt;protocol),<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 664, __func__, "Excercising transaction on scope %s on %s/%s"<br>, dns_protocol_to_string(t-&gt;scope-&gt;protocol), t-&gt;scope<br>-&gt;link ? t-&gt;scope-&gt;link-&gt;name : "*", t-&gt;scope-&gt;<br>family == 0 ? "*" : af_to_name(t-&gt;scope-&gt;family)) : -abs<br>(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">                  <span class='macro'>t-&gt;scope-&gt;link ? t-&gt;scope-&gt;link-&gt;name : <span class='string_literal'>"*"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 664, __func__, "Excercising transaction on scope %s on %s/%s"<br>, dns_protocol_to_string(t-&gt;scope-&gt;protocol), t-&gt;scope<br>-&gt;link ? t-&gt;scope-&gt;link-&gt;name : "*", t-&gt;scope-&gt;<br>family == 0 ? "*" : af_to_name(t-&gt;scope-&gt;family)) : -abs<br>(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">                  <span class='macro'>t-&gt;scope-&gt;family == AF_UNSPEC ? <span class='string_literal'>"*"</span> : af_to_name(t-&gt;scope-&gt;family))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 664, __func__, "Excercising transaction on scope %s on %s/%s"<br>, dns_protocol_to_string(t-&gt;scope-&gt;protocol), t-&gt;scope<br>-&gt;link ? t-&gt;scope-&gt;link-&gt;name : "*", t-&gt;scope-&gt;<br>family == 0 ? "*" : af_to_name(t-&gt;scope-&gt;family)) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">        <span class='keyword'>if</span> (t-&gt;n_attempts &gt;= <span class='macro'>TRANSACTION_ATTEMPTS_MAX(t-&gt;scope-&gt;protocol)<span class='expansion'>((t-&gt;scope-&gt;protocol) == DNS_PROTOCOL_LLMNR ? 3 : 16)</span></span>) {</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_ATTEMPTS_MAX_REACHED);</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN670">670</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN671">671</td><td class="line">        t-&gt;n_attempts++;</td></tr>
-<tr><td class="num" id="LN672">672</td><td class="line">        t-&gt;start_usec = ts;</td></tr>
-<tr><td class="num" id="LN673">673</td><td class="line">        t-&gt;received = dns_packet_unref(t-&gt;received);</td></tr>
-<tr><td class="num" id="LN674">674</td><td class="line">        t-&gt;answer = dns_answer_unref(t-&gt;answer);</td></tr>
-<tr><td class="num" id="LN675">675</td><td class="line">        t-&gt;answer_rcode = 0;</td></tr>
-<tr><td class="num" id="LN676">676</td><td class="line">        t-&gt;answer_source = _DNS_TRANSACTION_SOURCE_INVALID;</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_LLMNR &amp;&amp; had_stream) {</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">                <span class='comment'>/* If we already tried via a stream, then we don't</span></td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">                 <span class='comment'>* retry on LLMNR. See RFC 4795, Section 2.7. */</span></td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_ATTEMPTS_MAX_REACHED);</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN678">678</td><td class="line">        <span class='comment'>/* Check the zone, but obly if this transaction is not used</span></td></tr>
-<tr><td class="num" id="LN679">679</td><td class="line">         <span class='comment'>* for probing or verifying a zone item. */</span></td></tr>
-<tr><td class="num" id="LN680">680</td><td class="line">        <span class='keyword'>if</span> (set_isempty(t-&gt;zone_items)) {</td></tr>
-<tr><td class="num" id="LN681">681</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN682">682</td><td class="line">                r = dns_zone_lookup(&amp;t-&gt;scope-&gt;zone, t-&gt;key, &amp;t-&gt;answer, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN683">683</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN685">685</td><td class="line">                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
-<tr><td class="num" id="LN686">686</td><td class="line">                        t-&gt;answer_rcode = DNS_RCODE_SUCCESS;</td></tr>
-<tr><td class="num" id="LN687">687</td><td class="line">                        t-&gt;answer_source = DNS_TRANSACTION_ZONE;</td></tr>
-<tr><td class="num" id="LN688">688</td><td class="line">                        dns_transaction_complete(t, DNS_TRANSACTION_SUCCESS);</td></tr>
-<tr><td class="num" id="LN689">689</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN690">690</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN691">691</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN692">692</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">        <span class='comment'>/* Check the cache, but only if this transaction is not used</span></td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line">         <span class='comment'>* for probing or verifying a zone item. */</span></td></tr>
-<tr><td class="num" id="LN695">695</td><td class="line">        <span class='keyword'>if</span> (set_isempty(t-&gt;zone_items)) {</td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN697">697</td><td class="line">                <span class='comment'>/* Before trying the cache, let's make sure we figured out a</span></td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line">                 <span class='comment'>* server to use. Should this cause a change of server this</span></td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line">                 <span class='comment'>* might flush the cache. */</span></td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line">                dns_scope_get_dns_server(t-&gt;scope);</td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line">                <span class='comment'>/* Let's then prune all outdated entries */</span></td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">                dns_cache_prune(&amp;t-&gt;scope-&gt;cache);</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">        <span class='macro'>assert_se(sd_event_now(t-&gt;scope-&gt;manager-&gt;event, clock_boottime_or_monotonic(), &amp;ts) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(sd_event_now(t-&gt;scope-&gt;<br>manager-&gt;event, clock_boottime_or_monotonic(), &amp;ts) &gt;=<br> 0)),0))) log_assert_failed("sd_event_now(t-&gt;scope-&gt;manager-&gt;event, clock_boottime_or_monotonic(), &amp;ts) &gt;= 0"<br>, "src/resolve/resolved-dns-transaction.c", 678, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">        t-&gt;n_attempts++;</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">        t-&gt;start_usec = ts;</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">        t-&gt;received = dns_packet_unref(t-&gt;received);</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">        t-&gt;answer = dns_answer_unref(t-&gt;answer);</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">        t-&gt;answer_rcode = 0;</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">        t-&gt;answer_source = _DNS_TRANSACTION_SOURCE_INVALID;</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">        <span class='comment'>/* Check the trust anchor. Do so only on classic DNS, since DNSSEC does not apply otherwise. */</span></td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_DNS) {</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">                r = dns_trust_anchor_lookup(&amp;t-&gt;scope-&gt;manager-&gt;trust_anchor, t-&gt;key, &amp;t-&gt;answer);</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">                        t-&gt;answer_rcode = DNS_RCODE_SUCCESS;</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">                        t-&gt;answer_source = DNS_TRANSACTION_TRUST_ANCHOR;</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">                        t-&gt;answer_authenticated = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">                        dns_transaction_complete(t, DNS_TRANSACTION_SUCCESS);</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">        <span class='comment'>/* Check the zone, but only if this transaction is not used</span></td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">         <span class='comment'>* for probing or verifying a zone item. */</span></td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        <span class='keyword'>if</span> (set_isempty(t-&gt;zone_items)) {</td></tr>
 <tr><td class="num" id="LN704">704</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line">                r = dns_cache_lookup(&amp;t-&gt;scope-&gt;cache, t-&gt;key, &amp;t-&gt;answer_rcode, &amp;t-&gt;answer);</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">                r = dns_zone_lookup(&amp;t-&gt;scope-&gt;zone, t-&gt;key, &amp;t-&gt;answer, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN706">706</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN707">707</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN708">708</td><td class="line">                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line">                        t-&gt;answer_source = DNS_TRANSACTION_CACHE;</td></tr>
-<tr><td class="num" id="LN710">710</td><td class="line">                        <span class='keyword'>if</span> (t-&gt;answer_rcode == DNS_RCODE_SUCCESS)</td></tr>
-<tr><td class="num" id="LN711">711</td><td class="line">                                dns_transaction_complete(t, DNS_TRANSACTION_SUCCESS);</td></tr>
-<tr><td class="num" id="LN712">712</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line">                                dns_transaction_complete(t, DNS_TRANSACTION_FAILURE);</td></tr>
-<tr><td class="num" id="LN714">714</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN715">715</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN718">718</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_LLMNR &amp;&amp; !t-&gt;initial_jitter) {</td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line">                usec_t jitter;</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">                        t-&gt;answer_rcode = DNS_RCODE_SUCCESS;</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">                        t-&gt;answer_source = DNS_TRANSACTION_ZONE;</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">                        t-&gt;answer_authenticated = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">                        dns_transaction_complete(t, DNS_TRANSACTION_SUCCESS);</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">        <span class='comment'>/* Check the cache, but only if this transaction is not used</span></td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">         <span class='comment'>* for probing or verifying a zone item. */</span></td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">        <span class='keyword'>if</span> (set_isempty(t-&gt;zone_items)) {</td></tr>
 <tr><td class="num" id="LN720">720</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line">                <span class='comment'>/* RFC 4795 Section 2.7 suggests all queries should be</span></td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line">                 <span class='comment'>* delayed by a random time from 0 to JITTER_INTERVAL. */</span></td></tr>
-<tr><td class="num" id="LN723">723</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN724">724</td><td class="line">                t-&gt;initial_jitter = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">                <span class='comment'>/* Before trying the cache, let's make sure we figured out a</span></td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">                 <span class='comment'>* server to use. Should this cause a change of server this</span></td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">                 <span class='comment'>* might flush the cache. */</span></td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">                dns_scope_get_dns_server(t-&gt;scope);</td></tr>
 <tr><td class="num" id="LN725">725</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN726">726</td><td class="line">                random_bytes(&amp;jitter, <span class='keyword'>sizeof</span>(jitter));</td></tr>
-<tr><td class="num" id="LN727">727</td><td class="line">                jitter %= <span class='macro'>LLMNR_JITTER_INTERVAL_USEC<span class='expansion'>(100 * ((usec_t) 1000ULL))</span></span>;</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">                <span class='comment'>/* Let's then prune all outdated entries */</span></td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">                dns_cache_prune(&amp;t-&gt;scope-&gt;cache);</td></tr>
 <tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN729">729</td><td class="line">                r = sd_event_add_time(</td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">                                t-&gt;scope-&gt;manager-&gt;event,</td></tr>
-<tr><td class="num" id="LN731">731</td><td class="line">                                &amp;t-&gt;timeout_event_source,</td></tr>
-<tr><td class="num" id="LN732">732</td><td class="line">                                clock_boottime_or_monotonic(),</td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">                                ts + jitter,</td></tr>
-<tr><td class="num" id="LN734">734</td><td class="line">                                <span class='macro'>LLMNR_JITTER_INTERVAL_USEC<span class='expansion'>(100 * ((usec_t) 1000ULL))</span></span>,</td></tr>
-<tr><td class="num" id="LN735">735</td><td class="line">                                on_transaction_timeout, t);</td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN737">737</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN738">738</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN739">739</td><td class="line">                t-&gt;n_attempts = 0;</td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line">                t-&gt;state = DNS_TRANSACTION_PENDING;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">                r = dns_cache_lookup(&amp;t-&gt;scope-&gt;cache, t-&gt;key, &amp;t-&gt;answer_rcode, &amp;t-&gt;answer, &amp;t-&gt;answer_authenticated);</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">                        t-&gt;answer_source = DNS_TRANSACTION_CACHE;</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">                        <span class='keyword'>if</span> (t-&gt;answer_rcode == DNS_RCODE_SUCCESS)</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">                                dns_transaction_complete(t, DNS_TRANSACTION_SUCCESS);</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">                                dns_transaction_complete(t, DNS_TRANSACTION_FAILURE);</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN741">741</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Delaying LLMNR transaction for "</span> USEC_FMT <span class='string_literal'>"us."</span>, jitter)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 742, __func__, "Delaying LLMNR transaction for " "%" "l" "u"<br> "us.", jitter) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN744">744</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN745">745</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN746">746</td><td class="line">        <span class='comment'>/* Otherwise, we need to ask the network */</span></td></tr>
-<tr><td class="num" id="LN747">747</td><td class="line">        r = dns_transaction_make_packet(t);</td></tr>
-<tr><td class="num" id="LN748">748</td><td class="line">        <span class='keyword'>if</span> (r == -<span class='macro'>EDOM<span class='expansion'>33</span></span>) {</td></tr>
-<tr><td class="num" id="LN749">749</td><td class="line">                <span class='comment'>/* Not the right request to make on this network?</span></td></tr>
-<tr><td class="num" id="LN750">750</td><td class="line">                 <span class='comment'>* (i.e. an A request made on IPv6 or an AAAA request</span></td></tr>
-<tr><td class="num" id="LN751">751</td><td class="line">                 <span class='comment'>* made on IPv4, on LLMNR or mDNS.) */</span></td></tr>
-<tr><td class="num" id="LN752">752</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_NO_SERVERS);</td></tr>
-<tr><td class="num" id="LN753">753</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN754">754</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN755">755</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN756">756</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN757">757</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN758">758</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_LLMNR &amp;&amp;</td></tr>
-<tr><td class="num" id="LN759">759</td><td class="line">            (dns_name_endswith(DNS_RESOURCE_KEY_NAME(t-&gt;key), <span class='string_literal'>"in-addr.arpa"</span>) &gt; 0 ||</td></tr>
-<tr><td class="num" id="LN760">760</td><td class="line">             dns_name_endswith(DNS_RESOURCE_KEY_NAME(t-&gt;key), <span class='string_literal'>"ip6.arpa"</span>) &gt; 0)) {</td></tr>
-<tr><td class="num" id="LN761">761</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN762">762</td><td class="line">                <span class='comment'>/* RFC 4795, Section 2.4. says reverse lookups shall</span></td></tr>
-<tr><td class="num" id="LN763">763</td><td class="line">                 <span class='comment'>* always be made via TCP on LLMNR */</span></td></tr>
-<tr><td class="num" id="LN764">764</td><td class="line">                r = dns_transaction_open_tcp(t);</td></tr>
-<tr><td class="num" id="LN765">765</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN766">766</td><td class="line">                <span class='comment'>/* Try via UDP, and if that fails due to large size or lack of</span></td></tr>
-<tr><td class="num" id="LN767">767</td><td class="line">                 <span class='comment'>* support try via TCP */</span></td></tr>
-<tr><td class="num" id="LN768">768</td><td class="line">                r = dns_transaction_emit(t);</td></tr>
-<tr><td class="num" id="LN769">769</td><td class="line">                <span class='keyword'>if</span> (r == -<span class='macro'>EMSGSIZE<span class='expansion'>90</span></span> || r == -<span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
-<tr><td class="num" id="LN770">770</td><td class="line">                        r = dns_transaction_open_tcp(t);</td></tr>
-<tr><td class="num" id="LN771">771</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN772">772</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN773">773</td><td class="line">        <span class='keyword'>if</span> (r == -<span class='macro'>ESRCH<span class='expansion'>3</span></span>) {</td></tr>
-<tr><td class="num" id="LN774">774</td><td class="line">                <span class='comment'>/* No servers to send this to? */</span></td></tr>
-<tr><td class="num" id="LN775">775</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_NO_SERVERS);</td></tr>
-<tr><td class="num" id="LN776">776</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN777">777</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN778">778</td><td class="line">                <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol != DNS_PROTOCOL_DNS) {</td></tr>
-<tr><td class="num" id="LN779">779</td><td class="line">                        dns_transaction_complete(t, DNS_TRANSACTION_RESOURCES);</td></tr>
-<tr><td class="num" id="LN780">780</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN781">781</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN782">782</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN783">783</td><td class="line">                <span class='comment'>/* Couldn't send? Try immediately again, with a new server */</span></td></tr>
-<tr><td class="num" id="LN784">784</td><td class="line">                dns_transaction_next_dns_server(t);</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_LLMNR &amp;&amp; !t-&gt;initial_jitter) {</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">                usec_t jitter;</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">                <span class='comment'>/* RFC 4795 Section 2.7 suggests all queries should be</span></td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">                 <span class='comment'>* delayed by a random time from 0 to JITTER_INTERVAL. */</span></td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">                t-&gt;initial_jitter = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">                random_bytes(&amp;jitter, <span class='keyword'>sizeof</span>(jitter));</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">                jitter %= <span class='macro'>LLMNR_JITTER_INTERVAL_USEC<span class='expansion'>(100 * ((usec_t) 1000ULL))</span></span>;</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">                r = sd_event_add_time(</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">                                t-&gt;scope-&gt;manager-&gt;event,</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">                                &amp;t-&gt;timeout_event_source,</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">                                clock_boottime_or_monotonic(),</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">                                ts + jitter,</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">                                <span class='macro'>LLMNR_JITTER_INTERVAL_USEC<span class='expansion'>(100 * ((usec_t) 1000ULL))</span></span>,</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">                                on_transaction_timeout, t);</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">                t-&gt;n_attempts = 0;</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">                t-&gt;state = DNS_TRANSACTION_PENDING;</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Delaying LLMNR transaction for "</span> USEC_FMT <span class='string_literal'>"us."</span>, jitter)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 766, __func__, "Delaying LLMNR transaction for " "%" "l" "u"<br> "us.", jitter) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">        <span class='comment'>/* Otherwise, we need to ask the network */</span></td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">        r = dns_transaction_make_packet(t);</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">        <span class='keyword'>if</span> (r == -<span class='macro'>EDOM<span class='expansion'>33</span></span>) {</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">                <span class='comment'>/* Not the right request to make on this network?</span></td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">                 <span class='comment'>* (i.e. an A request made on IPv6 or an AAAA request</span></td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">                 <span class='comment'>* made on IPv4, on LLMNR or mDNS.) */</span></td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_NO_SERVERS);</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol == DNS_PROTOCOL_LLMNR &amp;&amp;</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">            (dns_name_endswith(DNS_RESOURCE_KEY_NAME(t-&gt;key), <span class='string_literal'>"in-addr.arpa"</span>) &gt; 0 ||</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">             dns_name_endswith(DNS_RESOURCE_KEY_NAME(t-&gt;key), <span class='string_literal'>"ip6.arpa"</span>) &gt; 0)) {</td></tr>
 <tr><td class="num" id="LN785">785</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN786">786</td><td class="line">                <span class='keyword'>return</span> dns_transaction_go(t);</td></tr>
-<tr><td class="num" id="LN787">787</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN788">788</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN789">789</td><td class="line">        r = sd_event_add_time(</td></tr>
-<tr><td class="num" id="LN790">790</td><td class="line">                        t-&gt;scope-&gt;manager-&gt;event,</td></tr>
-<tr><td class="num" id="LN791">791</td><td class="line">                        &amp;t-&gt;timeout_event_source,</td></tr>
-<tr><td class="num" id="LN792">792</td><td class="line">                        clock_boottime_or_monotonic(),</td></tr>
-<tr><td class="num" id="LN793">793</td><td class="line">                        ts + transaction_get_resend_timeout(t), 0,</td></tr>
-<tr><td class="num" id="LN794">794</td><td class="line">                        on_transaction_timeout, t);</td></tr>
-<tr><td class="num" id="LN795">795</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN796">796</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN797">797</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN798">798</td><td class="line">        t-&gt;state = DNS_TRANSACTION_PENDING;</td></tr>
-<tr><td class="num" id="LN799">799</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN800">800</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN801">801</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN802">802</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> dns_transaction_state_table[_DNS_TRANSACTION_STATE_MAX] = {</td></tr>
-<tr><td class="num" id="LN803">803</td><td class="line">        [DNS_TRANSACTION_NULL] = <span class='string_literal'>"null"</span>,</td></tr>
-<tr><td class="num" id="LN804">804</td><td class="line">        [DNS_TRANSACTION_PENDING] = <span class='string_literal'>"pending"</span>,</td></tr>
-<tr><td class="num" id="LN805">805</td><td class="line">        [DNS_TRANSACTION_FAILURE] = <span class='string_literal'>"failure"</span>,</td></tr>
-<tr><td class="num" id="LN806">806</td><td class="line">        [DNS_TRANSACTION_SUCCESS] = <span class='string_literal'>"success"</span>,</td></tr>
-<tr><td class="num" id="LN807">807</td><td class="line">        [DNS_TRANSACTION_NO_SERVERS] = <span class='string_literal'>"no-servers"</span>,</td></tr>
-<tr><td class="num" id="LN808">808</td><td class="line">        [DNS_TRANSACTION_TIMEOUT] = <span class='string_literal'>"timeout"</span>,</td></tr>
-<tr><td class="num" id="LN809">809</td><td class="line">        [DNS_TRANSACTION_ATTEMPTS_MAX_REACHED] = <span class='string_literal'>"attempts-max-reached"</span>,</td></tr>
-<tr><td class="num" id="LN810">810</td><td class="line">        [DNS_TRANSACTION_INVALID_REPLY] = <span class='string_literal'>"invalid-reply"</span>,</td></tr>
-<tr><td class="num" id="LN811">811</td><td class="line">        [DNS_TRANSACTION_RESOURCES] = <span class='string_literal'>"resources"</span>,</td></tr>
-<tr><td class="num" id="LN812">812</td><td class="line">        [DNS_TRANSACTION_ABORTED] = <span class='string_literal'>"aborted"</span>,</td></tr>
-<tr><td class="num" id="LN813">813</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN814">814</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(dns_transaction_state, DnsTransactionState)<span class='expansion'>const char *dns_transaction_state_to_string(DnsTransactionState<br> i) { if (i &lt; 0 || i &gt;= (DnsTransactionState) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(dns_transaction_state_table), typeof(&amp;*(dns_transaction_state_table<br>))), sizeof(dns_transaction_state_table)/sizeof((dns_transaction_state_table<br>)[0]), (void)0))) return ((void*)0); return dns_transaction_state_table<br>[i]; } DnsTransactionState dns_transaction_state_from_string(<br>const char *s) { return (DnsTransactionState) string_table_lookup<br>(dns_transaction_state_table, __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(dns_transaction_state_table<br>), typeof(&amp;*(dns_transaction_state_table))), sizeof(dns_transaction_state_table<br>)/sizeof((dns_transaction_state_table)[0]), (void)0)), s); } struct<br> __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN815">815</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN816">816</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> dns_transaction_source_table[_DNS_TRANSACTION_SOURCE_MAX] = {</td></tr>
-<tr><td class="num" id="LN817">817</td><td class="line">        [DNS_TRANSACTION_NETWORK] = <span class='string_literal'>"network"</span>,</td></tr>
-<tr><td class="num" id="LN818">818</td><td class="line">        [DNS_TRANSACTION_CACHE] = <span class='string_literal'>"cache"</span>,</td></tr>
-<tr><td class="num" id="LN819">819</td><td class="line">        [DNS_TRANSACTION_ZONE] = <span class='string_literal'>"zone"</span>,</td></tr>
-<tr><td class="num" id="LN820">820</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN821">821</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(dns_transaction_source, DnsTransactionSource)<span class='expansion'>const char *dns_transaction_source_to_string(DnsTransactionSource<br> i) { if (i &lt; 0 || i &gt;= (DnsTransactionSource) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(dns_transaction_source_table), typeof(&amp;*(dns_transaction_source_table<br>))), sizeof(dns_transaction_source_table)/sizeof((dns_transaction_source_table<br>)[0]), (void)0))) return ((void*)0); return dns_transaction_source_table<br>[i]; } DnsTransactionSource dns_transaction_source_from_string<br>(const char *s) { return (DnsTransactionSource) string_table_lookup<br>(dns_transaction_source_table, __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(dns_transaction_source_table<br>), typeof(&amp;*(dns_transaction_source_table))), sizeof(dns_transaction_source_table<br>)/sizeof((dns_transaction_source_table)[0]), (void)0)), s); }<br> struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">                <span class='comment'>/* RFC 4795, Section 2.4. says reverse lookups shall</span></td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">                 <span class='comment'>* always be made via TCP on LLMNR */</span></td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">                r = dns_transaction_open_tcp(t);</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">                <span class='comment'>/* Try via UDP, and if that fails due to large size or lack of</span></td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">                 <span class='comment'>* support try via TCP */</span></td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">                r = dns_transaction_emit(t);</td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">                <span class='keyword'>if</span> (r == -<span class='macro'>EMSGSIZE<span class='expansion'>90</span></span> || r == -<span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">                        r = dns_transaction_open_tcp(t);</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">        <span class='keyword'>if</span> (r == -<span class='macro'>ESRCH<span class='expansion'>3</span></span>) {</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">                <span class='comment'>/* No servers to send this to? */</span></td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">                dns_transaction_complete(t, DNS_TRANSACTION_NO_SERVERS);</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">                <span class='keyword'>if</span> (t-&gt;scope-&gt;protocol != DNS_PROTOCOL_DNS) {</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">                        dns_transaction_complete(t, DNS_TRANSACTION_RESOURCES);</td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">                <span class='comment'>/* Couldn't send? Try immediately again, with a new server */</span></td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">                dns_transaction_next_dns_server(t);</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">                <span class='keyword'>return</span> dns_transaction_go(t);</td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">        r = sd_event_add_time(</td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">                        t-&gt;scope-&gt;manager-&gt;event,</td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">                        &amp;t-&gt;timeout_event_source,</td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">                        clock_boottime_or_monotonic(),</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">                        ts + transaction_get_resend_timeout(t), 0,</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">                        on_transaction_timeout, t);</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">        t-&gt;state = DNS_TRANSACTION_PENDING;</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> dns_transaction_state_table[_DNS_TRANSACTION_STATE_MAX] = {</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">        [DNS_TRANSACTION_NULL] = <span class='string_literal'>"null"</span>,</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">        [DNS_TRANSACTION_PENDING] = <span class='string_literal'>"pending"</span>,</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">        [DNS_TRANSACTION_FAILURE] = <span class='string_literal'>"failure"</span>,</td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">        [DNS_TRANSACTION_SUCCESS] = <span class='string_literal'>"success"</span>,</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">        [DNS_TRANSACTION_NO_SERVERS] = <span class='string_literal'>"no-servers"</span>,</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">        [DNS_TRANSACTION_TIMEOUT] = <span class='string_literal'>"timeout"</span>,</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">        [DNS_TRANSACTION_ATTEMPTS_MAX_REACHED] = <span class='string_literal'>"attempts-max-reached"</span>,</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">        [DNS_TRANSACTION_INVALID_REPLY] = <span class='string_literal'>"invalid-reply"</span>,</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line">        [DNS_TRANSACTION_RESOURCES] = <span class='string_literal'>"resources"</span>,</td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">        [DNS_TRANSACTION_ABORTED] = <span class='string_literal'>"aborted"</span>,</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(dns_transaction_state, DnsTransactionState)<span class='expansion'>const char *dns_transaction_state_to_string(DnsTransactionState<br> i) { if (i &lt; 0 || i &gt;= (DnsTransactionState) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(dns_transaction_state_table), typeof(&amp;*(dns_transaction_state_table<br>))), sizeof(dns_transaction_state_table)/sizeof((dns_transaction_state_table<br>)[0]), (void)0))) return ((void*)0); return dns_transaction_state_table<br>[i]; } DnsTransactionState dns_transaction_state_from_string(<br>const char *s) { return (DnsTransactionState) string_table_lookup<br>(dns_transaction_state_table, __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(dns_transaction_state_table<br>), typeof(&amp;*(dns_transaction_state_table))), sizeof(dns_transaction_state_table<br>)/sizeof((dns_transaction_state_table)[0]), (void)0)), s); } struct<br> __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> dns_transaction_source_table[_DNS_TRANSACTION_SOURCE_MAX] = {</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">        [DNS_TRANSACTION_NETWORK] = <span class='string_literal'>"network"</span>,</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">        [DNS_TRANSACTION_CACHE] = <span class='string_literal'>"cache"</span>,</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line">        [DNS_TRANSACTION_ZONE] = <span class='string_literal'>"zone"</span>,</td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">        [DNS_TRANSACTION_TRUST_ANCHOR] = <span class='string_literal'>"trust-anchor"</span>,</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(dns_transaction_source, DnsTransactionSource)<span class='expansion'>const char *dns_transaction_source_to_string(DnsTransactionSource<br> i) { if (i &lt; 0 || i &gt;= (DnsTransactionSource) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(dns_transaction_source_table), typeof(&amp;*(dns_transaction_source_table<br>))), sizeof(dns_transaction_source_table)/sizeof((dns_transaction_source_table<br>)[0]), (void)0))) return ((void*)0); return dns_transaction_source_table<br>[i]; } DnsTransactionSource dns_transaction_source_from_string<br>(const char *s) { return (DnsTransactionSource) string_table_lookup<br>(dns_transaction_source_table, __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(dns_transaction_source_table<br>), typeof(&amp;*(dns_transaction_source_table))), sizeof(dns_transaction_source_table<br>)/sizeof((dns_transaction_source_table)[0]), (void)0)), s); }<br> struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
 </table></body></html>
