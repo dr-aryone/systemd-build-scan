@@ -439,361 +439,364 @@
 <tr><td class="num" id="LN348">348</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN349">349</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN350">350</td><td class="line">MMapCache* mmap_cache_unref(MMapCache *m) {</td></tr>
-<tr><td class="num" id="LN351">351</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 351, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN352">352</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 352, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN353">353</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN354">354</td><td class="line">        m-&gt;n_ref --;</td></tr>
-<tr><td class="num" id="LN355">355</td><td class="line">        <span class='keyword'>if</span> (m-&gt;n_ref == 0)</td></tr>
-<tr><td class="num" id="LN356">356</td><td class="line">                mmap_cache_free(m);</td></tr>
-<tr><td class="num" id="LN357">357</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN358">358</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN359">359</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">        <span class='keyword'>if</span> (!m)</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 355, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">        m-&gt;n_ref --;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">        <span class='keyword'>if</span> (m-&gt;n_ref == 0)</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">                mmap_cache_free(m);</td></tr>
 <tr><td class="num" id="LN360">360</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN361">361</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> make_room(MMapCache *m) {</td></tr>
-<tr><td class="num" id="LN362">362</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 362, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN363">363</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN364">364</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;last_unused)</td></tr>
-<tr><td class="num" id="LN365">365</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> make_room(MMapCache *m) {</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 365, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN366">366</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN367">367</td><td class="line">        window_free(m-&gt;last_unused);</td></tr>
-<tr><td class="num" id="LN368">368</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN369">369</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN370">370</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN371">371</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> try_context(</td></tr>
-<tr><td class="num" id="LN372">372</td><td class="line">                MMapCache *m,</td></tr>
-<tr><td class="num" id="LN373">373</td><td class="line">                <span class='keyword'>int</span> fd,</td></tr>
-<tr><td class="num" id="LN374">374</td><td class="line">                <span class='keyword'>int</span> prot,</td></tr>
-<tr><td class="num" id="LN375">375</td><td class="line">                <span class='keyword'>unsigned</span> context,</td></tr>
-<tr><td class="num" id="LN376">376</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> keep_always,</td></tr>
-<tr><td class="num" id="LN377">377</td><td class="line">                uint64_t offset,</td></tr>
-<tr><td class="num" id="LN378">378</td><td class="line">                size_t size,</td></tr>
-<tr><td class="num" id="LN379">379</td><td class="line">                <span class='keyword'>void</span> **ret) {</td></tr>
-<tr><td class="num" id="LN380">380</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN381">381</td><td class="line">        Context *c;</td></tr>
-<tr><td class="num" id="LN382">382</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN383">383</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 383, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN384">384</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 384, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN385">385</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 385, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN386">386</td><td class="line">        <span class='macro'>assert(size &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(size &gt; 0)),0))) log_assert_failed<br>("size &gt; 0", "src/journal/mmap-cache.c", 386, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN387">387</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/journal/mmap-cache.c", 387, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN388">388</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN389">389</td><td class="line">        c = m-&gt;contexts[context];</td></tr>
-<tr><td class="num" id="LN390">390</td><td class="line">        <span class='keyword'>if</span> (!c)</td></tr>
-<tr><td class="num" id="LN391">391</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN392">392</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN393">393</td><td class="line">        <span class='macro'>assert(c-&gt;id == context)<span class='expansion'>do { if ((__builtin_expect(!!(!(c-&gt;id == context)),0))) log_assert_failed<br>("c-&gt;id == context", "src/journal/mmap-cache.c", 393, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN394">394</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN395">395</td><td class="line">        <span class='keyword'>if</span> (!c-&gt;window)</td></tr>
-<tr><td class="num" id="LN396">396</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;last_unused)</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        window_free(m-&gt;last_unused);</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> try_context(</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">                MMapCache *m,</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">                <span class='keyword'>int</span> fd,</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">                <span class='keyword'>int</span> prot,</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">                <span class='keyword'>unsigned</span> context,</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> keep_always,</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">                uint64_t offset,</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">                size_t size,</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">                <span class='keyword'>void</span> **ret) {</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">        Context *c;</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 386, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 387, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 388, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        <span class='macro'>assert(size &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(size &gt; 0)),0))) log_assert_failed<br>("size &gt; 0", "src/journal/mmap-cache.c", 389, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/journal/mmap-cache.c", 390, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">        c = m-&gt;contexts[context];</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        <span class='keyword'>if</span> (!c)</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">        <span class='macro'>assert(c-&gt;id == context)<span class='expansion'>do { if ((__builtin_expect(!!(!(c-&gt;id == context)),0))) log_assert_failed<br>("c-&gt;id == context", "src/journal/mmap-cache.c", 396, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN397">397</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">        <span class='keyword'>if</span> (!window_matches(c-&gt;window, fd, prot, offset, size)) {</td></tr>
-<tr><td class="num" id="LN399">399</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN400">400</td><td class="line">                <span class='comment'>/* Drop the reference to the window, since it's unnecessary now */</span></td></tr>
-<tr><td class="num" id="LN401">401</td><td class="line">                context_detach_window(c);</td></tr>
-<tr><td class="num" id="LN402">402</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN403">403</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN404">404</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN405">405</td><td class="line">        <span class='keyword'>if</span> (c-&gt;window-&gt;fd-&gt;sigbus)</td></tr>
-<tr><td class="num" id="LN406">406</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">        <span class='keyword'>if</span> (!c-&gt;window)</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">        <span class='keyword'>if</span> (!window_matches(c-&gt;window, fd, prot, offset, size)) {</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">                <span class='comment'>/* Drop the reference to the window, since it's unnecessary now */</span></td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">                context_detach_window(c);</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN407">407</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN408">408</td><td class="line">        c-&gt;window-&gt;keep_always |= keep_always;</td></tr>
-<tr><td class="num" id="LN409">409</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN410">410</td><td class="line">        *ret = (uint8_t*) c-&gt;window-&gt;ptr + (offset - c-&gt;window-&gt;offset);</td></tr>
-<tr><td class="num" id="LN411">411</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN412">412</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN413">413</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN414">414</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> find_mmap(</td></tr>
-<tr><td class="num" id="LN415">415</td><td class="line">                MMapCache *m,</td></tr>
-<tr><td class="num" id="LN416">416</td><td class="line">                <span class='keyword'>int</span> fd,</td></tr>
-<tr><td class="num" id="LN417">417</td><td class="line">                <span class='keyword'>int</span> prot,</td></tr>
-<tr><td class="num" id="LN418">418</td><td class="line">                <span class='keyword'>unsigned</span> context,</td></tr>
-<tr><td class="num" id="LN419">419</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> keep_always,</td></tr>
-<tr><td class="num" id="LN420">420</td><td class="line">                uint64_t offset,</td></tr>
-<tr><td class="num" id="LN421">421</td><td class="line">                size_t size,</td></tr>
-<tr><td class="num" id="LN422">422</td><td class="line">                <span class='keyword'>void</span> **ret) {</td></tr>
-<tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN424">424</td><td class="line">        FileDescriptor *f;</td></tr>
-<tr><td class="num" id="LN425">425</td><td class="line">        Window *w;</td></tr>
-<tr><td class="num" id="LN426">426</td><td class="line">        Context *c;</td></tr>
-<tr><td class="num" id="LN427">427</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN428">428</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 428, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN429">429</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 429, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN430">430</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 430, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN431">431</td><td class="line">        <span class='macro'>assert(size &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(size &gt; 0)),0))) log_assert_failed<br>("size &gt; 0", "src/journal/mmap-cache.c", 431, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN432">432</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN433">433</td><td class="line">        f = hashmap_get(m-&gt;fds, <span class='macro'>FD_TO_PTR(fd)<span class='expansion'>((void *) ((intptr_t) ((fd)+1)))</span></span>);</td></tr>
-<tr><td class="num" id="LN434">434</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
-<tr><td class="num" id="LN435">435</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN436">436</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN437">437</td><td class="line">        <span class='macro'>assert(f-&gt;fd == fd)<span class='expansion'>do { if ((__builtin_expect(!!(!(f-&gt;fd == fd)),0))) log_assert_failed<br>("f-&gt;fd == fd", "src/journal/mmap-cache.c", 437, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN438">438</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN439">439</td><td class="line">        <span class='keyword'>if</span> (f-&gt;sigbus)</td></tr>
-<tr><td class="num" id="LN440">440</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">        <span class='keyword'>if</span> (c-&gt;window-&gt;fd-&gt;sigbus)</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">        c-&gt;window-&gt;keep_always |= keep_always;</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">        *ret = (uint8_t*) c-&gt;window-&gt;ptr + (offset - c-&gt;window-&gt;offset);</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> find_mmap(</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">                MMapCache *m,</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">                <span class='keyword'>int</span> fd,</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">                <span class='keyword'>int</span> prot,</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">                <span class='keyword'>unsigned</span> context,</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> keep_always,</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">                uint64_t offset,</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">                size_t size,</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">                <span class='keyword'>void</span> **ret) {</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">        FileDescriptor *f;</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">        Window *w;</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">        Context *c;</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 431, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 432, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 433, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">        <span class='macro'>assert(size &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(size &gt; 0)),0))) log_assert_failed<br>("size &gt; 0", "src/journal/mmap-cache.c", 434, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">        f = hashmap_get(m-&gt;fds, <span class='macro'>FD_TO_PTR(fd)<span class='expansion'>((void *) ((intptr_t) ((fd)+1)))</span></span>);</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">        <span class='macro'>assert(f-&gt;fd == fd)<span class='expansion'>do { if ((__builtin_expect(!!(!(f-&gt;fd == fd)),0))) log_assert_failed<br>("f-&gt;fd == fd", "src/journal/mmap-cache.c", 440, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN441">441</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN442">442</td><td class="line">        <span class='macro'>LIST_FOREACH(by_fd, w, f-&gt;windows)<span class='expansion'>for ((w) = (f-&gt;windows); (w); (w) = (w)-&gt;by_fd_next)</span></span></td></tr>
-<tr><td class="num" id="LN443">443</td><td class="line">                <span class='keyword'>if</span> (window_matches(w, fd, prot, offset, size))</td></tr>
-<tr><td class="num" id="LN444">444</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN445">445</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN446">446</td><td class="line">        <span class='keyword'>if</span> (!w)</td></tr>
-<tr><td class="num" id="LN447">447</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">        <span class='keyword'>if</span> (f-&gt;sigbus)</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">        <span class='macro'>LIST_FOREACH(by_fd, w, f-&gt;windows)<span class='expansion'>for ((w) = (f-&gt;windows); (w); (w) = (w)-&gt;by_fd_next)</span></span></td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">                <span class='keyword'>if</span> (window_matches(w, fd, prot, offset, size))</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN448">448</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN449">449</td><td class="line">        c = context_add(m, context);</td></tr>
-<tr><td class="num" id="LN450">450</td><td class="line">        <span class='keyword'>if</span> (!c)</td></tr>
-<tr><td class="num" id="LN451">451</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN452">452</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN453">453</td><td class="line">        context_attach_window(c, w);</td></tr>
-<tr><td class="num" id="LN454">454</td><td class="line">        w-&gt;keep_always += keep_always;</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">        <span class='keyword'>if</span> (!w)</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">        c = context_add(m, context);</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">        <span class='keyword'>if</span> (!c)</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN455">455</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN456">456</td><td class="line">        *ret = (uint8_t*) w-&gt;ptr + (offset - w-&gt;offset);</td></tr>
-<tr><td class="num" id="LN457">457</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN458">458</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN459">459</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN460">460</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> add_mmap(</td></tr>
-<tr><td class="num" id="LN461">461</td><td class="line">                MMapCache *m,</td></tr>
-<tr><td class="num" id="LN462">462</td><td class="line">                <span class='keyword'>int</span> fd,</td></tr>
-<tr><td class="num" id="LN463">463</td><td class="line">                <span class='keyword'>int</span> prot,</td></tr>
-<tr><td class="num" id="LN464">464</td><td class="line">                <span class='keyword'>unsigned</span> context,</td></tr>
-<tr><td class="num" id="LN465">465</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> keep_always,</td></tr>
-<tr><td class="num" id="LN466">466</td><td class="line">                uint64_t offset,</td></tr>
-<tr><td class="num" id="LN467">467</td><td class="line">                size_t size,</td></tr>
-<tr><td class="num" id="LN468">468</td><td class="line">                <span class='keyword'>struct</span> stat *st,</td></tr>
-<tr><td class="num" id="LN469">469</td><td class="line">                <span class='keyword'>void</span> **ret) {</td></tr>
-<tr><td class="num" id="LN470">470</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN471">471</td><td class="line">        uint64_t woffset, wsize;</td></tr>
-<tr><td class="num" id="LN472">472</td><td class="line">        Context *c;</td></tr>
-<tr><td class="num" id="LN473">473</td><td class="line">        FileDescriptor *f;</td></tr>
-<tr><td class="num" id="LN474">474</td><td class="line">        Window *w;</td></tr>
-<tr><td class="num" id="LN475">475</td><td class="line">        <span class='keyword'>void</span> *d;</td></tr>
-<tr><td class="num" id="LN476">476</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN477">477</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN478">478</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 478, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN479">479</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 479, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN480">480</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 480, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN481">481</td><td class="line">        <span class='macro'>assert(size &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(size &gt; 0)),0))) log_assert_failed<br>("size &gt; 0", "src/journal/mmap-cache.c", 481, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN482">482</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/journal/mmap-cache.c", 482, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN483">483</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN484">484</td><td class="line">        woffset = offset &amp; ~((uint64_t) page_size() - 1ULL);</td></tr>
-<tr><td class="num" id="LN485">485</td><td class="line">        wsize = size + (offset - woffset);</td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line">        wsize = <span class='macro'>PAGE_ALIGN(wsize)<span class='expansion'>ALIGN_TO((wsize), page_size())</span></span>;</td></tr>
-<tr><td class="num" id="LN487">487</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN488">488</td><td class="line">        <span class='keyword'>if</span> (wsize &lt; <span class='macro'>WINDOW_SIZE<span class='expansion'>(8ULL*1024ULL*1024ULL)</span></span>) {</td></tr>
-<tr><td class="num" id="LN489">489</td><td class="line">                uint64_t delta;</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">        context_attach_window(c, w);</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">        w-&gt;keep_always += keep_always;</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">        *ret = (uint8_t*) w-&gt;ptr + (offset - w-&gt;offset);</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> add_mmap(</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">                MMapCache *m,</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">                <span class='keyword'>int</span> fd,</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">                <span class='keyword'>int</span> prot,</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">                <span class='keyword'>unsigned</span> context,</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> keep_always,</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">                uint64_t offset,</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">                size_t size,</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">                <span class='keyword'>struct</span> stat *st,</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">                <span class='keyword'>void</span> **ret) {</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">        uint64_t woffset, wsize;</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">        Context *c;</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">        FileDescriptor *f;</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">        Window *w;</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">        <span class='keyword'>void</span> *d;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 481, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 482, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 483, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='macro'>assert(size &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(size &gt; 0)),0))) log_assert_failed<br>("size &gt; 0", "src/journal/mmap-cache.c", 484, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/journal/mmap-cache.c", 485, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">        woffset = offset &amp; ~((uint64_t) page_size() - 1ULL);</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">        wsize = size + (offset - woffset);</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">        wsize = <span class='macro'>PAGE_ALIGN(wsize)<span class='expansion'>ALIGN_TO((wsize), page_size())</span></span>;</td></tr>
 <tr><td class="num" id="LN490">490</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN491">491</td><td class="line">                delta = <span class='macro'>PAGE_ALIGN((WINDOW_SIZE - wsize) / 2)<span class='expansion'>ALIGN_TO((((8ULL*1024ULL*1024ULL) - wsize) / 2), page_size())</span></span>;</td></tr>
-<tr><td class="num" id="LN492">492</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN493">493</td><td class="line">                <span class='keyword'>if</span> (delta &gt; offset)</td></tr>
-<tr><td class="num" id="LN494">494</td><td class="line">                        woffset = 0;</td></tr>
-<tr><td class="num" id="LN495">495</td><td class="line">                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN496">496</td><td class="line">                        woffset -= delta;</td></tr>
-<tr><td class="num" id="LN497">497</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN498">498</td><td class="line">                wsize = <span class='macro'>WINDOW_SIZE<span class='expansion'>(8ULL*1024ULL*1024ULL)</span></span>;</td></tr>
-<tr><td class="num" id="LN499">499</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">        <span class='keyword'>if</span> (wsize &lt; <span class='macro'>WINDOW_SIZE<span class='expansion'>(8ULL*1024ULL*1024ULL)</span></span>) {</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">                uint64_t delta;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">                delta = <span class='macro'>PAGE_ALIGN((WINDOW_SIZE - wsize) / 2)<span class='expansion'>ALIGN_TO((((8ULL*1024ULL*1024ULL) - wsize) / 2), page_size())</span></span>;</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">                <span class='keyword'>if</span> (delta &gt; offset)</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">                        woffset = 0;</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">                        woffset -= delta;</td></tr>
 <tr><td class="num" id="LN500">500</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN501">501</td><td class="line">        <span class='keyword'>if</span> (st) {</td></tr>
-<tr><td class="num" id="LN502">502</td><td class="line">                <span class='comment'>/* Memory maps that are larger then the files</span></td></tr>
-<tr><td class="num" id="LN503">503</td><td class="line">                   <span class='comment'>underneath have undefined behavior. Hence, clamp</span></td></tr>
-<tr><td class="num" id="LN504">504</td><td class="line">                   <span class='comment'>things to the file size if we know it */</span></td></tr>
-<tr><td class="num" id="LN505">505</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN506">506</td><td class="line">                <span class='keyword'>if</span> (woffset &gt;= (uint64_t) st-&gt;st_size)</td></tr>
-<tr><td class="num" id="LN507">507</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EADDRNOTAVAIL<span class='expansion'>99</span></span>;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">                wsize = <span class='macro'>WINDOW_SIZE<span class='expansion'>(8ULL*1024ULL*1024ULL)</span></span>;</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">        <span class='keyword'>if</span> (st) {</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">                <span class='comment'>/* Memory maps that are larger then the files</span></td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">                   <span class='comment'>underneath have undefined behavior. Hence, clamp</span></td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">                   <span class='comment'>things to the file size if we know it */</span></td></tr>
 <tr><td class="num" id="LN508">508</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line">                <span class='keyword'>if</span> (woffset + wsize &gt; (uint64_t) st-&gt;st_size)</td></tr>
-<tr><td class="num" id="LN510">510</td><td class="line">                        wsize = <span class='macro'>PAGE_ALIGN(st-&gt;st_size - woffset)<span class='expansion'>ALIGN_TO((st-&gt;st_size - woffset), page_size())</span></span>;</td></tr>
-<tr><td class="num" id="LN511">511</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN512">512</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line">                d = mmap(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, wsize, prot, <span class='macro'>MAP_SHARED<span class='expansion'>0x01</span></span>, fd, woffset);</td></tr>
-<tr><td class="num" id="LN515">515</td><td class="line">                <span class='keyword'>if</span> (d != <span class='macro'>MAP_FAILED<span class='expansion'>((void *) -1)</span></span>)</td></tr>
-<tr><td class="num" id="LN516">516</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN517">517</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOMEM<span class='expansion'>12</span></span>)</td></tr>
-<tr><td class="num" id="LN518">518</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN519">519</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line">                r = make_room(m);</td></tr>
-<tr><td class="num" id="LN521">521</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN522">522</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN523">523</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN524">524</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN525">525</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN526">526</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN527">527</td><td class="line">        c = context_add(m, context);</td></tr>
-<tr><td class="num" id="LN528">528</td><td class="line">        <span class='keyword'>if</span> (!c)</td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line">                <span class='keyword'>goto</span> outofmem;</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line">        f = fd_add(m, fd);</td></tr>
-<tr><td class="num" id="LN532">532</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">                <span class='keyword'>goto</span> outofmem;</td></tr>
-<tr><td class="num" id="LN534">534</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line">        w = window_add(m);</td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line">        <span class='keyword'>if</span> (!w)</td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">                <span class='keyword'>goto</span> outofmem;</td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN539">539</td><td class="line">        w-&gt;keep_always = keep_always;</td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line">        w-&gt;ptr = d;</td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">        w-&gt;offset = woffset;</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line">        w-&gt;prot = prot;</td></tr>
-<tr><td class="num" id="LN543">543</td><td class="line">        w-&gt;size = wsize;</td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line">        w-&gt;fd = f;</td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">        <span class='macro'>LIST_PREPEND(by_fd, f-&gt;windows, w)<span class='expansion'>do { typeof(*(f-&gt;windows)) **_head = &amp;(f-&gt;windows),<br> *_item = (w); do { if ((__builtin_expect(!!(!(_item)),0))) log_assert_failed<br>("_item", "src/journal/mmap-cache.c", 546, __PRETTY_FUNCTION__<br>); } while (0); if ((_item-&gt;by_fd_next = *_head)) _item-&gt;<br>by_fd_next-&gt;by_fd_prev = _item; _item-&gt;by_fd_prev = ((void<br>*)0); *_head = _item; } while(0)</span></span>;</td></tr>
-<tr><td class="num" id="LN547">547</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line">        context_detach_window(c);</td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line">        c-&gt;window = w;</td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line">        <span class='macro'>LIST_PREPEND(by_window, w-&gt;contexts, c)<span class='expansion'>do { typeof(*(w-&gt;contexts)) **_head = &amp;(w-&gt;contexts<br>), *_item = (c); do { if ((__builtin_expect(!!(!(_item)),0)))<br> log_assert_failed("_item", "src/journal/mmap-cache.c", 550, __PRETTY_FUNCTION__<br>); } while (0); if ((_item-&gt;by_window_next = *_head)) _item<br>-&gt;by_window_next-&gt;by_window_prev = _item; _item-&gt;by_window_prev<br> = ((void*)0); *_head = _item; } while(0)</span></span>;</td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">        *ret = (uint8_t*) w-&gt;ptr + (offset - w-&gt;offset);</td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                <span class='keyword'>if</span> (woffset &gt;= (uint64_t) st-&gt;st_size)</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EADDRNOTAVAIL<span class='expansion'>99</span></span>;</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">                <span class='keyword'>if</span> (woffset + wsize &gt; (uint64_t) st-&gt;st_size)</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">                        wsize = <span class='macro'>PAGE_ALIGN(st-&gt;st_size - woffset)<span class='expansion'>ALIGN_TO((st-&gt;st_size - woffset), page_size())</span></span>;</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">                d = mmap(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, wsize, prot, <span class='macro'>MAP_SHARED<span class='expansion'>0x01</span></span>, fd, woffset);</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">                <span class='keyword'>if</span> (d != <span class='macro'>MAP_FAILED<span class='expansion'>((void *) -1)</span></span>)</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOMEM<span class='expansion'>12</span></span>)</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">                r = make_room(m);</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        c = context_add(m, context);</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>if</span> (!c)</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">                <span class='keyword'>goto</span> outofmem;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">        f = fd_add(m, fd);</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">                <span class='keyword'>goto</span> outofmem;</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">        w = window_add(m);</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">        <span class='keyword'>if</span> (!w)</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">                <span class='keyword'>goto</span> outofmem;</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">        w-&gt;keep_always = keep_always;</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">        w-&gt;ptr = d;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">        w-&gt;offset = woffset;</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">        w-&gt;prot = prot;</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">        w-&gt;size = wsize;</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">        w-&gt;fd = f;</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">        <span class='macro'>LIST_PREPEND(by_fd, f-&gt;windows, w)<span class='expansion'>do { typeof(*(f-&gt;windows)) **_head = &amp;(f-&gt;windows),<br> *_item = (w); do { if ((__builtin_expect(!!(!(_item)),0))) log_assert_failed<br>("_item", "src/journal/mmap-cache.c", 549, __PRETTY_FUNCTION__<br>); } while (0); if ((_item-&gt;by_fd_next = *_head)) _item-&gt;<br>by_fd_next-&gt;by_fd_prev = _item; _item-&gt;by_fd_prev = ((void<br>*)0); *_head = _item; } while(0)</span></span>;</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">        context_detach_window(c);</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">        c-&gt;window = w;</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">        <span class='macro'>LIST_PREPEND(by_window, w-&gt;contexts, c)<span class='expansion'>do { typeof(*(w-&gt;contexts)) **_head = &amp;(w-&gt;contexts<br>), *_item = (c); do { if ((__builtin_expect(!!(!(_item)),0)))<br> log_assert_failed("_item", "src/journal/mmap-cache.c", 553, __PRETTY_FUNCTION__<br>); } while (0); if ((_item-&gt;by_window_next = *_head)) _item<br>-&gt;by_window_next-&gt;by_window_prev = _item; _item-&gt;by_window_prev<br> = ((void*)0); *_head = _item; } while(0)</span></span>;</td></tr>
 <tr><td class="num" id="LN554">554</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">outofmem:</td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">        munmap(d, wsize);</td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line">        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line"><span class='keyword'>int</span> mmap_cache_get(</td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line">                MMapCache *m,</td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line">                <span class='keyword'>int</span> fd,</td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line">                <span class='keyword'>int</span> prot,</td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line">                <span class='keyword'>unsigned</span> context,</td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> keep_always,</td></tr>
-<tr><td class="num" id="LN566">566</td><td class="line">                uint64_t offset,</td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">                size_t size,</td></tr>
-<tr><td class="num" id="LN568">568</td><td class="line">                <span class='keyword'>struct</span> stat *st,</td></tr>
-<tr><td class="num" id="LN569">569</td><td class="line">                <span class='keyword'>void</span> **ret) {</td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN571">571</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 573, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 574, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 575, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line">        <span class='macro'>assert(size &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(size &gt; 0)),0))) log_assert_failed<br>("size &gt; 0", "src/journal/mmap-cache.c", 576, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/journal/mmap-cache.c", 577, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">        <span class='macro'>assert(context &lt; MMAP_CACHE_MAX_CONTEXTS)<span class='expansion'>do { if ((__builtin_expect(!!(!(context &lt; 9)),0))) log_assert_failed<br>("context &lt; MMAP_CACHE_MAX_CONTEXTS", "src/journal/mmap-cache.c"<br>, 578, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">        <span class='comment'>/* Check whether the current context is the right one already */</span></td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line">        r = try_context(m, fd, prot, context, keep_always, offset, size, ret);</td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">        <span class='keyword'>if</span> (r != 0) {</td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line">                m-&gt;n_hit ++;</td></tr>
-<tr><td class="num" id="LN584">584</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">        <span class='comment'>/* Search for a matching mmap */</span></td></tr>
-<tr><td class="num" id="LN588">588</td><td class="line">        r = find_mmap(m, fd, prot, context, keep_always, offset, size, ret);</td></tr>
-<tr><td class="num" id="LN589">589</td><td class="line">        <span class='keyword'>if</span> (r != 0) {</td></tr>
-<tr><td class="num" id="LN590">590</td><td class="line">                m-&gt;n_hit ++;</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN592">592</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN593">593</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN594">594</td><td class="line">        m-&gt;n_missed++;</td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN596">596</td><td class="line">        <span class='comment'>/* Create a new mmap */</span></td></tr>
-<tr><td class="num" id="LN597">597</td><td class="line">        <span class='keyword'>return</span> add_mmap(m, fd, prot, context, keep_always, offset, size, st, ret);</td></tr>
-<tr><td class="num" id="LN598">598</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN600">600</td><td class="line"><span class='keyword'>unsigned</span> mmap_cache_get_hit(MMapCache *m) {</td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 601, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">        *ret = (uint8_t*) w-&gt;ptr + (offset - w-&gt;offset);</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">outofmem:</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">        munmap(d, wsize);</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line"><span class='keyword'>int</span> mmap_cache_get(</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">                MMapCache *m,</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">                <span class='keyword'>int</span> fd,</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">                <span class='keyword'>int</span> prot,</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">                <span class='keyword'>unsigned</span> context,</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> keep_always,</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">                uint64_t offset,</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">                size_t size,</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">                <span class='keyword'>struct</span> stat *st,</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">                <span class='keyword'>void</span> **ret) {</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 576, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">        <span class='macro'>assert(m-&gt;n_ref &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_ref &gt; 0)),0))) log_assert_failed<br>("m-&gt;n_ref &gt; 0", "src/journal/mmap-cache.c", 577, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 578, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">        <span class='macro'>assert(size &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(size &gt; 0)),0))) log_assert_failed<br>("size &gt; 0", "src/journal/mmap-cache.c", 579, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/journal/mmap-cache.c", 580, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">        <span class='macro'>assert(context &lt; MMAP_CACHE_MAX_CONTEXTS)<span class='expansion'>do { if ((__builtin_expect(!!(!(context &lt; 9)),0))) log_assert_failed<br>("context &lt; MMAP_CACHE_MAX_CONTEXTS", "src/journal/mmap-cache.c"<br>, 581, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">        <span class='comment'>/* Check whether the current context is the right one already */</span></td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">        r = try_context(m, fd, prot, context, keep_always, offset, size, ret);</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">        <span class='keyword'>if</span> (r != 0) {</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">                m-&gt;n_hit ++;</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">        <span class='comment'>/* Search for a matching mmap */</span></td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">        r = find_mmap(m, fd, prot, context, keep_always, offset, size, ret);</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">        <span class='keyword'>if</span> (r != 0) {</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">                m-&gt;n_hit ++;</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">        m-&gt;n_missed++;</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">        <span class='comment'>/* Create a new mmap */</span></td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">        <span class='keyword'>return</span> add_mmap(m, fd, prot, context, keep_always, offset, size, st, ret);</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN602">602</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN603">603</td><td class="line">        <span class='keyword'>return</span> m-&gt;n_hit;</td></tr>
-<tr><td class="num" id="LN604">604</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line"><span class='keyword'>unsigned</span> mmap_cache_get_hit(MMapCache *m) {</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 604, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN605">605</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line"><span class='keyword'>unsigned</span> mmap_cache_get_missed(MMapCache *m) {</td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 607, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">        <span class='keyword'>return</span> m-&gt;n_hit;</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN608">608</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN609">609</td><td class="line">        <span class='keyword'>return</span> m-&gt;n_missed;</td></tr>
-<tr><td class="num" id="LN610">610</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line"><span class='keyword'>unsigned</span> mmap_cache_get_missed(MMapCache *m) {</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 610, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN611">611</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> mmap_cache_process_sigbus(MMapCache *m) {</td></tr>
-<tr><td class="num" id="LN613">613</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> found = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN614">614</td><td class="line">        FileDescriptor *f;</td></tr>
-<tr><td class="num" id="LN615">615</td><td class="line">        Iterator i;</td></tr>
-<tr><td class="num" id="LN616">616</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN617">617</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN618">618</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 618, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN619">619</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN620">620</td><td class="line">        <span class='comment'>/* Iterate through all triggered pages and mark their files as</span></td></tr>
-<tr><td class="num" id="LN621">621</td><td class="line">         <span class='comment'>* invalidated */</span></td></tr>
-<tr><td class="num" id="LN622">622</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN623">623</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> ours;</td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line">                <span class='keyword'>void</span> *addr;</td></tr>
-<tr><td class="num" id="LN625">625</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN626">626</td><td class="line">                r = sigbus_pop(&amp;addr);</td></tr>
-<tr><td class="num" id="LN627">627</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>_likely_(r == 0)<span class='expansion'>(__builtin_expect(!!(r == 0),1))</span></span>)</td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN630">630</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"SIGBUS handling failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/mmap-cache.c"<br>, 630, __func__, "SIGBUS handling failed: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line">                        abort();</td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN633">633</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line">                ours = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(f, m-&gt;fds, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;fds), &amp;(<br>i), (void**)&amp;(f), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN636">636</td><td class="line">                        Window *w;</td></tr>
-<tr><td class="num" id="LN637">637</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN638">638</td><td class="line">                        <span class='macro'>LIST_FOREACH(by_fd, w, f-&gt;windows)<span class='expansion'>for ((w) = (f-&gt;windows); (w); (w) = (w)-&gt;by_fd_next)</span></span> {</td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line">                                <span class='keyword'>if</span> ((uint8_t*) addr &gt;= (uint8_t*) w-&gt;ptr &amp;&amp;</td></tr>
-<tr><td class="num" id="LN640">640</td><td class="line">                                    (uint8_t*) addr &lt; (uint8_t*) w-&gt;ptr + w-&gt;size) {</td></tr>
-<tr><td class="num" id="LN641">641</td><td class="line">                                        found = ours = f-&gt;sigbus = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN642">642</td><td class="line">                                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN643">643</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN644">644</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN645">645</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN646">646</td><td class="line">                        <span class='keyword'>if</span> (ours)</td></tr>
-<tr><td class="num" id="LN647">647</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN648">648</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN649">649</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN650">650</td><td class="line">                <span class='comment'>/* Didn't find a matching window, give up */</span></td></tr>
-<tr><td class="num" id="LN651">651</td><td class="line">                <span class='keyword'>if</span> (!ours) {</td></tr>
-<tr><td class="num" id="LN652">652</td><td class="line">                        <span class='macro'>log_error(<span class='string_literal'>"Unknown SIGBUS page, aborting."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/mmap-cache.c"<br>, 652, __func__, "Unknown SIGBUS page, aborting.") : -abs(_e)<br>; })</span></span>;</td></tr>
-<tr><td class="num" id="LN653">653</td><td class="line">                        abort();</td></tr>
-<tr><td class="num" id="LN654">654</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN655">655</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN656">656</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN657">657</td><td class="line">        <span class='comment'>/* The list of triggered pages is now empty. Now, let's remap</span></td></tr>
-<tr><td class="num" id="LN658">658</td><td class="line">         <span class='comment'>* all windows of the triggered file to anonymous maps, so</span></td></tr>
-<tr><td class="num" id="LN659">659</td><td class="line">         <span class='comment'>* that no page of the file in question is triggered again, so</span></td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line">         <span class='comment'>* that we can be sure not to hit the queue size limit. */</span></td></tr>
-<tr><td class="num" id="LN661">661</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>_likely_(!found)<span class='expansion'>(__builtin_expect(!!(!found),1))</span></span>)</td></tr>
-<tr><td class="num" id="LN662">662</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN663">663</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN664">664</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(f, m-&gt;fds, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;fds), &amp;(<br>i), (void**)&amp;(f), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN665">665</td><td class="line">                Window *w;</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">        <span class='keyword'>return</span> m-&gt;n_missed;</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> mmap_cache_process_sigbus(MMapCache *m) {</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> found = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">        FileDescriptor *f;</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 621, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">        <span class='comment'>/* Iterate through all triggered pages and mark their files as</span></td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">         <span class='comment'>* invalidated */</span></td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> ours;</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">                <span class='keyword'>void</span> *addr;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">                r = sigbus_pop(&amp;addr);</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>_likely_(r == 0)<span class='expansion'>(__builtin_expect(!!(r == 0),1))</span></span>)</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"SIGBUS handling failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/mmap-cache.c"<br>, 633, __func__, "SIGBUS handling failed: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">                        abort();</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">                ours = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(f, m-&gt;fds, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;fds), &amp;(<br>i), (void**)&amp;(f), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">                        Window *w;</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">                        <span class='macro'>LIST_FOREACH(by_fd, w, f-&gt;windows)<span class='expansion'>for ((w) = (f-&gt;windows); (w); (w) = (w)-&gt;by_fd_next)</span></span> {</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">                                <span class='keyword'>if</span> ((uint8_t*) addr &gt;= (uint8_t*) w-&gt;ptr &amp;&amp;</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">                                    (uint8_t*) addr &lt; (uint8_t*) w-&gt;ptr + w-&gt;size) {</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">                                        found = ours = f-&gt;sigbus = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">                                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">                        <span class='keyword'>if</span> (ours)</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">                <span class='comment'>/* Didn't find a matching window, give up */</span></td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">                <span class='keyword'>if</span> (!ours) {</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">                        <span class='macro'>log_error(<span class='string_literal'>"Unknown SIGBUS page, aborting."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/mmap-cache.c"<br>, 655, __func__, "Unknown SIGBUS page, aborting.") : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">                        abort();</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">        <span class='comment'>/* The list of triggered pages is now empty. Now, let's remap</span></td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">         <span class='comment'>* all windows of the triggered file to anonymous maps, so</span></td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">         <span class='comment'>* that no page of the file in question is triggered again, so</span></td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">         <span class='comment'>* that we can be sure not to hit the queue size limit. */</span></td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>_likely_(!found)<span class='expansion'>(__builtin_expect(!!(!found),1))</span></span>)</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN666">666</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN667">667</td><td class="line">                <span class='keyword'>if</span> (!f-&gt;sigbus)</td></tr>
-<tr><td class="num" id="LN668">668</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(f, m-&gt;fds, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;fds), &amp;(<br>i), (void**)&amp;(f), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">                Window *w;</td></tr>
 <tr><td class="num" id="LN669">669</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN670">670</td><td class="line">                <span class='macro'>LIST_FOREACH(by_fd, w, f-&gt;windows)<span class='expansion'>for ((w) = (f-&gt;windows); (w); (w) = (w)-&gt;by_fd_next)</span></span></td></tr>
-<tr><td class="num" id="LN671">671</td><td class="line">                        window_invalidate(w);</td></tr>
-<tr><td class="num" id="LN672">672</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN673">673</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN674">674</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN675">675</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> mmap_cache_got_sigbus(MMapCache *m, <span class='keyword'>int</span> fd) {</td></tr>
-<tr><td class="num" id="LN676">676</td><td class="line">        FileDescriptor *f;</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">                <span class='keyword'>if</span> (!f-&gt;sigbus)</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">                <span class='macro'>LIST_FOREACH(by_fd, w, f-&gt;windows)<span class='expansion'>for ((w) = (f-&gt;windows); (w); (w) = (w)-&gt;by_fd_next)</span></span></td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">                        window_invalidate(w);</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN678">678</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 678, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN679">679</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 679, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> mmap_cache_got_sigbus(MMapCache *m, <span class='keyword'>int</span> fd) {</td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">        FileDescriptor *f;</td></tr>
 <tr><td class="num" id="LN680">680</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN681">681</td><td class="line">        mmap_cache_process_sigbus(m);</td></tr>
-<tr><td class="num" id="LN682">682</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN683">683</td><td class="line">        f = hashmap_get(m-&gt;fds, <span class='macro'>FD_TO_PTR(fd)<span class='expansion'>((void *) ((intptr_t) ((fd)+1)))</span></span>);</td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
-<tr><td class="num" id="LN685">685</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN686">686</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN687">687</td><td class="line">        <span class='keyword'>return</span> f-&gt;sigbus;</td></tr>
-<tr><td class="num" id="LN688">688</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 681, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 682, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">        mmap_cache_process_sigbus(m);</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">        f = hashmap_get(m-&gt;fds, <span class='macro'>FD_TO_PTR(fd)<span class='expansion'>((void *) ((intptr_t) ((fd)+1)))</span></span>);</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN689">689</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN690">690</td><td class="line"><span class='keyword'>void</span> mmap_cache_close_fd(MMapCache *m, <span class='keyword'>int</span> fd) {</td></tr>
-<tr><td class="num" id="LN691">691</td><td class="line">        FileDescriptor *f;</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">        <span class='keyword'>return</span> f-&gt;sigbus;</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN692">692</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 693, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 694, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line"><span class='keyword'>void</span> mmap_cache_close_fd(MMapCache *m, <span class='keyword'>int</span> fd) {</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">        FileDescriptor *f;</td></tr>
 <tr><td class="num" id="LN695">695</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line">        <span class='comment'>/* Make sure that any queued SIGBUS are first dispatched, so</span></td></tr>
-<tr><td class="num" id="LN697">697</td><td class="line">         <span class='comment'>* that we don't end up with a SIGBUS entry we cannot relate</span></td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line">         <span class='comment'>* to any existing memory map */</span></td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line">        mmap_cache_process_sigbus(m);</td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line">        f = hashmap_get(m-&gt;fds, <span class='macro'>FD_TO_PTR(fd)<span class='expansion'>((void *) ((intptr_t) ((fd)+1)))</span></span>);</td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
-<tr><td class="num" id="LN704">704</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN706">706</td><td class="line">        fd_free(f);</td></tr>
-<tr><td class="num" id="LN707">707</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/journal/mmap-cache.c", 696, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/mmap-cache.c", 697, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">        <span class='comment'>/* Make sure that any queued SIGBUS are first dispatched, so</span></td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">         <span class='comment'>* that we don't end up with a SIGBUS entry we cannot relate</span></td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">         <span class='comment'>* to any existing memory map */</span></td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        mmap_cache_process_sigbus(m);</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">        f = hashmap_get(m-&gt;fds, <span class='macro'>FD_TO_PTR(fd)<span class='expansion'>((void *) ((intptr_t) ((fd)+1)))</span></span>);</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">        fd_free(f);</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">}</td></tr>
 </table></body></html>
