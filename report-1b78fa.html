@@ -64,11 +64,11 @@
 
 <!-- FILENAME resolved-dns-transaction.c -->
 
-<!-- FUNCTIONNAME dns_transaction_emit -->
+<!-- FUNCTIONNAME dns_transaction_open_tcp -->
 
-<!-- BUGLINE 674 -->
+<!-- BUGLINE 342 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 9 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/resolve/resolved-dns-transaction.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 674, column 17</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 342, column 9</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -424,7 +424,8 @@
 <tr><td class="num" id="LN339">339</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN340">340</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN341">341</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN342">342</td><td class="line">        fd = -1;</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
 <tr><td class="num" id="LN343">343</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN344">344</td><td class="line">        r = dns_stream_write_packet(t-&gt;stream, t-&gt;sent);</td></tr>
 <tr><td class="num" id="LN345">345</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
@@ -756,8 +757,7 @@
 <tr><td class="num" id="LN671">671</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN672">672</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN673">673</td><td class="line">                t-&gt;dns_udp_fd = fd;</td></tr>
-<tr><td class="num" id="LN674">674</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">                fd = -1;</td></tr>
 <tr><td class="num" id="LN675">675</td><td class="line">                t-&gt;server = dns_server_ref(server);</td></tr>
 <tr><td class="num" id="LN676">676</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
@@ -929,7 +929,7 @@
 <tr><td class="num" id="LN843">843</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 843, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN844">844</td><td class="line">        <span class='macro'>assert(t-&gt;scope-&gt;protocol == DNS_PROTOCOL_MDNS)<span class='expansion'>do { if ((__builtin_expect(!!(!(t-&gt;scope-&gt;protocol == DNS_PROTOCOL_MDNS<br>)),0))) log_assert_failed("t-&gt;scope-&gt;protocol == DNS_PROTOCOL_MDNS"<br>, "src/resolve/resolved-dns-transaction.c", 844, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN845">845</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN846">846</td><td class="line">        <span class='comment'>/* Discard any previously prepared packet, so we can start over and coaleasce again */</span></td></tr>
+<tr><td class="num" id="LN846">846</td><td class="line">        <span class='comment'>/* Discard any previously prepared packet, so we can start over and coalesce again */</span></td></tr>
 <tr><td class="num" id="LN847">847</td><td class="line">        t-&gt;sent = dns_packet_unref(t-&gt;sent);</td></tr>
 <tr><td class="num" id="LN848">848</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN849">849</td><td class="line">        r = dns_packet_new_query(&amp;p, t-&gt;scope-&gt;protocol, 0, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
@@ -1270,7 +1270,7 @@
 <tr><td class="num" id="LN1184">1184</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;dnssec_mode != DNSSEC_YES)</td></tr>
 <tr><td class="num" id="LN1185">1185</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1186">1186</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1187">1187</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH(rr, t-&gt;answer)<span class='expansion'>for (unsigned __unique_prefix_i6 = ({ (rr) = ((t-&gt;answer) &amp;&amp;<br> (t-&gt;answer)-&gt;n_rrs &gt; 0) ? (t-&gt;answer)-&gt;items[<br>0].rr : ((void*)0); 0; }); (t-&gt;answer) &amp;&amp; (__unique_prefix_i6<br> &lt; (t-&gt;answer)-&gt;n_rrs); __unique_prefix_i6++, (rr) =<br> (__unique_prefix_i6 &lt; (t-&gt;answer)-&gt;n_rrs ? (t-&gt;answer<br>)-&gt;items[__unique_prefix_i6].rr : ((void*)0)))</span></span> {</td></tr>
+<tr><td class="num" id="LN1187">1187</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH(rr, t-&gt;answer)<span class='expansion'>for (unsigned __unique_prefix_i3 = ({ (rr) = ((t-&gt;answer) &amp;&amp;<br> (t-&gt;answer)-&gt;n_rrs &gt; 0) ? (t-&gt;answer)-&gt;items[<br>0].rr : ((void*)0); 0; }); (t-&gt;answer) &amp;&amp; (__unique_prefix_i3<br> &lt; (t-&gt;answer)-&gt;n_rrs); __unique_prefix_i3++, (rr) =<br> (__unique_prefix_i3 &lt; (t-&gt;answer)-&gt;n_rrs ? (t-&gt;answer<br>)-&gt;items[__unique_prefix_i3].rr : ((void*)0)))</span></span> {</td></tr>
 <tr><td class="num" id="LN1188">1188</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1189">1189</td><td class="line">                <span class='keyword'>switch</span> (rr-&gt;key-&gt;type) {</td></tr>
 <tr><td class="num" id="LN1190">1190</td><td class="line"> </td></tr>
@@ -1374,213 +1374,265 @@
 <tr><td class="num" id="LN1288">1288</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1289">1289</td><td class="line">        <span class='comment'>/* Check if the specified RR is the "primary" response,</span></td></tr>
 <tr><td class="num" id="LN1290">1290</td><td class="line">         <span class='comment'>* i.e. either matches the question precisely or is a</span></td></tr>
-<tr><td class="num" id="LN1291">1291</td><td class="line">         <span class='comment'>* CNAME/DNAME for it */</span></td></tr>
+<tr><td class="num" id="LN1291">1291</td><td class="line">         <span class='comment'>* CNAME/DNAME for it, or is any kind of NSEC/NSEC3 RR */</span></td></tr>
 <tr><td class="num" id="LN1292">1292</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1293">1293</td><td class="line">        r = dns_resource_key_match_rr(t-&gt;key, rr, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN1294">1294</td><td class="line">        <span class='keyword'>if</span> (r != 0)</td></tr>
-<tr><td class="num" id="LN1295">1295</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1296">1296</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1297">1297</td><td class="line">        r = dns_resource_key_match_cname_or_dname(t-&gt;key, rr-&gt;key, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN1298">1298</td><td class="line">        <span class='keyword'>if</span> (r != 0)</td></tr>
-<tr><td class="num" id="LN1299">1299</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1300">1300</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1301">1301</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1302">1302</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1293">1293</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>IN_SET(rr-&gt;key-&gt;type, DNS_TYPE_NSEC, DNS_TYPE_NSEC3)<span class='expansion'>({ static const typeof(DNS_TYPE_NSEC) _array[] = { (DNS_TYPE_NSEC<br>), DNS_TYPE_NSEC3 }; const typeof(DNS_TYPE_NSEC) _x = (rr-&gt;<br>key-&gt;type); unsigned _i; _Bool _found = 0; for (_i = 0; _i<br> &lt; __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_array), typeof(&amp;*(_array))), sizeof(_array)/sizeof<br>((_array)[0]), (void)0)); _i++) if (_array[_i] == _x) { _found<br> = 1; break; } _found; })</span></span>)</td></tr>
+<tr><td class="num" id="LN1294">1294</td><td class="line">                <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1295">1295</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1296">1296</td><td class="line">        r = dns_resource_key_match_rr(t-&gt;key, rr, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN1297">1297</td><td class="line">        <span class='keyword'>if</span> (r != 0)</td></tr>
+<tr><td class="num" id="LN1298">1298</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1299">1299</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1300">1300</td><td class="line">        r = dns_resource_key_match_cname_or_dname(t-&gt;key, rr-&gt;key, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN1301">1301</td><td class="line">        <span class='keyword'>if</span> (r != 0)</td></tr>
+<tr><td class="num" id="LN1302">1302</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1303">1303</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1304">1304</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_transaction_validate_dnskey_by_ds(DnsTransaction *t) {</td></tr>
-<tr><td class="num" id="LN1305">1305</td><td class="line">        DnsResourceRecord *rr;</td></tr>
-<tr><td class="num" id="LN1306">1306</td><td class="line">        <span class='keyword'>int</span> ifindex, r;</td></tr>
-<tr><td class="num" id="LN1307">1307</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1308">1308</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 1308, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1309">1309</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1310">1310</td><td class="line">        <span class='comment'>/* Add all DNSKEY RRs from the answer that are validated by DS</span></td></tr>
-<tr><td class="num" id="LN1311">1311</td><td class="line">         <span class='comment'>* RRs from the list of validated keys to the lis of validated</span></td></tr>
-<tr><td class="num" id="LN1312">1312</td><td class="line">         <span class='comment'>* keys. */</span></td></tr>
-<tr><td class="num" id="LN1313">1313</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1314">1314</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH_IFINDEX(rr, ifindex, t-&gt;answer)<span class='expansion'>for (unsigned __unique_prefix_i7 = ({ (rr) = ((t-&gt;answer) &amp;&amp;<br> (t-&gt;answer)-&gt;n_rrs &gt; 0) ? (t-&gt;answer)-&gt;items[<br>0].rr : ((void*)0); (ifindex) = ((t-&gt;answer) &amp;&amp; (t<br>-&gt;answer)-&gt;n_rrs &gt; 0) ? (t-&gt;answer)-&gt;items[0].<br>ifindex : 0; 0; }); (t-&gt;answer) &amp;&amp; (__unique_prefix_i7<br> &lt; (t-&gt;answer)-&gt;n_rrs); __unique_prefix_i7++, (rr) =<br> ((__unique_prefix_i7 &lt; (t-&gt;answer)-&gt;n_rrs) ? (t-&gt;<br>answer)-&gt;items[__unique_prefix_i7].rr : ((void*)0)), (ifindex<br>) = ((__unique_prefix_i7 &lt; (t-&gt;answer)-&gt;n_rrs) ? (t-&gt;<br>answer)-&gt;items[__unique_prefix_i7].ifindex : 0))</span></span> {</td></tr>
-<tr><td class="num" id="LN1315">1315</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1316">1316</td><td class="line">                r = dnssec_verify_dnskey_search(rr, t-&gt;validated_keys);</td></tr>
-<tr><td class="num" id="LN1317">1317</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1318">1318</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1319">1319</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN1320">1320</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN1321">1321</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1322">1322</td><td class="line">                <span class='comment'>/* If so, the DNSKEY is validated too. */</span></td></tr>
-<tr><td class="num" id="LN1323">1323</td><td class="line">                r = dns_answer_add_extend(&amp;t-&gt;validated_keys, rr, ifindex);</td></tr>
-<tr><td class="num" id="LN1324">1324</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1325">1325</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1326">1326</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1327">1327</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1328">1328</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1329">1329</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1304">1304</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1305">1305</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1306">1306</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1307">1307</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_transaction_validate_dnskey_by_ds(DnsTransaction *t) {</td></tr>
+<tr><td class="num" id="LN1308">1308</td><td class="line">        DnsResourceRecord *rr;</td></tr>
+<tr><td class="num" id="LN1309">1309</td><td class="line">        <span class='keyword'>int</span> ifindex, r;</td></tr>
+<tr><td class="num" id="LN1310">1310</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1311">1311</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 1311, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1312">1312</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1313">1313</td><td class="line">        <span class='comment'>/* Add all DNSKEY RRs from the answer that are validated by DS</span></td></tr>
+<tr><td class="num" id="LN1314">1314</td><td class="line">         <span class='comment'>* RRs from the list of validated keys to the lis of validated</span></td></tr>
+<tr><td class="num" id="LN1315">1315</td><td class="line">         <span class='comment'>* keys. */</span></td></tr>
+<tr><td class="num" id="LN1316">1316</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1317">1317</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH_IFINDEX(rr, ifindex, t-&gt;answer)<span class='expansion'>for (unsigned __unique_prefix_i4 = ({ (rr) = ((t-&gt;answer) &amp;&amp;<br> (t-&gt;answer)-&gt;n_rrs &gt; 0) ? (t-&gt;answer)-&gt;items[<br>0].rr : ((void*)0); (ifindex) = ((t-&gt;answer) &amp;&amp; (t<br>-&gt;answer)-&gt;n_rrs &gt; 0) ? (t-&gt;answer)-&gt;items[0].<br>ifindex : 0; 0; }); (t-&gt;answer) &amp;&amp; (__unique_prefix_i4<br> &lt; (t-&gt;answer)-&gt;n_rrs); __unique_prefix_i4++, (rr) =<br> ((__unique_prefix_i4 &lt; (t-&gt;answer)-&gt;n_rrs) ? (t-&gt;<br>answer)-&gt;items[__unique_prefix_i4].rr : ((void*)0)), (ifindex<br>) = ((__unique_prefix_i4 &lt; (t-&gt;answer)-&gt;n_rrs) ? (t-&gt;<br>answer)-&gt;items[__unique_prefix_i4].ifindex : 0))</span></span> {</td></tr>
+<tr><td class="num" id="LN1318">1318</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1319">1319</td><td class="line">                r = dnssec_verify_dnskey_search(rr, t-&gt;validated_keys);</td></tr>
+<tr><td class="num" id="LN1320">1320</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1321">1321</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1322">1322</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN1323">1323</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1324">1324</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1325">1325</td><td class="line">                <span class='comment'>/* If so, the DNSKEY is validated too. */</span></td></tr>
+<tr><td class="num" id="LN1326">1326</td><td class="line">                r = dns_answer_add_extend(&amp;t-&gt;validated_keys, rr, ifindex);</td></tr>
+<tr><td class="num" id="LN1327">1327</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1328">1328</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1329">1329</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1330">1330</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1331">1331</td><td class="line"><span class='keyword'>int</span> dns_transaction_validate_dnssec(DnsTransaction *t) {</td></tr>
-<tr><td class="num" id="LN1332">1332</td><td class="line">        <span class='macro'>_cleanup_(dns_answer_unrefp)<span class='expansion'>__attribute__((cleanup(dns_answer_unrefp)))</span></span> DnsAnswer *validated = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1333">1333</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> dnskeys_finalized = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN1334">1334</td><td class="line">        DnsResourceRecord *rr;</td></tr>
-<tr><td class="num" id="LN1335">1335</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN1336">1336</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1337">1337</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 1337, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1338">1338</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1339">1339</td><td class="line">        <span class='comment'>/* We have now collected all DS and DNSKEY RRs in</span></td></tr>
-<tr><td class="num" id="LN1340">1340</td><td class="line">         <span class='comment'>* t-&gt;validated_keys, let's see which RRs we can now</span></td></tr>
-<tr><td class="num" id="LN1341">1341</td><td class="line">         <span class='comment'>* authenticate with that. */</span></td></tr>
-<tr><td class="num" id="LN1342">1342</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1343">1343</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;dnssec_mode != DNSSEC_YES)</td></tr>
-<tr><td class="num" id="LN1344">1344</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1331">1331</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1332">1332</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1333">1333</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1334">1334</td><td class="line"><span class='keyword'>int</span> dns_transaction_validate_dnssec(DnsTransaction *t) {</td></tr>
+<tr><td class="num" id="LN1335">1335</td><td class="line">        <span class='macro'>_cleanup_(dns_answer_unrefp)<span class='expansion'>__attribute__((cleanup(dns_answer_unrefp)))</span></span> DnsAnswer *validated = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1336">1336</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> dnskeys_finalized = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1337">1337</td><td class="line">        DnsResourceRecord *rr;</td></tr>
+<tr><td class="num" id="LN1338">1338</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN1339">1339</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1340">1340</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/resolve/resolved-dns-transaction.c", 1340, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1341">1341</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1342">1342</td><td class="line">        <span class='comment'>/* We have now collected all DS and DNSKEY RRs in</span></td></tr>
+<tr><td class="num" id="LN1343">1343</td><td class="line">         <span class='comment'>* t-&gt;validated_keys, let's see which RRs we can now</span></td></tr>
+<tr><td class="num" id="LN1344">1344</td><td class="line">         <span class='comment'>* authenticate with that. */</span></td></tr>
 <tr><td class="num" id="LN1345">1345</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1346">1346</td><td class="line">        <span class='comment'>/* Already validated */</span></td></tr>
-<tr><td class="num" id="LN1347">1347</td><td class="line">        <span class='keyword'>if</span> (t-&gt;dnssec_result != _DNSSEC_RESULT_INVALID)</td></tr>
-<tr><td class="num" id="LN1348">1348</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1349">1349</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1350">1350</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>IN_SET(t-&gt;answer_source, DNS_TRANSACTION_ZONE, DNS_TRANSACTION_TRUST_ANCHOR)<span class='expansion'>({ static const typeof(DNS_TRANSACTION_ZONE) _array[] = { (DNS_TRANSACTION_ZONE<br>), DNS_TRANSACTION_TRUST_ANCHOR }; const typeof(DNS_TRANSACTION_ZONE<br>) _x = (t-&gt;answer_source); unsigned _i; _Bool _found = 0; for<br> (_i = 0; _i &lt; __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_array), typeof(&amp;*(_array))), sizeof(_array)/sizeof<br>((_array)[0]), (void)0)); _i++) if (_array[_i] == _x) { _found<br> = 1; break; } _found; })</span></span>) {</td></tr>
-<tr><td class="num" id="LN1351">1351</td><td class="line">                t-&gt;dnssec_result = DNSSEC_VALIDATED;</td></tr>
-<tr><td class="num" id="LN1352">1352</td><td class="line">                t-&gt;answer_authenticated = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1353">1353</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1354">1354</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1355">1355</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1356">1356</td><td class="line">        <span class='keyword'>if</span> (log_get_max_level() &gt;= <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>) {</td></tr>
-<tr><td class="num" id="LN1357">1357</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *ks = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1346">1346</td><td class="line">        <span class='keyword'>if</span> (t-&gt;scope-&gt;dnssec_mode != DNSSEC_YES)</td></tr>
+<tr><td class="num" id="LN1347">1347</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1348">1348</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1349">1349</td><td class="line">        <span class='comment'>/* Already validated */</span></td></tr>
+<tr><td class="num" id="LN1350">1350</td><td class="line">        <span class='keyword'>if</span> (t-&gt;dnssec_result != _DNSSEC_RESULT_INVALID)</td></tr>
+<tr><td class="num" id="LN1351">1351</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1352">1352</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1353">1353</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>IN_SET(t-&gt;answer_source, DNS_TRANSACTION_ZONE, DNS_TRANSACTION_TRUST_ANCHOR)<span class='expansion'>({ static const typeof(DNS_TRANSACTION_ZONE) _array[] = { (DNS_TRANSACTION_ZONE<br>), DNS_TRANSACTION_TRUST_ANCHOR }; const typeof(DNS_TRANSACTION_ZONE<br>) _x = (t-&gt;answer_source); unsigned _i; _Bool _found = 0; for<br> (_i = 0; _i &lt; __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_array), typeof(&amp;*(_array))), sizeof(_array)/sizeof<br>((_array)[0]), (void)0)); _i++) if (_array[_i] == _x) { _found<br> = 1; break; } _found; })</span></span>) {</td></tr>
+<tr><td class="num" id="LN1354">1354</td><td class="line">                t-&gt;dnssec_result = DNSSEC_VALIDATED;</td></tr>
+<tr><td class="num" id="LN1355">1355</td><td class="line">                t-&gt;answer_authenticated = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1356">1356</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1357">1357</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1358">1358</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1359">1359</td><td class="line">                (<span class='keyword'>void</span>) dns_resource_key_to_string(t-&gt;key, &amp;ks);</td></tr>
-<tr><td class="num" id="LN1360">1360</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Validating response from transaction %"</span> PRIu16 <span class='string_literal'>" (%s)."</span>, t-&gt;id, ks ? strstrip(ks) : <span class='string_literal'>"???"</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 1360, __func__, "Validating response from transaction %" "u"<br> " (%s).", t-&gt;id, ks ? strstrip(ks) : "???") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1361">1361</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1362">1362</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1363">1363</td><td class="line">        <span class='comment'>/* First see if there are DNSKEYs we already known a validated DS for. */</span></td></tr>
-<tr><td class="num" id="LN1364">1364</td><td class="line">        r = dns_transaction_validate_dnskey_by_ds(t);</td></tr>
-<tr><td class="num" id="LN1365">1365</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1366">1366</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1367">1367</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1368">1368</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN1369">1369</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> changed = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1359">1359</td><td class="line">        <span class='keyword'>if</span> (log_get_max_level() &gt;= <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>) {</td></tr>
+<tr><td class="num" id="LN1360">1360</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *ks = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1361">1361</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1362">1362</td><td class="line">                (<span class='keyword'>void</span>) dns_resource_key_to_string(t-&gt;key, &amp;ks);</td></tr>
+<tr><td class="num" id="LN1363">1363</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Validating response from transaction %"</span> PRIu16 <span class='string_literal'>" (%s)."</span>, t-&gt;id, ks ? strstrip(ks) : <span class='string_literal'>"???"</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 1363, __func__, "Validating response from transaction %" "u"<br> " (%s).", t-&gt;id, ks ? strstrip(ks) : "???") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1364">1364</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1365">1365</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1366">1366</td><td class="line">        <span class='comment'>/* First see if there are DNSKEYs we already known a validated DS for. */</span></td></tr>
+<tr><td class="num" id="LN1367">1367</td><td class="line">        r = dns_transaction_validate_dnskey_by_ds(t);</td></tr>
+<tr><td class="num" id="LN1368">1368</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1369">1369</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1370">1370</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1371">1371</td><td class="line">                <span class='macro'>DNS_ANSWER_FOREACH(rr, t-&gt;answer)<span class='expansion'>for (unsigned __unique_prefix_i8 = ({ (rr) = ((t-&gt;answer) &amp;&amp;<br> (t-&gt;answer)-&gt;n_rrs &gt; 0) ? (t-&gt;answer)-&gt;items[<br>0].rr : ((void*)0); 0; }); (t-&gt;answer) &amp;&amp; (__unique_prefix_i8<br> &lt; (t-&gt;answer)-&gt;n_rrs); __unique_prefix_i8++, (rr) =<br> (__unique_prefix_i8 &lt; (t-&gt;answer)-&gt;n_rrs ? (t-&gt;answer<br>)-&gt;items[__unique_prefix_i8].rr : ((void*)0)))</span></span> {</td></tr>
-<tr><td class="num" id="LN1372">1372</td><td class="line">                        DnssecResult result;</td></tr>
+<tr><td class="num" id="LN1371">1371</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN1372">1372</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> changed = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN1373">1373</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1374">1374</td><td class="line">                        <span class='keyword'>if</span> (rr-&gt;key-&gt;type == DNS_TYPE_RRSIG)</td></tr>
-<tr><td class="num" id="LN1375">1375</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1374">1374</td><td class="line">                <span class='macro'>DNS_ANSWER_FOREACH(rr, t-&gt;answer)<span class='expansion'>for (unsigned __unique_prefix_i5 = ({ (rr) = ((t-&gt;answer) &amp;&amp;<br> (t-&gt;answer)-&gt;n_rrs &gt; 0) ? (t-&gt;answer)-&gt;items[<br>0].rr : ((void*)0); 0; }); (t-&gt;answer) &amp;&amp; (__unique_prefix_i5<br> &lt; (t-&gt;answer)-&gt;n_rrs); __unique_prefix_i5++, (rr) =<br> (__unique_prefix_i5 &lt; (t-&gt;answer)-&gt;n_rrs ? (t-&gt;answer<br>)-&gt;items[__unique_prefix_i5].rr : ((void*)0)))</span></span> {</td></tr>
+<tr><td class="num" id="LN1375">1375</td><td class="line">                        DnssecResult result;</td></tr>
 <tr><td class="num" id="LN1376">1376</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1377">1377</td><td class="line">                        r = dnssec_verify_rrset_search(t-&gt;answer, rr-&gt;key, t-&gt;validated_keys, <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>, &amp;result);</td></tr>
-<tr><td class="num" id="LN1378">1378</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1379">1379</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1380">1380</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1381">1381</td><td class="line">                        <span class='keyword'>if</span> (log_get_max_level() &gt;= <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>) {</td></tr>
-<tr><td class="num" id="LN1382">1382</td><td class="line">                                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *rrs = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1377">1377</td><td class="line">                        <span class='keyword'>if</span> (rr-&gt;key-&gt;type == DNS_TYPE_RRSIG)</td></tr>
+<tr><td class="num" id="LN1378">1378</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1379">1379</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1380">1380</td><td class="line">                        r = dnssec_verify_rrset_search(t-&gt;answer, rr-&gt;key, t-&gt;validated_keys, <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>, &amp;result);</td></tr>
+<tr><td class="num" id="LN1381">1381</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1382">1382</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1383">1383</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1384">1384</td><td class="line">                                (<span class='keyword'>void</span>) dns_resource_record_to_string(rr, &amp;rrs);</td></tr>
-<tr><td class="num" id="LN1385">1385</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Looking at %s: %s"</span>, rrs ? strstrip(rrs) : <span class='string_literal'>"???"</span>, dnssec_result_to_string(result))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 1385, __func__, "Looking at %s: %s", rrs ? strstrip(rrs) : "???"<br>, dnssec_result_to_string(result)) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1386">1386</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1387">1387</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1388">1388</td><td class="line">                        <span class='keyword'>if</span> (result == DNSSEC_VALIDATED) {</td></tr>
-<tr><td class="num" id="LN1389">1389</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1390">1390</td><td class="line">                                <span class='comment'>/* Add the validated RRset to the new list of validated RRsets */</span></td></tr>
-<tr><td class="num" id="LN1391">1391</td><td class="line">                                r = dns_answer_copy_by_key(&amp;validated, t-&gt;answer, rr-&gt;key);</td></tr>
-<tr><td class="num" id="LN1392">1392</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1393">1393</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1394">1394</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1395">1395</td><td class="line">                                <span class='keyword'>if</span> (rr-&gt;key-&gt;type == DNS_TYPE_DNSKEY) {</td></tr>
-<tr><td class="num" id="LN1396">1396</td><td class="line">                                        <span class='comment'>/* If we just validated a</span></td></tr>
-<tr><td class="num" id="LN1397">1397</td><td class="line">                                         <span class='comment'>* DNSKEY RRset, then let's</span></td></tr>
-<tr><td class="num" id="LN1398">1398</td><td class="line">                                         <span class='comment'>* add these keys to the set</span></td></tr>
-<tr><td class="num" id="LN1399">1399</td><td class="line">                                         <span class='comment'>* of validated keys for this</span></td></tr>
-<tr><td class="num" id="LN1400">1400</td><td class="line">                                         <span class='comment'>* transaction. */</span></td></tr>
-<tr><td class="num" id="LN1401">1401</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1402">1402</td><td class="line">                                        r = dns_answer_copy_by_key(&amp;t-&gt;validated_keys, t-&gt;answer, rr-&gt;key);</td></tr>
-<tr><td class="num" id="LN1403">1403</td><td class="line">                                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1404">1404</td><td class="line">                                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1405">1405</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN1406">1406</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1407">1407</td><td class="line">                                <span class='comment'>/* Now, remove this RRset from the RRs still to process */</span></td></tr>
-<tr><td class="num" id="LN1408">1408</td><td class="line">                                r = dns_answer_remove_by_key(&amp;t-&gt;answer, rr-&gt;key);</td></tr>
-<tr><td class="num" id="LN1409">1409</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1410">1410</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1411">1411</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1412">1412</td><td class="line">                                <span class='comment'>/* Exit the loop, we dropped something from the answer, start from the beginning */</span></td></tr>
-<tr><td class="num" id="LN1413">1413</td><td class="line">                                changed = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1414">1414</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN1415">1415</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1416">1416</td><td class="line">                        } <span class='keyword'>else</span> <span class='keyword'>if</span> (dnskeys_finalized) {</td></tr>
-<tr><td class="num" id="LN1417">1417</td><td class="line">                                <span class='comment'>/* If we haven't read all DNSKEYs yet</span></td></tr>
-<tr><td class="num" id="LN1418">1418</td><td class="line">                                 <span class='comment'>* a negative result of the validation</span></td></tr>
-<tr><td class="num" id="LN1419">1419</td><td class="line">                                 <span class='comment'>* is irrelevant, as there might be</span></td></tr>
-<tr><td class="num" id="LN1420">1420</td><td class="line">                                 <span class='comment'>* more DNSKEYs coming. */</span></td></tr>
-<tr><td class="num" id="LN1421">1421</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1422">1422</td><td class="line">                                r = dns_transaction_is_primary_response(t, rr);</td></tr>
-<tr><td class="num" id="LN1423">1423</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1424">1424</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1425">1425</td><td class="line">                                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
-<tr><td class="num" id="LN1426">1426</td><td class="line">                                        <span class='comment'>/* This is a primary response</span></td></tr>
-<tr><td class="num" id="LN1427">1427</td><td class="line">                                         <span class='comment'>* to our question, and it</span></td></tr>
-<tr><td class="num" id="LN1428">1428</td><td class="line">                                         <span class='comment'>* failed validation. That's</span></td></tr>
-<tr><td class="num" id="LN1429">1429</td><td class="line">                                         <span class='comment'>* fatal. */</span></td></tr>
-<tr><td class="num" id="LN1430">1430</td><td class="line">                                        t-&gt;dnssec_result = result;</td></tr>
-<tr><td class="num" id="LN1431">1431</td><td class="line">                                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1432">1432</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN1433">1433</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1434">1434</td><td class="line">                                <span class='comment'>/* This is just some auxiliary</span></td></tr>
-<tr><td class="num" id="LN1435">1435</td><td class="line">                                 <span class='comment'>* data. Just remove the RRset and</span></td></tr>
-<tr><td class="num" id="LN1436">1436</td><td class="line">                                 <span class='comment'>* continue. */</span></td></tr>
-<tr><td class="num" id="LN1437">1437</td><td class="line">                                r = dns_answer_remove_by_key(&amp;t-&gt;answer, rr-&gt;key);</td></tr>
-<tr><td class="num" id="LN1438">1438</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1439">1439</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1440">1440</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1441">1441</td><td class="line">                                <span class='comment'>/* Exit the loop, we dropped something from the answer, start from the beginning */</span></td></tr>
-<tr><td class="num" id="LN1442">1442</td><td class="line">                                changed = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1443">1443</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN1444">1444</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN1445">1445</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1446">1446</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1447">1447</td><td class="line">                <span class='keyword'>if</span> (changed)</td></tr>
-<tr><td class="num" id="LN1448">1448</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1384">1384</td><td class="line">                        <span class='keyword'>if</span> (log_get_max_level() &gt;= <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>) {</td></tr>
+<tr><td class="num" id="LN1385">1385</td><td class="line">                                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *rrs = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1386">1386</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1387">1387</td><td class="line">                                (<span class='keyword'>void</span>) dns_resource_record_to_string(rr, &amp;rrs);</td></tr>
+<tr><td class="num" id="LN1388">1388</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Looking at %s: %s"</span>, rrs ? strstrip(rrs) : <span class='string_literal'>"???"</span>, dnssec_result_to_string(result))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-transaction.c"<br>, 1388, __func__, "Looking at %s: %s", rrs ? strstrip(rrs) : "???"<br>, dnssec_result_to_string(result)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1389">1389</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1390">1390</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1391">1391</td><td class="line">                        <span class='keyword'>if</span> (result == DNSSEC_VALIDATED) {</td></tr>
+<tr><td class="num" id="LN1392">1392</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1393">1393</td><td class="line">                                <span class='comment'>/* Add the validated RRset to the new list of validated RRsets */</span></td></tr>
+<tr><td class="num" id="LN1394">1394</td><td class="line">                                r = dns_answer_copy_by_key(&amp;validated, t-&gt;answer, rr-&gt;key);</td></tr>
+<tr><td class="num" id="LN1395">1395</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1396">1396</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1397">1397</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1398">1398</td><td class="line">                                <span class='keyword'>if</span> (rr-&gt;key-&gt;type == DNS_TYPE_DNSKEY) {</td></tr>
+<tr><td class="num" id="LN1399">1399</td><td class="line">                                        <span class='comment'>/* If we just validated a</span></td></tr>
+<tr><td class="num" id="LN1400">1400</td><td class="line">                                         <span class='comment'>* DNSKEY RRset, then let's</span></td></tr>
+<tr><td class="num" id="LN1401">1401</td><td class="line">                                         <span class='comment'>* add these keys to the set</span></td></tr>
+<tr><td class="num" id="LN1402">1402</td><td class="line">                                         <span class='comment'>* of validated keys for this</span></td></tr>
+<tr><td class="num" id="LN1403">1403</td><td class="line">                                         <span class='comment'>* transaction. */</span></td></tr>
+<tr><td class="num" id="LN1404">1404</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1405">1405</td><td class="line">                                        r = dns_answer_copy_by_key(&amp;t-&gt;validated_keys, t-&gt;answer, rr-&gt;key);</td></tr>
+<tr><td class="num" id="LN1406">1406</td><td class="line">                                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1407">1407</td><td class="line">                                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1408">1408</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN1409">1409</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1410">1410</td><td class="line">                                <span class='comment'>/* Now, remove this RRset from the RRs still to process */</span></td></tr>
+<tr><td class="num" id="LN1411">1411</td><td class="line">                                r = dns_answer_remove_by_key(&amp;t-&gt;answer, rr-&gt;key);</td></tr>
+<tr><td class="num" id="LN1412">1412</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1413">1413</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1414">1414</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1415">1415</td><td class="line">                                <span class='comment'>/* Exit the loop, we dropped something from the answer, start from the beginning */</span></td></tr>
+<tr><td class="num" id="LN1416">1416</td><td class="line">                                changed = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1417">1417</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1418">1418</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1419">1419</td><td class="line">                        } <span class='keyword'>else</span> <span class='keyword'>if</span> (dnskeys_finalized) {</td></tr>
+<tr><td class="num" id="LN1420">1420</td><td class="line">                                <span class='comment'>/* If we haven't read all DNSKEYs yet</span></td></tr>
+<tr><td class="num" id="LN1421">1421</td><td class="line">                                 <span class='comment'>* a negative result of the validation</span></td></tr>
+<tr><td class="num" id="LN1422">1422</td><td class="line">                                 <span class='comment'>* is irrelevant, as there might be</span></td></tr>
+<tr><td class="num" id="LN1423">1423</td><td class="line">                                 <span class='comment'>* more DNSKEYs coming. */</span></td></tr>
+<tr><td class="num" id="LN1424">1424</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1425">1425</td><td class="line">                                r = dns_transaction_is_primary_response(t, rr);</td></tr>
+<tr><td class="num" id="LN1426">1426</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1427">1427</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1428">1428</td><td class="line">                                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1429">1429</td><td class="line">                                        <span class='comment'>/* This is a primary response</span></td></tr>
+<tr><td class="num" id="LN1430">1430</td><td class="line">                                         <span class='comment'>* to our question, and it</span></td></tr>
+<tr><td class="num" id="LN1431">1431</td><td class="line">                                         <span class='comment'>* failed validation. That's</span></td></tr>
+<tr><td class="num" id="LN1432">1432</td><td class="line">                                         <span class='comment'>* fatal. */</span></td></tr>
+<tr><td class="num" id="LN1433">1433</td><td class="line">                                        t-&gt;dnssec_result = result;</td></tr>
+<tr><td class="num" id="LN1434">1434</td><td class="line">                                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1435">1435</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN1436">1436</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1437">1437</td><td class="line">                                <span class='comment'>/* This is just some auxiliary</span></td></tr>
+<tr><td class="num" id="LN1438">1438</td><td class="line">                                 <span class='comment'>* data. Just remove the RRset and</span></td></tr>
+<tr><td class="num" id="LN1439">1439</td><td class="line">                                 <span class='comment'>* continue. */</span></td></tr>
+<tr><td class="num" id="LN1440">1440</td><td class="line">                                r = dns_answer_remove_by_key(&amp;t-&gt;answer, rr-&gt;key);</td></tr>
+<tr><td class="num" id="LN1441">1441</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1442">1442</td><td class="line">                                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1443">1443</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1444">1444</td><td class="line">                                <span class='comment'>/* Exit the loop, we dropped something from the answer, start from the beginning */</span></td></tr>
+<tr><td class="num" id="LN1445">1445</td><td class="line">                                changed = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1446">1446</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1447">1447</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN1448">1448</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1449">1449</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1450">1450</td><td class="line">                <span class='keyword'>if</span> (!dnskeys_finalized) {</td></tr>
-<tr><td class="num" id="LN1451">1451</td><td class="line">                        <span class='comment'>/* OK, now we know we have added all DNSKEYs</span></td></tr>
-<tr><td class="num" id="LN1452">1452</td><td class="line">                         <span class='comment'>* we possibly could to our validated</span></td></tr>
-<tr><td class="num" id="LN1453">1453</td><td class="line">                         <span class='comment'>* list. Now run the whole thing once more,</span></td></tr>
-<tr><td class="num" id="LN1454">1454</td><td class="line">                         <span class='comment'>* and strip everything we still cannot</span></td></tr>
-<tr><td class="num" id="LN1455">1455</td><td class="line">                         <span class='comment'>* validate.</span></td></tr>
-<tr><td class="num" id="LN1456">1456</td><td class="line">                         <span class='comment'>*/</span></td></tr>
-<tr><td class="num" id="LN1457">1457</td><td class="line">                        dnskeys_finalized = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1458">1458</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN1459">1459</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1460">1460</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1461">1461</td><td class="line">                <span class='comment'>/* We're done */</span></td></tr>
-<tr><td class="num" id="LN1462">1462</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN1463">1463</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1464">1464</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1465">1465</td><td class="line">        dns_answer_unref(t-&gt;answer);</td></tr>
-<tr><td class="num" id="LN1466">1466</td><td class="line">        t-&gt;answer = validated;</td></tr>
-<tr><td class="num" id="LN1467">1467</td><td class="line">        validated = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1468">1468</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1469">1469</td><td class="line">        <span class='comment'>/* Everything that's now in t-&gt;answer is known to be good, hence cacheable. */</span></td></tr>
-<tr><td class="num" id="LN1470">1470</td><td class="line">        t-&gt;n_answer_cacheable = (<span class='keyword'>unsigned</span>) -1; <span class='comment'>/* everything! */</span></td></tr>
+<tr><td class="num" id="LN1450">1450</td><td class="line">                <span class='keyword'>if</span> (changed)</td></tr>
+<tr><td class="num" id="LN1451">1451</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1452">1452</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1453">1453</td><td class="line">                <span class='keyword'>if</span> (!dnskeys_finalized) {</td></tr>
+<tr><td class="num" id="LN1454">1454</td><td class="line">                        <span class='comment'>/* OK, now we know we have added all DNSKEYs</span></td></tr>
+<tr><td class="num" id="LN1455">1455</td><td class="line">                         <span class='comment'>* we possibly could to our validated</span></td></tr>
+<tr><td class="num" id="LN1456">1456</td><td class="line">                         <span class='comment'>* list. Now run the whole thing once more,</span></td></tr>
+<tr><td class="num" id="LN1457">1457</td><td class="line">                         <span class='comment'>* and strip everything we still cannot</span></td></tr>
+<tr><td class="num" id="LN1458">1458</td><td class="line">                         <span class='comment'>* validate.</span></td></tr>
+<tr><td class="num" id="LN1459">1459</td><td class="line">                         <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN1460">1460</td><td class="line">                        dnskeys_finalized = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1461">1461</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1462">1462</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1463">1463</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1464">1464</td><td class="line">                <span class='comment'>/* We're done */</span></td></tr>
+<tr><td class="num" id="LN1465">1465</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1466">1466</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1467">1467</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1468">1468</td><td class="line">        dns_answer_unref(t-&gt;answer);</td></tr>
+<tr><td class="num" id="LN1469">1469</td><td class="line">        t-&gt;answer = validated;</td></tr>
+<tr><td class="num" id="LN1470">1470</td><td class="line">        validated = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1471">1471</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1472">1472</td><td class="line">        t-&gt;answer_authenticated = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1473">1473</td><td class="line">        t-&gt;dnssec_result = DNSSEC_VALIDATED;</td></tr>
-<tr><td class="num" id="LN1474">1474</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN1475">1475</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1476">1476</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1477">1477</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> dns_transaction_state_table[_DNS_TRANSACTION_STATE_MAX] = {</td></tr>
-<tr><td class="num" id="LN1478">1478</td><td class="line">        [DNS_TRANSACTION_NULL] = <span class='string_literal'>"null"</span>,</td></tr>
-<tr><td class="num" id="LN1479">1479</td><td class="line">        [DNS_TRANSACTION_PENDING] = <span class='string_literal'>"pending"</span>,</td></tr>
-<tr><td class="num" id="LN1480">1480</td><td class="line">        [DNS_TRANSACTION_VALIDATING] = <span class='string_literal'>"validating"</span>,</td></tr>
-<tr><td class="num" id="LN1481">1481</td><td class="line">        [DNS_TRANSACTION_FAILURE] = <span class='string_literal'>"failure"</span>,</td></tr>
-<tr><td class="num" id="LN1482">1482</td><td class="line">        [DNS_TRANSACTION_SUCCESS] = <span class='string_literal'>"success"</span>,</td></tr>
-<tr><td class="num" id="LN1483">1483</td><td class="line">        [DNS_TRANSACTION_NO_SERVERS] = <span class='string_literal'>"no-servers"</span>,</td></tr>
-<tr><td class="num" id="LN1484">1484</td><td class="line">        [DNS_TRANSACTION_TIMEOUT] = <span class='string_literal'>"timeout"</span>,</td></tr>
-<tr><td class="num" id="LN1485">1485</td><td class="line">        [DNS_TRANSACTION_ATTEMPTS_MAX_REACHED] = <span class='string_literal'>"attempts-max-reached"</span>,</td></tr>
-<tr><td class="num" id="LN1486">1486</td><td class="line">        [DNS_TRANSACTION_INVALID_REPLY] = <span class='string_literal'>"invalid-reply"</span>,</td></tr>
-<tr><td class="num" id="LN1487">1487</td><td class="line">        [DNS_TRANSACTION_RESOURCES] = <span class='string_literal'>"resources"</span>,</td></tr>
-<tr><td class="num" id="LN1488">1488</td><td class="line">        [DNS_TRANSACTION_ABORTED] = <span class='string_literal'>"aborted"</span>,</td></tr>
-<tr><td class="num" id="LN1489">1489</td><td class="line">        [DNS_TRANSACTION_DNSSEC_FAILED] = <span class='string_literal'>"dnssec-failed"</span>,</td></tr>
-<tr><td class="num" id="LN1490">1490</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1491">1491</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(dns_transaction_state, DnsTransactionState)<span class='expansion'>const char *dns_transaction_state_to_string(DnsTransactionState<br> i) { if (i &lt; 0 || i &gt;= (DnsTransactionState) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(dns_transaction_state_table), typeof(&amp;*(dns_transaction_state_table<br>))), sizeof(dns_transaction_state_table)/sizeof((dns_transaction_state_table<br>)[0]), (void)0))) return ((void*)0); return dns_transaction_state_table<br>[i]; } DnsTransactionState dns_transaction_state_from_string(<br>const char *s) { return (DnsTransactionState) string_table_lookup<br>(dns_transaction_state_table, __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(dns_transaction_state_table<br>), typeof(&amp;*(dns_transaction_state_table))), sizeof(dns_transaction_state_table<br>)/sizeof((dns_transaction_state_table)[0]), (void)0)), s); } struct<br> __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN1492">1492</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1493">1493</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> dns_transaction_source_table[_DNS_TRANSACTION_SOURCE_MAX] = {</td></tr>
-<tr><td class="num" id="LN1494">1494</td><td class="line">        [DNS_TRANSACTION_NETWORK] = <span class='string_literal'>"network"</span>,</td></tr>
-<tr><td class="num" id="LN1495">1495</td><td class="line">        [DNS_TRANSACTION_CACHE] = <span class='string_literal'>"cache"</span>,</td></tr>
-<tr><td class="num" id="LN1496">1496</td><td class="line">        [DNS_TRANSACTION_ZONE] = <span class='string_literal'>"zone"</span>,</td></tr>
-<tr><td class="num" id="LN1497">1497</td><td class="line">        [DNS_TRANSACTION_TRUST_ANCHOR] = <span class='string_literal'>"trust-anchor"</span>,</td></tr>
-<tr><td class="num" id="LN1498">1498</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1499">1499</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(dns_transaction_source, DnsTransactionSource)<span class='expansion'>const char *dns_transaction_source_to_string(DnsTransactionSource<br> i) { if (i &lt; 0 || i &gt;= (DnsTransactionSource) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(dns_transaction_source_table), typeof(&amp;*(dns_transaction_source_table<br>))), sizeof(dns_transaction_source_table)/sizeof((dns_transaction_source_table<br>)[0]), (void)0))) return ((void*)0); return dns_transaction_source_table<br>[i]; } DnsTransactionSource dns_transaction_source_from_string<br>(const char *s) { return (DnsTransactionSource) string_table_lookup<br>(dns_transaction_source_table, __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(dns_transaction_source_table<br>), typeof(&amp;*(dns_transaction_source_table))), sizeof(dns_transaction_source_table<br>)/sizeof((dns_transaction_source_table)[0]), (void)0)), s); }<br> struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1472">1472</td><td class="line">        <span class='comment'>/* Everything that's now in t-&gt;answer is known to be good, hence cacheable. */</span></td></tr>
+<tr><td class="num" id="LN1473">1473</td><td class="line">        t-&gt;n_answer_cacheable = (<span class='keyword'>unsigned</span>) -1; <span class='comment'>/* everything! */</span></td></tr>
+<tr><td class="num" id="LN1474">1474</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1475">1475</td><td class="line">        <span class='comment'>/* At this point the answer only contains validated</span></td></tr>
+<tr><td class="num" id="LN1476">1476</td><td class="line">         <span class='comment'>* RRsets. Now, let's see if it actually answers the question</span></td></tr>
+<tr><td class="num" id="LN1477">1477</td><td class="line">         <span class='comment'>* we asked. If so, great! If it doesn't, then see if</span></td></tr>
+<tr><td class="num" id="LN1478">1478</td><td class="line">         <span class='comment'>* NSEC/NSEC3 can prove this. */</span></td></tr>
+<tr><td class="num" id="LN1479">1479</td><td class="line">        r = dns_answer_match_key(t-&gt;answer, t-&gt;key);</td></tr>
+<tr><td class="num" id="LN1480">1480</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1481">1481</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1482">1482</td><td class="line">        <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1483">1483</td><td class="line">                <span class='comment'>/* Yes, it answer the question, everything is authenticated. */</span></td></tr>
+<tr><td class="num" id="LN1484">1484</td><td class="line">                t-&gt;dnssec_result = DNSSEC_VALIDATED;</td></tr>
+<tr><td class="num" id="LN1485">1485</td><td class="line">                t-&gt;answer_rcode = DNS_RCODE_SUCCESS;</td></tr>
+<tr><td class="num" id="LN1486">1486</td><td class="line">                t-&gt;answer_authenticated = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1487">1487</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (r == 0) {</td></tr>
+<tr><td class="num" id="LN1488">1488</td><td class="line">                DnssecNsecResult nr;</td></tr>
+<tr><td class="num" id="LN1489">1489</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1490">1490</td><td class="line">                <span class='comment'>/* Bummer! Let's check NSEC/NSEC3 */</span></td></tr>
+<tr><td class="num" id="LN1491">1491</td><td class="line">                r = dnssec_test_nsec(t-&gt;answer, t-&gt;key, &amp;nr);</td></tr>
+<tr><td class="num" id="LN1492">1492</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1493">1493</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1494">1494</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1495">1495</td><td class="line">                <span class='keyword'>switch</span> (nr) {</td></tr>
+<tr><td class="num" id="LN1496">1496</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1497">1497</td><td class="line">                <span class='keyword'>case</span> DNSSEC_NSEC_NXDOMAIN:</td></tr>
+<tr><td class="num" id="LN1498">1498</td><td class="line">                        <span class='comment'>/* NSEC proves the domain doesn't exist. Very good. */</span></td></tr>
+<tr><td class="num" id="LN1499">1499</td><td class="line">                        t-&gt;dnssec_result = DNSSEC_VALIDATED;</td></tr>
+<tr><td class="num" id="LN1500">1500</td><td class="line">                        t-&gt;answer_rcode = DNS_RCODE_NXDOMAIN;</td></tr>
+<tr><td class="num" id="LN1501">1501</td><td class="line">                        t-&gt;answer_authenticated = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1502">1502</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1503">1503</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1504">1504</td><td class="line">                <span class='keyword'>case</span> DNSSEC_NSEC_NODATA:</td></tr>
+<tr><td class="num" id="LN1505">1505</td><td class="line">                        <span class='comment'>/* NSEC proves that there's no data here, very good. */</span></td></tr>
+<tr><td class="num" id="LN1506">1506</td><td class="line">                        t-&gt;dnssec_result = DNSSEC_VALIDATED;</td></tr>
+<tr><td class="num" id="LN1507">1507</td><td class="line">                        t-&gt;answer_rcode = DNS_RCODE_SUCCESS;</td></tr>
+<tr><td class="num" id="LN1508">1508</td><td class="line">                        t-&gt;answer_authenticated = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1509">1509</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1510">1510</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1511">1511</td><td class="line">                <span class='keyword'>case</span> DNSSEC_NSEC_NO_RR:</td></tr>
+<tr><td class="num" id="LN1512">1512</td><td class="line">                        <span class='comment'>/* No NSEC data? Bummer! */</span></td></tr>
+<tr><td class="num" id="LN1513">1513</td><td class="line">                        t-&gt;dnssec_result = DNSSEC_UNSIGNED;</td></tr>
+<tr><td class="num" id="LN1514">1514</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1515">1515</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1516">1516</td><td class="line">                <span class='keyword'>case</span> DNSSEC_NSEC_FOUND:</td></tr>
+<tr><td class="num" id="LN1517">1517</td><td class="line">                        <span class='comment'>/* NSEC says it needs to be there, but we couldn't find it? Bummer! */</span></td></tr>
+<tr><td class="num" id="LN1518">1518</td><td class="line">                        t-&gt;dnssec_result = DNSSEC_NSEC_MISMATCH;</td></tr>
+<tr><td class="num" id="LN1519">1519</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1520">1520</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1521">1521</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN1522">1522</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Unexpected NSEC result."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unexpected NSEC result.",<br> "src/resolve/resolved-dns-transaction.c", 1522, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1523">1523</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1524">1524</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1525">1525</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1526">1526</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1527">1527</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1528">1528</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1529">1529</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> dns_transaction_state_table[_DNS_TRANSACTION_STATE_MAX] = {</td></tr>
+<tr><td class="num" id="LN1530">1530</td><td class="line">        [DNS_TRANSACTION_NULL] = <span class='string_literal'>"null"</span>,</td></tr>
+<tr><td class="num" id="LN1531">1531</td><td class="line">        [DNS_TRANSACTION_PENDING] = <span class='string_literal'>"pending"</span>,</td></tr>
+<tr><td class="num" id="LN1532">1532</td><td class="line">        [DNS_TRANSACTION_VALIDATING] = <span class='string_literal'>"validating"</span>,</td></tr>
+<tr><td class="num" id="LN1533">1533</td><td class="line">        [DNS_TRANSACTION_FAILURE] = <span class='string_literal'>"failure"</span>,</td></tr>
+<tr><td class="num" id="LN1534">1534</td><td class="line">        [DNS_TRANSACTION_SUCCESS] = <span class='string_literal'>"success"</span>,</td></tr>
+<tr><td class="num" id="LN1535">1535</td><td class="line">        [DNS_TRANSACTION_NO_SERVERS] = <span class='string_literal'>"no-servers"</span>,</td></tr>
+<tr><td class="num" id="LN1536">1536</td><td class="line">        [DNS_TRANSACTION_TIMEOUT] = <span class='string_literal'>"timeout"</span>,</td></tr>
+<tr><td class="num" id="LN1537">1537</td><td class="line">        [DNS_TRANSACTION_ATTEMPTS_MAX_REACHED] = <span class='string_literal'>"attempts-max-reached"</span>,</td></tr>
+<tr><td class="num" id="LN1538">1538</td><td class="line">        [DNS_TRANSACTION_INVALID_REPLY] = <span class='string_literal'>"invalid-reply"</span>,</td></tr>
+<tr><td class="num" id="LN1539">1539</td><td class="line">        [DNS_TRANSACTION_RESOURCES] = <span class='string_literal'>"resources"</span>,</td></tr>
+<tr><td class="num" id="LN1540">1540</td><td class="line">        [DNS_TRANSACTION_ABORTED] = <span class='string_literal'>"aborted"</span>,</td></tr>
+<tr><td class="num" id="LN1541">1541</td><td class="line">        [DNS_TRANSACTION_DNSSEC_FAILED] = <span class='string_literal'>"dnssec-failed"</span>,</td></tr>
+<tr><td class="num" id="LN1542">1542</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1543">1543</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(dns_transaction_state, DnsTransactionState)<span class='expansion'>const char *dns_transaction_state_to_string(DnsTransactionState<br> i) { if (i &lt; 0 || i &gt;= (DnsTransactionState) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(dns_transaction_state_table), typeof(&amp;*(dns_transaction_state_table<br>))), sizeof(dns_transaction_state_table)/sizeof((dns_transaction_state_table<br>)[0]), (void)0))) return ((void*)0); return dns_transaction_state_table<br>[i]; } DnsTransactionState dns_transaction_state_from_string(<br>const char *s) { return (DnsTransactionState) string_table_lookup<br>(dns_transaction_state_table, __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(dns_transaction_state_table<br>), typeof(&amp;*(dns_transaction_state_table))), sizeof(dns_transaction_state_table<br>)/sizeof((dns_transaction_state_table)[0]), (void)0)), s); } struct<br> __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1544">1544</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1545">1545</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> dns_transaction_source_table[_DNS_TRANSACTION_SOURCE_MAX] = {</td></tr>
+<tr><td class="num" id="LN1546">1546</td><td class="line">        [DNS_TRANSACTION_NETWORK] = <span class='string_literal'>"network"</span>,</td></tr>
+<tr><td class="num" id="LN1547">1547</td><td class="line">        [DNS_TRANSACTION_CACHE] = <span class='string_literal'>"cache"</span>,</td></tr>
+<tr><td class="num" id="LN1548">1548</td><td class="line">        [DNS_TRANSACTION_ZONE] = <span class='string_literal'>"zone"</span>,</td></tr>
+<tr><td class="num" id="LN1549">1549</td><td class="line">        [DNS_TRANSACTION_TRUST_ANCHOR] = <span class='string_literal'>"trust-anchor"</span>,</td></tr>
+<tr><td class="num" id="LN1550">1550</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1551">1551</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(dns_transaction_source, DnsTransactionSource)<span class='expansion'>const char *dns_transaction_source_to_string(DnsTransactionSource<br> i) { if (i &lt; 0 || i &gt;= (DnsTransactionSource) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(dns_transaction_source_table), typeof(&amp;*(dns_transaction_source_table<br>))), sizeof(dns_transaction_source_table)/sizeof((dns_transaction_source_table<br>)[0]), (void)0))) return ((void*)0); return dns_transaction_source_table<br>[i]; } DnsTransactionSource dns_transaction_source_from_string<br>(const char *s) { return (DnsTransactionSource) string_table_lookup<br>(dns_transaction_source_table, __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(dns_transaction_source_table<br>), typeof(&amp;*(dns_transaction_source_table))), sizeof(dns_transaction_source_table<br>)/sizeof((dns_transaction_source_table)[0]), (void)0)), s); }<br> struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
 </table></body></html>
