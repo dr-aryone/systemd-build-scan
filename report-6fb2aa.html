@@ -54,9 +54,9 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Dereference of undefined pointer value -->
+<!-- BUGDESC Function call argument is an uninitialized value -->
 
-<!-- BUGTYPE Dereference of undefined pointer value -->
+<!-- BUGTYPE Uninitialized argument value -->
 
 <!-- BUGCATEGORY Logic error -->
 
@@ -64,21 +64,21 @@
 
 <!-- FILENAME logind-dbus.c -->
 
-<!-- FUNCTIONNAME manager_get_seat_from_creds -->
+<!-- FUNCTIONNAME method_get_user -->
 
-<!-- BUGLINE 126 -->
+<!-- BUGLINE 352 -->
 
-<!-- BUGCOLUMN 24 -->
+<!-- BUGCOLUMN 13 -->
 
-<!-- BUGPATHLENGTH 24 -->
+<!-- BUGPATHLENGTH 16 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/login/logind-dbus.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 126, column 24</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Dereference of undefined pointer value</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 352, column 13</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Function call argument is an uninitialized value</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -143,38 +143,21 @@
 <tr><td class="num" id="LN58">58</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN59">59</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN60">60</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/login/logind-dbus.c", 60, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN61">61</td><td class="line">        <span class='macro'>assert(message)<span class='expansion'>do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed<br>("message", "src/login/logind-dbus.c", 61, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN62">62</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/login/logind-dbus.c", 62, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN63">63</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN64">64</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange"><span class="mrange">isempty(name)</span></span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Calling 'isempty'</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Returning from 'isempty'</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">        <span class='keyword'>if</span> (isempty(name)) {</td></tr>
 <tr><td class="num" id="LN65">65</td><td class="line">                r = sd_bus_query_sender_creds(message, SD_BUS_CREDS_SESSION|SD_BUS_CREDS_AUGMENT, &amp;creds);</td></tr>
-<tr><td class="num" id="LN66">66</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN67">67</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN68">68</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN69">69</td><td class="line">                r = sd_bus_creds_get_session(creds, &amp;name);</td></tr>
-<tr><td class="num" id="LN70">70</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN71">71</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN72">72</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN73">73</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN74">74</td><td class="line">        session = <span class="mrange"><span class="mrange">hashmap_get(m-&gt;sessions, name)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgEvent" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Calling 'hashmap_get'</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Returning from 'hashmap_get'</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN75">75</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!session</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Assuming 'session' is null</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">        session = hashmap_get(m-&gt;sessions, name);</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">        <span class='keyword'>if</span> (!session)</td></tr>
 <tr><td class="num" id="LN76">76</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_setf(error, <span class='macro'>BUS_ERROR_NO_SUCH_SESSION<span class='expansion'>"org.freedesktop.login1.NoSuchSession"</span></span>, <span class='string_literal'>"No session '%s' known"</span>, name);</td></tr>
 <tr><td class="num" id="LN77">77</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN78">78</td><td class="line">        *ret = session;</td></tr>
@@ -186,10 +169,17 @@
 <tr><td class="num" id="LN84">84</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN85">85</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN86">86</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/login/logind-dbus.c", 86, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
+</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN87">87</td><td class="line">        <span class='macro'>assert(message)<span class='expansion'>do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed<br>("message", "src/login/logind-dbus.c", 87, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
+</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN88">88</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/login/logind-dbus.c", 88, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
+</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN89">89</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN90">90</td><td class="line">        <span class='keyword'>if</span> (uid == <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN91">91</td><td class="line">                <span class='macro'>_cleanup_(sd_bus_creds_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_creds_unrefp)))</span></span> sd_bus_creds *creds = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN92">92</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN93">93</td><td class="line">                <span class='comment'>/* Note that we get the owner UID of the session, not the actual client UID here! */</span></td></tr>
@@ -202,8 +192,12 @@
 <tr><td class="num" id="LN100">100</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN101">101</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN102">102</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN103">103</td><td class="line">        user = hashmap_get(m-&gt;users, <span class='macro'>UID_TO_PTR(uid)<span class='expansion'>((void*) (((uintptr_t) (uid))+1))</span></span>);</td></tr>
-<tr><td class="num" id="LN104">104</td><td class="line">        <span class='keyword'>if</span> (!user)</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">        user = <span class="mrange"><span class="mrange">hashmap_get(m-&gt;users, <span class='macro'>UID_TO_PTR(uid)<span class='expansion'>((void*) (((uintptr_t) (uid))+1))</span></span>)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:16ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Calling 'hashmap_get'</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:16ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Returning from 'hashmap_get'</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!user</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'user' is null</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN105">105</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_setf(error, <span class='macro'>BUS_ERROR_NO_SUCH_USER<span class='expansion'>"org.freedesktop.login1.NoSuchUser"</span></span>, <span class='string_literal'>"No user "</span><span class='macro'>UID_FMT<span class='expansion'>"%" "u"</span></span><span class='string_literal'>" known or logged in"</span>, uid);</td></tr>
 <tr><td class="num" id="LN106">106</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN107">107</td><td class="line">        *ret = user;</td></tr>
@@ -219,20 +213,13 @@
 <tr><td class="num" id="LN117">117</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/login/logind-dbus.c", 117, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN118">118</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN119">119</td><td class="line">        <span class='keyword'>if</span> (isempty(name)) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN120">120</td><td class="line">                <span class="mrange">Session *session</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>'session' declared without an initial value</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">                Session *session;</td></tr>
 <tr><td class="num" id="LN121">121</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN122">122</td><td class="line">                r = <span class="mrange"><span class="mrange">manager_get_session_from_creds(m, message, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, error, &amp;session)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Calling 'manager_get_session_from_creds'</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Returning from 'manager_get_session_from_creds'</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN123">123</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (24)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">                r = manager_get_session_from_creds(m, message, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, error, &amp;session);</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN124">124</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN125">125</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN126">126</td><td class="line">                seat = <span class="mrange">session-&gt;seat</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Dereference of undefined pointer value</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">                seat = session-&gt;seat;</td></tr>
 <tr><td class="num" id="LN127">127</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN128">128</td><td class="line">                <span class='keyword'>if</span> (!seat)</td></tr>
 <tr><td class="num" id="LN129">129</td><td class="line">                        <span class='keyword'>return</span> sd_bus_error_setf(error, <span class='macro'>BUS_ERROR_NO_SUCH_SEAT<span class='expansion'>"org.freedesktop.login1.NoSuchSeat"</span></span>, <span class='string_literal'>"Session has no seat."</span>);</td></tr>
@@ -447,21 +434,29 @@
 <tr><td class="num" id="LN335">335</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN336">336</td><td class="line">        Manager *m = userdata;</td></tr>
 <tr><td class="num" id="LN337">337</td><td class="line">        uint32_t uid;</td></tr>
-<tr><td class="num" id="LN338">338</td><td class="line">        User *user;</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">        <span class="mrange">User *user</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>'user' declared without an initial value</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN339">339</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN340">340</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN341">341</td><td class="line">        <span class='macro'>assert(message)<span class='expansion'>do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed<br>("message", "src/login/logind-dbus.c", 341, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN342">342</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/login/logind-dbus.c", 342, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN343">343</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN344">344</td><td class="line">        r = sd_bus_message_read(message, <span class='string_literal'>"u"</span>, &amp;uid);</td></tr>
-<tr><td class="num" id="LN345">345</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN346">346</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN347">347</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN348">348</td><td class="line">        r = manager_get_user_from_creds(m, message, uid, error, &amp;user);</td></tr>
-<tr><td class="num" id="LN349">349</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        r = <span class="mrange"><span class="mrange">manager_get_user_from_creds(m, message, uid, error, &amp;user)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Calling 'manager_get_user_from_creds'</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Returning from 'manager_get_user_from_creds'</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN350">350</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN351">351</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN352">352</td><td class="line">        p = user_bus_path(user);</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">        p = user_bus_path(<span class="mrange">user</span>);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Function call argument is an uninitialized value</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN353">353</td><td class="line">        <span class='keyword'>if</span> (!p)</td></tr>
 <tr><td class="num" id="LN354">354</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN355">355</td><td class="line"> </td></tr>
@@ -1188,13 +1183,10 @@
 <tr><td class="num" id="LN1067">1067</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/login/logind-dbus.c", 1067, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1068">1068</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1069">1069</td><td class="line">        r = sd_bus_message_read(message, <span class='string_literal'>"s"</span>, &amp;name);</td></tr>
-<tr><td class="num" id="LN1070">1070</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1071">1071</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1072">1072</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1073">1073</td><td class="line">        r = <span class="mrange">manager_get_seat_from_creds(m, message, name, error, &amp;seat)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Calling 'manager_get_seat_from_creds'</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1073">1073</td><td class="line">        r = manager_get_seat_from_creds(m, message, name, error, &amp;seat);</td></tr>
 <tr><td class="num" id="LN1074">1074</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1075">1075</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1076">1076</td><td class="line"> </td></tr>
@@ -2068,9 +2060,9 @@
 <tr><td class="num" id="LN1944">1944</td><td class="line">                action_multiple_sessions = <span class='string_literal'>"org.freedesktop.login1.halt-multiple-sessions"</span>;</td></tr>
 <tr><td class="num" id="LN1945">1945</td><td class="line">                action_ignore_inhibit = <span class='string_literal'>"org.freedesktop.login1.halt-ignore-inhibit"</span>;</td></tr>
 <tr><td class="num" id="LN1946">1946</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(type, <span class='string_literal'>"poweroff"</span>)<span class='expansion'>(strcmp((type),("poweroff")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN1947">1947</td><td class="line">                action = <span class='string_literal'>"org.freedesktop.login1.poweroff"</span>;</td></tr>
-<tr><td class="num" id="LN1948">1948</td><td class="line">                action_multiple_sessions = <span class='string_literal'>"org.freedesktop.login1.poweroff-multiple-sessions"</span>;</td></tr>
-<tr><td class="num" id="LN1949">1949</td><td class="line">                action_ignore_inhibit = <span class='string_literal'>"org.freedesktop.login1.poweroff-ignore-inhibit"</span>;</td></tr>
+<tr><td class="num" id="LN1947">1947</td><td class="line">                action = <span class='string_literal'>"org.freedesktop.login1.power-off"</span>;</td></tr>
+<tr><td class="num" id="LN1948">1948</td><td class="line">                action_multiple_sessions = <span class='string_literal'>"org.freedesktop.login1.power-off-multiple-sessions"</span>;</td></tr>
+<tr><td class="num" id="LN1949">1949</td><td class="line">                action_ignore_inhibit = <span class='string_literal'>"org.freedesktop.login1.power-off-ignore-inhibit"</span>;</td></tr>
 <tr><td class="num" id="LN1950">1950</td><td class="line">        } <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN1951">1951</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_setf(error, <span class='macro'>SD_BUS_ERROR_INVALID_ARGS<span class='expansion'>"org.freedesktop.DBus.Error.InvalidArgs"</span></span>, <span class='string_literal'>"Unsupported shutdown type"</span>);</td></tr>
 <tr><td class="num" id="LN1952">1952</td><td class="line"> </td></tr>
