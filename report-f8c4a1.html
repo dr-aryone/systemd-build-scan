@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Value stored to 'd' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME manager.c -->
 
-<!-- FUNCTIONNAME manager_setup_notify -->
+<!-- FUNCTIONNAME manager_build_unit_path_cache -->
 
-<!-- BUGLINE 730 -->
+<!-- BUGLINE 1089 -->
 
 <!-- BUGCOLUMN 17 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>src/core/manager.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 730, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1089, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -468,38 +468,38 @@
 <tr><td class="num" id="LN380">380</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN381">381</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 381, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN382">382</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN383">383</td><td class="line">        <span class='comment'>/* Enable that we get SIGINT on control-alt-del. In containers</span></td></tr>
-<tr><td class="num" id="LN384">384</td><td class="line">         <span class='comment'>* this will fail with EPERM (older) or EINVAL (newer), so</span></td></tr>
-<tr><td class="num" id="LN385">385</td><td class="line">         <span class='comment'>* ignore that. */</span></td></tr>
-<tr><td class="num" id="LN386">386</td><td class="line">        <span class='keyword'>if</span> (reboot(<span class='macro'>RB_DISABLE_CAD<span class='expansion'>0</span></span>) &lt; 0 &amp;&amp; <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>EPERM<span class='expansion'>1</span></span> &amp;&amp; <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>EINVAL<span class='expansion'>22</span></span>)</td></tr>
-<tr><td class="num" id="LN387">387</td><td class="line">                <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to enable ctrl-alt-del handling: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 387, __func__, "Failed to enable ctrl-alt-del handling: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN388">388</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN389">389</td><td class="line">        fd = open_terminal(<span class='string_literal'>"/dev/tty0"</span>, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
-<tr><td class="num" id="LN390">390</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
-<tr><td class="num" id="LN391">391</td><td class="line">                <span class='comment'>/* Support systems without virtual console */</span></td></tr>
-<tr><td class="num" id="LN392">392</td><td class="line">                <span class='keyword'>if</span> (fd != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN393">393</td><td class="line">                        <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to open /dev/tty0: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 393, __func__, "Failed to open /dev/tty0: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN394">394</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN395">395</td><td class="line">                <span class='comment'>/* Enable that we get SIGWINCH on kbrequest */</span></td></tr>
-<tr><td class="num" id="LN396">396</td><td class="line">                <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>KDSIGACCEPT<span class='expansion'>0x4B4E</span></span>, <span class='macro'>SIGWINCH<span class='expansion'>28</span></span>) &lt; 0)</td></tr>
-<tr><td class="num" id="LN397">397</td><td class="line">                        <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to enable kbrequest handling: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 397, __func__, "Failed to enable kbrequest handling: %m") :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN399">399</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN400">400</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN401">401</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">        <span class='keyword'>if</span> (m-&gt;test_run)</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">        <span class='comment'>/* Enable that we get SIGINT on control-alt-del. In containers</span></td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">         <span class='comment'>* this will fail with EPERM (older) or EINVAL (newer), so</span></td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">         <span class='comment'>* ignore that. */</span></td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        <span class='keyword'>if</span> (reboot(<span class='macro'>RB_DISABLE_CAD<span class='expansion'>0</span></span>) &lt; 0 &amp;&amp; <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>EPERM<span class='expansion'>1</span></span> &amp;&amp; <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>EINVAL<span class='expansion'>22</span></span>)</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">                <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to enable ctrl-alt-del handling: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 390, __func__, "Failed to enable ctrl-alt-del handling: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">        fd = open_terminal(<span class='string_literal'>"/dev/tty0"</span>, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">                <span class='comment'>/* Support systems without virtual console */</span></td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">                <span class='keyword'>if</span> (fd != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">                        <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to open /dev/tty0: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 396, __func__, "Failed to open /dev/tty0: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">                <span class='comment'>/* Enable that we get SIGWINCH on kbrequest */</span></td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">                <span class='keyword'>if</span> (ioctl(fd, <span class='macro'>KDSIGACCEPT<span class='expansion'>0x4B4E</span></span>, <span class='macro'>SIGWINCH<span class='expansion'>28</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">                        <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to enable kbrequest handling: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 400, __func__, "Failed to enable kbrequest handling: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN402">402</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN403">403</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> manager_setup_signals(Manager *m) {</td></tr>
-<tr><td class="num" id="LN404">404</td><td class="line">        <span class='keyword'>struct</span> sigaction sa = {</td></tr>
-<tr><td class="num" id="LN405">405</td><td class="line">                .<span class='macro'>sa_handler<span class='expansion'>__sigaction_handler.sa_handler</span></span> = <span class='macro'>SIG_DFL<span class='expansion'>((__sighandler_t) 0)</span></span>,</td></tr>
-<tr><td class="num" id="LN406">406</td><td class="line">                .sa_flags = <span class='macro'>SA_NOCLDSTOP<span class='expansion'>1</span></span>|<span class='macro'>SA_RESTART<span class='expansion'>0x10000000</span></span>,</td></tr>
-<tr><td class="num" id="LN407">407</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN408">408</td><td class="line">        sigset_t mask;</td></tr>
-<tr><td class="num" id="LN409">409</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN410">410</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN411">411</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 411, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN412">412</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN413">413</td><td class="line">        <span class='keyword'>if</span> (m-&gt;test_run)</td></tr>
-<tr><td class="num" id="LN414">414</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> manager_setup_signals(Manager *m) {</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">        <span class='keyword'>struct</span> sigaction sa = {</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">                .<span class='macro'>sa_handler<span class='expansion'>__sigaction_handler.sa_handler</span></span> = <span class='macro'>SIG_DFL<span class='expansion'>((__sighandler_t) 0)</span></span>,</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">                .sa_flags = <span class='macro'>SA_NOCLDSTOP<span class='expansion'>1</span></span>|<span class='macro'>SA_RESTART<span class='expansion'>0x10000000</span></span>,</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">        sigset_t mask;</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 414, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN415">415</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN416">416</td><td class="line">        <span class='macro'>assert_se(sigaction(SIGCHLD, &amp;sa, NULL) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(sigaction(17, &amp;sa, ((void<br>*)0)) == 0)),0))) log_assert_failed("sigaction(SIGCHLD, &amp;sa, NULL) == 0"<br>, "src/core/manager.c", 416, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN417">417</td><td class="line"> </td></tr>
@@ -815,8 +815,7 @@
 <tr><td class="num" id="LN727">727</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"SO_PASSCRED failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 727, __func__, "SO_PASSCRED failed: %m") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN729">729</td><td class="line">                m-&gt;notify_fd = fd;</td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">                fd = -1;</td></tr>
 <tr><td class="num" id="LN731">731</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN732">732</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Using notification socket %s"</span>, m-&gt;notify_socket)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 732, __func__, "Using notification socket %s", m-&gt;notify_socket<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN733">733</td><td class="line">        }</td></tr>
@@ -1175,7 +1174,8 @@
 <tr><td class="num" id="LN1086">1086</td><td class="line">                                <span class='keyword'>goto</span> fail;</td></tr>
 <tr><td class="num" id="LN1087">1087</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1088">1088</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1089">1089</td><td class="line">                d = safe_closedir(d);</td></tr>
+<tr><td class="num" id="LN1089">1089</td><td class="line">                d = <span class="mrange">safe_closedir(d)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'd' is never read</div></td></tr>
 <tr><td class="num" id="LN1090">1090</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1091">1091</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1092">1092</td><td class="line">        <span class='keyword'>return</span>;</td></tr>
@@ -2448,7 +2448,7 @@
 <tr><td class="num" id="LN2359">2359</td><td class="line">                        <span class='keyword'>if</span> (safe_atou32(l+15, &amp;id) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2360">2360</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse current job id value %s"</span>, l+15)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 2360, __func__, "Failed to parse current job id value %s", l<br>+15) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2361">2361</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2362">2362</td><td class="line">                                m-&gt;current_job_id = <span class='macro'>MAX(m-&gt;current_job_id, id)<span class='expansion'>__extension__ ({ const typeof((m-&gt;current_job_id)) __unique_prefix_A8<br> = ((m-&gt;current_job_id)); const typeof((id)) __unique_prefix_B9<br> = ((id)); __unique_prefix_A8 &gt; __unique_prefix_B9 ? __unique_prefix_A8<br> : __unique_prefix_B9; })</span></span>;</td></tr>
+<tr><td class="num" id="LN2362">2362</td><td class="line">                                m-&gt;current_job_id = <span class='macro'>MAX(m-&gt;current_job_id, id)<span class='expansion'>__extension__ ({ const typeof((m-&gt;current_job_id)) __unique_prefix_A10<br> = ((m-&gt;current_job_id)); const typeof((id)) __unique_prefix_B11<br> = ((id)); __unique_prefix_A10 &gt; __unique_prefix_B11 ? __unique_prefix_A10<br> : __unique_prefix_B11; })</span></span>;</td></tr>
 <tr><td class="num" id="LN2363">2363</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2364">2364</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (startswith(l, <span class='string_literal'>"n-installed-jobs="</span>)) {</td></tr>
 <tr><td class="num" id="LN2365">2365</td><td class="line">                        uint32_t n;</td></tr>
