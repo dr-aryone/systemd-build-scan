@@ -2972,188 +2972,207 @@
 <tr><td class="num" id="LN2868">2868</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2869">2869</td><td class="line">                fprintf(f, <span class='string_literal'>"LLMNR=%s\n"</span>,</td></tr>
 <tr><td class="num" id="LN2870">2870</td><td class="line">                        resolve_support_to_string(link-&gt;network-&gt;llmnr));</td></tr>
-<tr><td class="num" id="LN2871">2871</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2872">2872</td><td class="line">                fputs(<span class='string_literal'>"ADDRESSES="</span>, f);</td></tr>
-<tr><td class="num" id="LN2873">2873</td><td class="line">                space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2874">2874</td><td class="line">                <span class='macro'>SET_FOREACH(a, link-&gt;addresses, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((link-&gt;addresses), &amp;<br>(i), (void**)&amp;(a)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN2875">2875</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *address_str = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2876">2876</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2877">2877</td><td class="line">                        r = in_addr_to_string(a-&gt;family, &amp;a-&gt;in_addr, &amp;address_str);</td></tr>
-<tr><td class="num" id="LN2878">2878</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2879">2879</td><td class="line">                                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN2871">2871</td><td class="line">                fprintf(f, <span class='string_literal'>"MDNS=%s\n"</span>,</td></tr>
+<tr><td class="num" id="LN2872">2872</td><td class="line">                        resolve_support_to_string(link-&gt;network-&gt;mdns));</td></tr>
+<tr><td class="num" id="LN2873">2873</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2874">2874</td><td class="line">                <span class='keyword'>if</span> (link-&gt;network-&gt;dnssec_mode != _DNSSEC_MODE_INVALID)</td></tr>
+<tr><td class="num" id="LN2875">2875</td><td class="line">                        fprintf(f, <span class='string_literal'>"DNSSEC=%s\n"</span>,</td></tr>
+<tr><td class="num" id="LN2876">2876</td><td class="line">                                dnssec_mode_to_string(link-&gt;network-&gt;dnssec_mode));</td></tr>
+<tr><td class="num" id="LN2877">2877</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2878">2878</td><td class="line">                <span class='keyword'>if</span> (!set_isempty(link-&gt;network-&gt;dnssec_negative_trust_anchors)) {</td></tr>
+<tr><td class="num" id="LN2879">2879</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>char</span> *n;</td></tr>
 <tr><td class="num" id="LN2880">2880</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2881">2881</td><td class="line">                        fprintf(f, <span class='string_literal'>"%s%s/%u"</span>, space ? <span class='string_literal'>" "</span> : <span class='string_literal'>""</span>, address_str, a-&gt;prefixlen);</td></tr>
-<tr><td class="num" id="LN2882">2882</td><td class="line">                        space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2883">2883</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2884">2884</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2885">2885</td><td class="line">                fputc('\n', f);</td></tr>
-<tr><td class="num" id="LN2886">2886</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2887">2887</td><td class="line">                fputs(<span class='string_literal'>"ROUTES="</span>, f);</td></tr>
-<tr><td class="num" id="LN2888">2888</td><td class="line">                space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2889">2889</td><td class="line">                <span class='macro'>SET_FOREACH(route, link-&gt;routes, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((link-&gt;routes), &amp;<br>(i), (void**)&amp;(route)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN2890">2890</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *route_str = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2881">2881</td><td class="line">                        fputs(<span class='string_literal'>"DNSSEC_NTA="</span>, f);</td></tr>
+<tr><td class="num" id="LN2882">2882</td><td class="line">                        space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2883">2883</td><td class="line">                        <span class='macro'>SET_FOREACH(n, link-&gt;network-&gt;dnssec_negative_trust_anchors, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((link-&gt;network-&gt;dnssec_negative_trust_anchors<br>), &amp;(i), (void**)&amp;(n)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN2884">2884</td><td class="line">                                <span class='keyword'>if</span> (space)</td></tr>
+<tr><td class="num" id="LN2885">2885</td><td class="line">                                        fputc(' ', f);</td></tr>
+<tr><td class="num" id="LN2886">2886</td><td class="line">                                fputs(n, f);</td></tr>
+<tr><td class="num" id="LN2887">2887</td><td class="line">                                space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2888">2888</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2889">2889</td><td class="line">                        fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN2890">2890</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN2891">2891</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2892">2892</td><td class="line">                        r = in_addr_to_string(route-&gt;family, &amp;route-&gt;dst, &amp;route_str);</td></tr>
-<tr><td class="num" id="LN2893">2893</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2894">2894</td><td class="line">                                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN2895">2895</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2896">2896</td><td class="line">                        fprintf(f, <span class='string_literal'>"%s%s/%hhu/%hhu/%"</span><span class='macro'>PRIu32<span class='expansion'>"u"</span></span><span class='string_literal'>"/%hhu/"</span><span class='macro'>USEC_FMT<span class='expansion'>"%" "l" "u"</span></span>, space ? <span class='string_literal'>" "</span> : <span class='string_literal'>""</span>, route_str,</td></tr>
-<tr><td class="num" id="LN2897">2897</td><td class="line">                                route-&gt;dst_prefixlen, route-&gt;tos, route-&gt;priority, route-&gt;table, route-&gt;lifetime);</td></tr>
-<tr><td class="num" id="LN2898">2898</td><td class="line">                        space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2899">2899</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2892">2892</td><td class="line">                fputs(<span class='string_literal'>"ADDRESSES="</span>, f);</td></tr>
+<tr><td class="num" id="LN2893">2893</td><td class="line">                space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2894">2894</td><td class="line">                <span class='macro'>SET_FOREACH(a, link-&gt;addresses, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((link-&gt;addresses), &amp;<br>(i), (void**)&amp;(a)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN2895">2895</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *address_str = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2896">2896</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2897">2897</td><td class="line">                        r = in_addr_to_string(a-&gt;family, &amp;a-&gt;in_addr, &amp;address_str);</td></tr>
+<tr><td class="num" id="LN2898">2898</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2899">2899</td><td class="line">                                <span class='keyword'>goto</span> fail;</td></tr>
 <tr><td class="num" id="LN2900">2900</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2901">2901</td><td class="line">                fputc('\n', f);</td></tr>
-<tr><td class="num" id="LN2902">2902</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2903">2903</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2904">2904</td><td class="line">        <span class='keyword'>if</span> (!hashmap_isempty(link-&gt;bound_to_links)) {</td></tr>
-<tr><td class="num" id="LN2905">2905</td><td class="line">                Link *carrier;</td></tr>
-<tr><td class="num" id="LN2906">2906</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2907">2907</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2908">2908</td><td class="line">                fputs(<span class='string_literal'>"CARRIER_BOUND_TO="</span>, f);</td></tr>
-<tr><td class="num" id="LN2909">2909</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(carrier, link-&gt;bound_to_links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((link-&gt;bound_to_links<br>), &amp;(i), (void**)&amp;(carrier), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN2910">2910</td><td class="line">                        <span class='keyword'>if</span> (space)</td></tr>
-<tr><td class="num" id="LN2911">2911</td><td class="line">                                fputc(' ', f);</td></tr>
-<tr><td class="num" id="LN2912">2912</td><td class="line">                        fputs(carrier-&gt;ifname, f);</td></tr>
-<tr><td class="num" id="LN2913">2913</td><td class="line">                        space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2914">2914</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2915">2915</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2916">2916</td><td class="line">                fputc('\n', f);</td></tr>
-<tr><td class="num" id="LN2917">2917</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2918">2918</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2919">2919</td><td class="line">        <span class='keyword'>if</span> (!hashmap_isempty(link-&gt;bound_by_links)) {</td></tr>
-<tr><td class="num" id="LN2920">2920</td><td class="line">                Link *carrier;</td></tr>
-<tr><td class="num" id="LN2921">2921</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2901">2901</td><td class="line">                        fprintf(f, <span class='string_literal'>"%s%s/%u"</span>, space ? <span class='string_literal'>" "</span> : <span class='string_literal'>""</span>, address_str, a-&gt;prefixlen);</td></tr>
+<tr><td class="num" id="LN2902">2902</td><td class="line">                        space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2903">2903</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2904">2904</td><td class="line">                fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN2905">2905</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2906">2906</td><td class="line">                fputs(<span class='string_literal'>"ROUTES="</span>, f);</td></tr>
+<tr><td class="num" id="LN2907">2907</td><td class="line">                space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2908">2908</td><td class="line">                <span class='macro'>SET_FOREACH(route, link-&gt;routes, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((link-&gt;routes), &amp;<br>(i), (void**)&amp;(route)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN2909">2909</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *route_str = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2910">2910</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2911">2911</td><td class="line">                        r = in_addr_to_string(route-&gt;family, &amp;route-&gt;dst, &amp;route_str);</td></tr>
+<tr><td class="num" id="LN2912">2912</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2913">2913</td><td class="line">                                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN2914">2914</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2915">2915</td><td class="line">                        fprintf(f, <span class='string_literal'>"%s%s/%hhu/%hhu/%"</span><span class='macro'>PRIu32<span class='expansion'>"u"</span></span><span class='string_literal'>"/%hhu/"</span><span class='macro'>USEC_FMT<span class='expansion'>"%" "l" "u"</span></span>, space ? <span class='string_literal'>" "</span> : <span class='string_literal'>""</span>, route_str,</td></tr>
+<tr><td class="num" id="LN2916">2916</td><td class="line">                                route-&gt;dst_prefixlen, route-&gt;tos, route-&gt;priority, route-&gt;table, route-&gt;lifetime);</td></tr>
+<tr><td class="num" id="LN2917">2917</td><td class="line">                        space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2918">2918</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2919">2919</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2920">2920</td><td class="line">                fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN2921">2921</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN2922">2922</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2923">2923</td><td class="line">                fputs(<span class='string_literal'>"CARRIER_BOUND_BY="</span>, f);</td></tr>
-<tr><td class="num" id="LN2924">2924</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(carrier, link-&gt;bound_by_links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((link-&gt;bound_by_links<br>), &amp;(i), (void**)&amp;(carrier), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN2925">2925</td><td class="line">                        <span class='keyword'>if</span> (space)</td></tr>
-<tr><td class="num" id="LN2926">2926</td><td class="line">                                fputc(' ', f);</td></tr>
-<tr><td class="num" id="LN2927">2927</td><td class="line">                        fputs(carrier-&gt;ifname, f);</td></tr>
-<tr><td class="num" id="LN2928">2928</td><td class="line">                        space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2929">2929</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2930">2930</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2931">2931</td><td class="line">                fputc('\n', f);</td></tr>
-<tr><td class="num" id="LN2932">2932</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2933">2933</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2934">2934</td><td class="line">        <span class='keyword'>if</span> (link-&gt;dhcp_lease) {</td></tr>
-<tr><td class="num" id="LN2935">2935</td><td class="line">                <span class='keyword'>struct</span> in_addr address;</td></tr>
-<tr><td class="num" id="LN2936">2936</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *tz = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2923">2923</td><td class="line">        <span class='keyword'>if</span> (!hashmap_isempty(link-&gt;bound_to_links)) {</td></tr>
+<tr><td class="num" id="LN2924">2924</td><td class="line">                Link *carrier;</td></tr>
+<tr><td class="num" id="LN2925">2925</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2926">2926</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2927">2927</td><td class="line">                fputs(<span class='string_literal'>"CARRIER_BOUND_TO="</span>, f);</td></tr>
+<tr><td class="num" id="LN2928">2928</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(carrier, link-&gt;bound_to_links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((link-&gt;bound_to_links<br>), &amp;(i), (void**)&amp;(carrier), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN2929">2929</td><td class="line">                        <span class='keyword'>if</span> (space)</td></tr>
+<tr><td class="num" id="LN2930">2930</td><td class="line">                                fputc(' ', f);</td></tr>
+<tr><td class="num" id="LN2931">2931</td><td class="line">                        fputs(carrier-&gt;ifname, f);</td></tr>
+<tr><td class="num" id="LN2932">2932</td><td class="line">                        space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2933">2933</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2934">2934</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2935">2935</td><td class="line">                fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN2936">2936</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN2937">2937</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2938">2938</td><td class="line">                <span class='macro'>assert(link-&gt;network)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;network)),0))) log_assert_failed<br>("link-&gt;network", "src/network/networkd-link.c", 2938, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2939">2939</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2940">2940</td><td class="line">                r = sd_dhcp_lease_get_timezone(link-&gt;dhcp_lease, &amp;tz);</td></tr>
-<tr><td class="num" id="LN2941">2941</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN2942">2942</td><td class="line">                        fprintf(f, <span class='string_literal'>"TIMEZONE=%s\n"</span>, tz);</td></tr>
-<tr><td class="num" id="LN2943">2943</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2944">2944</td><td class="line">                r = sd_dhcp_lease_get_address(link-&gt;dhcp_lease, &amp;address);</td></tr>
-<tr><td class="num" id="LN2945">2945</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN2946">2946</td><td class="line">                        fputs(<span class='string_literal'>"DHCP4_ADDRESS="</span>, f);</td></tr>
-<tr><td class="num" id="LN2947">2947</td><td class="line">                        serialize_in_addrs(f, &amp;address, 1);</td></tr>
-<tr><td class="num" id="LN2948">2948</td><td class="line">                        fputc('\n', f);</td></tr>
-<tr><td class="num" id="LN2949">2949</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2950">2950</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2951">2951</td><td class="line">                r = dhcp_lease_save(link-&gt;dhcp_lease, link-&gt;lease_file);</td></tr>
-<tr><td class="num" id="LN2952">2952</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2953">2953</td><td class="line">                        <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN2954">2954</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2955">2955</td><td class="line">                fprintf(f,</td></tr>
-<tr><td class="num" id="LN2956">2956</td><td class="line">                        <span class='string_literal'>"DHCP_LEASE=%s\n"</span>,</td></tr>
-<tr><td class="num" id="LN2957">2957</td><td class="line">                        link-&gt;lease_file);</td></tr>
-<tr><td class="num" id="LN2958">2958</td><td class="line">        } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2959">2959</td><td class="line">                unlink(link-&gt;lease_file);</td></tr>
-<tr><td class="num" id="LN2960">2960</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2961">2961</td><td class="line">        <span class='keyword'>if</span> (link-&gt;ipv4ll) {</td></tr>
-<tr><td class="num" id="LN2962">2962</td><td class="line">                <span class='keyword'>struct</span> in_addr address;</td></tr>
-<tr><td class="num" id="LN2963">2963</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2964">2964</td><td class="line">                r = sd_ipv4ll_get_address(link-&gt;ipv4ll, &amp;address);</td></tr>
-<tr><td class="num" id="LN2965">2965</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN2966">2966</td><td class="line">                        fputs(<span class='string_literal'>"IPV4LL_ADDRESS="</span>, f);</td></tr>
-<tr><td class="num" id="LN2967">2967</td><td class="line">                        serialize_in_addrs(f, &amp;address, 1);</td></tr>
-<tr><td class="num" id="LN2968">2968</td><td class="line">                        fputc('\n', f);</td></tr>
-<tr><td class="num" id="LN2969">2969</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2970">2970</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2971">2971</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2972">2972</td><td class="line">        <span class='keyword'>if</span> (link-&gt;lldp) {</td></tr>
-<tr><td class="num" id="LN2973">2973</td><td class="line">                <span class='macro'>assert(link-&gt;network)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;network)),0))) log_assert_failed<br>("link-&gt;network", "src/network/networkd-link.c", 2973, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2974">2974</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2975">2975</td><td class="line">                r = sd_lldp_save(link-&gt;lldp, link-&gt;lldp_file);</td></tr>
-<tr><td class="num" id="LN2976">2976</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2977">2977</td><td class="line">                        <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN2978">2978</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2979">2979</td><td class="line">                fprintf(f,</td></tr>
-<tr><td class="num" id="LN2980">2980</td><td class="line">                        <span class='string_literal'>"LLDP_FILE=%s\n"</span>,</td></tr>
-<tr><td class="num" id="LN2981">2981</td><td class="line">                        link-&gt;lldp_file);</td></tr>
-<tr><td class="num" id="LN2982">2982</td><td class="line">        } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2983">2983</td><td class="line">                unlink(link-&gt;lldp_file);</td></tr>
-<tr><td class="num" id="LN2984">2984</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2985">2985</td><td class="line">        r = fflush_and_check(f);</td></tr>
-<tr><td class="num" id="LN2986">2986</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2987">2987</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN2988">2988</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2989">2989</td><td class="line">        <span class='keyword'>if</span> (rename(temp_path, link-&gt;state_file) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2990">2990</td><td class="line">                r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN2991">2991</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN2992">2992</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2938">2938</td><td class="line">        <span class='keyword'>if</span> (!hashmap_isempty(link-&gt;bound_by_links)) {</td></tr>
+<tr><td class="num" id="LN2939">2939</td><td class="line">                Link *carrier;</td></tr>
+<tr><td class="num" id="LN2940">2940</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> space = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2941">2941</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2942">2942</td><td class="line">                fputs(<span class='string_literal'>"CARRIER_BOUND_BY="</span>, f);</td></tr>
+<tr><td class="num" id="LN2943">2943</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(carrier, link-&gt;bound_by_links, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((link-&gt;bound_by_links<br>), &amp;(i), (void**)&amp;(carrier), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN2944">2944</td><td class="line">                        <span class='keyword'>if</span> (space)</td></tr>
+<tr><td class="num" id="LN2945">2945</td><td class="line">                                fputc(' ', f);</td></tr>
+<tr><td class="num" id="LN2946">2946</td><td class="line">                        fputs(carrier-&gt;ifname, f);</td></tr>
+<tr><td class="num" id="LN2947">2947</td><td class="line">                        space = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2948">2948</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2949">2949</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2950">2950</td><td class="line">                fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN2951">2951</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2952">2952</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2953">2953</td><td class="line">        <span class='keyword'>if</span> (link-&gt;dhcp_lease) {</td></tr>
+<tr><td class="num" id="LN2954">2954</td><td class="line">                <span class='keyword'>struct</span> in_addr address;</td></tr>
+<tr><td class="num" id="LN2955">2955</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *tz = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2956">2956</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2957">2957</td><td class="line">                <span class='macro'>assert(link-&gt;network)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;network)),0))) log_assert_failed<br>("link-&gt;network", "src/network/networkd-link.c", 2957, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2958">2958</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2959">2959</td><td class="line">                r = sd_dhcp_lease_get_timezone(link-&gt;dhcp_lease, &amp;tz);</td></tr>
+<tr><td class="num" id="LN2960">2960</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN2961">2961</td><td class="line">                        fprintf(f, <span class='string_literal'>"TIMEZONE=%s\n"</span>, tz);</td></tr>
+<tr><td class="num" id="LN2962">2962</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2963">2963</td><td class="line">                r = sd_dhcp_lease_get_address(link-&gt;dhcp_lease, &amp;address);</td></tr>
+<tr><td class="num" id="LN2964">2964</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN2965">2965</td><td class="line">                        fputs(<span class='string_literal'>"DHCP4_ADDRESS="</span>, f);</td></tr>
+<tr><td class="num" id="LN2966">2966</td><td class="line">                        serialize_in_addrs(f, &amp;address, 1);</td></tr>
+<tr><td class="num" id="LN2967">2967</td><td class="line">                        fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN2968">2968</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2969">2969</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2970">2970</td><td class="line">                r = dhcp_lease_save(link-&gt;dhcp_lease, link-&gt;lease_file);</td></tr>
+<tr><td class="num" id="LN2971">2971</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2972">2972</td><td class="line">                        <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN2973">2973</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2974">2974</td><td class="line">                fprintf(f,</td></tr>
+<tr><td class="num" id="LN2975">2975</td><td class="line">                        <span class='string_literal'>"DHCP_LEASE=%s\n"</span>,</td></tr>
+<tr><td class="num" id="LN2976">2976</td><td class="line">                        link-&gt;lease_file);</td></tr>
+<tr><td class="num" id="LN2977">2977</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN2978">2978</td><td class="line">                unlink(link-&gt;lease_file);</td></tr>
+<tr><td class="num" id="LN2979">2979</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2980">2980</td><td class="line">        <span class='keyword'>if</span> (link-&gt;ipv4ll) {</td></tr>
+<tr><td class="num" id="LN2981">2981</td><td class="line">                <span class='keyword'>struct</span> in_addr address;</td></tr>
+<tr><td class="num" id="LN2982">2982</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2983">2983</td><td class="line">                r = sd_ipv4ll_get_address(link-&gt;ipv4ll, &amp;address);</td></tr>
+<tr><td class="num" id="LN2984">2984</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN2985">2985</td><td class="line">                        fputs(<span class='string_literal'>"IPV4LL_ADDRESS="</span>, f);</td></tr>
+<tr><td class="num" id="LN2986">2986</td><td class="line">                        serialize_in_addrs(f, &amp;address, 1);</td></tr>
+<tr><td class="num" id="LN2987">2987</td><td class="line">                        fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN2988">2988</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2989">2989</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2990">2990</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2991">2991</td><td class="line">        <span class='keyword'>if</span> (link-&gt;lldp) {</td></tr>
+<tr><td class="num" id="LN2992">2992</td><td class="line">                <span class='macro'>assert(link-&gt;network)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;network)),0))) log_assert_failed<br>("link-&gt;network", "src/network/networkd-link.c", 2992, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN2993">2993</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2994">2994</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN2995">2995</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2996">2996</td><td class="line">fail:</td></tr>
-<tr><td class="num" id="LN2997">2997</td><td class="line">        (<span class='keyword'>void</span>) unlink(link-&gt;state_file);</td></tr>
-<tr><td class="num" id="LN2998">2998</td><td class="line">        <span class='keyword'>if</span> (temp_path)</td></tr>
-<tr><td class="num" id="LN2999">2999</td><td class="line">                (<span class='keyword'>void</span>) unlink(temp_path);</td></tr>
-<tr><td class="num" id="LN3000">3000</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3001">3001</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>log_link_error_errno(link, r, <span class='string_literal'>"Failed to save link data to %s: %m"</span>, link-&gt;state_file)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(3, r, "src/network/networkd-link.c"<br>, 3001, __func__, "INTERFACE=", _l-&gt;ifname, "Failed to save link data to %s: %m"<br>, link-&gt;state_file) : log_internal(3, r, "src/network/networkd-link.c"<br>, 3001, __func__, "Failed to save link data to %s: %m", link-&gt;<br>state_file); })</span></span>;</td></tr>
-<tr><td class="num" id="LN3002">3002</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN2994">2994</td><td class="line">                r = sd_lldp_save(link-&gt;lldp, link-&gt;lldp_file);</td></tr>
+<tr><td class="num" id="LN2995">2995</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2996">2996</td><td class="line">                        <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN2997">2997</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2998">2998</td><td class="line">                fprintf(f,</td></tr>
+<tr><td class="num" id="LN2999">2999</td><td class="line">                        <span class='string_literal'>"LLDP_FILE=%s\n"</span>,</td></tr>
+<tr><td class="num" id="LN3000">3000</td><td class="line">                        link-&gt;lldp_file);</td></tr>
+<tr><td class="num" id="LN3001">3001</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN3002">3002</td><td class="line">                unlink(link-&gt;lldp_file);</td></tr>
 <tr><td class="num" id="LN3003">3003</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3004">3004</td><td class="line"><span class='comment'>/* The serialized state in /run is no longer up-to-date. */</span></td></tr>
-<tr><td class="num" id="LN3005">3005</td><td class="line"><span class='keyword'>void</span> link_dirty(Link *link) {</td></tr>
-<tr><td class="num" id="LN3006">3006</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN3004">3004</td><td class="line">        r = fflush_and_check(f);</td></tr>
+<tr><td class="num" id="LN3005">3005</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN3006">3006</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
 <tr><td class="num" id="LN3007">3007</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3008">3008</td><td class="line">        <span class='macro'>assert(link)<span class='expansion'>do { if ((__builtin_expect(!!(!(link)),0))) log_assert_failed<br>("link", "src/network/networkd-link.c", 3008, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN3009">3009</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3010">3010</td><td class="line">        r = <span class='macro'>set_ensure_allocated(&amp;link-&gt;manager-&gt;dirty_links, NULL)<span class='expansion'>internal_set_ensure_allocated(&amp;link-&gt;manager-&gt;dirty_links<br>, ((void*)0) )</span></span>;</td></tr>
-<tr><td class="num" id="LN3011">3011</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN3012">3012</td><td class="line">                <span class='comment'>/* allocation errors are ignored */</span></td></tr>
-<tr><td class="num" id="LN3013">3013</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN3008">3008</td><td class="line">        <span class='keyword'>if</span> (rename(temp_path, link-&gt;state_file) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN3009">3009</td><td class="line">                r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN3010">3010</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN3011">3011</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN3012">3012</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3013">3013</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN3014">3014</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3015">3015</td><td class="line">        r = set_put(link-&gt;manager-&gt;dirty_links, link);</td></tr>
-<tr><td class="num" id="LN3016">3016</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN3017">3017</td><td class="line">                <span class='comment'>/* allocation errors are ignored */</span></td></tr>
-<tr><td class="num" id="LN3018">3018</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN3015">3015</td><td class="line">fail:</td></tr>
+<tr><td class="num" id="LN3016">3016</td><td class="line">        (<span class='keyword'>void</span>) unlink(link-&gt;state_file);</td></tr>
+<tr><td class="num" id="LN3017">3017</td><td class="line">        <span class='keyword'>if</span> (temp_path)</td></tr>
+<tr><td class="num" id="LN3018">3018</td><td class="line">                (<span class='keyword'>void</span>) unlink(temp_path);</td></tr>
 <tr><td class="num" id="LN3019">3019</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3020">3020</td><td class="line">        link_ref(link);</td></tr>
+<tr><td class="num" id="LN3020">3020</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>log_link_error_errno(link, r, <span class='string_literal'>"Failed to save link data to %s: %m"</span>, link-&gt;state_file)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(3, r, "src/network/networkd-link.c"<br>, 3020, __func__, "INTERFACE=", _l-&gt;ifname, "Failed to save link data to %s: %m"<br>, link-&gt;state_file) : log_internal(3, r, "src/network/networkd-link.c"<br>, 3020, __func__, "Failed to save link data to %s: %m", link-&gt;<br>state_file); })</span></span>;</td></tr>
 <tr><td class="num" id="LN3021">3021</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN3022">3022</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3023">3023</td><td class="line"><span class='comment'>/* The serialized state in /run is up-to-date */</span></td></tr>
-<tr><td class="num" id="LN3024">3024</td><td class="line"><span class='keyword'>void</span> link_clean(Link *link) {</td></tr>
-<tr><td class="num" id="LN3025">3025</td><td class="line">        <span class='macro'>assert(link)<span class='expansion'>do { if ((__builtin_expect(!!(!(link)),0))) log_assert_failed<br>("link", "src/network/networkd-link.c", 3025, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN3026">3026</td><td class="line">        <span class='macro'>assert(link-&gt;manager)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;manager)),0))) log_assert_failed<br>("link-&gt;manager", "src/network/networkd-link.c", 3026, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN3027">3027</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3028">3028</td><td class="line">        set_remove(link-&gt;manager-&gt;dirty_links, link);</td></tr>
-<tr><td class="num" id="LN3029">3029</td><td class="line">        link_unref(link);</td></tr>
-<tr><td class="num" id="LN3030">3030</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN3031">3031</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3032">3032</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> link_state_table[_LINK_STATE_MAX] = {</td></tr>
-<tr><td class="num" id="LN3033">3033</td><td class="line">        [LINK_STATE_PENDING] = <span class='string_literal'>"pending"</span>,</td></tr>
-<tr><td class="num" id="LN3034">3034</td><td class="line">        [LINK_STATE_ENSLAVING] = <span class='string_literal'>"configuring"</span>,</td></tr>
-<tr><td class="num" id="LN3035">3035</td><td class="line">        [LINK_STATE_SETTING_ADDRESSES] = <span class='string_literal'>"configuring"</span>,</td></tr>
-<tr><td class="num" id="LN3036">3036</td><td class="line">        [LINK_STATE_SETTING_ROUTES] = <span class='string_literal'>"configuring"</span>,</td></tr>
-<tr><td class="num" id="LN3037">3037</td><td class="line">        [LINK_STATE_CONFIGURED] = <span class='string_literal'>"configured"</span>,</td></tr>
-<tr><td class="num" id="LN3038">3038</td><td class="line">        [LINK_STATE_UNMANAGED] = <span class='string_literal'>"unmanaged"</span>,</td></tr>
-<tr><td class="num" id="LN3039">3039</td><td class="line">        [LINK_STATE_FAILED] = <span class='string_literal'>"failed"</span>,</td></tr>
-<tr><td class="num" id="LN3040">3040</td><td class="line">        [LINK_STATE_LINGER] = <span class='string_literal'>"linger"</span>,</td></tr>
-<tr><td class="num" id="LN3041">3041</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN3042">3042</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3043">3043</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(link_state, LinkState)<span class='expansion'>const char *link_state_to_string(LinkState i) { if (i &lt; 0 ||<br> i &gt;= (LinkState) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(link_state_table), typeof(&amp;*(link_state_table))),<br> sizeof(link_state_table)/sizeof((link_state_table)[0]), (void<br>)0))) return ((void*)0); return link_state_table[i]; } LinkState<br> link_state_from_string(const char *s) { return (LinkState) string_table_lookup<br>(link_state_table, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(link_state_table), typeof(&amp;*(link_state_table))),<br> sizeof(link_state_table)/sizeof((link_state_table)[0]), (void<br>)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN3044">3044</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3045">3045</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> link_operstate_table[_LINK_OPERSTATE_MAX] = {</td></tr>
-<tr><td class="num" id="LN3046">3046</td><td class="line">        [LINK_OPERSTATE_OFF] = <span class='string_literal'>"off"</span>,</td></tr>
-<tr><td class="num" id="LN3047">3047</td><td class="line">        [LINK_OPERSTATE_NO_CARRIER] = <span class='string_literal'>"no-carrier"</span>,</td></tr>
-<tr><td class="num" id="LN3048">3048</td><td class="line">        [LINK_OPERSTATE_DORMANT] = <span class='string_literal'>"dormant"</span>,</td></tr>
-<tr><td class="num" id="LN3049">3049</td><td class="line">        [LINK_OPERSTATE_CARRIER] = <span class='string_literal'>"carrier"</span>,</td></tr>
-<tr><td class="num" id="LN3050">3050</td><td class="line">        [LINK_OPERSTATE_DEGRADED] = <span class='string_literal'>"degraded"</span>,</td></tr>
-<tr><td class="num" id="LN3051">3051</td><td class="line">        [LINK_OPERSTATE_ROUTABLE] = <span class='string_literal'>"routable"</span>,</td></tr>
-<tr><td class="num" id="LN3052">3052</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN3053">3053</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3054">3054</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(link_operstate, LinkOperationalState)<span class='expansion'>const char *link_operstate_to_string(LinkOperationalState i) {<br> if (i &lt; 0 || i &gt;= (LinkOperationalState) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(link_operstate_table), typeof(&amp;*(link_operstate_table)))<br>, sizeof(link_operstate_table)/sizeof((link_operstate_table)[<br>0]), (void)0))) return ((void*)0); return link_operstate_table<br>[i]; } LinkOperationalState link_operstate_from_string(const char<br> *s) { return (LinkOperationalState) string_table_lookup(link_operstate_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(link_operstate_table), typeof(&amp;*(link_operstate_table<br>))), sizeof(link_operstate_table)/sizeof((link_operstate_table<br>)[0]), (void)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN3023">3023</td><td class="line"><span class='comment'>/* The serialized state in /run is no longer up-to-date. */</span></td></tr>
+<tr><td class="num" id="LN3024">3024</td><td class="line"><span class='keyword'>void</span> link_dirty(Link *link) {</td></tr>
+<tr><td class="num" id="LN3025">3025</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN3026">3026</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3027">3027</td><td class="line">        <span class='macro'>assert(link)<span class='expansion'>do { if ((__builtin_expect(!!(!(link)),0))) log_assert_failed<br>("link", "src/network/networkd-link.c", 3027, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN3028">3028</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3029">3029</td><td class="line">        r = <span class='macro'>set_ensure_allocated(&amp;link-&gt;manager-&gt;dirty_links, NULL)<span class='expansion'>internal_set_ensure_allocated(&amp;link-&gt;manager-&gt;dirty_links<br>, ((void*)0) )</span></span>;</td></tr>
+<tr><td class="num" id="LN3030">3030</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN3031">3031</td><td class="line">                <span class='comment'>/* allocation errors are ignored */</span></td></tr>
+<tr><td class="num" id="LN3032">3032</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN3033">3033</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3034">3034</td><td class="line">        r = set_put(link-&gt;manager-&gt;dirty_links, link);</td></tr>
+<tr><td class="num" id="LN3035">3035</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN3036">3036</td><td class="line">                <span class='comment'>/* allocation errors are ignored */</span></td></tr>
+<tr><td class="num" id="LN3037">3037</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN3038">3038</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3039">3039</td><td class="line">        link_ref(link);</td></tr>
+<tr><td class="num" id="LN3040">3040</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN3041">3041</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3042">3042</td><td class="line"><span class='comment'>/* The serialized state in /run is up-to-date */</span></td></tr>
+<tr><td class="num" id="LN3043">3043</td><td class="line"><span class='keyword'>void</span> link_clean(Link *link) {</td></tr>
+<tr><td class="num" id="LN3044">3044</td><td class="line">        <span class='macro'>assert(link)<span class='expansion'>do { if ((__builtin_expect(!!(!(link)),0))) log_assert_failed<br>("link", "src/network/networkd-link.c", 3044, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN3045">3045</td><td class="line">        <span class='macro'>assert(link-&gt;manager)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;manager)),0))) log_assert_failed<br>("link-&gt;manager", "src/network/networkd-link.c", 3045, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN3046">3046</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3047">3047</td><td class="line">        set_remove(link-&gt;manager-&gt;dirty_links, link);</td></tr>
+<tr><td class="num" id="LN3048">3048</td><td class="line">        link_unref(link);</td></tr>
+<tr><td class="num" id="LN3049">3049</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN3050">3050</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3051">3051</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> link_state_table[_LINK_STATE_MAX] = {</td></tr>
+<tr><td class="num" id="LN3052">3052</td><td class="line">        [LINK_STATE_PENDING] = <span class='string_literal'>"pending"</span>,</td></tr>
+<tr><td class="num" id="LN3053">3053</td><td class="line">        [LINK_STATE_ENSLAVING] = <span class='string_literal'>"configuring"</span>,</td></tr>
+<tr><td class="num" id="LN3054">3054</td><td class="line">        [LINK_STATE_SETTING_ADDRESSES] = <span class='string_literal'>"configuring"</span>,</td></tr>
+<tr><td class="num" id="LN3055">3055</td><td class="line">        [LINK_STATE_SETTING_ROUTES] = <span class='string_literal'>"configuring"</span>,</td></tr>
+<tr><td class="num" id="LN3056">3056</td><td class="line">        [LINK_STATE_CONFIGURED] = <span class='string_literal'>"configured"</span>,</td></tr>
+<tr><td class="num" id="LN3057">3057</td><td class="line">        [LINK_STATE_UNMANAGED] = <span class='string_literal'>"unmanaged"</span>,</td></tr>
+<tr><td class="num" id="LN3058">3058</td><td class="line">        [LINK_STATE_FAILED] = <span class='string_literal'>"failed"</span>,</td></tr>
+<tr><td class="num" id="LN3059">3059</td><td class="line">        [LINK_STATE_LINGER] = <span class='string_literal'>"linger"</span>,</td></tr>
+<tr><td class="num" id="LN3060">3060</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN3061">3061</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3062">3062</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(link_state, LinkState)<span class='expansion'>const char *link_state_to_string(LinkState i) { if (i &lt; 0 ||<br> i &gt;= (LinkState) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(link_state_table), typeof(&amp;*(link_state_table))),<br> sizeof(link_state_table)/sizeof((link_state_table)[0]), (void<br>)0))) return ((void*)0); return link_state_table[i]; } LinkState<br> link_state_from_string(const char *s) { return (LinkState) string_table_lookup<br>(link_state_table, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(link_state_table), typeof(&amp;*(link_state_table))),<br> sizeof(link_state_table)/sizeof((link_state_table)[0]), (void<br>)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN3063">3063</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3064">3064</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> link_operstate_table[_LINK_OPERSTATE_MAX] = {</td></tr>
+<tr><td class="num" id="LN3065">3065</td><td class="line">        [LINK_OPERSTATE_OFF] = <span class='string_literal'>"off"</span>,</td></tr>
+<tr><td class="num" id="LN3066">3066</td><td class="line">        [LINK_OPERSTATE_NO_CARRIER] = <span class='string_literal'>"no-carrier"</span>,</td></tr>
+<tr><td class="num" id="LN3067">3067</td><td class="line">        [LINK_OPERSTATE_DORMANT] = <span class='string_literal'>"dormant"</span>,</td></tr>
+<tr><td class="num" id="LN3068">3068</td><td class="line">        [LINK_OPERSTATE_CARRIER] = <span class='string_literal'>"carrier"</span>,</td></tr>
+<tr><td class="num" id="LN3069">3069</td><td class="line">        [LINK_OPERSTATE_DEGRADED] = <span class='string_literal'>"degraded"</span>,</td></tr>
+<tr><td class="num" id="LN3070">3070</td><td class="line">        [LINK_OPERSTATE_ROUTABLE] = <span class='string_literal'>"routable"</span>,</td></tr>
+<tr><td class="num" id="LN3071">3071</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN3072">3072</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3073">3073</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(link_operstate, LinkOperationalState)<span class='expansion'>const char *link_operstate_to_string(LinkOperationalState i) {<br> if (i &lt; 0 || i &gt;= (LinkOperationalState) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(link_operstate_table), typeof(&amp;*(link_operstate_table)))<br>, sizeof(link_operstate_table)/sizeof((link_operstate_table)[<br>0]), (void)0))) return ((void*)0); return link_operstate_table<br>[i]; } LinkOperationalState link_operstate_from_string(const char<br> *s) { return (LinkOperationalState) string_table_lookup(link_operstate_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(link_operstate_table), typeof(&amp;*(link_operstate_table<br>))), sizeof(link_operstate_table)/sizeof((link_operstate_table<br>)[0]), (void)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
 </table></body></html>

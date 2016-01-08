@@ -1,0 +1,791 @@
+<!doctype html>
+<html>
+<head>
+<title>src/resolve/resolved-dns-trust-anchor.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'old_answer' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /home/runner/systemd/src/resolve/resolved-dns-trust-anchor.c -->
+
+<!-- FILENAME resolved-dns-trust-anchor.c -->
+
+<!-- FUNCTIONNAME dns_trust_anchor_load_positive -->
+
+<!-- BUGLINE 353 -->
+
+<!-- BUGCOLUMN 9 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/resolve/resolved-dns-trust-anchor.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 353, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'old_answer' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*-*- Mode: C; c-basic-offset: 8; indent-tabs-mode: nil -*-*/</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>Copyright 2015 Lennart Poettering</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line"><span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='directive'>#include &lt;sd-messages.h&gt;</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "alloc-util.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "conf-files.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "def.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include "dns-domain.h"</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#include "fd-util.h"</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='directive'>#include "fileio.h"</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='directive'>#include "hexdecoct.h"</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='directive'>#include "parse-util.h"</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='directive'>#include "resolved-dns-trust-anchor.h"</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"><span class='directive'>#include "resolved-dns-dnssec.h"</span></td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='directive'>#include "set.h"</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"><span class='directive'>#include "strv.h"</span></td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> trust_anchor_dirs[] = <span class='macro'>CONF_PATHS_NULSTR(<span class='string_literal'>"dnssec-trust-anchors.d"</span>)<span class='expansion'>"/etc/" "dnssec-trust-anchors.d" "\0" "/run/" "dnssec-trust-anchors.d"<br> "\0" "/usr/local/lib/" "dnssec-trust-anchors.d" "\0" "/usr/lib/"<br> "dnssec-trust-anchors.d" "\0"</span></span>;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"><span class='comment'>/* The DS RR from https://data.iana.org/root-anchors/root-anchors.xml, retrieved December 2015 */</span></td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> uint8_t root_digest[] =</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">        { 0x49, 0xAA, 0xC1, 0x1D, 0x7B, 0x6F, 0x64, 0x46, 0x70, 0x2E, 0x54, 0xA1, 0x60, 0x73, 0x71, 0x60,</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">          0x7A, 0x1A, 0x41, 0x85, 0x52, 0x00, 0xFD, 0x2C, 0xE1, 0xCD, 0xDE, 0x32, 0xF2, 0x4E, 0x8F, 0xB5 };</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line"><span class='keyword'>static</span> <span class='macro'>bool<span class='expansion'>_Bool</span></span> dns_trust_anchor_knows_domain_positive(DnsTrustAnchor *d, <span class='keyword'>const</span> <span class='keyword'>char</span> *name) {</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 46, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">        <span class='comment'>/* Returns true if there's an entry for the specified domain</span></td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">         <span class='comment'>* name in our trust anchor */</span></td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">        <span class='keyword'>return</span></td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">                hashmap_contains(d-&gt;positive_by_key, &amp;<span class='macro'>DNS_RESOURCE_KEY_CONST(DNS_CLASS_IN, DNS_TYPE_DNSKEY, name)<span class='expansion'>((DnsResourceKey) { .n_ref = (unsigned) -1, .class = DNS_CLASS_IN<br>, .type = DNS_TYPE_DNSKEY, ._name = (char*) name, })</span></span>) ||</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">                hashmap_contains(d-&gt;positive_by_key, &amp;<span class='macro'>DNS_RESOURCE_KEY_CONST(DNS_CLASS_IN, DNS_TYPE_DS, name)<span class='expansion'>((DnsResourceKey) { .n_ref = (unsigned) -1, .class = DNS_CLASS_IN<br>, .type = DNS_TYPE_DS, ._name = (char*) name, })</span></span>);</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_trust_anchor_add_builtin_positive(DnsTrustAnchor *d) {</td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">        <span class='macro'>_cleanup_(dns_resource_record_unrefp)<span class='expansion'>__attribute__((cleanup(dns_resource_record_unrefp)))</span></span> DnsResourceRecord *rr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">        <span class='macro'>_cleanup_(dns_answer_unrefp)<span class='expansion'>__attribute__((cleanup(dns_answer_unrefp)))</span></span> DnsAnswer *answer = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 61, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">        r = <span class='macro'>hashmap_ensure_allocated(&amp;d-&gt;positive_by_key, &amp;dns_resource_key_hash_ops)<span class='expansion'>internal_hashmap_ensure_allocated(&amp;d-&gt;positive_by_key,<br> &amp;dns_resource_key_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">        <span class='comment'>/* Only add the built-in trust anchor if there's neither a DS</span></td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">         <span class='comment'>* nor a DNSKEY defined for the root domain. That way users</span></td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">         <span class='comment'>* have an easy way to override the root domain DS/DNSKEY</span></td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">         <span class='comment'>* data. */</span></td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">        <span class='keyword'>if</span> (dns_trust_anchor_knows_domain_positive(d, <span class='string_literal'>"."</span>))</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">        <span class='comment'>/* Add the RR from https://data.iana.org/root-anchors/root-anchors.xml */</span></td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">        rr = dns_resource_record_new_full(DNS_CLASS_IN, DNS_TYPE_DS, <span class='string_literal'>""</span>);</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">        <span class='keyword'>if</span> (!rr)</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">        rr-&gt;ds.key_tag = 19036;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">        rr-&gt;ds.algorithm = DNSSEC_ALGORITHM_RSASHA256;</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">        rr-&gt;ds.digest_type = DNSSEC_DIGEST_SHA256;</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">        rr-&gt;ds.digest_size = <span class='keyword'>sizeof</span>(root_digest);</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">        rr-&gt;ds.digest = memdup(root_digest, rr-&gt;ds.digest_size);</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">        <span class='keyword'>if</span> (!rr-&gt;ds.digest)</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">                <span class='keyword'>return</span>  -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">        answer = dns_answer_new(1);</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">        <span class='keyword'>if</span> (!answer)</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">        r = dns_answer_add(answer, rr, 0, DNS_ANSWER_AUTHENTICATED);</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">        r = hashmap_put(d-&gt;positive_by_key, rr-&gt;key, answer);</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">        answer = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_trust_anchor_add_builtin_negative(DnsTrustAnchor *d) {</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> private_domains[] =</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">                <span class='comment'>/* RFC 6761 says that .test is a special domain for</span></td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">                 <span class='comment'>* testing and not to be installed in the root zone */</span></td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">                <span class='string_literal'>"test\0"</span></td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">                <span class='comment'>/* RFC 6761 says that these reverse IP lookup ranges</span></td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">                 <span class='comment'>* are for private addresses, and hence should not</span></td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">                 <span class='comment'>* show up in the root zone */</span></td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">                <span class='string_literal'>"10.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">                <span class='string_literal'>"16.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">                <span class='string_literal'>"17.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">                <span class='string_literal'>"18.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">                <span class='string_literal'>"19.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">                <span class='string_literal'>"20.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">                <span class='string_literal'>"21.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">                <span class='string_literal'>"22.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">                <span class='string_literal'>"23.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">                <span class='string_literal'>"24.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">                <span class='string_literal'>"25.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">                <span class='string_literal'>"26.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">                <span class='string_literal'>"27.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">                <span class='string_literal'>"28.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">                <span class='string_literal'>"29.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">                <span class='string_literal'>"30.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">                <span class='string_literal'>"31.172.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">                <span class='string_literal'>"168.192.in-addr.arpa\0"</span></td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">                <span class='comment'>/* RFC 6762 reserves the .local domain for Multicast</span></td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">                 <span class='comment'>* DNS, it hence cannot appear in the root zone. (Note</span></td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">                 <span class='comment'>* that we by default do not route .local traffic to</span></td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">                 <span class='comment'>* DNS anyway, except when a configured search domain</span></td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">                 <span class='comment'>* suggests so.) */</span></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">                <span class='string_literal'>"local\0"</span></td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">                <span class='comment'>/* These two are well known, popular private zone</span></td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">                 <span class='comment'>* TLDs, that are blocked from delegation, according</span></td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">                 <span class='comment'>* to:</span></td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">                 <span class='comment'>* http://icannwiki.com/Name_Collision#NGPC_Resolution</span></td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">                 <span class='comment'>*</span></td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">                 <span class='comment'>* There's also ongoing work on making this official</span></td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">                 <span class='comment'>* in an RRC:</span></td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">                 <span class='comment'>* https://www.ietf.org/archive/id/draft-chapin-additional-reserved-tlds-02.txt */</span></td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">                <span class='string_literal'>"home\0"</span></td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">                <span class='string_literal'>"corp\0"</span></td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">                <span class='comment'>/* The following four TLDs are suggested for private</span></td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">                 <span class='comment'>* zones in RFC 6762, Appendix G, and are hence very</span></td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">                 <span class='comment'>* unlikely to be made official TLDs any day soon */</span></td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">                <span class='string_literal'>"lan\0"</span></td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">                <span class='string_literal'>"intranet\0"</span></td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">                <span class='string_literal'>"internal\0"</span></td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">                <span class='string_literal'>"private\0"</span>;</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *name;</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 161, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">        <span class='comment'>/* Only add the built-in trust anchor if there's no negative</span></td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">         <span class='comment'>* trust anchor defined at all. This enables easy overriding</span></td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">         <span class='comment'>* of negative trust anchors. */</span></td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">        <span class='keyword'>if</span> (set_size(d-&gt;negative_by_name) &gt; 0)</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">        r = <span class='macro'>set_ensure_allocated(&amp;d-&gt;negative_by_name, &amp;dns_name_hash_ops)<span class='expansion'>internal_set_ensure_allocated(&amp;d-&gt;negative_by_name, &amp;<br>dns_name_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">        <span class='comment'>/* We add a couple of domains as default negative trust</span></td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">         <span class='comment'>* anchors, where it's very unlikely they will be installed in</span></td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">         <span class='comment'>* the root zone. If they exist they must be private, and thus</span></td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">         <span class='comment'>* unsigned. */</span></td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">        <span class='macro'>NULSTR_FOREACH(name, private_domains)<span class='expansion'>for ((name) = (private_domains); (name) &amp;&amp; *(name); (<br>name) = strchr((name), 0)+1)</span></span> {</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">                <span class='keyword'>if</span> (dns_trust_anchor_knows_domain_positive(d, name))</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">                r = set_put_strdup(d-&gt;negative_by_name, name);</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_trust_anchor_load_positive(DnsTrustAnchor *d, <span class='keyword'>const</span> <span class='keyword'>char</span> *path, <span class='keyword'>unsigned</span> line, <span class='keyword'>const</span> <span class='keyword'>char</span> *s) {</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">        <span class='macro'>_cleanup_(dns_resource_record_unrefp)<span class='expansion'>__attribute__((cleanup(dns_resource_record_unrefp)))</span></span> DnsResourceRecord *rr = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *domain = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *class = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *type = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">        <span class='macro'>_cleanup_(dns_answer_unrefp)<span class='expansion'>__attribute__((cleanup(dns_answer_unrefp)))</span></span> DnsAnswer *answer = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">        DnsAnswer *old_answer = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p = s;</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 200, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">        <span class='macro'>assert(line)<span class='expansion'>do { if ((__builtin_expect(!!(!(line)),0))) log_assert_failed<br>("line", "src/resolve/resolved-dns-trust-anchor.c", 201, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">        r = extract_first_word(&amp;p, &amp;domain, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, EXTRACT_QUOTES);</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Unable to parse domain in line %s:%u: %m"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 205, __func__, "Unable to parse domain in line %s:%u: %m", path<br>, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">        <span class='keyword'>if</span> (!dns_name_is_valid(domain)) {</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Domain name %s is invalid, at line %s:%u, ignoring line."</span>, domain, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 208, __func__, "Domain name %s is invalid, at line %s:%u, ignoring line."<br>, domain, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">        r = extract_many_words(&amp;p, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 0, &amp;class, &amp;type, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Unable to parse class and type in line %s:%u: %m"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 214, __func__, "Unable to parse class and type in line %s:%u: %m"<br>, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">        <span class='keyword'>if</span> (r != 2) {</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Missing class or type in line %s:%u"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 216, __func__, "Missing class or type in line %s:%u", path,<br> line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>strcaseeq(class, <span class='string_literal'>"IN"</span>)<span class='expansion'>(strcasecmp((class),("IN")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"RR class %s is not supported, ignoring line %s:%u."</span>, class, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 221, __func__, "RR class %s is not supported, ignoring line %s:%u."<br>, class, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>strcaseeq(type, <span class='string_literal'>"DS"</span>)<span class='expansion'>(strcasecmp((type),("DS")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *key_tag = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *algorithm = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *digest_type = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *digest = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>void</span> *dd = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">                uint16_t kt;</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">                <span class='keyword'>int</span> a, dt;</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">                size_t l;</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">                r = extract_many_words(&amp;p, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 0, &amp;key_tag, &amp;algorithm, &amp;digest_type, &amp;digest, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">                        <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to parse DS parameters on line %s:%u: %m"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 234, __func__, "Failed to parse DS parameters on line %s:%u: %m"<br>, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">                <span class='keyword'>if</span> (r != 4) {</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"Missing DS parameters on line %s:%u"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 238, __func__, "Missing DS parameters on line %s:%u", path,<br> line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">                r = safe_atou16(key_tag, &amp;kt);</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to parse DS key tag %s on line %s:%u: %m"</span>, key_tag, path, line)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 244, __func__, "Failed to parse DS key tag %s on line %s:%u: %m"<br>, key_tag, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">                a = dnssec_algorithm_from_string(algorithm);</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">                <span class='keyword'>if</span> (a &lt; 0) {</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"Failed to parse DS algorithm %s on line %s:%u"</span>, algorithm, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 248, __func__, "Failed to parse DS algorithm %s on line %s:%u"<br>, algorithm, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">                dt = dnssec_digest_from_string(digest_type);</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">                <span class='keyword'>if</span> (dt &lt; 0) {</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"Failed to parse DS digest type %s on line %s:%u"</span>, digest_type, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 254, __func__, "Failed to parse DS digest type %s on line %s:%u"<br>, digest_type, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">                r = unhexmem(digest, strlen(digest), &amp;dd, &amp;l);</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"Failed to parse DS digest %s on line %s:%u"</span>, digest, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 260, __func__, "Failed to parse DS digest %s on line %s:%u"<br>, digest, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">                rr = dns_resource_record_new_full(DNS_CLASS_IN, DNS_TYPE_DS, domain);</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">                <span class='keyword'>if</span> (!rr)</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/resolve/resolved-dns-trust-anchor.c", 266<br>, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">                rr-&gt;ds.key_tag = kt;</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">                rr-&gt;ds.algorithm = a;</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">                rr-&gt;ds.digest_type = dt;</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">                rr-&gt;ds.digest_size = l;</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">                rr-&gt;ds.digest = dd;</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">                dd = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strcaseeq(type, <span class='string_literal'>"DNSKEY"</span>)<span class='expansion'>(strcasecmp((type),("DNSKEY")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *flags = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *protocol = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *algorithm = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *key = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>void</span> *k = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">                uint16_t f;</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">                size_t l;</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">                <span class='keyword'>int</span> a;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">                r = extract_many_words(&amp;p, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 0, &amp;flags, &amp;protocol, &amp;algorithm, &amp;key, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to parse DNSKEY parameters on line %s:%u: %m"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 284, __func__, "Failed to parse DNSKEY parameters on line %s:%u: %m"<br>, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">                <span class='keyword'>if</span> (r != 4) {</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"Missing DNSKEY parameters on line %s:%u"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 286, __func__, "Missing DNSKEY parameters on line %s:%u", path<br>, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>streq(protocol, <span class='string_literal'>"3"</span>)<span class='expansion'>(strcmp((protocol),("3")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"DNSKEY Protocol is not 3 on line %s:%u"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 291, __func__, "DNSKEY Protocol is not 3 on line %s:%u", path<br>, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">                r = safe_atou16(flags, &amp;f);</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to parse DNSKEY flags field %s on line %s:%u"</span>, flags, path, line)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 297, __func__, "Failed to parse DNSKEY flags field %s on line %s:%u"<br>, flags, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">                <span class='keyword'>if</span> ((f &amp; <span class='macro'>DNSKEY_FLAG_ZONE_KEY<span class='expansion'>(1 &lt;&lt; 8)</span></span>) == 0) {</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"DNSKEY lacks zone key bit set on line %s:%u"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 299, __func__, "DNSKEY lacks zone key bit set on line %s:%u"<br>, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">                <span class='keyword'>if</span> ((f &amp; <span class='macro'>DNSKEY_FLAG_REVOKE<span class='expansion'>(1 &lt;&lt; 7)</span></span>)) {</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"DNSKEY is already revoked on line %s:%u"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 303, __func__, "DNSKEY is already revoked on line %s:%u", path<br>, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">                a = dnssec_algorithm_from_string(algorithm);</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">                <span class='keyword'>if</span> (a &lt; 0) {</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">                        <span class='macro'>log_warning(<span class='string_literal'>"Failed to parse DNSKEY algorithm %s on line %s:%u"</span>, algorithm, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 309, __func__, "Failed to parse DNSKEY algorithm %s on line %s:%u"<br>, algorithm, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">                r = unbase64mem(key, strlen(key), &amp;k, &amp;l);</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to parse DNSKEY key data %s on line %s:%u"</span>, key, path, line)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 315, __func__, "Failed to parse DNSKEY key data %s on line %s:%u"<br>, key, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">                rr = dns_resource_record_new_full(DNS_CLASS_IN, DNS_TYPE_DNSKEY, domain);</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">                <span class='keyword'>if</span> (!rr)</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/resolve/resolved-dns-trust-anchor.c", 319<br>, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">                rr-&gt;dnskey.flags = f;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">                rr-&gt;dnskey.protocol = 3;</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">                rr-&gt;dnskey.algorithm = a;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">                rr-&gt;dnskey.key_size = l;</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">                rr-&gt;dnskey.key = k;</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">                k = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"RR type %s is not supported, ignoring line %s:%u."</span>, type, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 329, __func__, "RR type %s is not supported, ignoring line %s:%u."<br>, type, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">        <span class='keyword'>if</span> (!isempty(p)) {</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Trailing garbage on line %s:%u, ignoring line."</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 334, __func__, "Trailing garbage on line %s:%u, ignoring line."<br>, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">        r = <span class='macro'>hashmap_ensure_allocated(&amp;d-&gt;positive_by_key, &amp;dns_resource_key_hash_ops)<span class='expansion'>internal_hashmap_ensure_allocated(&amp;d-&gt;positive_by_key,<br> &amp;dns_resource_key_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/resolve/resolved-dns-trust-anchor.c", 340<br>, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">        old_answer = hashmap_get(d-&gt;positive_by_key, rr-&gt;key);</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">        answer = dns_answer_ref(old_answer);</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">        r = dns_answer_add_extend(&amp;answer, rr, 0, DNS_ANSWER_AUTHENTICATED);</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add trust anchor RR: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 347, __func__, "Failed to add trust anchor RR: %m") : -abs(<br>_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">        r = hashmap_replace(d-&gt;positive_by_key, rr-&gt;key, answer);</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add answer to trust anchor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 351, __func__, "Failed to add answer to trust anchor: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">        old_answer = <span class="mrange">dns_answer_unref(old_answer)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'old_answer' is never read</div></td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">        answer = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_trust_anchor_load_negative(DnsTrustAnchor *d, <span class='keyword'>const</span> <span class='keyword'>char</span> *path, <span class='keyword'>unsigned</span> line, <span class='keyword'>const</span> <span class='keyword'>char</span> *s) {</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *domain = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p = s;</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 364, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">        <span class='macro'>assert(line)<span class='expansion'>do { if ((__builtin_expect(!!(!(line)),0))) log_assert_failed<br>("line", "src/resolve/resolved-dns-trust-anchor.c", 365, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">        r = extract_first_word(&amp;p, &amp;domain, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, EXTRACT_QUOTES);</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Unable to parse line %s:%u: %m"</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 369, __func__, "Unable to parse line %s:%u: %m", path, line<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        <span class='keyword'>if</span> (!dns_name_is_valid(domain)) {</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Domain name %s is invalid, at line %s:%u, ignoring line."</span>, domain, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 372, __func__, "Domain name %s is invalid, at line %s:%u, ignoring line."<br>, domain, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">        <span class='keyword'>if</span> (!isempty(p)) {</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Trailing garbage at line %s:%u, ignoring line."</span>, path, line)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 377, __func__, "Trailing garbage at line %s:%u, ignoring line."<br>, path, line) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">        r = <span class='macro'>set_ensure_allocated(&amp;d-&gt;negative_by_name, &amp;dns_name_hash_ops)<span class='expansion'>internal_set_ensure_allocated(&amp;d-&gt;negative_by_name, &amp;<br>dns_name_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/resolve/resolved-dns-trust-anchor.c", 383<br>, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">        r = set_put(d-&gt;negative_by_name, domain);</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/resolve/resolved-dns-trust-anchor.c", 387<br>, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">        <span class='keyword'>if</span> (r &gt; 0)</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">                domain = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_trust_anchor_load_files(</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">                DnsTrustAnchor *d,</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *suffix,</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">                <span class='keyword'>int</span> (*loader)(DnsTrustAnchor *d, <span class='keyword'>const</span> <span class='keyword'>char</span> *path, <span class='keyword'>unsigned</span> n, <span class='keyword'>const</span> <span class='keyword'>char</span> *line)) {</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **files = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">        <span class='keyword'>char</span> **f;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 403, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">        <span class='macro'>assert(suffix)<span class='expansion'>do { if ((__builtin_expect(!!(!(suffix)),0))) log_assert_failed<br>("suffix", "src/resolve/resolved-dns-trust-anchor.c", 404, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">        <span class='macro'>assert(loader)<span class='expansion'>do { if ((__builtin_expect(!!(!(loader)),0))) log_assert_failed<br>("loader", "src/resolve/resolved-dns-trust-anchor.c", 405, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">        r = conf_files_list_nulstr(&amp;files, suffix, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, trust_anchor_dirs);</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to enumerate %s trust anchor files: %m"</span>, suffix)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 409, __func__, "Failed to enumerate %s trust anchor files: %m"<br>, suffix) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">        <span class='macro'>STRV_FOREACH(f, files)<span class='expansion'>for ((f) = (files); (f) &amp;&amp; *(f); (f)++)</span></span> {</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">                <span class='macro'>_cleanup_fclose_<span class='expansion'>__attribute__((cleanup(fclosep)))</span></span> FILE *g = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">                <span class='keyword'>char</span> line[<span class='macro'>LINE_MAX<span class='expansion'>2048</span></span>];</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">                <span class='keyword'>unsigned</span> n = 0;</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                g = fopen(*f, <span class='string_literal'>"r"</span>);</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">                <span class='keyword'>if</span> (!g) {</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">                        <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to open %s: %m"</span>, *f)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 421, __func__, "Failed to open %s: %m", *f) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">                <span class='macro'>FOREACH_LINE(line, g, log_warning_errno(errno, <span class='string_literal'>"Failed to read %s, ignoring: %m"</span>, *f))<span class='expansion'>for (;;) if (!fgets(line, sizeof(line), g)) { if (ferror(g)) {<br> ({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 425, __func__, "Failed to read %s, ignoring: %m", *f) : -abs<br>(_e); }); } break; } else</span></span> {</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">                        <span class='keyword'>char</span> *l;</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">                        n++;</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">                        l = strstrip(line);</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">                        <span class='keyword'>if</span> (isempty(l))</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">                        <span class='keyword'>if</span> (*l == ';')</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">                        (<span class='keyword'>void</span>) loader(d, *f, n, l);</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> domain_name_cmp(<span class='keyword'>const</span> <span class='keyword'>void</span> *a, <span class='keyword'>const</span> <span class='keyword'>void</span> *b) {</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">        <span class='keyword'>char</span> **x = (<span class='keyword'>char</span>**) a, **y = (<span class='keyword'>char</span>**) b;</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">        <span class='keyword'>return</span> dns_name_compare_func(*x, *y);</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_trust_anchor_dump(DnsTrustAnchor *d) {</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">        DnsAnswer *a;</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 454, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">        <span class='keyword'>if</span> (hashmap_isempty(d-&gt;positive_by_key))</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"No positive trust anchors defined."</span>)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 457, __func__, "No positive trust anchors defined.") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Positive Trust Anchors:"</span>)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 459, __func__, "Positive Trust Anchors:") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(a, d-&gt;positive_by_key, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((d-&gt;positive_by_key<br>), &amp;(i), (void**)&amp;(a), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">                        DnsResourceRecord *rr;</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">                        <span class='macro'>DNS_ANSWER_FOREACH(rr, a)<span class='expansion'>for (unsigned __unique_prefix_i5 = ({ (rr) = ((a) &amp;&amp; (<br>a)-&gt;n_rrs &gt; 0) ? (a)-&gt;items[0].rr : ((void*)0); 0; }<br>); (a) &amp;&amp; (__unique_prefix_i5 &lt; (a)-&gt;n_rrs); __unique_prefix_i5<br>++, (rr) = (__unique_prefix_i5 &lt; (a)-&gt;n_rrs ? (a)-&gt;items<br>[__unique_prefix_i5].rr : ((void*)0)))</span></span></td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">                                <span class='macro'>log_info(<span class='string_literal'>"%s"</span>, dns_resource_record_to_string(rr))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 464, __func__, "%s", dns_resource_record_to_string(rr)) : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">        <span class='keyword'>if</span> (set_isempty(d-&gt;negative_by_name))</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"No negative trust anchors defined."</span>)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 469, __func__, "No negative trust anchors defined.") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *j = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">                l = set_get_strv(d-&gt;negative_by_name);</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">                <span class='keyword'>if</span> (!l)</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/resolve/resolved-dns-trust-anchor.c", 475<br>, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">                qsort_safe(l, set_size(d-&gt;negative_by_name), <span class='keyword'>sizeof</span>(<span class='keyword'>char</span>*), domain_name_cmp);</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">                j = strv_join(l, <span class='string_literal'>" "</span>);</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">                <span class='keyword'>if</span> (!j)</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/resolve/resolved-dns-trust-anchor.c", 481<br>, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Negative trust anchors: %s"</span>, j)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 483, __func__, "Negative trust anchors: %s", j) : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line"><span class='keyword'>int</span> dns_trust_anchor_load(DnsTrustAnchor *d) {</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 492, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        <span class='comment'>/* If loading things from disk fails, we don't consider this fatal */</span></td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">        (<span class='keyword'>void</span>) dns_trust_anchor_load_files(d, <span class='string_literal'>".positive"</span>, dns_trust_anchor_load_positive);</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">        (<span class='keyword'>void</span>) dns_trust_anchor_load_files(d, <span class='string_literal'>".negative"</span>, dns_trust_anchor_load_negative);</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">        <span class='comment'>/* However, if the built-in DS fails, then we have a problem. */</span></td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">        r = dns_trust_anchor_add_builtin_positive(d);</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add built-in positive trust anchor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 501, __func__, "Failed to add built-in positive trust anchor: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">        r = dns_trust_anchor_add_builtin_negative(d);</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add built-in negative trust anchor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-trust-anchor.c"<br>, 505, __func__, "Failed to add built-in negative trust anchor: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">        dns_trust_anchor_dump(d);</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line"><span class='keyword'>void</span> dns_trust_anchor_flush(DnsTrustAnchor *d) {</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">        DnsAnswer *a;</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 515, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">        <span class='keyword'>while</span> ((a = hashmap_steal_first(d-&gt;positive_by_key)))</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">                dns_answer_unref(a);</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">        d-&gt;positive_by_key = hashmap_free(d-&gt;positive_by_key);</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">        d-&gt;negative_by_name = set_free_free(d-&gt;negative_by_name);</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line"><span class='keyword'>int</span> dns_trust_anchor_lookup_positive(DnsTrustAnchor *d, <span class='keyword'>const</span> DnsResourceKey *key, DnsAnswer **ret) {</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">        DnsAnswer *a;</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 527, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">        <span class='macro'>assert(key)<span class='expansion'>do { if ((__builtin_expect(!!(!(key)),0))) log_assert_failed(<br>"key", "src/resolve/resolved-dns-trust-anchor.c", 528, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/resolve/resolved-dns-trust-anchor.c", 529, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">        <span class='comment'>/* We only serve DS and DNSKEY RRs. */</span></td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>IN_SET(key-&gt;type, DNS_TYPE_DS, DNS_TYPE_DNSKEY)<span class='expansion'>({ static const typeof(DNS_TYPE_DS) _array[] = { (DNS_TYPE_DS<br>), DNS_TYPE_DNSKEY }; const typeof(DNS_TYPE_DS) _x = (key-&gt;<br>type); unsigned _i; _Bool _found = 0; for (_i = 0; _i &lt; __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(_array), typeof(&amp;*(_array))), sizeof(_array)/sizeof((_array<br>)[0]), (void)0)); _i++) if (_array[_i] == _x) { _found = 1; break<br>; } _found; })</span></span>)</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">        a = hashmap_get(d-&gt;positive_by_key, key);</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">        <span class='keyword'>if</span> (!a)</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">        *ret = dns_answer_ref(a);</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line"><span class='keyword'>int</span> dns_trust_anchor_lookup_negative(DnsTrustAnchor *d, <span class='keyword'>const</span> <span class='keyword'>char</span> *name) {</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 544, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">        <span class='macro'>assert(name)<span class='expansion'>do { if ((__builtin_expect(!!(!(name)),0))) log_assert_failed<br>("name", "src/resolve/resolved-dns-trust-anchor.c", 545, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">        <span class='keyword'>return</span> set_contains(d-&gt;negative_by_name, name);</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_trust_anchor_remove_revoked(DnsTrustAnchor *d, DnsResourceRecord *rr) {</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">        <span class='macro'>_cleanup_(dns_answer_unrefp)<span class='expansion'>__attribute__((cleanup(dns_answer_unrefp)))</span></span> DnsAnswer *new_answer = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">        DnsAnswer *old_answer;</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">        old_answer = hashmap_get(d-&gt;positive_by_key, rr-&gt;key);</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">        <span class='keyword'>if</span> (!old_answer)</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">        new_answer = dns_answer_ref(old_answer);</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">        r = dns_answer_remove_by_rr(&amp;new_answer, rr);</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">        <span class='comment'>/* We found the key! Warn the user */</span></td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">        <span class='macro'>log_struct(LOG_WARNING,<span class='expansion'>log_struct_internal(4, 0, "src/resolve/resolved-dns-trust-anchor.c"<br>, 570, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[0], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[1], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[2], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[3], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[4], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[5], (((const sd_id128_t<br>) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85<br>, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[6<br>], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[7], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[8], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[9], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[10], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[11], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[12], (((const<br> sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1,<br> 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[13], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[14], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[15], "MESSAGE="<br> "DNSSEC Trust anchor %s has been revoked. Please update the trust anchor, or upgrade your operating system."<br>, strna(dns_resource_record_to_string(rr)), "TRUST_ANCHOR=%s"<br>, dns_resource_record_to_string(rr), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">                   <span class='macro'>LOG_MESSAGE_ID(SD_MESSAGE_DNSSEC_TRUST_ANCHOR_REVOKED),<span class='expansion'>log_struct_internal(4, 0, "src/resolve/resolved-dns-trust-anchor.c"<br>, 570, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[0], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[1], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[2], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[3], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[4], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[5], (((const sd_id128_t<br>) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85<br>, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[6<br>], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[7], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[8], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[9], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[10], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[11], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[12], (((const<br> sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1,<br> 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[13], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[14], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[15], "MESSAGE="<br> "DNSSEC Trust anchor %s has been revoked. Please update the trust anchor, or upgrade your operating system."<br>, strna(dns_resource_record_to_string(rr)), "TRUST_ANCHOR=%s"<br>, dns_resource_record_to_string(rr), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">                   <span class='macro'>LOG_MESSAGE(<span class='string_literal'>"DNSSEC Trust anchor %s has been revoked. Please update the trust anchor, or upgrade your operating system."</span>), strna(dns_resource_record_to_string(rr)),<span class='expansion'>log_struct_internal(4, 0, "src/resolve/resolved-dns-trust-anchor.c"<br>, 570, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[0], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[1], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[2], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[3], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[4], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[5], (((const sd_id128_t<br>) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85<br>, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[6<br>], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[7], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[8], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[9], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[10], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[11], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[12], (((const<br> sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1,<br> 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[13], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[14], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[15], "MESSAGE="<br> "DNSSEC Trust anchor %s has been revoked. Please update the trust anchor, or upgrade your operating system."<br>, strna(dns_resource_record_to_string(rr)), "TRUST_ANCHOR=%s"<br>, dns_resource_record_to_string(rr), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">                   <span class='string_literal'><span class='macro'>"TRUST_ANCHOR=%s"</span>, dns_resource_record_to_string(rr),<span class='expansion'>log_struct_internal(4, 0, "src/resolve/resolved-dns-trust-anchor.c"<br>, 570, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[0], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[1], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[2], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[3], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[4], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[5], (((const sd_id128_t<br>) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85<br>, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[6<br>], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[7], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[8], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[9], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[10], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[11], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[12], (((const<br> sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1,<br> 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[13], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[14], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[15], "MESSAGE="<br> "DNSSEC Trust anchor %s has been revoked. Please update the trust anchor, or upgrade your operating system."<br>, strna(dns_resource_record_to_string(rr)), "TRUST_ANCHOR=%s"<br>, dns_resource_record_to_string(rr), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">                   <span class='macro'>NULL)<span class='expansion'>log_struct_internal(4, 0, "src/resolve/resolved-dns-trust-anchor.c"<br>, 570, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[0], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[1], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[2], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[3], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[4], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[5], (((const sd_id128_t<br>) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85<br>, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[6<br>], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0<br>, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a,<br> 0x65 }})).bytes[7], (((const sd_id128_t) { .bytes = { 0x4d, 0x44<br>, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6,<br> 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[8], (((const sd_id128_t) {<br> .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91<br>, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[9], (((<br>const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1<br>, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[10], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[11], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[12], (((const<br> sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1,<br> 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }<br>})).bytes[13], (((const sd_id128_t) { .bytes = { 0x4d, 0x44, 0x08<br>, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84, 0xd1, 0xe6, 0x5d,<br> 0x7c, 0x8a, 0x65 }})).bytes[14], (((const sd_id128_t) { .bytes<br> = { 0x4d, 0x44, 0x08, 0xcf, 0xd0, 0xd1, 0x44, 0x85, 0x91, 0x84<br>, 0xd1, 0xe6, 0x5d, 0x7c, 0x8a, 0x65 }})).bytes[15], "MESSAGE="<br> "DNSSEC Trust anchor %s has been revoked. Please update the trust anchor, or upgrade your operating system."<br>, strna(dns_resource_record_to_string(rr)), "TRUST_ANCHOR=%s"<br>, dns_resource_record_to_string(rr), ((void*)0))</span></span>;</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">        <span class='keyword'>if</span> (dns_answer_size(new_answer) &lt;= 0) {</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">                <span class='macro'>assert_se(hashmap_remove(d-&gt;positive_by_key, rr-&gt;key) == old_answer)<span class='expansion'>do { if ((__builtin_expect(!!(!(hashmap_remove(d-&gt;positive_by_key<br>, rr-&gt;key) == old_answer)),0))) log_assert_failed("hashmap_remove(d-&gt;positive_by_key, rr-&gt;key) == old_answer"<br>, "src/resolve/resolved-dns-trust-anchor.c", 573, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">                dns_answer_unref(old_answer);</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">                <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">        r = hashmap_replace(d-&gt;positive_by_key, new_answer-&gt;items[0].rr-&gt;key, new_answer);</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">        new_answer = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">        dns_answer_unref(old_answer);</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dns_trust_anchor_check_revoked_one(DnsTrustAnchor *d, DnsResourceRecord *revoked_dnskey) {</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">        DnsAnswer *a;</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 591, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">        <span class='macro'>assert(revoked_dnskey)<span class='expansion'>do { if ((__builtin_expect(!!(!(revoked_dnskey)),0))) log_assert_failed<br>("revoked_dnskey", "src/resolve/resolved-dns-trust-anchor.c",<br> 592, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">        <span class='macro'>assert(revoked_dnskey-&gt;key-&gt;type == DNS_TYPE_DNSKEY)<span class='expansion'>do { if ((__builtin_expect(!!(!(revoked_dnskey-&gt;key-&gt;type<br> == DNS_TYPE_DNSKEY)),0))) log_assert_failed("revoked_dnskey-&gt;key-&gt;type == DNS_TYPE_DNSKEY"<br>, "src/resolve/resolved-dns-trust-anchor.c", 593, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">        <span class='macro'>assert(revoked_dnskey-&gt;dnskey.flags &amp; DNSKEY_FLAG_REVOKE)<span class='expansion'>do { if ((__builtin_expect(!!(!(revoked_dnskey-&gt;dnskey.flags<br> &amp; (1 &lt;&lt; 7))),0))) log_assert_failed("revoked_dnskey-&gt;dnskey.flags &amp; DNSKEY_FLAG_REVOKE"<br>, "src/resolve/resolved-dns-trust-anchor.c", 594, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">        a = hashmap_get(d-&gt;positive_by_key, revoked_dnskey-&gt;key);</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">        <span class='keyword'>if</span> (a) {</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">                DnsResourceRecord *anchor;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">                <span class='comment'>/* First, look for the precise DNSKEY in our trust anchor database */</span></td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">                <span class='macro'>DNS_ANSWER_FOREACH(anchor, a)<span class='expansion'>for (unsigned __unique_prefix_i6 = ({ (anchor) = ((a) &amp;&amp;<br> (a)-&gt;n_rrs &gt; 0) ? (a)-&gt;items[0].rr : ((void*)0); 0;<br> }); (a) &amp;&amp; (__unique_prefix_i6 &lt; (a)-&gt;n_rrs); __unique_prefix_i6<br>++, (anchor) = (__unique_prefix_i6 &lt; (a)-&gt;n_rrs ? (a)-&gt;<br>items[__unique_prefix_i6].rr : ((void*)0)))</span></span> {</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">                        <span class='keyword'>if</span> (anchor-&gt;dnskey.protocol != revoked_dnskey-&gt;dnskey.protocol)</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">                        <span class='keyword'>if</span> (anchor-&gt;dnskey.algorithm != revoked_dnskey-&gt;dnskey.algorithm)</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">                        <span class='keyword'>if</span> (anchor-&gt;dnskey.key_size != revoked_dnskey-&gt;dnskey.key_size)</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">                        <span class='keyword'>if</span> (((anchor-&gt;dnskey.flags ^ revoked_dnskey-&gt;dnskey.flags) | <span class='macro'>DNSKEY_FLAG_REVOKE<span class='expansion'>(1 &lt;&lt; 7)</span></span>) != <span class='macro'>DNSKEY_FLAG_REVOKE<span class='expansion'>(1 &lt;&lt; 7)</span></span>)</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">                        <span class='keyword'>if</span> (memcmp(anchor-&gt;dnskey.key, revoked_dnskey-&gt;dnskey.key, anchor-&gt;dnskey.key_size) != 0)</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">                        dns_trust_anchor_remove_revoked(d, anchor);</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        a = hashmap_get(d-&gt;positive_by_key, &amp;<span class='macro'>DNS_RESOURCE_KEY_CONST(revoked_dnskey-&gt;key-&gt;class, DNS_TYPE_DS, DNS_RESOURCE_KEY_NAME(revoked_dnskey-&gt;key))<span class='expansion'>((DnsResourceKey) { .n_ref = (unsigned) -1, .class = revoked_dnskey<br>-&gt;key-&gt;class, .type = DNS_TYPE_DS, ._name = (char*) DNS_RESOURCE_KEY_NAME<br>(revoked_dnskey-&gt;key), })</span></span>);</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">        <span class='keyword'>if</span> (a) {</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">                DnsResourceRecord *anchor;</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">                <span class='comment'>/* Second, look for DS RRs matching this DNSKEY in our trust anchor database */</span></td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">                <span class='macro'>DNS_ANSWER_FOREACH(anchor, a)<span class='expansion'>for (unsigned __unique_prefix_i7 = ({ (anchor) = ((a) &amp;&amp;<br> (a)-&gt;n_rrs &gt; 0) ? (a)-&gt;items[0].rr : ((void*)0); 0;<br> }); (a) &amp;&amp; (__unique_prefix_i7 &lt; (a)-&gt;n_rrs); __unique_prefix_i7<br>++, (anchor) = (__unique_prefix_i7 &lt; (a)-&gt;n_rrs ? (a)-&gt;<br>items[__unique_prefix_i7].rr : ((void*)0)))</span></span> {</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">                        r = dnssec_verify_dnskey(revoked_dnskey, anchor, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">                        <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">                        dns_trust_anchor_remove_revoked(d, anchor);</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line"><span class='keyword'>int</span> dns_trust_anchor_check_revoked(DnsTrustAnchor *d, DnsAnswer *rrs, <span class='keyword'>const</span> DnsResourceKey *key) {</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">        DnsResourceRecord *dnskey;</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">        <span class='macro'>assert(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/resolve/resolved-dns-trust-anchor.c", 650, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">        <span class='macro'>assert(key)<span class='expansion'>do { if ((__builtin_expect(!!(!(key)),0))) log_assert_failed(<br>"key", "src/resolve/resolved-dns-trust-anchor.c", 651, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">        <span class='comment'>/* Looks for self-signed DNSKEY RRs in "rrs" that have been revoked. */</span></td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">        <span class='keyword'>if</span> (key-&gt;type != DNS_TYPE_DNSKEY)</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH(dnskey, rrs)<span class='expansion'>for (unsigned __unique_prefix_i8 = ({ (dnskey) = ((rrs) &amp;&amp;<br> (rrs)-&gt;n_rrs &gt; 0) ? (rrs)-&gt;items[0].rr : ((void*)0)<br>; 0; }); (rrs) &amp;&amp; (__unique_prefix_i8 &lt; (rrs)-&gt;<br>n_rrs); __unique_prefix_i8++, (dnskey) = (__unique_prefix_i8 &lt;<br> (rrs)-&gt;n_rrs ? (rrs)-&gt;items[__unique_prefix_i8].rr : (<br>(void*)0)))</span></span> {</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">                DnsResourceRecord *rrsig;</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">                DnssecResult result;</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">                r = dns_resource_key_equal(key, dnskey-&gt;key);</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">                <span class='comment'>/* Is this DNSKEY revoked? */</span></td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">                <span class='keyword'>if</span> ((dnskey-&gt;dnskey.flags &amp; <span class='macro'>DNSKEY_FLAG_REVOKE<span class='expansion'>(1 &lt;&lt; 7)</span></span>) == 0)</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">                <span class='comment'>/* Could this be interesting to us at all? If not,</span></td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">                 <span class='comment'>* there's no point in looking for and verifying a</span></td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">                 <span class='comment'>* self-signed RRSIG. */</span></td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">                <span class='keyword'>if</span> (!dns_trust_anchor_knows_domain_positive(d, DNS_RESOURCE_KEY_NAME(dnskey-&gt;key)))</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">                <span class='comment'>/* Look for a self-signed RRSIG */</span></td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">                <span class='macro'>DNS_ANSWER_FOREACH(rrsig, rrs)<span class='expansion'>for (unsigned __unique_prefix_i9 = ({ (rrsig) = ((rrs) &amp;&amp;<br> (rrs)-&gt;n_rrs &gt; 0) ? (rrs)-&gt;items[0].rr : ((void*)0)<br>; 0; }); (rrs) &amp;&amp; (__unique_prefix_i9 &lt; (rrs)-&gt;<br>n_rrs); __unique_prefix_i9++, (rrsig) = (__unique_prefix_i9 &lt;<br> (rrs)-&gt;n_rrs ? (rrs)-&gt;items[__unique_prefix_i9].rr : (<br>(void*)0)))</span></span> {</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">                        <span class='keyword'>if</span> (rrsig-&gt;key-&gt;type != DNS_TYPE_RRSIG)</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">                        r = dnssec_rrsig_match_dnskey(rrsig, dnskey, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">                        <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">                        r = dnssec_verify_rrset(rrs, key, rrsig, dnskey, <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>, &amp;result);</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">                        <span class='keyword'>if</span> (result != DNSSEC_VALIDATED)</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">                        <span class='comment'>/* Bingo! Now, act! */</span></td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">                        r = dns_trust_anchor_check_revoked_one(d, dnskey);</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">}</td></tr>
+</table></body></html>

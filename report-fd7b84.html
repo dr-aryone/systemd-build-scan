@@ -191,11 +191,11 @@
 <tr><td class="num" id="LN101">101</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN102">102</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"sd_resolve_getnameinfo(): %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/libsystemd/sd-resolve/test-resolve.c"<br>, 102, __func__, "sd_resolve_getnameinfo(): %m") : -abs(_e); }<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN103">103</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN104">104</td><td class="line">        <span class='comment'>/* Wait until the two queries are completed */</span></td></tr>
-<tr><td class="num" id="LN105">105</td><td class="line">        <span class='keyword'>while</span> (sd_resolve_query_is_done(q1) == 0 ||</td></tr>
-<tr><td class="num" id="LN106">106</td><td class="line">               sd_resolve_query_is_done(q2) == 0) {</td></tr>
-<tr><td class="num" id="LN107">107</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN108">108</td><td class="line">                r = sd_resolve_wait(resolve, (uint64_t) -1);</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">        <span class='comment'>/* Wait until all queries are completed */</span></td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">                r = sd_resolve_wait(resolve, (uint64_t) -1);</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN109">109</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
 <tr><td class="num" id="LN110">110</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"sd_resolve_wait(): %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/libsystemd/sd-resolve/test-resolve.c"<br>, 110, __func__, "sd_resolve_wait(): %m") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN111">111</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"sd_resolve_wait() failed"</span>)<span class='expansion'>do { log_assert_failed_unreachable("sd_resolve_wait() failed"<br>, "src/libsystemd/sd-resolve/test-resolve.c", 111, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
