@@ -1,0 +1,885 @@
+<!doctype html>
+<html>
+<head>
+<title>src/basic/util.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Value stored to 'pidnsfd' is never read -->
+
+<!-- BUGTYPE Dead assignment -->
+
+<!-- BUGCATEGORY Dead store -->
+
+<!-- BUGFILE /home/runner/systemd/src/basic/util.c -->
+
+<!-- FILENAME util.c -->
+
+<!-- FUNCTIONNAME namespace_open -->
+
+<!-- BUGLINE 717 -->
+
+<!-- BUGCOLUMN 9 -->
+
+<!-- BUGPATHLENGTH 1 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>src/basic/util.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 717, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'pidnsfd' is never read</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/*-*- Mode: C; c-basic-offset: 8; indent-tabs-mode: nil -*-*/</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>Copyright 2010 Lennart Poettering</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line"><span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='directive'>#include &lt;alloca.h&gt;</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"><span class='directive'>#include &lt;dirent.h&gt;</span></td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include &lt;<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>.h&gt;</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include &lt;fcntl.h&gt;</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include &lt;sched.h&gt;</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include &lt;signal.h&gt;</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#include &lt;stdarg.h&gt;</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='directive'>#include &lt;stdio.h&gt;</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='directive'>#include &lt;stdlib.h&gt;</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='directive'>#include &lt;string.h&gt;</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='directive'>#include &lt;sys/mman.h&gt;</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"><span class='directive'>#include &lt;sys/prctl.h&gt;</span></td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='directive'>#include &lt;sys/statfs.h&gt;</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"><span class='directive'>#include &lt;sys/sysmacros.h&gt;</span></td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"><span class='directive'>#include &lt;sys/types.h&gt;</span></td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"><span class='directive'>#include &lt;unistd.h&gt;</span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"><span class='directive'>#include "alloc-util.h"</span></td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"><span class='directive'>#include "build.h"</span></td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line"><span class='directive'>#include "def.h"</span></td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line"><span class='directive'>#include "dirent-util.h"</span></td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line"><span class='directive'>#include "fd-util.h"</span></td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"><span class='directive'>#include "fileio.h"</span></td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line"><span class='directive'>#include "formats-util.h"</span></td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"><span class='directive'>#include "hashmap.h"</span></td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line"><span class='directive'>#include "hostname-util.h"</span></td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line"><span class='directive'>#include "log.h"</span></td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"><span class='directive'>#include "macro.h"</span></td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line"><span class='directive'>#include "missing.h"</span></td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line"><span class='directive'>#include "parse-util.h"</span></td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line"><span class='directive'>#include "path-util.h"</span></td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line"><span class='directive'>#include "process-util.h"</span></td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line"><span class='directive'>#include "set.h"</span></td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"><span class='directive'>#include "signal-util.h"</span></td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line"><span class='directive'>#include "stat-util.h"</span></td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line"><span class='directive'>#include "strv.h"</span></td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line"><span class='directive'>#include "time-util.h"</span></td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line"><span class='directive'>#include "user-util.h"</span></td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"><span class='directive'>#include "util.h"</span></td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line"><span class='comment'>/* Put this test here for a lack of better place */</span></td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"><span class='macro'>assert_cc(EAGAIN == EWOULDBLOCK)<span class='expansion'>GCC diagnostic push
+; GCC diagnostic ignored "-Wdeclaration-after-statement"<br>
+; _Static_assert(11 == 11, "EAGAIN == EWOULDBLOCK"); GCC diagnostic<br> pop
+</span></span>;</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line"><span class='keyword'>int</span> saved_argc = 0;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line"><span class='keyword'>char</span> **saved_argv = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">size_t page_size(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">        <span class='keyword'>static</span> <span class='macro'>thread_local<span class='expansion'>__thread</span></span> size_t pgsz = 0;</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">        <span class='keyword'>long</span> r;</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>_likely_(pgsz &gt; 0)<span class='expansion'>(__builtin_expect(!!(pgsz &gt; 0),1))</span></span>)</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">                <span class='keyword'>return</span> pgsz;</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">        r = sysconf(<span class='macro'>_SC_PAGESIZE<span class='expansion'>_SC_PAGESIZE</span></span>);</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">        <span class='macro'>assert(r &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt; 0)),0))) log_assert_failed<br>("r &gt; 0", "src/basic/util.c", 77, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">        pgsz = (size_t) r;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">        <span class='keyword'>return</span> pgsz;</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> do_execute(<span class='keyword'>char</span> **directories, usec_t timeout, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">        <span class='macro'>_cleanup_hashmap_free_free_<span class='expansion'>__attribute__((cleanup(hashmap_free_freep)))</span></span> Hashmap *pids = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">        <span class='macro'>_cleanup_set_free_free_<span class='expansion'>__attribute__((cleanup(set_free_freep)))</span></span> Set *seen = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">        <span class='keyword'>char</span> **directory;</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">        <span class='comment'>/* We fork this all off from a child process so that we can</span></td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">         <span class='comment'>* somewhat cleanly make use of SIGALRM to set a time limit */</span></td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">        (<span class='keyword'>void</span>) reset_all_signal_handlers();</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">        (<span class='keyword'>void</span>) reset_signal_mask();</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">        <span class='macro'>assert_se(prctl(PR_SET_PDEATHSIG, SIGTERM) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(prctl(1, 15) == 0)),0))) log_assert_failed<br>("prctl(PR_SET_PDEATHSIG, SIGTERM) == 0", "src/basic/util.c",<br> 94, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">        pids = <span class='macro'>hashmap_new(NULL)<span class='expansion'>internal_hashmap_new(((void*)0) )</span></span>;</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">        <span class='keyword'>if</span> (!pids)</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/basic/util.c", 98, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">        seen = <span class='macro'>set_new(&amp;string_hash_ops)<span class='expansion'>internal_set_new(&amp;string_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">        <span class='keyword'>if</span> (!seen)</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/basic/util.c", 102, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">        <span class='macro'>STRV_FOREACH(directory, directories)<span class='expansion'>for ((directory) = (directories); (directory) &amp;&amp; *(directory<br>); (directory)++)</span></span> {</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">                <span class='macro'>_cleanup_closedir_<span class='expansion'>__attribute__((cleanup(closedirp)))</span></span> DIR *d;</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">                <span class='keyword'>struct</span> dirent *de;</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">                d = opendir(*directory);</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">                <span class='keyword'>if</span> (!d) {</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to open directory %s: %m"</span>, *directory)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c"<br>, 113, __func__, "Failed to open directory %s: %m", *directory<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">                <span class='macro'>FOREACH_DIRENT(de, d, <span class='keyword'>break</span>)<span class='expansion'>for ((*__errno_location ()) = 0, de = readdir(d);; (*__errno_location<br> ()) = 0, de = readdir(d)) if (!de) { if ((*__errno_location (<br>)) &gt; 0) { break; } break; } else if (hidden_file((de)-&gt;<br>d_name)) continue; else</span></span> {</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">                        pid_t pid;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">                        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">                        <span class='keyword'>if</span> (!dirent_is_file(de))</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">                        <span class='keyword'>if</span> (set_contains(seen, de-&gt;d_name)) {</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"%1$s/%2$s skipped (%2$s was already seen)."</span>, *directory, de-&gt;d_name)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c",<br> 125, __func__, "%1$s/%2$s skipped (%2$s was already seen).",<br> *directory, de-&gt;d_name) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">                        r = set_put_strdup(seen, de-&gt;d_name);</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/basic/util.c", 131, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">                        path = strjoin(*directory, <span class='string_literal'>"/"</span>, de-&gt;d_name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">                        <span class='keyword'>if</span> (!path)</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/basic/util.c", 135, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">                        <span class='keyword'>if</span> (null_or_empty_path(path)) {</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"%s is empty (a mask)."</span>, path)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c",<br> 138, __func__, "%s is empty (a mask).", path) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">                        pid = fork();</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">                        <span class='keyword'>if</span> (pid &lt; 0) {</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">                                <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to fork: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c"<br>, 144, __func__, "Failed to fork: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">                        } <span class='keyword'>else</span> <span class='keyword'>if</span> (pid == 0) {</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">                                <span class='keyword'>char</span> *_argv[2];</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">                                <span class='macro'>assert_se(prctl(PR_SET_PDEATHSIG, SIGTERM) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(prctl(1, 15) == 0)),0))) log_assert_failed<br>("prctl(PR_SET_PDEATHSIG, SIGTERM) == 0", "src/basic/util.c",<br> 149, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">                                <span class='keyword'>if</span> (!argv) {</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">                                        _argv[0] = path;</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">                                        _argv[1] = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">                                        argv = _argv;</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">                                } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">                                        argv[0] = path;</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">                                execv(path, argv);</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to execute %s: %m"</span>, path)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c"<br>, 159, __func__, "Failed to execute %s: %m", path) : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">                        <span class='macro'>log_debug(<span class='string_literal'>"Spawned %s as "</span> PID_FMT <span class='string_literal'>"."</span>, path, pid)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c",<br> 162, __func__, "Spawned %s as " "%" "i" ".", path, pid) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">                        r = hashmap_put(pids, <span class='macro'>PID_TO_PTR(pid)<span class='expansion'>((void*) ((uintptr_t) pid))</span></span>, path);</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/basic/util.c", 166, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">                        path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">        <span class='comment'>/* Abort execution of this process after the timout. We simply</span></td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">         <span class='comment'>* rely on SIGALRM as default action terminating the process,</span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">         <span class='comment'>* and turn on alarm(). */</span></td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">        <span class='keyword'>if</span> (timeout != <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>)</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">                alarm((timeout + <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span> - 1) / <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">        <span class='keyword'>while</span> (!hashmap_isempty(pids)) {</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">                pid_t pid;</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">                pid = <span class='macro'>PTR_TO_PID(hashmap_first_key(pids))<span class='expansion'>((pid_t) ((uintptr_t) hashmap_first_key(pids)))</span></span>;</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">                <span class='macro'>assert(pid &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(pid &gt; 0)),0))) log_assert_failed<br>("pid &gt; 0", "src/basic/util.c", 183, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">                path = hashmap_remove(pids, <span class='macro'>PID_TO_PTR(pid)<span class='expansion'>((void*) ((uintptr_t) pid))</span></span>);</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">                <span class='macro'>assert(path)<span class='expansion'>do { if ((__builtin_expect(!!(!(path)),0))) log_assert_failed<br>("path", "src/basic/util.c", 186, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">                wait_for_terminate_and_warn(path, pid, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line"><span class='keyword'>void</span> execute_directories(<span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span>* directories, usec_t timeout, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">        pid_t executor_pid;</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">        <span class='keyword'>char</span> *name;</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">        <span class='keyword'>char</span> **dirs = (<span class='keyword'>char</span>**) directories;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">        <span class='macro'>assert(!strv_isempty(dirs))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_isempty(dirs))),0))) log_assert_failed<br>("!strv_isempty(dirs)", "src/basic/util.c", 200, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">        name = basename(dirs[0]);</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">        <span class='macro'>assert(!isempty(name))<span class='expansion'>do { if ((__builtin_expect(!!(!(!isempty(name))),0))) log_assert_failed<br>("!isempty(name)", "src/basic/util.c", 203, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">        <span class='comment'>/* Executes all binaries in the directories in parallel and waits</span></td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">         <span class='comment'>* for them to finish. Optionally a timeout is applied. If a file</span></td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">         <span class='comment'>* with the same name exists in more than one directory, the</span></td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">         <span class='comment'>* earliest one wins. */</span></td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">        executor_pid = fork();</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">        <span class='keyword'>if</span> (executor_pid &lt; 0) {</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">                <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to fork: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c"<br>, 212, __func__, "Failed to fork: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (executor_pid == 0) {</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">                r = do_execute(dirs, timeout, argv);</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">                _exit(r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">        wait_for_terminate_and_warn(name, executor_pid, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> plymouth_running(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">        <span class='keyword'>return</span> access(<span class='string_literal'>"/run/plymouth/pid"</span>, <span class='macro'>F_OK<span class='expansion'>0</span></span>) &gt;= 0;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> display_is_local(<span class='keyword'>const</span> <span class='keyword'>char</span> *display) {</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">        <span class='macro'>assert(display)<span class='expansion'>do { if ((__builtin_expect(!!(!(display)),0))) log_assert_failed<br>("display", "src/basic/util.c", 228, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">        <span class='keyword'>return</span></td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">                display[0] == ':' &amp;&amp;</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">                display[1] &gt;= '0' &amp;&amp;</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">                display[1] &lt;= '9';</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line"><span class='keyword'>int</span> socket_from_display(<span class='keyword'>const</span> <span class='keyword'>char</span> *display, <span class='keyword'>char</span> **path) {</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">        size_t k;</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">        <span class='keyword'>char</span> *f, *c;</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">        <span class='macro'>assert(display)<span class='expansion'>do { if ((__builtin_expect(!!(!(display)),0))) log_assert_failed<br>("display", "src/basic/util.c", 240, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">        <span class='macro'>assert(path)<span class='expansion'>do { if ((__builtin_expect(!!(!(path)),0))) log_assert_failed<br>("path", "src/basic/util.c", 241, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">        <span class='keyword'>if</span> (!display_is_local(display))</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">        k = strspn(display+1, <span class='string_literal'>"0123456789"</span>);</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">        f = <span class='macro'>new(<span class='keyword'>char</span>, strlen(<span class='string_literal'>"/tmp/.X11-unix/X"</span>) + k + 1)<span class='expansion'>((char*) malloc_multiply(sizeof(char), (strlen("/tmp/.X11-unix/X"<br>) + k + 1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">        c = stpcpy(f, <span class='string_literal'>"/tmp/.X11-unix/X"</span>);</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">        memcpy(c, display+1, k);</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">        c[k] = 0;</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">        *path = f;</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line"><span class='keyword'>int</span> block_get_whole_disk(dev_t d, dev_t *ret) {</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">        <span class='keyword'>char</span> *p, *s;</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">        <span class='keyword'>unsigned</span> n, m;</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/basic/util.c", 266, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">        <span class='comment'>/* If it has a queue this is good enough for us */</span></td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;p, <span class='string_literal'>"/sys/dev/block/%u:%u/queue"</span>, <span class='macro'>major(d)<span class='expansion'>gnu_dev_major (d)</span></span>, <span class='macro'>minor(d)<span class='expansion'>gnu_dev_minor (d)</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">        r = access(p, <span class='macro'>F_OK<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">        free(p);</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">        <span class='keyword'>if</span> (r &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">                *ret = d;</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">        <span class='comment'>/* If it is a partition find the originating device */</span></td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;p, <span class='string_literal'>"/sys/dev/block/%u:%u/partition"</span>, <span class='macro'>major(d)<span class='expansion'>gnu_dev_major (d)</span></span>, <span class='macro'>minor(d)<span class='expansion'>gnu_dev_minor (d)</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">        r = access(p, <span class='macro'>F_OK<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">        free(p);</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOENT<span class='expansion'>2</span></span>;</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">        <span class='comment'>/* Get parent dev_t */</span></td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;p, <span class='string_literal'>"/sys/dev/block/%u:%u/../dev"</span>, <span class='macro'>major(d)<span class='expansion'>gnu_dev_major (d)</span></span>, <span class='macro'>minor(d)<span class='expansion'>gnu_dev_minor (d)</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">        r = read_one_line_file(p, &amp;s);</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">        free(p);</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">        r = sscanf(s, <span class='string_literal'>"%u:%u"</span>, &amp;m, &amp;n);</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">        free(s);</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">        <span class='keyword'>if</span> (r != 2)</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">        <span class='comment'>/* Only return this if it is really good enough for us. */</span></td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;p, <span class='string_literal'>"/sys/dev/block/%u:%u/queue"</span>, m, n) &lt; 0)</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">        r = access(p, <span class='macro'>F_OK<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">        free(p);</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        <span class='keyword'>if</span> (r &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">                *ret = <span class='macro'>makedev(m, n)<span class='expansion'>gnu_dev_makedev (m, n)</span></span>;</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">        <span class='keyword'>return</span> -<span class='macro'>ENOENT<span class='expansion'>2</span></span>;</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> kexec_loaded(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">       <span class='macro'>bool<span class='expansion'>_Bool</span></span> loaded = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">       <span class='keyword'>char</span> *s;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">       <span class='keyword'>if</span> (read_one_line_file(<span class='string_literal'>"/sys/kernel/kexec_loaded"</span>, &amp;s) &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">               <span class='keyword'>if</span> (s[0] == '1')</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">                       loaded = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">               free(s);</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">       }</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">       <span class='keyword'>return</span> loaded;</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line"><span class='keyword'>int</span> prot_from_flags(<span class='keyword'>int</span> flags) {</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">        <span class='keyword'>switch</span> (flags &amp; <span class='macro'>O_ACCMODE<span class='expansion'>0003</span></span>) {</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">        <span class='keyword'>case</span> <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>:</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>PROT_READ<span class='expansion'>0x1</span></span>;</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">        <span class='keyword'>case</span> <span class='macro'>O_WRONLY<span class='expansion'>01</span></span>:</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>PROT_WRITE<span class='expansion'>0x2</span></span>;</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">        <span class='keyword'>case</span> <span class='macro'>O_RDWR<span class='expansion'>02</span></span>:</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>PROT_READ<span class='expansion'>0x1</span></span>|<span class='macro'>PROT_WRITE<span class='expansion'>0x2</span></span>;</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line"><span class='keyword'>int</span> fork_agent(pid_t *pid, <span class='keyword'>const</span> <span class='keyword'>int</span> except[], <span class='keyword'>unsigned</span> n_except, <span class='keyword'>const</span> <span class='keyword'>char</span> *path, ...) {</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> stdout_is_tty, stderr_is_tty;</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">        pid_t parent_pid, agent_pid;</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">        sigset_t ss, saved_ss;</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">        <span class='keyword'>unsigned</span> n, i;</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">        va_list ap;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">        <span class='keyword'>char</span> **l;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">        <span class='macro'>assert(pid)<span class='expansion'>do { if ((__builtin_expect(!!(!(pid)),0))) log_assert_failed(<br>"pid", "src/basic/util.c", 359, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">        <span class='macro'>assert(path)<span class='expansion'>do { if ((__builtin_expect(!!(!(path)),0))) log_assert_failed<br>("path", "src/basic/util.c", 360, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">        <span class='comment'>/* Spawns a temporary TTY agent, making sure it goes away when</span></td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">         <span class='comment'>* we go away */</span></td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">        parent_pid = getpid();</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">        <span class='comment'>/* First we temporarily block all signals, so that the new</span></td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">         <span class='comment'>* child has them blocked initially. This way, we can be sure</span></td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">         <span class='comment'>* that SIGTERMs are not lost we might send to the agent. */</span></td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        <span class='macro'>assert_se(sigfillset(&amp;ss) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(sigfillset(&amp;ss) &gt;= 0))<br>,0))) log_assert_failed("sigfillset(&amp;ss) &gt;= 0", "src/basic/util.c"<br>, 370, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        <span class='macro'>assert_se(sigprocmask(SIG_SETMASK, &amp;ss, &amp;saved_ss) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(sigprocmask(2, &amp;ss, &amp;<br>saved_ss) &gt;= 0)),0))) log_assert_failed("sigprocmask(SIG_SETMASK, &amp;ss, &amp;saved_ss) &gt;= 0"<br>, "src/basic/util.c", 371, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">        agent_pid = fork();</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">        <span class='keyword'>if</span> (agent_pid &lt; 0) {</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">                <span class='macro'>assert_se(sigprocmask(SIG_SETMASK, &amp;saved_ss, NULL) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(sigprocmask(2, &amp;saved_ss,<br> ((void*)0)) &gt;= 0)),0))) log_assert_failed("sigprocmask(SIG_SETMASK, &amp;saved_ss, NULL) &gt;= 0"<br>, "src/basic/util.c", 375, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        <span class='keyword'>if</span> (agent_pid != 0) {</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">                <span class='macro'>assert_se(sigprocmask(SIG_SETMASK, &amp;saved_ss, NULL) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(sigprocmask(2, &amp;saved_ss,<br> ((void*)0)) &gt;= 0)),0))) log_assert_failed("sigprocmask(SIG_SETMASK, &amp;saved_ss, NULL) &gt;= 0"<br>, "src/basic/util.c", 380, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">                *pid = agent_pid;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">        <span class='comment'>/* In the child:</span></td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">         <span class='comment'>*</span></td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">         <span class='comment'>* Make sure the agent goes away when the parent dies */</span></td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">        <span class='keyword'>if</span> (prctl(<span class='macro'>PR_SET_PDEATHSIG<span class='expansion'>1</span></span>, <span class='macro'>SIGTERM<span class='expansion'>15</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">                _exit(<span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">        <span class='comment'>/* Make sure we actually can kill the agent, if we need to, in</span></td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">         <span class='comment'>* case somebody invoked us from a shell script that trapped</span></td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">         <span class='comment'>* SIGTERM or so... */</span></td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">        (<span class='keyword'>void</span>) reset_all_signal_handlers();</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">        (<span class='keyword'>void</span>) reset_signal_mask();</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">        <span class='comment'>/* Check whether our parent died before we were able</span></td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">         <span class='comment'>* to set the death signal and unblock the signals */</span></td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">        <span class='keyword'>if</span> (getppid() != parent_pid)</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">                _exit(<span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">        <span class='comment'>/* Don't leak fds to the agent */</span></td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">        close_all_fds(except, n_except);</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">        stdout_is_tty = isatty(<span class='macro'>STDOUT_FILENO<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">        stderr_is_tty = isatty(<span class='macro'>STDERR_FILENO<span class='expansion'>2</span></span>);</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">        <span class='keyword'>if</span> (!stdout_is_tty || !stderr_is_tty) {</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">                <span class='keyword'>int</span> fd;</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">                <span class='comment'>/* Detach from stdout/stderr. and reopen</span></td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">                 <span class='comment'>* /dev/tty for them. This is important to</span></td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">                 <span class='comment'>* ensure that when systemctl is started via</span></td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">                 <span class='comment'>* popen() or a similar call that expects to</span></td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">                 <span class='comment'>* read EOF we actually do generate EOF and</span></td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                 <span class='comment'>* not delay this indefinitely by because we</span></td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">                 <span class='comment'>* keep an unused copy of stdin around. */</span></td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">                fd = open(<span class='string_literal'>"/dev/tty"</span>, <span class='macro'>O_WRONLY<span class='expansion'>01</span></span>);</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">                <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">                        <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to open /dev/tty: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c"<br>, 420, __func__, "Failed to open /dev/tty: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">                        _exit(<span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">                <span class='keyword'>if</span> (!stdout_is_tty)</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">                        dup2(fd, <span class='macro'>STDOUT_FILENO<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">                <span class='keyword'>if</span> (!stderr_is_tty)</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">                        dup2(fd, <span class='macro'>STDERR_FILENO<span class='expansion'>2</span></span>);</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">                <span class='keyword'>if</span> (fd &gt; 2)</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">                        close(fd);</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">        <span class='comment'>/* Count arguments */</span></td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">        <span class='macro'>va_start(ap, path)<span class='expansion'>__builtin_va_start(ap, path)</span></span>;</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">        <span class='keyword'>for</span> (n = 0; <span class='macro'>va_arg(ap, <span class='keyword'>char</span>*)<span class='expansion'>__builtin_va_arg(ap, char*)</span></span>; n++)</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">                ;</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">        <span class='macro'>va_end(ap)<span class='expansion'>__builtin_va_end(ap)</span></span>;</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">        <span class='comment'>/* Allocate strv */</span></td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">        l = <span class='macro'>alloca(<span class='keyword'>sizeof</span>(<span class='keyword'>char</span> *) * (n + 1))<span class='expansion'>__builtin_alloca (sizeof(char *) * (n + 1))</span></span>;</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">        <span class='comment'>/* Fill in arguments */</span></td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">        <span class='macro'>va_start(ap, path)<span class='expansion'>__builtin_va_start(ap, path)</span></span>;</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">        <span class='keyword'>for</span> (i = 0; i &lt;= n; i++)</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">                l[i] = <span class='macro'>va_arg(ap, <span class='keyword'>char</span>*)<span class='expansion'>__builtin_va_arg(ap, char*)</span></span>;</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">        <span class='macro'>va_end(ap)<span class='expansion'>__builtin_va_end(ap)</span></span>;</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">        execv(path, l);</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">        _exit(<span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> in_initrd(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>int</span> saved = -1;</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">        <span class='keyword'>struct</span> statfs s;</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">        <span class='keyword'>if</span> (saved &gt;= 0)</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">                <span class='keyword'>return</span> saved;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">        <span class='comment'>/* We make two checks here:</span></td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">         <span class='comment'>*</span></td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">         <span class='comment'>* 1. the flag file /etc/initrd-release must exist</span></td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">         <span class='comment'>* 2. the root file system must be a memory file system</span></td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">         <span class='comment'>*</span></td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">         <span class='comment'>* The second check is extra paranoia, since misdetecting an</span></td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">         <span class='comment'>* initrd can have bad bad consequences due the initrd</span></td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">         <span class='comment'>* emptying when transititioning to the main systemd.</span></td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">         <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">        saved = access(<span class='string_literal'>"/etc/initrd-release"</span>, <span class='macro'>F_OK<span class='expansion'>0</span></span>) &gt;= 0 &amp;&amp;</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">                statfs(<span class='string_literal'>"/"</span>, &amp;s) &gt;= 0 &amp;&amp;</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">                is_temporary_fs(&amp;s);</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">        <span class='keyword'>return</span> saved;</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line"><span class='comment'>/* hey glibc, APIs with callbacks without a user pointer are so useless */</span></td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line"><span class='keyword'>void</span> *xbsearch_r(<span class='keyword'>const</span> <span class='keyword'>void</span> *key, <span class='keyword'>const</span> <span class='keyword'>void</span> *base, size_t nmemb, size_t size,</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">                 <span class='keyword'>int</span> (*compar) (<span class='keyword'>const</span> <span class='keyword'>void</span> *, <span class='keyword'>const</span> <span class='keyword'>void</span> *, <span class='keyword'>void</span> *), <span class='keyword'>void</span> *arg) {</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">        size_t l, u, idx;</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>void</span> *p;</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">        <span class='keyword'>int</span> comparison;</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        l = 0;</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">        u = nmemb;</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        <span class='keyword'>while</span> (l &lt; u) {</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">                idx = (l + u) / 2;</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">                p = (<span class='keyword'>void</span> *)(((<span class='keyword'>const</span> <span class='keyword'>char</span> *) base) + (idx * size));</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">                comparison = compar(key, p, arg);</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">                <span class='keyword'>if</span> (comparison &lt; 0)</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">                        u = idx;</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (comparison &gt; 0)</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">                        l = idx + 1;</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">                        <span class='keyword'>return</span> (<span class='keyword'>void</span> *)p;</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line"><span class='keyword'>int</span> on_ac_power(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> found_offline = <span class='macro'>false<span class='expansion'>0</span></span>, found_online = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">        <span class='macro'>_cleanup_closedir_<span class='expansion'>__attribute__((cleanup(closedirp)))</span></span> DIR *d = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">        d = opendir(<span class='string_literal'>"/sys/class/power_supply"</span>);</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">        <span class='keyword'>if</span> (!d)</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span> ? <span class='macro'>true<span class='expansion'>1</span></span> : -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                <span class='keyword'>struct</span> dirent *de;</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">                <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1, device = -1;</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">                <span class='keyword'>char</span> contents[6];</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">                ssize_t n;</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">                <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> = 0;</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">                de = readdir(d);</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">                <span class='keyword'>if</span> (!de &amp;&amp; <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> &gt; 0)</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">                <span class='keyword'>if</span> (!de)</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">                <span class='keyword'>if</span> (hidden_file(de-&gt;d_name))</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">                device = openat(dirfd(d), de-&gt;d_name, <span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>|<span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">                <span class='keyword'>if</span> (device &lt; 0) {</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span> || <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOTDIR<span class='expansion'>20</span></span>)</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">                fd = openat(device, <span class='string_literal'>"type"</span>, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">                <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">                n = read(fd, contents, <span class='keyword'>sizeof</span>(contents));</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">                <span class='keyword'>if</span> (n &lt; 0)</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">                <span class='keyword'>if</span> (n != 6 || memcmp(contents, <span class='string_literal'>"Mains\n"</span>, 6))</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">                safe_close(fd);</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">                fd = openat(device, <span class='string_literal'>"online"</span>, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">                <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">                n = read(fd, contents, <span class='keyword'>sizeof</span>(contents));</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">                <span class='keyword'>if</span> (n &lt; 0)</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">                <span class='keyword'>if</span> (n != 2 || contents[1] != '\n')</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">                <span class='keyword'>if</span> (contents[0] == '1') {</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">                        found_online = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (contents[0] == '0')</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">                        found_offline = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">        <span class='keyword'>return</span> found_online || !found_offline;</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> id128_is_valid(<span class='keyword'>const</span> <span class='keyword'>char</span> *s) {</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">        size_t i, l;</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">        l = strlen(s);</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">        <span class='keyword'>if</span> (l == 32) {</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">                <span class='comment'>/* Simple formatted 128bit hex string */</span></td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">                <span class='keyword'>for</span> (i = 0; i &lt; l; i++) {</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">                        <span class='keyword'>char</span> c = s[i];</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                        <span class='keyword'>if</span> (!(c &gt;= '0' &amp;&amp; c &lt;= '9') &amp;&amp;</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">                            !(c &gt;= 'a' &amp;&amp; c &lt;= 'z') &amp;&amp;</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">                            !(c &gt;= 'A' &amp;&amp; c &lt;= 'Z'))</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (l == 36) {</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">                <span class='comment'>/* Formatted UUID */</span></td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">                <span class='keyword'>for</span> (i = 0; i &lt; l; i++) {</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">                        <span class='keyword'>char</span> c = s[i];</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">                        <span class='keyword'>if</span> ((i == 8 || i == 13 || i == 18 || i == 23)) {</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">                                <span class='keyword'>if</span> (c != '-')</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">                                        <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">                        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">                                <span class='keyword'>if</span> (!(c &gt;= '0' &amp;&amp; c &lt;= '9') &amp;&amp;</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">                                    !(c &gt;= 'a' &amp;&amp; c &lt;= 'z') &amp;&amp;</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">                                    !(c &gt;= 'A' &amp;&amp; c &lt;= 'Z'))</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">                                        <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line"><span class='keyword'>int</span> container_get_leader(<span class='keyword'>const</span> <span class='keyword'>char</span> *machine, pid_t *pid) {</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *s = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *class = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">        pid_t leader;</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">        <span class='macro'>assert(machine)<span class='expansion'>do { if ((__builtin_expect(!!(!(machine)),0))) log_assert_failed<br>("machine", "src/basic/util.c", 623, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        <span class='macro'>assert(pid)<span class='expansion'>do { if ((__builtin_expect(!!(!(pid)),0))) log_assert_failed(<br>"pid", "src/basic/util.c", 624, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>machine_name_is_valid(machine)<span class='expansion'>hostname_is_valid(machine, 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">        p = <span class='macro'>strjoina(<span class='string_literal'>"/run/systemd/machines/"</span>, machine)<span class='expansion'>({ const char *_appendees_[] = { "/run/systemd/machines/", machine<br> }; char *_d_, *_p_; int _len_ = 0; unsigned _i_; for (_i_ = 0<br>; _i_ &lt; __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">        r = parse_env_file(p, <span class='macro'>NEWLINE<span class='expansion'>"\n\r"</span></span>, <span class='string_literal'>"LEADER"</span>, &amp;s, <span class='string_literal'>"CLASS"</span>, &amp;class, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">        <span class='keyword'>if</span> (r == -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EHOSTDOWN<span class='expansion'>112</span></span>;</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">        <span class='keyword'>if</span> (!s)</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">        <span class='keyword'>if</span> (!streq_ptr(class, <span class='string_literal'>"container"</span>))</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">        r = parse_pid(s, &amp;leader);</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">        <span class='keyword'>if</span> (leader &lt;= 1)</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">        *pid = leader;</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line"><span class='keyword'>int</span> namespace_open(pid_t pid, <span class='keyword'>int</span> *pidns_fd, <span class='keyword'>int</span> *mntns_fd, <span class='keyword'>int</span> *netns_fd, <span class='keyword'>int</span> *userns_fd, <span class='keyword'>int</span> *root_fd) {</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> pidnsfd = -1, mntnsfd = -1, netnsfd = -1, usernsfd = -1;</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">        <span class='keyword'>int</span> rfd = -1;</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">        <span class='macro'>assert(pid &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(pid &gt;= 0)),0))) log_assert_failed<br>("pid &gt;= 0", "src/basic/util.c", 655, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">        <span class='keyword'>if</span> (mntns_fd) {</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *mntns;</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">                mntns = <span class='macro'>procfs_file_alloca(pid, <span class='string_literal'>"ns/mnt"</span>)<span class='expansion'>({ pid_t _pid_ = (pid); const char *_r_; if (_pid_ == 0) { _r_<br> = ("/proc/self/" "ns/mnt"); } else { _r_ = __builtin_alloca (<br>strlen("/proc/") + (2+(sizeof(pid_t) &lt;= 1 ? 3 : sizeof(pid_t<br>) &lt;= 2 ? 5 : sizeof(pid_t) &lt;= 4 ? 10 : sizeof(pid_t) &lt;=<br> 8 ? 20 : sizeof(int[-2*(sizeof(pid_t) &gt; 8)]))) + 1 + sizeof<br>("ns/mnt")); sprintf((char*) _r_, "/proc/""%" "i""/" "ns/mnt"<br>, _pid_); } _r_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">                mntnsfd = open(mntns, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">                <span class='keyword'>if</span> (mntnsfd &lt; 0)</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">        <span class='keyword'>if</span> (pidns_fd) {</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *pidns;</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">                pidns = <span class='macro'>procfs_file_alloca(pid, <span class='string_literal'>"ns/pid"</span>)<span class='expansion'>({ pid_t _pid_ = (pid); const char *_r_; if (_pid_ == 0) { _r_<br> = ("/proc/self/" "ns/pid"); } else { _r_ = __builtin_alloca (<br>strlen("/proc/") + (2+(sizeof(pid_t) &lt;= 1 ? 3 : sizeof(pid_t<br>) &lt;= 2 ? 5 : sizeof(pid_t) &lt;= 4 ? 10 : sizeof(pid_t) &lt;=<br> 8 ? 20 : sizeof(int[-2*(sizeof(pid_t) &gt; 8)]))) + 1 + sizeof<br>("ns/pid")); sprintf((char*) _r_, "/proc/""%" "i""/" "ns/pid"<br>, _pid_); } _r_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">                pidnsfd = open(pidns, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">                <span class='keyword'>if</span> (pidnsfd &lt; 0)</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">        <span class='keyword'>if</span> (netns_fd) {</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *netns;</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">                netns = <span class='macro'>procfs_file_alloca(pid, <span class='string_literal'>"ns/net"</span>)<span class='expansion'>({ pid_t _pid_ = (pid); const char *_r_; if (_pid_ == 0) { _r_<br> = ("/proc/self/" "ns/net"); } else { _r_ = __builtin_alloca (<br>strlen("/proc/") + (2+(sizeof(pid_t) &lt;= 1 ? 3 : sizeof(pid_t<br>) &lt;= 2 ? 5 : sizeof(pid_t) &lt;= 4 ? 10 : sizeof(pid_t) &lt;=<br> 8 ? 20 : sizeof(int[-2*(sizeof(pid_t) &gt; 8)]))) + 1 + sizeof<br>("ns/net")); sprintf((char*) _r_, "/proc/""%" "i""/" "ns/net"<br>, _pid_); } _r_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">                netnsfd = open(netns, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">                <span class='keyword'>if</span> (netnsfd &lt; 0)</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">        <span class='keyword'>if</span> (userns_fd) {</td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *userns;</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">                userns = <span class='macro'>procfs_file_alloca(pid, <span class='string_literal'>"ns/user"</span>)<span class='expansion'>({ pid_t _pid_ = (pid); const char *_r_; if (_pid_ == 0) { _r_<br> = ("/proc/self/" "ns/user"); } else { _r_ = __builtin_alloca<br> (strlen("/proc/") + (2+(sizeof(pid_t) &lt;= 1 ? 3 : sizeof(pid_t<br>) &lt;= 2 ? 5 : sizeof(pid_t) &lt;= 4 ? 10 : sizeof(pid_t) &lt;=<br> 8 ? 20 : sizeof(int[-2*(sizeof(pid_t) &gt; 8)]))) + 1 + sizeof<br>("ns/user")); sprintf((char*) _r_, "/proc/""%" "i""/" "ns/user"<br>, _pid_); } _r_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">                usernsfd = open(userns, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">                <span class='keyword'>if</span> (usernsfd &lt; 0 &amp;&amp; <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">        <span class='keyword'>if</span> (root_fd) {</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *root;</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">                root = <span class='macro'>procfs_file_alloca(pid, <span class='string_literal'>"root"</span>)<span class='expansion'>({ pid_t _pid_ = (pid); const char *_r_; if (_pid_ == 0) { _r_<br> = ("/proc/self/" "root"); } else { _r_ = __builtin_alloca (strlen<br>("/proc/") + (2+(sizeof(pid_t) &lt;= 1 ? 3 : sizeof(pid_t) &lt;=<br> 2 ? 5 : sizeof(pid_t) &lt;= 4 ? 10 : sizeof(pid_t) &lt;= 8 ?<br> 20 : sizeof(int[-2*(sizeof(pid_t) &gt; 8)]))) + 1 + sizeof("root"<br>)); sprintf((char*) _r_, "/proc/""%" "i""/" "root", _pid_); }<br> _r_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">                rfd = open(root, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>);</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">                <span class='keyword'>if</span> (rfd &lt; 0)</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">        <span class='keyword'>if</span> (pidns_fd)</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">                *pidns_fd = pidnsfd;</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">        <span class='keyword'>if</span> (mntns_fd)</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">                *mntns_fd = mntnsfd;</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">        <span class='keyword'>if</span> (netns_fd)</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">                *netns_fd = netnsfd;</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">        <span class='keyword'>if</span> (userns_fd)</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">                *userns_fd = usernsfd;</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">        <span class='keyword'>if</span> (root_fd)</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">                *root_fd = rfd;</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">        pidnsfd = <span class="mrange">mntnsfd = netnsfd = usernsfd = -1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'pidnsfd' is never read</div></td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line"><span class='keyword'>int</span> namespace_enter(<span class='keyword'>int</span> pidns_fd, <span class='keyword'>int</span> mntns_fd, <span class='keyword'>int</span> netns_fd, <span class='keyword'>int</span> userns_fd, <span class='keyword'>int</span> root_fd) {</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">        <span class='keyword'>if</span> (userns_fd &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">                <span class='comment'>/* Can't setns to your own userns, since then you could</span></td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">                 <span class='comment'>* escalate from non-root to root in your own namespace, so</span></td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">                 <span class='comment'>* check if namespaces equal before attempting to enter. */</span></td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *userns_fd_path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">                <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">                <span class='keyword'>if</span> (asprintf(&amp;userns_fd_path, <span class='string_literal'>"/proc/self/fd/%d"</span>, userns_fd) &lt; 0)</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">                r = files_same(userns_fd_path, <span class='string_literal'>"/proc/self/ns/user"</span>);</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">                <span class='keyword'>if</span> (r)</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">                        userns_fd = -1;</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">        <span class='keyword'>if</span> (pidns_fd &gt;= 0)</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">                <span class='keyword'>if</span> (setns(pidns_fd, <span class='macro'>CLONE_NEWPID<span class='expansion'>0x20000000</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">        <span class='keyword'>if</span> (mntns_fd &gt;= 0)</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">                <span class='keyword'>if</span> (setns(mntns_fd, <span class='macro'>CLONE_NEWNS<span class='expansion'>0x00020000</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">        <span class='keyword'>if</span> (netns_fd &gt;= 0)</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">                <span class='keyword'>if</span> (setns(netns_fd, <span class='macro'>CLONE_NEWNET<span class='expansion'>0x40000000</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">        <span class='keyword'>if</span> (userns_fd &gt;= 0)</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">                <span class='keyword'>if</span> (setns(userns_fd, <span class='macro'>CLONE_NEWUSER<span class='expansion'>0x10000000</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">        <span class='keyword'>if</span> (root_fd &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">                <span class='keyword'>if</span> (fchdir(root_fd) &lt; 0)</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">                <span class='keyword'>if</span> (chroot(<span class='string_literal'>"."</span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">        <span class='keyword'>return</span> reset_uid_gid();</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">uint64_t physical_memory(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">        <span class='keyword'>long</span> mem;</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">        <span class='comment'>/* We return this as uint64_t in case we are running as 32bit</span></td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">         <span class='comment'>* process on a 64bit kernel with huge amounts of memory */</span></td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">        mem = sysconf(<span class='macro'>_SC_PHYS_PAGES<span class='expansion'>_SC_PHYS_PAGES</span></span>);</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">        <span class='macro'>assert(mem &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(mem &gt; 0)),0))) log_assert_failed<br>("mem &gt; 0", "src/basic/util.c", 773, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">        <span class='keyword'>return</span> (uint64_t) mem * (uint64_t) page_size();</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line"><span class='keyword'>int</span> update_reboot_param_file(<span class='keyword'>const</span> <span class='keyword'>char</span> *param) {</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">        <span class='keyword'>int</span> r = 0;</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">        <span class='keyword'>if</span> (param) {</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">                r = write_string_file(<span class='macro'>REBOOT_PARAM_FILE<span class='expansion'>"/run/systemd/reboot-param"</span></span>, param, WRITE_STRING_FILE_CREATE);</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to write reboot param to "</span>REBOOT_PARAM_FILE<span class='string_literal'>": %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/util.c",<br> 784, __func__, "Failed to write reboot param to ""/run/systemd/reboot-param"<br>": %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">                (<span class='keyword'>void</span>) unlink(<span class='macro'>REBOOT_PARAM_FILE<span class='expansion'>"/run/systemd/reboot-param"</span></span>);</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line"><span class='keyword'>int</span> version(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">        puts(<span class='macro'>PACKAGE_STRING<span class='expansion'>"systemd 228"</span></span> <span class='string_literal'>"\n"</span></td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">             <span class='macro'>SYSTEMD_FEATURES<span class='expansion'>"+PAM" " " "+AUDIT" " " "+SELINUX" " " "+IMA" " " "-APPARMOR"<br> " " "+SMACK" " " "+SYSVINIT" " " "+UTMP" " " "+LIBCRYPTSETUP"<br> " " "+GCRYPT" " " "-GNUTLS" " " "+ACL" " " "+XZ" " " "-LZ4" " "<br> "+SECCOMP" " " "+BLKID" " " "-ELFUTILS" " " "+KMOD" " " "+IDN"</span></span>);</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">}</td></tr>
+</table></body></html>
