@@ -1,0 +1,275 @@
+<!doctype html>
+<html>
+<head>
+<title>src/random-seed/random-seed.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Potential leak of memory pointed to by 'buf' -->
+
+<!-- BUGTYPE Memory leak -->
+
+<!-- BUGCATEGORY Memory Error -->
+
+<!-- BUGFILE /home/runner/systemd/src/random-seed/random-seed.c -->
+
+<!-- FILENAME random-seed.c -->
+
+<!-- FUNCTIONNAME main -->
+
+<!-- BUGLINE 77 -->
+
+<!-- BUGCOLUMN 17 -->
+
+<!-- BUGPATHLENGTH 11 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>random-seed/random-seed.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 77, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'buf'</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright 2010 Lennart Poettering</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"><span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line"><span class='directive'>#include &lt;<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>.h&gt;</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"><span class='directive'>#include &lt;fcntl.h&gt;</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='directive'>#include &lt;string.h&gt;</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"><span class='directive'>#include &lt;sys/stat.h&gt;</span></td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include &lt;unistd.h&gt;</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "alloc-util.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include "fd-util.h"</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#include "io-util.h"</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='directive'>#include "log.h"</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='directive'>#include "mkdir.h"</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='directive'>#include "util.h"</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='directive'>#define <span class='macro'>POOL_SIZE_MIN<span class='expansion'>512</span></span> 512</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> seed_fd = -1, random_fd = -1;</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>void</span>* buf = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">        size_t buf_size = 0;</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">        ssize_t k;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">        <span class='keyword'>int</span> r, open_rw_error;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">        FILE *f;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> refresh_seed_file = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">argc != 2</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'argc' is equal to 2</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"This program requires one argument."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 46, __func__, "This program requires one argument.") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">        log_set_target(LOG_TARGET_AUTO);</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">        log_parse_environment();</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">        log_open();</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">        umask(0022);</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line">        <span class='comment'>/* Read pool size, if possible */</span></td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">        f = fopen(<span class='string_literal'>"/proc/sys/kernel/random/poolsize"</span>, <span class='string_literal'>"re"</span>);</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">f</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'f' is null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">                <span class='keyword'>if</span> (fscanf(f, <span class='string_literal'>"%zu"</span>, &amp;buf_size) &gt; 0)</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">                        <span class='comment'>/* poolsize is in bits on 2.6, but we want bytes */</span></td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">                        buf_size /= 8;</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">                fclose(f);</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">        <span class='keyword'>if</span> (buf_size &lt;= <span class='macro'>POOL_SIZE_MIN<span class='expansion'>512</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">                buf_size = <span class='macro'>POOL_SIZE_MIN<span class='expansion'>512</span></span>;</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">        buf = <span class="mrange">malloc(buf_size)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:15ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!buf</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'buf' is non-null</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">                r = <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/random-seed/random-seed.c", 71, __func__<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">        r = mkdir_parents_label(<span class='macro'>RANDOM_SEED<span class='expansion'>"/usr/var/lib/systemd/random-seed"</span></span>, 0755);</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to create directory "</span> RANDOM_SEED_DIR <span class='string_literal'>": %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 77, __func__, "Failed to create directory " "/usr/var/lib/systemd/"<br> ": %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error_errno':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'buf'</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">        <span class='comment'>/* When we load the seed we read it and write it to the device</span></td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">         <span class='comment'>* and then immediately update the saved seed with new data,</span></td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">         <span class='comment'>* to make sure the next boot gets seeded differently. */</span></td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(argv[1], <span class='string_literal'>"load"</span>)<span class='expansion'>(strcmp((argv[1]),("load")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">                seed_fd = open(<span class='macro'>RANDOM_SEED<span class='expansion'>"/usr/var/lib/systemd/random-seed"</span></span>, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CREAT<span class='expansion'>0100</span></span>, 0600);</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">                open_rw_error = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">                <span class='keyword'>if</span> (seed_fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">                        refresh_seed_file = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">                        seed_fd = open(<span class='macro'>RANDOM_SEED<span class='expansion'>"/usr/var/lib/systemd/random-seed"</span></span>, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">                        <span class='keyword'>if</span> (seed_fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">                                <span class='macro'>bool<span class='expansion'>_Bool</span></span> missing = <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>;</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">                                <span class='macro'>log_full_errno(missing ? LOG_DEBUG : LOG_ERR,<span class='expansion'>({ int _level = (missing ? 7 : 3), _e = (open_rw_error); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 97, __func__, "Failed to open " "/usr/var/lib/systemd/random-seed"<br> " for writing: %m") : -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">                                               <span class='macro'>open_rw_error, <span class='string_literal'>"Failed to open "</span> RANDOM_SEED <span class='string_literal'>" for writing: %m"</span>)<span class='expansion'>({ int _level = (missing ? 7 : 3), _e = (open_rw_error); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 97, __func__, "Failed to open " "/usr/var/lib/systemd/random-seed"<br> " for writing: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">                                r = <span class='macro'>log_full_errno(missing ? LOG_DEBUG : LOG_ERR,<span class='expansion'>({ int _level = (missing ? 7 : 3), _e = ((*__errno_location (<br>))); (log_get_max_level() &gt;= ((_level) &amp; 0x07)) ? log_internal<br>(_level, _e, "src/random-seed/random-seed.c", 99, __func__, "Failed to open "<br> "/usr/var/lib/systemd/random-seed" " for reading: %m") : -abs<br>(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">                                                   <span class='macro'>errno, <span class='string_literal'>"Failed to open "</span> RANDOM_SEED <span class='string_literal'>" for reading: %m"</span>)<span class='expansion'>({ int _level = (missing ? 7 : 3), _e = ((*__errno_location (<br>))); (log_get_max_level() &gt;= ((_level) &amp; 0x07)) ? log_internal<br>(_level, _e, "src/random-seed/random-seed.c", 99, __func__, "Failed to open "<br> "/usr/var/lib/systemd/random-seed" " for reading: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">                                <span class='keyword'>if</span> (missing)</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">                                        r = 0;</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">                                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">                random_fd = open(<span class='string_literal'>"/dev/urandom"</span>, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>, 0600);</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">                <span class='keyword'>if</span> (random_fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">                        random_fd = open(<span class='string_literal'>"/dev/urandom"</span>, <span class='macro'>O_WRONLY<span class='expansion'>01</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>, 0600);</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">                        <span class='keyword'>if</span> (random_fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">                                r = <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to open /dev/urandom: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 111, __func__, "Failed to open /dev/urandom: %m") : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">                                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">                k = loop_read(seed_fd, buf, buf_size, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">                        r = <span class='macro'>log_error_errno(k, <span class='string_literal'>"Failed to read seed from "</span> RANDOM_SEED <span class='string_literal'>": %m"</span>)<span class='expansion'>({ int _level = (3), _e = (k); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 118, __func__, "Failed to read seed from " "/usr/var/lib/systemd/random-seed"<br> ": %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (k == 0) {</td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">                        r = 0;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">                        <span class='macro'>log_debug(<span class='string_literal'>"Seed file "</span> RANDOM_SEED <span class='string_literal'>" not yet initialized, proceeding."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 121, __func__, "Seed file " "/usr/var/lib/systemd/random-seed"<br> " not yet initialized, proceeding.") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">                        (<span class='keyword'>void</span>) lseek(seed_fd, 0, <span class='macro'>SEEK_SET<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">                        r = loop_write(random_fd, buf, (size_t) k, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">                                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to write seed to /dev/urandom: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 127, __func__, "Failed to write seed to /dev/urandom: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(argv[1], <span class='string_literal'>"save"</span>)<span class='expansion'>(strcmp((argv[1]),("save")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">                seed_fd = open(<span class='macro'>RANDOM_SEED<span class='expansion'>"/usr/var/lib/systemd/random-seed"</span></span>, <span class='macro'>O_WRONLY<span class='expansion'>01</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CREAT<span class='expansion'>0100</span></span>, 0600);</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">                <span class='keyword'>if</span> (seed_fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">                        r = <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to open "</span> RANDOM_SEED <span class='string_literal'>": %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 134, __func__, "Failed to open " "/usr/var/lib/systemd/random-seed"<br> ": %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">                random_fd = open(<span class='string_literal'>"/dev/urandom"</span>, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">                <span class='keyword'>if</span> (random_fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">                        r = <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to open /dev/urandom: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 140, __func__, "Failed to open /dev/urandom: %m") : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Unknown verb '%s'."</span>, argv[1])<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 145, __func__, "Unknown verb '%s'.", argv[1]) : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">                r = -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">        <span class='keyword'>if</span> (refresh_seed_file) {</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">                <span class='comment'>/* This is just a safety measure. Given that we are root and</span></td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">                 <span class='comment'>* most likely created the file ourselves the mode and owner</span></td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">                 <span class='comment'>* should be correct anyway. */</span></td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">                (<span class='keyword'>void</span>) fchmod(seed_fd, 0600);</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">                (<span class='keyword'>void</span>) fchown(seed_fd, 0, 0);</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">                k = loop_read(random_fd, buf, buf_size, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0) {</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                        r = <span class='macro'>log_error_errno(k, <span class='string_literal'>"Failed to read new seed from /dev/urandom: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (k); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 160, __func__, "Failed to read new seed from /dev/urandom: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">                <span class='keyword'>if</span> (k == 0) {</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">                        <span class='macro'>log_error(<span class='string_literal'>"Got EOF while reading from /dev/urandom."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 164, __func__, "Got EOF while reading from /dev/urandom.") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">                        r = -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">                r = loop_write(seed_fd, buf, (size_t) k, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to write new random seed file: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/random-seed/random-seed.c"<br>, 171, __func__, "Failed to write new random seed file: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">}</td></tr>
+</table></body></html>

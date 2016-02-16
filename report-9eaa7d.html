@@ -1,0 +1,642 @@
+<!doctype html>
+<html>
+<head>
+<title>src/bootchart/bootchart.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Access to field 'link_prev' results in a dereference of a null pointer (loaded from variable 'sampledata') -->
+
+<!-- BUGTYPE Dereference of null pointer -->
+
+<!-- BUGCATEGORY Logic error -->
+
+<!-- BUGFILE /home/runner/systemd/src/bootchart/bootchart.c -->
+
+<!-- FILENAME bootchart.c -->
+
+<!-- FUNCTIONNAME main -->
+
+<!-- BUGLINE 519 -->
+
+<!-- BUGCOLUMN 16 -->
+
+<!-- BUGPATHLENGTH 23 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>bootchart/bootchart.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 519, column 16</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Access to field 'link_prev' results in a dereference of a null pointer (loaded from variable 'sampledata')</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright (C) 2009-2013 Intel Corporation</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>Authors:</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">    <span class='comment'>Auke Kok &lt;auke-jan.h.kok@intel.com&gt;</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"> <span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line">  <span class='comment'>Many thanks to those who contributed ideas and code:</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line">  <span class='comment'>- Ziga Mahkovec - Original bootchart author</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line">  <span class='comment'>- Anders Norgaard - PyBootchartgui</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line">  <span class='comment'>- Michael Meeks - bootchart2</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line">  <span class='comment'>- Scott James Remnant - Ubuntu C-based logger</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">  <span class='comment'>- Arjan van der Ven - for the idea to merge bootgraph.pl functionality</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"> <span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='directive'>#include &lt;<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>.h&gt;</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"><span class='directive'>#include &lt;fcntl.h&gt;</span></td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"><span class='directive'>#include &lt;getopt.h&gt;</span></td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"><span class='directive'>#include &lt;limits.h&gt;</span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line"><span class='directive'>#include &lt;signal.h&gt;</span></td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"><span class='directive'>#include &lt;stdbool.h&gt;</span></td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"><span class='directive'>#include &lt;stdio.h&gt;</span></td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line"><span class='directive'>#include &lt;stdlib.h&gt;</span></td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line"><span class='directive'>#include &lt;string.h&gt;</span></td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line"><span class='directive'>#include &lt;sys/resource.h&gt;</span></td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"><span class='directive'>#include &lt;time.h&gt;</span></td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line"><span class='directive'>#include &lt;unistd.h&gt;</span></td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line"><span class='directive'>#include "sd-journal.h"</span></td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"><span class='directive'>#include "alloc-util.h"</span></td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line"><span class='directive'>#include "bootchart.h"</span></td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line"><span class='directive'>#include "conf-parser.h"</span></td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line"><span class='directive'>#include "def.h"</span></td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line"><span class='directive'>#include "fd-util.h"</span></td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line"><span class='directive'>#include "fileio.h"</span></td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line"><span class='directive'>#include "io-util.h"</span></td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line"><span class='directive'>#include "list.h"</span></td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line"><span class='directive'>#include "macro.h"</span></td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line"><span class='directive'>#include "parse-util.h"</span></td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line"><span class='directive'>#include "path-util.h"</span></td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line"><span class='directive'>#include "store.h"</span></td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line"><span class='directive'>#include "strxcpyx.h"</span></td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line"><span class='directive'>#include "svg.h"</span></td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"><span class='directive'>#include "util.h"</span></td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> exiting = 0;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line"><span class='directive'>#define <span class='macro'>DEFAULT_SAMPLES_LEN<span class='expansion'>500</span></span> 500</span></td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line"><span class='directive'>#define <span class='macro'>DEFAULT_HZ<span class='expansion'>25.0</span></span> 25.0</span></td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line"><span class='directive'>#define <span class='macro'>DEFAULT_SCALE_X<span class='expansion'>100.0</span></span> 100.0 /* 100px = 1sec */</span></td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line"><span class='directive'>#define <span class='macro'>DEFAULT_SCALE_Y<span class='expansion'>20.0</span></span> 20.0  /* 16px = 1 process bar */</span></td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line"><span class='directive'>#define <span class='macro'>DEFAULT_INIT<span class='expansion'>"/usr/lib/systemd" "/systemd"</span></span> <span class='macro'>ROOTLIBEXECDIR<span class='expansion'>"/usr/lib/systemd"</span></span> "/systemd"</span></td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line"><span class='directive'>#define <span class='macro'>DEFAULT_OUTPUT<span class='expansion'>"/run/log"</span></span> "/run/log"</span></td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line"><span class='comment'>/* graph defaults */</span></td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> arg_entropy = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> arg_initcall = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> arg_relative = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> arg_filter = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> arg_show_cmdline = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> arg_show_cgroup = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> arg_pss = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> arg_percpu = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line"><span class='keyword'>int</span> arg_samples_len = <span class='macro'>DEFAULT_SAMPLES_LEN<span class='expansion'>500</span></span>; <span class='comment'>/* we record len+1 (1 start sample) */</span></td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line"><span class='keyword'>double</span> arg_hz = <span class='macro'>DEFAULT_HZ<span class='expansion'>25.0</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line"><span class='keyword'>double</span> arg_scale_x = <span class='macro'>DEFAULT_SCALE_X<span class='expansion'>100.0</span></span>;</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line"><span class='keyword'>double</span> arg_scale_y = <span class='macro'>DEFAULT_SCALE_Y<span class='expansion'>20.0</span></span>;</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line"><span class='keyword'>char</span> arg_init_path[<span class='macro'>PATH_MAX<span class='expansion'>4096</span></span>] = <span class='macro'>DEFAULT_INIT<span class='expansion'>"/usr/lib/systemd" "/systemd"</span></span>;</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line"><span class='keyword'>char</span> arg_output_path[<span class='macro'>PATH_MAX<span class='expansion'>4096</span></span>] = <span class='macro'>DEFAULT_OUTPUT<span class='expansion'>"/run/log"</span></span>;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> signal_handler(<span class='keyword'>int</span> sig) {</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">        exiting = 1;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line"><span class='directive'>#define <span class='macro'>BOOTCHART_MAX<span class='expansion'>(16*1024*1024)</span></span> (16*1024*1024)</span></td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> parse_conf(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">        <span class='keyword'>char</span> *init = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *output = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">        <span class='keyword'>const</span> ConfigTableItem items[] = {</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"Samples"</span>,          config_parse_int,    0, &amp;arg_samples_len },</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"Frequency"</span>,        config_parse_double, 0, &amp;arg_hz          },</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"Relative"</span>,         config_parse_bool,   0, &amp;arg_relative    },</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"Filter"</span>,           config_parse_bool,   0, &amp;arg_filter      },</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"Output"</span>,           config_parse_path,   0, &amp;output          },</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"Init"</span>,             config_parse_path,   0, &amp;init            },</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"PlotMemoryUsage"</span>,  config_parse_bool,   0, &amp;arg_pss         },</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"PlotEntropyGraph"</span>, config_parse_bool,   0, &amp;arg_entropy     },</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"ScaleX"</span>,           config_parse_double, 0, &amp;arg_scale_x     },</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"ScaleY"</span>,           config_parse_double, 0, &amp;arg_scale_y     },</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"ControlGroup"</span>,     config_parse_bool,   0, &amp;arg_show_cgroup },</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">                { <span class='string_literal'>"Bootchart"</span>, <span class='string_literal'>"PerCPU"</span>,           config_parse_bool,   0, &amp;arg_percpu      },</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">                { <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> }</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">        config_parse_many(<span class='macro'>PKGSYSCONFDIR<span class='expansion'>"/usr/etc/systemd"</span></span> <span class='string_literal'>"/bootchart.conf"</span>,</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">                          <span class='macro'>CONF_PATHS_NULSTR(<span class='string_literal'>"systemd/bootchart.conf.d"</span>)<span class='expansion'>"/etc/" "systemd/bootchart.conf.d" "\0" "/run/" "systemd/bootchart.conf.d"<br> "\0" "/usr/local/lib/" "systemd/bootchart.conf.d" "\0" "/usr/lib/"<br> "systemd/bootchart.conf.d" "\0"</span></span>,</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">                          <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, config_item_table_lookup, items, <span class='macro'>true<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">        <span class='keyword'>if</span> (init != <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">                strscpy(arg_init_path, <span class='keyword'>sizeof</span>(arg_init_path), init);</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">        <span class='keyword'>if</span> (output != <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">                strscpy(arg_output_path, <span class='keyword'>sizeof</span>(arg_output_path), output);</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> help(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">        printf(<span class='string_literal'>"Usage: %s [OPTIONS]\n\n"</span></td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">               <span class='string_literal'>"Options:\n"</span></td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">               <span class='string_literal'>"  -r --rel             Record time relative to recording\n"</span></td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">               <span class='string_literal'>"  -f --freq=FREQ       Sample frequency [%g]\n"</span></td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">               <span class='string_literal'>"  -n --samples=N       Stop sampling at [%d] samples\n"</span></td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">               <span class='string_literal'>"  -x --scale-x=N       Scale the graph horizontally [%g] \n"</span></td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">               <span class='string_literal'>"  -y --scale-y=N       Scale the graph vertically [%g] \n"</span></td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">               <span class='string_literal'>"  -p --pss             Enable PSS graph (CPU intensive)\n"</span></td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">               <span class='string_literal'>"  -e --entropy         Enable the entropy_avail graph\n"</span></td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">               <span class='string_literal'>"  -o --output=PATH     Path to output files [%s]\n"</span></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">               <span class='string_literal'>"  -i --init=PATH       Path to init executable [%s]\n"</span></td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">               <span class='string_literal'>"  -F --no-filter       Disable filtering of unimportant or ephemeral processes\n"</span></td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">               <span class='string_literal'>"  -C --cmdline         Display full command lines with arguments\n"</span></td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">               <span class='string_literal'>"  -c --control-group   Display process control group\n"</span></td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">               <span class='string_literal'>"     --per-cpu         Draw each CPU utilization and wait bar also\n"</span></td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">               <span class='string_literal'>"  -h --help            Display this message\n\n"</span></td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">               <span class='string_literal'>"See bootchart.conf for more information.\n"</span>,</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">               program_invocation_short_name,</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">               <span class='macro'>DEFAULT_HZ<span class='expansion'>25.0</span></span>,</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">               <span class='macro'>DEFAULT_SAMPLES_LEN<span class='expansion'>500</span></span>,</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">               <span class='macro'>DEFAULT_SCALE_X<span class='expansion'>100.0</span></span>,</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">               <span class='macro'>DEFAULT_SCALE_Y<span class='expansion'>20.0</span></span>,</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">               <span class='macro'>DEFAULT_OUTPUT<span class='expansion'>"/run/log"</span></span>,</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">               <span class='macro'>DEFAULT_INIT<span class='expansion'>"/usr/lib/systemd" "/systemd"</span></span>);</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> parse_argv(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">        <span class='keyword'>enum</span> {</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">                ARG_PERCPU = 0x100,</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>struct</span> option options[] = {</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                {<span class='string_literal'>"rel"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'r'       },</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">                {<span class='string_literal'>"freq"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>,  <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'f'       },</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">                {<span class='string_literal'>"samples"</span>,       <span class='macro'>required_argument<span class='expansion'>1</span></span>,  <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'n'       },</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">                {<span class='string_literal'>"pss"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'p'       },</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">                {<span class='string_literal'>"output"</span>,        <span class='macro'>required_argument<span class='expansion'>1</span></span>,  <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'o'       },</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">                {<span class='string_literal'>"init"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>,  <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'i'       },</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">                {<span class='string_literal'>"no-filter"</span>,     <span class='macro'>no_argument<span class='expansion'>0</span></span>,        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'F'       },</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">                {<span class='string_literal'>"cmdline"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'C'       },</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">                {<span class='string_literal'>"control-group"</span>, <span class='macro'>no_argument<span class='expansion'>0</span></span>,        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'c'       },</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">                {<span class='string_literal'>"help"</span>,          <span class='macro'>no_argument<span class='expansion'>0</span></span>,        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'h'       },</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">                {<span class='string_literal'>"scale-x"</span>,       <span class='macro'>required_argument<span class='expansion'>1</span></span>,  <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'x'       },</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">                {<span class='string_literal'>"scale-y"</span>,       <span class='macro'>required_argument<span class='expansion'>1</span></span>,  <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'y'       },</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">                {<span class='string_literal'>"entropy"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  'e'       },</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">                {<span class='string_literal'>"per-cpu"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,  ARG_PERCPU},</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">                {}</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">        <span class='keyword'>int</span> c, r;</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">        <span class='keyword'>if</span> (getpid() == 1)</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">                opterr = 0;</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">        <span class='keyword'>while</span> ((c = getopt_long(argc, argv, <span class='string_literal'>"erpf:n:o:i:FCchx:y:"</span>, options, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) &gt;= 0)</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">                <span class='keyword'>switch</span> (c) {</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">                <span class='keyword'>case</span> 'r':</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">                        arg_relative = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">                <span class='keyword'>case</span> 'f':</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">                        r = safe_atod(optarg, &amp;arg_hz);</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">                                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"failed to parse --freq/-f argument '%s': %m"</span>,<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 191, __func__, "failed to parse --freq/-f argument '%s': %m"<br>, optarg) : -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">                                                  <span class='macro'>optarg)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 191, __func__, "failed to parse --freq/-f argument '%s': %m"<br>, optarg) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">                <span class='keyword'>case</span> 'F':</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">                        arg_filter = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">                <span class='keyword'>case</span> 'C':</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">                        arg_show_cmdline = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">                <span class='keyword'>case</span> 'c':</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">                        arg_show_cgroup = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">                <span class='keyword'>case</span> 'n':</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">                        r = safe_atoi(optarg, &amp;arg_samples_len);</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">                                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"failed to parse --samples/-n argument '%s': %m"</span>,<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 206, __func__, "failed to parse --samples/-n argument '%s': %m"<br>, optarg) : -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">                                                  <span class='macro'>optarg)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 206, __func__, "failed to parse --samples/-n argument '%s': %m"<br>, optarg) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">                <span class='keyword'>case</span> 'o':</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">                        path_kill_slashes(optarg);</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">                        strscpy(arg_output_path, <span class='keyword'>sizeof</span>(arg_output_path), optarg);</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">                <span class='keyword'>case</span> 'i':</td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">                        path_kill_slashes(optarg);</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">                        strscpy(arg_init_path, <span class='keyword'>sizeof</span>(arg_init_path), optarg);</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">                <span class='keyword'>case</span> 'p':</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">                        arg_pss = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">                <span class='keyword'>case</span> 'x':</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">                        r = safe_atod(optarg, &amp;arg_scale_x);</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">                                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"failed to parse --scale-x/-x argument '%s': %m"</span>,<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 223, __func__, "failed to parse --scale-x/-x argument '%s': %m"<br>, optarg) : -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">                                                  <span class='macro'>optarg)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 223, __func__, "failed to parse --scale-x/-x argument '%s': %m"<br>, optarg) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">                <span class='keyword'>case</span> 'y':</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line">                        r = safe_atod(optarg, &amp;arg_scale_y);</td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">                                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"failed to parse --scale-y/-y argument '%s': %m"</span>,<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 229, __func__, "failed to parse --scale-y/-y argument '%s': %m"<br>, optarg) : -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">                                                  <span class='macro'>optarg)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 229, __func__, "failed to parse --scale-y/-y argument '%s': %m"<br>, optarg) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">                <span class='keyword'>case</span> 'e':</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">                        arg_entropy = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">                <span class='keyword'>case</span> ARG_PERCPU:</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">                        arg_percpu = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">                <span class='keyword'>case</span> 'h':</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">                        help();</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">                <span class='keyword'>case</span> '?':</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">                        <span class='keyword'>if</span> (getpid() != 1)</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">                                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Unhandled option code."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unhandled option code.", "src/bootchart/bootchart.c"<br>, 246, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">        <span class='keyword'>if</span> (arg_hz &lt;= 0) {</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Frequency needs to be &gt; 0"</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 250, __func__, "Frequency needs to be &gt; 0") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> do_journal_append(<span class='keyword'>char</span> *file) {</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *bootchart_message = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *bootchart_file = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">        <span class='keyword'>struct</span> iovec iovec[5];</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">        <span class='keyword'>int</span> r, j = 0;</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">        ssize_t n;</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">        bootchart_file = strappend(<span class='string_literal'>"BOOTCHART_FILE="</span>, file);</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">        <span class='keyword'>if</span> (!bootchart_file)</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/bootchart/bootchart.c", 268, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">        <span class='macro'>IOVEC_SET_STRING(iovec[j++], bootchart_file)<span class='expansion'>do { struct iovec *_i = &amp;(iovec[j++]); char *_s = (char *<br>)(bootchart_file); _i-&gt;iov_base = _s; _i-&gt;iov_len = strlen<br>(_s); } while(0)</span></span>;</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">        <span class='macro'>IOVEC_SET_STRING(iovec[j++], <span class='string_literal'>"MESSAGE_ID=9f26aa562cf440c2b16c773d0479b518"</span>)<span class='expansion'>do { struct iovec *_i = &amp;(iovec[j++]); char *_s = (char *<br>)("MESSAGE_ID=9f26aa562cf440c2b16c773d0479b518"); _i-&gt;iov_base<br> = _s; _i-&gt;iov_len = strlen(_s); } while(0)</span></span>;</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">        <span class='macro'>IOVEC_SET_STRING(iovec[j++], <span class='string_literal'>"PRIORITY=7"</span>)<span class='expansion'>do { struct iovec *_i = &amp;(iovec[j++]); char *_s = (char *<br>)("PRIORITY=7"); _i-&gt;iov_base = _s; _i-&gt;iov_len = strlen<br>(_s); } while(0)</span></span>;</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">        bootchart_message = strjoin(<span class='string_literal'>"MESSAGE=Bootchart created: "</span>, file, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">        <span class='keyword'>if</span> (!bootchart_message)</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/bootchart/bootchart.c", 275, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">        <span class='macro'>IOVEC_SET_STRING(iovec[j++], bootchart_message)<span class='expansion'>do { struct iovec *_i = &amp;(iovec[j++]); char *_s = (char *<br>)(bootchart_message); _i-&gt;iov_base = _s; _i-&gt;iov_len = strlen<br>(_s); } while(0)</span></span>;</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">        p = malloc(10 + <span class='macro'>BOOTCHART_MAX<span class='expansion'>(16*1024*1024)</span></span>);</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">        <span class='keyword'>if</span> (!p)</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/bootchart/bootchart.c", 281, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">        memcpy(p, <span class='string_literal'>"BOOTCHART="</span>, 10);</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">        fd = open(file, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to open bootchart data \"%s\": %m"</span>, file)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 287, __func__, "Failed to open bootchart data \"%s\": %m", file<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">        n = loop_read(fd, p + 10, <span class='macro'>BOOTCHART_MAX<span class='expansion'>(16*1024*1024)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">        <span class='keyword'>if</span> (n &lt; 0)</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(n, <span class='string_literal'>"Failed to read bootchart data: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (n); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 291, __func__, "Failed to read bootchart data: %m") : -abs(<br>_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">        iovec[j].iov_base = p;</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">        iovec[j].iov_len = 10 + n;</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">        j++;</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        r = <span class='macro'>sd_journal_sendv(iovec, j)<span class='expansion'>sd_journal_sendv_with_location("CODE_FILE=" "src/bootchart/bootchart.c"<br>, "CODE_LINE=" "297", __func__, iovec, j)</span></span>;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to send bootchart: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 299, __func__, "Failed to send bootchart: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>struct</span> list_sample_data *sampledata;</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">        <span class='macro'>_cleanup_closedir_<span class='expansion'>__attribute__((cleanup(closedirp)))</span></span> DIR *proc = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *build = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">        <span class='macro'>_cleanup_fclose_<span class='expansion'>__attribute__((cleanup(fclosep)))</span></span> FILE *of = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> sysfd = -1;</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">        <span class='keyword'>struct</span> ps_struct *ps_first;</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">        <span class='keyword'>double</span> graph_start;</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">        <span class='keyword'>double</span> log_start;</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        <span class='keyword'>double</span> interval;</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">        <span class='keyword'>char</span> output_file[<span class='macro'>PATH_MAX<span class='expansion'>4096</span></span>];</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">        <span class='keyword'>char</span> datestr[200];</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">        <span class='keyword'>int</span> pscount = 0;</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">        <span class='keyword'>int</span> n_cpus = 0;</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">        <span class='keyword'>int</span> overrun = 0;</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">        time_t t = 0;</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">        <span class='keyword'>int</span> r, samples;</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">        <span class='keyword'>struct</span> ps_struct *ps;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">        <span class='keyword'>struct</span> rlimit rlim;</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">        <span class='keyword'>struct</span> list_sample_data *head;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">        <span class='keyword'>struct</span> sigaction sig = {</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">                .<span class='macro'>sa_handler<span class='expansion'>__sigaction_handler.sa_handler</span></span> = signal_handler,</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">        parse_conf();</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">        r = parse_argv(argc, argv);</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r == 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'r' is not equal to 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">        <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">         <span class='comment'>* If the kernel executed us through init=/usr/lib/systemd/systemd-bootchart, then</span></td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">         <span class='comment'>* fork:</span></td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">         <span class='comment'>* - parent execs executable specified via init_path[] (/usr/lib/systemd/systemd by default) as pid=1</span></td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">         <span class='comment'>* - child logs data</span></td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">         <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">        <span class='keyword'>if</span> (getpid() == 1) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">                <span class='keyword'>if</span> (fork())</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">                        <span class='comment'>/* parent */</span></td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">                        execl(arg_init_path, arg_init_path, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        argv[0][0] = '@';</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">        rlim.rlim_cur = 4096;</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">        rlim.rlim_max = 4096;</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">        (<span class='keyword'>void</span>) setrlimit(<span class='macro'>RLIMIT_NOFILE<span class='expansion'>RLIMIT_NOFILE</span></span>, &amp;rlim);</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">        <span class='comment'>/* start with empty ps LL */</span></td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">        ps_first = <span class='macro'>new0(<span class='keyword'>struct</span> ps_struct, 1)<span class='expansion'>((struct ps_struct*) calloc((1), sizeof(struct ps_struct)))</span></span>;</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!ps_first</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'ps_first' is non-null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">                <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/bootchart/bootchart.c", 357, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        <span class='comment'>/* handle TERM/INT nicely */</span></td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">        sigaction(<span class='macro'>SIGHUP<span class='expansion'>1</span></span>, &amp;sig, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">        interval = (1.0 / arg_hz) * 1000000000.0;</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">arg_relative</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'arg_relative' is 0</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">                graph_start = log_start = gettime_ns();</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">                <span class='keyword'>struct</span> timespec n;</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">                <span class='keyword'>double</span> uptime;</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">                clock_gettime(clock_boottime_or_monotonic(), &amp;n);</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">                uptime = (n.tv_sec + (n.tv_nsec / (<span class='keyword'>double</span>) <span class='macro'>NSEC_PER_SEC<span class='expansion'>((nsec_t) 1000000000ULL)</span></span>));</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">                log_start = gettime_ns();</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">                graph_start = log_start - uptime;</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        <span class='keyword'>if</span> (graph_start &lt; 0.0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Failed to setup graph start time.\n\n"<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 382, __func__, "Failed to setup graph start time.\n\n" "The system uptime probably includes time that the system was suspended. "<br> "Use --rel to bypass this issue.") : -abs(_e); })</span></span></span></td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">                          <span class='string_literal'><span class='macro'>"The system uptime probably includes time that the system was suspended. "<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 382, __func__, "Failed to setup graph start time.\n\n" "The system uptime probably includes time that the system was suspended. "<br> "Use --rel to bypass this issue.") : -abs(_e); })</span></span></span></td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">                          <span class='string_literal'><span class='macro'>"Use --rel to bypass this issue."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 382, __func__, "Failed to setup graph start time.\n\n" "The system uptime probably includes time that the system was suspended. "<br> "Use --rel to bypass this issue.") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">        <span class='macro'>LIST_HEAD_INIT(head)<span class='expansion'>do { (head) = ((void*)0); } while(0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'LIST_HEAD_INIT':
+</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Null pointer value stored to 'head'</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">        <span class='comment'>/* main program loop */</span></td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        <span class='keyword'>for</span> (samples = 0; <span class="mrange">!exiting</span> &amp;&amp; samples &lt; arg_samples_len; samples++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:27ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Assuming 'exiting' is not equal to 0</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">                <span class='keyword'>int</span> res;</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">                <span class='keyword'>double</span> sample_stop;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">                <span class='keyword'>double</span> elapsed;</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">                <span class='keyword'>double</span> timeleft;</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">                sampledata = <span class='macro'>new0(<span class='keyword'>struct</span> list_sample_data, 1)<span class='expansion'>((struct list_sample_data*) calloc((1), sizeof(struct list_sample_data<br>)))</span></span>;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">                <span class='keyword'>if</span> (sampledata == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">                        <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/bootchart/bootchart.c", 397, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">                sampledata-&gt;sampletime = gettime_ns();</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">                sampledata-&gt;counter = samples;</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">                <span class='keyword'>if</span> (sysfd &lt; 0)</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">                        sysfd = open(<span class='string_literal'>"/sys"</span>, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">                <span class='keyword'>if</span> (!build) {</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">                        <span class='keyword'>if</span> (parse_env_file(<span class='string_literal'>"/etc/os-release"</span>, <span class='macro'>NEWLINE<span class='expansion'>"\n\r"</span></span>, <span class='string_literal'>"PRETTY_NAME"</span>, &amp;build, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) == -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">                                parse_env_file(<span class='string_literal'>"/usr/lib/os-release"</span>, <span class='macro'>NEWLINE<span class='expansion'>"\n\r"</span></span>, <span class='string_literal'>"PRETTY_NAME"</span>, &amp;build, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">                <span class='keyword'>if</span> (proc)</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">                        rewinddir(proc);</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">                        proc = opendir(<span class='string_literal'>"/proc"</span>);</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">                <span class='comment'>/* wait for /proc to become available, discarding samples */</span></td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">                <span class='keyword'>if</span> (proc) {</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">                        r = log_sample(proc, samples, ps_first, &amp;sampledata, &amp;pscount, &amp;n_cpus);</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">                sample_stop = gettime_ns();</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">                elapsed = (sample_stop - sampledata-&gt;sampletime) * 1000000000.0;</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">                timeleft = interval - elapsed;</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">                <span class='comment'>/*</span></td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">                 <span class='comment'>* check if we have not consumed our entire timeslice. If we</span></td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">                 <span class='comment'>* do, don't sleep and take a new sample right away.</span></td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">                 <span class='comment'>* we'll lose all the missed samples and overrun our total</span></td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">                 <span class='comment'>* time</span></td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">                 <span class='comment'>*/</span></td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">                <span class='keyword'>if</span> (timeleft &gt; 0) {</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">                        <span class='keyword'>struct</span> timespec req;</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">                        req.tv_sec = (time_t)(timeleft / 1000000000.0);</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">                        req.tv_nsec = (<span class='keyword'>long</span>)(timeleft - (req.tv_sec * 1000000000.0));</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">                        res = nanosleep(&amp;req, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">                        <span class='keyword'>if</span> (res) {</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">                                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EINTR<span class='expansion'>4</span></span>)</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">                                        <span class='comment'>/* caught signal, probably HUP! */</span></td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">                                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">                                <span class='macro'>log_error_errno(errno, <span class='string_literal'>"nanosleep() failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 446, __func__, "nanosleep() failed: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">                        overrun++;</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">                        <span class='comment'>/* calculate how many samples we lost and scrap them */</span></td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">                        arg_samples_len -= (<span class='keyword'>int</span>)(-timeleft / interval);</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">                <span class='macro'>LIST_PREPEND(link, head, sampledata)<span class='expansion'>do { typeof(*(head)) **_head = &amp;(head), *_item = (sampledata<br>); do { if ((__builtin_expect(!!(!(_item)),0))) log_assert_failed<br>("_item", "src/bootchart/bootchart.c", 454, __PRETTY_FUNCTION__<br>); } while (0); if ((_item-&gt;link_next = *_head)) _item-&gt;<br>link_next-&gt;link_prev = _item; _item-&gt;link_prev = ((void<br>*)0); *_head = _item; } while(0)</span></span>;</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">        <span class='comment'>/* do some cleanup, close fd's */</span></td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">        ps = ps_first;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">        <span class='keyword'>while</span> (ps-&gt;next_ps) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 466</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">                ps = ps-&gt;next_ps;</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">                ps-&gt;schedstat = safe_close(ps-&gt;schedstat);</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">                ps-&gt;sched = safe_close(ps-&gt;sched);</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">                ps-&gt;smaps = safe_fclose(ps-&gt;smaps);</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">        <span class='keyword'>if</span> (!of) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">                t = time(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">                r = strftime(datestr, <span class='keyword'>sizeof</span>(datestr), <span class='string_literal'>"%Y%m%d-%H%M"</span>, localtime(&amp;t));</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">                <span class='macro'>assert_se(r &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt; 0)),0))) log_assert_failed<br>("r &gt; 0", "src/bootchart/bootchart.c", 469, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">                snprintf(output_file, <span class='macro'>PATH_MAX<span class='expansion'>4096</span></span>, <span class='string_literal'>"%s/bootchart-%s.svg"</span>, arg_output_path, datestr);</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">                of = fopen(output_file, <span class='string_literal'>"we"</span>);</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!of</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'of' is non-null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Error opening output file '%s': %m\n"</span>, output_file)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 476, __func__, "Error opening output file '%s': %m\n", output_file<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">        r = svg_do(of, strna(build), head, ps_first,</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">                   samples, pscount, n_cpus, graph_start,</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">                   log_start, interval, overrun);</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Error generating svg file: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 485, __func__, "Error generating svg file: %m") : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"systemd-bootchart wrote %s\n"</span>, output_file)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 489, __func__, "systemd-bootchart wrote %s\n", output_file)<br> : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">        r = do_journal_append(output_file);</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">        <span class='comment'>/* nitpic cleanups */</span></td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">        ps = ps_first-&gt;next_ps;</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">        <span class='keyword'>while</span> (ps-&gt;next_ps) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 514</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">                <span class='keyword'>struct</span> ps_struct *old;</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">                old = ps;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">                old-&gt;sample = ps-&gt;first;</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">                ps = ps-&gt;next_ps;</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">                <span class='keyword'>while</span> (old-&gt;sample-&gt;next) {</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">                        <span class='keyword'>struct</span> ps_sched_struct *oldsample = old-&gt;sample;</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">                        old-&gt;sample = old-&gt;sample-&gt;next;</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">                        free(oldsample);</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                free(old-&gt;cgroup);</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">                free(old-&gt;sample);</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">                free(old);</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">        free(ps-&gt;cgroup);</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">        free(ps-&gt;sample);</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">        free(ps);</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">        <span class="mrange">sampledata = head</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Null pointer value stored to 'sampledata'</td><td><div class="PathNav"><a href="#EndPath" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">        <span class='keyword'>while</span> (<span class="mrange">sampledata</span>-&gt;link_prev) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:16ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Access to field 'link_prev' results in a dereference of a null pointer (loaded from variable 'sampledata')</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">                <span class='keyword'>struct</span> list_sample_data *old_sampledata = sampledata;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">                sampledata = sampledata-&gt;link_prev;</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">                free(old_sampledata);</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">        free(sampledata);</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">        <span class='comment'>/* don't complain when overrun once, happens most commonly on 1st sample */</span></td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">        <span class='keyword'>if</span> (overrun &gt; 1)</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"systemd-bootchart: sample time overrun %i times\n"</span>, overrun)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/bootchart/bootchart.c"<br>, 528, __func__, "systemd-bootchart: sample time overrun %i times\n"<br>, overrun) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">}</td></tr>
+</table></body></html>

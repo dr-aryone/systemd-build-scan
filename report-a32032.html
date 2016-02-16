@@ -1,0 +1,538 @@
+<!doctype html>
+<html>
+<head>
+<title>src/test/test-fileio.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Array access (from variable 'a') results in a null pointer dereference -->
+
+<!-- BUGTYPE Dereference of null pointer -->
+
+<!-- BUGCATEGORY Logic error -->
+
+<!-- BUGFILE /home/runner/systemd/src/test/test-fileio.c -->
+
+<!-- FILENAME test-fileio.c -->
+
+<!-- FUNCTIONNAME test_parse_multiline_env_file -->
+
+<!-- BUGLINE 191 -->
+
+<!-- BUGCOLUMN 9 -->
+
+<!-- BUGPATHLENGTH 4 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>test/test-fileio.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 191, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Array access (from variable 'a') results in a null pointer dereference</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright 2013 Lennart Poettering</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"><span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line"><span class='directive'>#include &lt;fcntl.h&gt;</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"><span class='directive'>#include &lt;stdio.h&gt;</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='directive'>#include &lt;unistd.h&gt;</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "alloc-util.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "ctype.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "def.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include "env-util.h"</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#include "fd-util.h"</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='directive'>#include "fileio.h"</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='directive'>#include "parse-util.h"</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='directive'>#include "process-util.h"</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"><span class='directive'>#include "strv.h"</span></td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='directive'>#include "util.h"</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_parse_env_file(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">        <span class='keyword'>char</span>    t[] = <span class='string_literal'>"/tmp/test-fileio-in-XXXXXX"</span>,</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">                p[] = <span class='string_literal'>"/tmp/test-fileio-out-XXXXXX"</span>;</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line">        <span class='keyword'>int</span> fd, r;</td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">        FILE *f;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *one = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *two = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *three = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *four = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *five = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line">                        *six = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *seven = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *eight = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *nine = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *ten = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">        <span class='keyword'>char</span> **i;</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">        <span class='keyword'>unsigned</span> k;</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">        fd = mkostemp_safe(p, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 48, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line">        close(fd);</td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">        fd = mkostemp_safe(t, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 52, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">        f = fdopen(fd, <span class='string_literal'>"w"</span>);</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">        <span class='macro'>assert_se(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/test/test-fileio.c", 55, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line">        fputs(<span class='string_literal'>"one=BAR   \n"</span></td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">              <span class='string_literal'>"# comment\n"</span></td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">              <span class='string_literal'>" # comment \n"</span></td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">              <span class='string_literal'>" ; comment \n"</span></td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">              <span class='string_literal'>"  two   =   bar    \n"</span></td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">              <span class='string_literal'>"invalid line\n"</span></td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">              <span class='string_literal'>"invalid line #comment\n"</span></td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line">              <span class='string_literal'>"three = \"333\n"</span></td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">              <span class='string_literal'>"xxxx\"\n"</span></td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">              <span class='string_literal'>"four = \'44\\\"44\'\n"</span></td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">              <span class='string_literal'>"five = \'55\\\'55\' \"FIVE\" cinco   \n"</span></td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">              <span class='string_literal'>"six = seis sechs\\\n"</span></td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">              <span class='string_literal'>" sis\n"</span></td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">              <span class='string_literal'>"seven=\"sevenval\" #nocomment\n"</span></td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">              <span class='string_literal'>"eight=eightval #nocomment\n"</span></td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line">              <span class='string_literal'>"export nine=nineval\n"</span></td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">              <span class='string_literal'>"ten="</span>, f);</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">        fflush(f);</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">        fclose(f);</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">        r = load_env_file(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;a);</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-fileio.c", 79, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">        <span class='macro'>STRV_FOREACH(i, a)<span class='expansion'>for ((i) = (a); (i) &amp;&amp; *(i); (i)++)</span></span></td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Got: &lt;%s&gt;"</span>, *i)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 82, __func__, "Got: &lt;%s&gt;", *i) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[0], <span class='string_literal'>"one=BAR"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[0], "one=BAR"))),<br>0))) log_assert_failed("streq_ptr(a[0], \"one=BAR\")", "src/test/test-fileio.c"<br>, 84, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[1], <span class='string_literal'>"two=bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[1], "two=bar"))),<br>0))) log_assert_failed("streq_ptr(a[1], \"two=bar\")", "src/test/test-fileio.c"<br>, 85, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[2], <span class='string_literal'>"three=333\nxxxx"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[2], "three=333\nxxxx"<br>))),0))) log_assert_failed("streq_ptr(a[2], \"three=333\\nxxxx\")"<br>, "src/test/test-fileio.c", 86, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[3], <span class='string_literal'>"four=44\"44"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[3], "four=44\"44"<br>))),0))) log_assert_failed("streq_ptr(a[3], \"four=44\\\"44\")"<br>, "src/test/test-fileio.c", 87, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[4], <span class='string_literal'>"five=55\'55FIVEcinco"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[4], "five=55\'55FIVEcinco"<br>))),0))) log_assert_failed("streq_ptr(a[4], \"five=55\\'55FIVEcinco\")"<br>, "src/test/test-fileio.c", 88, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[5], <span class='string_literal'>"six=seis sechs sis"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[5], "six=seis sechs sis"<br>))),0))) log_assert_failed("streq_ptr(a[5], \"six=seis sechs sis\")"<br>, "src/test/test-fileio.c", 89, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[6], <span class='string_literal'>"seven=sevenval#nocomment"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[6], "seven=sevenval#nocomment"<br>))),0))) log_assert_failed("streq_ptr(a[6], \"seven=sevenval#nocomment\")"<br>, "src/test/test-fileio.c", 90, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[7], <span class='string_literal'>"eight=eightval #nocomment"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[7], "eight=eightval #nocomment"<br>))),0))) log_assert_failed("streq_ptr(a[7], \"eight=eightval #nocomment\")"<br>, "src/test/test-fileio.c", 91, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[8], <span class='string_literal'>"export nine=nineval"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[8], "export nine=nineval"<br>))),0))) log_assert_failed("streq_ptr(a[8], \"export nine=nineval\")"<br>, "src/test/test-fileio.c", 92, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[9], <span class='string_literal'>"ten="</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[9], "ten="))),0))<br>) log_assert_failed("streq_ptr(a[9], \"ten=\")", "src/test/test-fileio.c"<br>, 93, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">        <span class='macro'>assert_se(a[10] == NULL)<span class='expansion'>do { if ((__builtin_expect(!!(!(a[10] == ((void*)0))),0))) log_assert_failed<br>("a[10] == NULL", "src/test/test-fileio.c", 94, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">        <span class='macro'>strv_env_clean(a)<span class='expansion'>strv_env_clean_with_callback(a, ((void*)0), ((void*)0))</span></span>;</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">        k = 0;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">        <span class='macro'>STRV_FOREACH(i, b)<span class='expansion'>for ((i) = (b); (i) &amp;&amp; *(i); (i)++)</span></span> {</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Got2: &lt;%s&gt;"</span>, *i)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 100, __func__, "Got2: &lt;%s&gt;", *i) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">                <span class='macro'>assert_se(streq(*i, a[k++]))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*i),(a[k++])) == 0))<br>),0))) log_assert_failed("streq(*i, a[k++])", "src/test/test-fileio.c"<br>, 101, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">        r = parse_env_file(</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">                        t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">                       <span class='string_literal'>"one"</span>, &amp;one,</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">                       <span class='string_literal'>"two"</span>, &amp;two,</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">                       <span class='string_literal'>"three"</span>, &amp;three,</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">                       <span class='string_literal'>"four"</span>, &amp;four,</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">                       <span class='string_literal'>"five"</span>, &amp;five,</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">                       <span class='string_literal'>"six"</span>, &amp;six,</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">                       <span class='string_literal'>"seven"</span>, &amp;seven,</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">                       <span class='string_literal'>"eight"</span>, &amp;eight,</td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">                       <span class='string_literal'>"export nine"</span>, &amp;nine,</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">                       <span class='string_literal'>"ten"</span>, &amp;ten,</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">                       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-fileio.c", 118, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"one=[%s]"</span>, strna(one))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 120, __func__, "one=[%s]", strna(one)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"two=[%s]"</span>, strna(two))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 121, __func__, "two=[%s]", strna(two)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"three=[%s]"</span>, strna(three))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 122, __func__, "three=[%s]", strna(three)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"four=[%s]"</span>, strna(four))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 123, __func__, "four=[%s]", strna(four)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"five=[%s]"</span>, strna(five))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 124, __func__, "five=[%s]", strna(five)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"six=[%s]"</span>, strna(six))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 125, __func__, "six=[%s]", strna(six)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"seven=[%s]"</span>, strna(seven))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 126, __func__, "seven=[%s]", strna(seven)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"eight=[%s]"</span>, strna(eight))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 127, __func__, "eight=[%s]", strna(eight)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"export nine=[%s]"</span>, strna(nine))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 128, __func__, "export nine=[%s]", strna(nine)) : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"ten=[%s]"</span>, strna(nine))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 129, __func__, "ten=[%s]", strna(nine)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">        <span class='macro'>assert_se(streq(one, <span class='string_literal'>"BAR"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((one),("BAR")) == 0))<br>),0))) log_assert_failed("streq(one, \"BAR\")", "src/test/test-fileio.c"<br>, 131, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">        <span class='macro'>assert_se(streq(two, <span class='string_literal'>"bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((two),("bar")) == 0))<br>),0))) log_assert_failed("streq(two, \"bar\")", "src/test/test-fileio.c"<br>, 132, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">        <span class='macro'>assert_se(streq(three, <span class='string_literal'>"333\nxxxx"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((three),("333\nxxxx")<br>) == 0))),0))) log_assert_failed("streq(three, \"333\\nxxxx\")"<br>, "src/test/test-fileio.c", 133, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">        <span class='macro'>assert_se(streq(four, <span class='string_literal'>"44\"44"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((four),("44\"44")) ==<br> 0))),0))) log_assert_failed("streq(four, \"44\\\"44\")", "src/test/test-fileio.c"<br>, 134, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">        <span class='macro'>assert_se(streq(five, <span class='string_literal'>"55\'55FIVEcinco"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((five),("55\'55FIVEcinco"<br>)) == 0))),0))) log_assert_failed("streq(five, \"55\\'55FIVEcinco\")"<br>, "src/test/test-fileio.c", 135, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">        <span class='macro'>assert_se(streq(six, <span class='string_literal'>"seis sechs sis"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((six),("seis sechs sis"<br>)) == 0))),0))) log_assert_failed("streq(six, \"seis sechs sis\")"<br>, "src/test/test-fileio.c", 136, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">        <span class='macro'>assert_se(streq(seven, <span class='string_literal'>"sevenval#nocomment"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((seven),("sevenval#nocomment"<br>)) == 0))),0))) log_assert_failed("streq(seven, \"sevenval#nocomment\")"<br>, "src/test/test-fileio.c", 137, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">        <span class='macro'>assert_se(streq(eight, <span class='string_literal'>"eightval #nocomment"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((eight),("eightval #nocomment"<br>)) == 0))),0))) log_assert_failed("streq(eight, \"eightval #nocomment\")"<br>, "src/test/test-fileio.c", 138, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">        <span class='macro'>assert_se(streq(nine, <span class='string_literal'>"nineval"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((nine),("nineval")) ==<br> 0))),0))) log_assert_failed("streq(nine, \"nineval\")", "src/test/test-fileio.c"<br>, 139, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">        <span class='macro'>assert_se(ten == NULL)<span class='expansion'>do { if ((__builtin_expect(!!(!(ten == ((void*)0))),0))) log_assert_failed<br>("ten == NULL", "src/test/test-fileio.c", 140, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">        r = write_env_file(p, a);</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-fileio.c", 143, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">        r = load_env_file(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, p, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;b);</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-fileio.c", 146, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">        unlink(t);</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">        unlink(p);</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_parse_multiline_env_file(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">        <span class='keyword'>char</span>    t[] = <span class='string_literal'>"/tmp/test-fileio-in-XXXXXX"</span>,</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">                p[] = <span class='string_literal'>"/tmp/test-fileio-out-XXXXXX"</span>;</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">        <span class='keyword'>int</span> fd, r;</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">        FILE *f;</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">        <span class='keyword'>char</span> **i;</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">        fd = mkostemp_safe(p, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 161, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">        close(fd);</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">        fd = mkostemp_safe(t, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 165, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">        f = fdopen(fd, <span class='string_literal'>"w"</span>);</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">        <span class='macro'>assert_se(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/test/test-fileio.c", 168, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">        fputs(<span class='string_literal'>"one=BAR\\\n"</span></td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">              <span class='string_literal'>"    VAR\\\n"</span></td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">              <span class='string_literal'>"\tGAR\n"</span></td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">              <span class='string_literal'>"#comment\n"</span></td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">              <span class='string_literal'>"two=\"bar\\\n"</span></td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">              <span class='string_literal'>"    var\\\n"</span></td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">              <span class='string_literal'>"\tgar\"\n"</span></td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">              <span class='string_literal'>"#comment\n"</span></td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">              <span class='string_literal'>"tri=\"bar \\\n"</span></td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">              <span class='string_literal'>"    var \\\n"</span></td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">              <span class='string_literal'>"\tgar \"\n"</span>, f);</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">        fflush(f);</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">        fclose(f);</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">        r = <span class="mrange">load_env_file(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;a)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Value assigned to 'a'</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-fileio.c", 186, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">        <span class='macro'>STRV_FOREACH(i, a)<span class='expansion'>for ((i) = (a); (i) &amp;&amp; *(i); (i)++)</span></span></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'STRV_FOREACH':
+</td><td><div class="PathNav"><a href="#EndPath" title="Next event (4)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming pointer value is null</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Got: &lt;%s&gt;"</span>, *i)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 189, __func__, "Got: &lt;%s&gt;", *i) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[0], <span class='string_literal'>"one=BAR    VAR\tGAR"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[0], "one=BAR    VAR\tGAR"<br>))),0))) log_assert_failed("streq_ptr(a[0], \"one=BAR    VAR\\tGAR\")"<br>, "src/test/test-fileio.c", 191, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Array access (from variable 'a') results in a null pointer dereference</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[1], <span class='string_literal'>"two=bar    var\tgar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[1], "two=bar    var\tgar"<br>))),0))) log_assert_failed("streq_ptr(a[1], \"two=bar    var\\tgar\")"<br>, "src/test/test-fileio.c", 192, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[2], <span class='string_literal'>"tri=bar     var \tgar "</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[2], "tri=bar     var \tgar "<br>))),0))) log_assert_failed("streq_ptr(a[2], \"tri=bar     var \\tgar \")"<br>, "src/test/test-fileio.c", 193, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">        <span class='macro'>assert_se(a[3] == NULL)<span class='expansion'>do { if ((__builtin_expect(!!(!(a[3] == ((void*)0))),0))) log_assert_failed<br>("a[3] == NULL", "src/test/test-fileio.c", 194, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">        r = write_env_file(p, a);</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-fileio.c", 197, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">        r = load_env_file(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, p, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;b);</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-fileio.c", 200, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">        unlink(t);</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">        unlink(p);</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_executable_is_script(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">        <span class='keyword'>char</span> t[] = <span class='string_literal'>"/tmp/test-executable-XXXXXX"</span>;</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">        <span class='keyword'>int</span> fd, r;</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">        FILE *f;</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">        <span class='keyword'>char</span> *command;</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">        fd = mkostemp_safe(t, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 214, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">        f = fdopen(fd, <span class='string_literal'>"w"</span>);</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">        <span class='macro'>assert_se(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/test/test-fileio.c", 217, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">        fputs(<span class='string_literal'>"#! /bin/script -a -b \ngoo goo"</span>, f);</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">        fflush(f);</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">        r = executable_is_script(t, &amp;command);</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">        <span class='macro'>assert_se(r &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt; 0)),0))) log_assert_failed<br>("r &gt; 0", "src/test/test-fileio.c", 223, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">        <span class='macro'>assert_se(streq(command, <span class='string_literal'>"/bin/script"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((command),("/bin/script"<br>)) == 0))),0))) log_assert_failed("streq(command, \"/bin/script\")"<br>, "src/test/test-fileio.c", 224, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">        free(command);</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">        r = executable_is_script(<span class='string_literal'>"/bin/sh"</span>, &amp;command);</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">        <span class='macro'>assert_se(r == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == 0)),0))) log_assert_failed<br>("r == 0", "src/test/test-fileio.c", 228, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">        r = executable_is_script(<span class='string_literal'>"/usr/bin/yum"</span>, &amp;command);</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">        <span class='macro'>assert_se(r &gt; 0 || r == -ENOENT)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt; 0 || r == -2)),0))) log_assert_failed<br>("r &gt; 0 || r == -ENOENT", "src/test/test-fileio.c", 231, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">        <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">                <span class='macro'>assert_se(startswith(command, <span class='string_literal'>"/"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(startswith(command, "/"))),0)<br>)) log_assert_failed("startswith(command, \"/\")", "src/test/test-fileio.c"<br>, 233, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">                free(command);</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">        fclose(f);</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">        unlink(t);</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_status_field(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *s = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *z = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">        <span class='keyword'>unsigned</span> <span class='keyword'>long</span> <span class='keyword'>long</span> total = 0, buffers = 0;</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">        <span class='macro'>assert_se(get_proc_field(<span class='string_literal'>"/proc/self/status"</span>, <span class='string_literal'>"Threads"</span>, WHITESPACE, &amp;t) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(get_proc_field("/proc/self/status"<br>, "Threads", " \t\n\r", &amp;t) == 0)),0))) log_assert_failed<br>("get_proc_field(\"/proc/self/status\", \"Threads\", WHITESPACE, &amp;t) == 0"<br>, "src/test/test-fileio.c", 246, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">        puts(t);</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">        <span class='macro'>assert_se(streq(t, <span class='string_literal'>"1"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((t),("1")) == 0))),0)<br>)) log_assert_failed("streq(t, \"1\")", "src/test/test-fileio.c"<br>, 248, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">        r = get_proc_field(<span class='string_literal'>"/proc/meminfo"</span>, <span class='string_literal'>"MemTotal"</span>, <span class='macro'>WHITESPACE<span class='expansion'>" \t\n\r"</span></span>, &amp;p);</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">        <span class='keyword'>if</span> (r != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>) {</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">                <span class='macro'>assert_se(r == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == 0)),0))) log_assert_failed<br>("r == 0", "src/test/test-fileio.c", 252, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">                puts(p);</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">                <span class='macro'>assert_se(safe_atollu(p, &amp;total) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(safe_atollu(p, &amp;total) ==<br> 0)),0))) log_assert_failed("safe_atollu(p, &amp;total) == 0"<br>, "src/test/test-fileio.c", 254, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">        r = get_proc_field(<span class='string_literal'>"/proc/meminfo"</span>, <span class='string_literal'>"Buffers"</span>, <span class='macro'>WHITESPACE<span class='expansion'>" \t\n\r"</span></span>, &amp;s);</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">        <span class='keyword'>if</span> (r != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>) {</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">                <span class='macro'>assert_se(r == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == 0)),0))) log_assert_failed<br>("r == 0", "src/test/test-fileio.c", 259, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">                puts(s);</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">                <span class='macro'>assert_se(safe_atollu(s, &amp;buffers) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(safe_atollu(s, &amp;buffers) ==<br> 0)),0))) log_assert_failed("safe_atollu(s, &amp;buffers) == 0"<br>, "src/test/test-fileio.c", 261, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">        <span class='keyword'>if</span> (p)</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">                <span class='macro'>assert_se(buffers &lt; total)<span class='expansion'>do { if ((__builtin_expect(!!(!(buffers &lt; total)),0))) log_assert_failed<br>("buffers &lt; total", "src/test/test-fileio.c", 265, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">        <span class='comment'>/* Seccomp should be a good test for field full of zeros. */</span></td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">        r = get_proc_field(<span class='string_literal'>"/proc/meminfo"</span>, <span class='string_literal'>"Seccomp"</span>, <span class='macro'>WHITESPACE<span class='expansion'>" \t\n\r"</span></span>, &amp;z);</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">        <span class='keyword'>if</span> (r != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>) {</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">                <span class='macro'>assert_se(r == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == 0)),0))) log_assert_failed<br>("r == 0", "src/test/test-fileio.c", 270, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">                puts(z);</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">                <span class='macro'>assert_se(safe_atollu(z, &amp;buffers) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(safe_atollu(z, &amp;buffers) ==<br> 0)),0))) log_assert_failed("safe_atollu(z, &amp;buffers) == 0"<br>, "src/test/test-fileio.c", 272, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_capeff(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">        <span class='keyword'>int</span> pid, p;</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">        <span class='keyword'>for</span> (pid = 0; pid &lt; 2; pid++) {</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *capeff = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">                <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">                r = get_process_capeff(0, &amp;capeff);</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"capeff: '%s' (r=%d)"</span>, capeff, r)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/test/test-fileio.c"<br>, 284, __func__, "capeff: '%s' (r=%d)", capeff, r) : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">                <span class='keyword'>if</span> (r == -<span class='macro'>ENOENT<span class='expansion'>2</span></span> || r == -<span class='macro'>EPERM<span class='expansion'>1</span></span>)</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">                        <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">                <span class='macro'>assert_se(r == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == 0)),0))) log_assert_failed<br>("r == 0", "src/test/test-fileio.c", 289, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">                <span class='macro'>assert_se(*capeff)<span class='expansion'>do { if ((__builtin_expect(!!(!(*capeff)),0))) log_assert_failed<br>("*capeff", "src/test/test-fileio.c", 290, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">                p = capeff[strspn(capeff, <span class='macro'>DIGITS<span class='expansion'>"0123456789"</span></span> <span class='string_literal'>"abcdefABCDEF"</span>)];</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">                <span class='macro'>assert_se(!p || isspace(p))<span class='expansion'>do { if ((__builtin_expect(!!(!(!p || ((*__ctype_b_loc ())[(int<br>) ((p))] &amp; (unsigned short int) _ISspace))),0))) log_assert_failed<br>("!p || isspace(p)", "src/test/test-fileio.c", 292, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_write_string_stream(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        <span class='keyword'>char</span> fn[] = <span class='string_literal'>"/tmp/test-write_string_stream-XXXXXX"</span>;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">        <span class='macro'>_cleanup_fclose_<span class='expansion'>__attribute__((cleanup(fclosep)))</span></span> FILE *f = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">        <span class='keyword'>int</span> fd;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">        <span class='keyword'>char</span> buf[64];</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">        fd = mkostemp_safe(fn, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>);</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 303, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">        f = fdopen(fd, <span class='string_literal'>"r"</span>);</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">        <span class='macro'>assert_se(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/test/test-fileio.c", 306, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">        <span class='macro'>assert_se(write_string_stream(f, <span class='string_literal'>"boohoo"</span>, true) &lt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_stream(f, "boohoo"<br>, 1) &lt; 0)),0))) log_assert_failed("write_string_stream(f, \"boohoo\", true) &lt; 0"<br>, "src/test/test-fileio.c", 307, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">        f = freopen(fn, <span class='string_literal'>"r+"</span>, f);</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">        <span class='macro'>assert_se(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/test/test-fileio.c", 310, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">        <span class='macro'>assert_se(write_string_stream(f, <span class='string_literal'>"boohoo"</span>, true) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_stream(f, "boohoo"<br>, 1) == 0)),0))) log_assert_failed("write_string_stream(f, \"boohoo\", true) == 0"<br>, "src/test/test-fileio.c", 312, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        rewind(f);</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">        <span class='macro'>assert_se(fgets(buf, <span class='keyword'>sizeof</span>(buf), f))<span class='expansion'>do { if ((__builtin_expect(!!(!(fgets(buf, sizeof(buf), f))),<br>0))) log_assert_failed("fgets(buf, sizeof(buf), f)", "src/test/test-fileio.c"<br>, 315, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">        <span class='macro'>assert_se(streq(buf, <span class='string_literal'>"boohoo\n"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((buf),("boohoo\n")) ==<br> 0))),0))) log_assert_failed("streq(buf, \"boohoo\\n\")", "src/test/test-fileio.c"<br>, 316, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">        f = freopen(fn, <span class='string_literal'>"w+"</span>, f);</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">        <span class='macro'>assert_se(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/test/test-fileio.c", 319, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">        <span class='macro'>assert_se(write_string_stream(f, <span class='string_literal'>"boohoo"</span>, false) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_stream(f, "boohoo"<br>, 0) == 0)),0))) log_assert_failed("write_string_stream(f, \"boohoo\", false) == 0"<br>, "src/test/test-fileio.c", 321, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">        rewind(f);</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">        <span class='macro'>assert_se(fgets(buf, <span class='keyword'>sizeof</span>(buf), f))<span class='expansion'>do { if ((__builtin_expect(!!(!(fgets(buf, sizeof(buf), f))),<br>0))) log_assert_failed("fgets(buf, sizeof(buf), f)", "src/test/test-fileio.c"<br>, 324, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">        printf(<span class='string_literal'>"&gt;%s&lt;"</span>, buf);</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">        <span class='macro'>assert_se(streq(buf, <span class='string_literal'>"boohoo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((buf),("boohoo")) == 0<br>))),0))) log_assert_failed("streq(buf, \"boohoo\")", "src/test/test-fileio.c"<br>, 326, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">        unlink(fn);</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_write_string_file(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">        <span class='keyword'>char</span> fn[] = <span class='string_literal'>"/tmp/test-write_string_file-XXXXXX"</span>;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">        <span class='keyword'>char</span> buf[64] = {};</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd;</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">        fd = mkostemp_safe(fn, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>);</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 337, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">        <span class='macro'>assert_se(write_string_file(fn, <span class='string_literal'>"boohoo"</span>, WRITE_STRING_FILE_CREATE) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_file(fn, "boohoo"<br>, WRITE_STRING_FILE_CREATE) == 0)),0))) log_assert_failed("write_string_file(fn, \"boohoo\", WRITE_STRING_FILE_CREATE) == 0"<br>, "src/test/test-fileio.c", 339, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">        <span class='macro'>assert_se(read(fd, buf, <span class='keyword'>sizeof</span>(buf)) == 7)<span class='expansion'>do { if ((__builtin_expect(!!(!(read(fd, buf, sizeof(buf)) ==<br> 7)),0))) log_assert_failed("read(fd, buf, sizeof(buf)) == 7"<br>, "src/test/test-fileio.c", 341, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">        <span class='macro'>assert_se(streq(buf, <span class='string_literal'>"boohoo\n"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((buf),("boohoo\n")) ==<br> 0))),0))) log_assert_failed("streq(buf, \"boohoo\\n\")", "src/test/test-fileio.c"<br>, 342, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">        unlink(fn);</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_write_string_file_no_create(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        <span class='keyword'>char</span> fn[] = <span class='string_literal'>"/tmp/test-write_string_file_no_create-XXXXXX"</span>;</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd;</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">        <span class='keyword'>char</span> buf[64] = {0};</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">        fd = mkostemp_safe(fn, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>);</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 353, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">        <span class='macro'>assert_se(write_string_file(<span class='string_literal'>"/a/file/which/does/not/exists/i/guess"</span>, <span class='string_literal'>"boohoo"</span>, 0) &lt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_file("/a/file/which/does/not/exists/i/guess"<br>, "boohoo", 0) &lt; 0)),0))) log_assert_failed("write_string_file(\"/a/file/which/does/not/exists/i/guess\", \"boohoo\", 0) &lt; 0"<br>, "src/test/test-fileio.c", 355, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">        <span class='macro'>assert_se(write_string_file(fn, <span class='string_literal'>"boohoo"</span>, 0) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_file(fn, "boohoo"<br>, 0) == 0)),0))) log_assert_failed("write_string_file(fn, \"boohoo\", 0) == 0"<br>, "src/test/test-fileio.c", 356, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">        <span class='macro'>assert_se(read(fd, buf, <span class='keyword'>sizeof</span>(buf)) == strlen(<span class='string_literal'>"boohoo\n"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(read(fd, buf, sizeof(buf)) ==<br> strlen("boohoo\n"))),0))) log_assert_failed("read(fd, buf, sizeof(buf)) == strlen(\"boohoo\\n\")"<br>, "src/test/test-fileio.c", 358, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">        <span class='macro'>assert_se(streq(buf, <span class='string_literal'>"boohoo\n"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((buf),("boohoo\n")) ==<br> 0))),0))) log_assert_failed("streq(buf, \"boohoo\\n\")", "src/test/test-fileio.c"<br>, 359, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        unlink(fn);</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_write_string_file_verify(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *buf = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *buf2 = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        <span class='macro'>assert_se(read_one_line_file(<span class='string_literal'>"/proc/cmdline"</span>, &amp;buf) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(read_one_line_file("/proc/cmdline"<br>, &amp;buf) &gt;= 0)),0))) log_assert_failed("read_one_line_file(\"/proc/cmdline\", &amp;buf) &gt;= 0"<br>, "src/test/test-fileio.c", 368, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">        <span class='macro'>assert_se((buf2 = strjoin(buf, <span class='string_literal'>"\n"</span>, NULL)))<span class='expansion'>do { if ((__builtin_expect(!!(!((buf2 = strjoin(buf, "\n", ((<br>void*)0))))),0))) log_assert_failed("(buf2 = strjoin(buf, \"\\n\", NULL))"<br>, "src/test/test-fileio.c", 369, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        r = write_string_file(<span class='string_literal'>"/proc/cmdline"</span>, buf, 0);</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">        <span class='macro'>assert_se(r == -EACCES || r == -EIO)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == -13 || r == -5)),0))) log_assert_failed<br>("r == -EACCES || r == -EIO", "src/test/test-fileio.c", 372, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">        r = write_string_file(<span class='string_literal'>"/proc/cmdline"</span>, buf2, 0);</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">        <span class='macro'>assert_se(r == -EACCES || r == -EIO)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == -13 || r == -5)),0))) log_assert_failed<br>("r == -EACCES || r == -EIO", "src/test/test-fileio.c", 374, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">        <span class='macro'>assert_se(write_string_file(<span class='string_literal'>"/proc/cmdline"</span>, buf, WRITE_STRING_FILE_VERIFY_ON_FAILURE) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_file("/proc/cmdline"<br>, buf, WRITE_STRING_FILE_VERIFY_ON_FAILURE) == 0)),0))) log_assert_failed<br>("write_string_file(\"/proc/cmdline\", buf, WRITE_STRING_FILE_VERIFY_ON_FAILURE) == 0"<br>, "src/test/test-fileio.c", 376, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">        <span class='macro'>assert_se(write_string_file(<span class='string_literal'>"/proc/cmdline"</span>, buf2, WRITE_STRING_FILE_VERIFY_ON_FAILURE) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_file("/proc/cmdline"<br>, buf2, WRITE_STRING_FILE_VERIFY_ON_FAILURE) == 0)),0))) log_assert_failed<br>("write_string_file(\"/proc/cmdline\", buf2, WRITE_STRING_FILE_VERIFY_ON_FAILURE) == 0"<br>, "src/test/test-fileio.c", 377, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        r = write_string_file(<span class='string_literal'>"/proc/cmdline"</span>, buf, WRITE_STRING_FILE_VERIFY_ON_FAILURE|WRITE_STRING_FILE_AVOID_NEWLINE);</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">        <span class='macro'>assert_se(r == -EACCES || r == -EIO)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == -13 || r == -5)),0))) log_assert_failed<br>("r == -EACCES || r == -EIO", "src/test/test-fileio.c", 380, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">        <span class='macro'>assert_se(write_string_file(<span class='string_literal'>"/proc/cmdline"</span>, buf2, WRITE_STRING_FILE_VERIFY_ON_FAILURE|WRITE_STRING_FILE_AVOID_NEWLINE) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(write_string_file("/proc/cmdline"<br>, buf2, WRITE_STRING_FILE_VERIFY_ON_FAILURE|WRITE_STRING_FILE_AVOID_NEWLINE<br>) == 0)),0))) log_assert_failed("write_string_file(\"/proc/cmdline\", buf2, WRITE_STRING_FILE_VERIFY_ON_FAILURE|WRITE_STRING_FILE_AVOID_NEWLINE) == 0"<br>, "src/test/test-fileio.c", 381, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_load_env_file_pairs(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">        <span class='keyword'>char</span> fn[] = <span class='string_literal'>"/tmp/test-load_env_file_pairs-XXXXXX"</span>;</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">        <span class='keyword'>int</span> fd;</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">        <span class='macro'>_cleanup_fclose_<span class='expansion'>__attribute__((cleanup(fclosep)))</span></span> FILE *f = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">        <span class='keyword'>char</span> **k, **v;</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">        fd = mkostemp_safe(fn, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>);</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        <span class='macro'>assert_se(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/test/test-fileio.c", 393, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">        r = write_string_file(fn,</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">                        <span class='string_literal'>"NAME=\"Arch Linux\"\n"</span></td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">                        <span class='string_literal'>"ID=arch\n"</span></td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">                        <span class='string_literal'>"PRETTY_NAME=\"Arch Linux\"\n"</span></td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">                        <span class='string_literal'>"ANSI_COLOR=\"0;36\"\n"</span></td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">                        <span class='string_literal'>"HOME_URL=\"https://www.archlinux.org/\"\n"</span></td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">                        <span class='string_literal'>"SUPPORT_URL=\"https://bbs.archlinux.org/\"\n"</span></td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">                        <span class='string_literal'>"BUG_REPORT_URL=\"https://bugs.archlinux.org/\"\n"</span>,</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">                        WRITE_STRING_FILE_CREATE);</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">        <span class='macro'>assert_se(r == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == 0)),0))) log_assert_failed<br>("r == 0", "src/test/test-fileio.c", 404, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">        f = fdopen(fd, <span class='string_literal'>"r"</span>);</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">        <span class='macro'>assert_se(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/test/test-fileio.c", 407, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">        r = load_env_file_pairs(f, fn, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;l);</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-fileio.c", 410, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">        <span class='macro'>assert_se(strv_length(l) == 14)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_length(l) == 14)),0))) log_assert_failed<br>("strv_length(l) == 14", "src/test/test-fileio.c", 412, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">        <span class='macro'>STRV_FOREACH_PAIR(k, v, l)<span class='expansion'>for ((k) = (l), (v) = (k+1); (k) &amp;&amp; *(k) &amp;&amp; *<br>(v); (k) += 2, (v) = (k + 1))</span></span> {</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">                <span class='macro'>assert_se(STR_IN_SET(*k, <span class='string_literal'>"NAME"</span>, <span class='string_literal'>"ID"</span>, <span class='string_literal'>"PRETTY_NAME"</span>, <span class='string_literal'>"ANSI_COLOR"</span>, <span class='string_literal'>"HOME_URL"</span>, <span class='string_literal'>"SUPPORT_URL"</span>, <span class='string_literal'>"BUG_REPORT_URL"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((!!strv_find((((char**) ((const<br> char*[]) { "NAME", "ID", "PRETTY_NAME", "ANSI_COLOR", "HOME_URL"<br>, "SUPPORT_URL", "BUG_REPORT_URL", ((void*)0) }))), (*k))))),<br>0))) log_assert_failed("STR_IN_SET(*k, \"NAME\", \"ID\", \"PRETTY_NAME\", \"ANSI_COLOR\", \"HOME_URL\", \"SUPPORT_URL\", \"BUG_REPORT_URL\")"<br>, "src/test/test-fileio.c", 414, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">                printf(<span class='string_literal'>"%s=%s\n"</span>, *k, *v);</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(*k, <span class='string_literal'>"NAME"</span>)<span class='expansion'>(strcmp((*k),("NAME")) == 0)</span></span>) <span class='macro'>assert_se(streq(*v, <span class='string_literal'>"Arch Linux"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*v),("Arch Linux")) ==<br> 0))),0))) log_assert_failed("streq(*v, \"Arch Linux\")", "src/test/test-fileio.c"<br>, 416, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(*k, <span class='string_literal'>"ID"</span>)<span class='expansion'>(strcmp((*k),("ID")) == 0)</span></span>) <span class='macro'>assert_se(streq(*v, <span class='string_literal'>"arch"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*v),("arch")) == 0))<br>),0))) log_assert_failed("streq(*v, \"arch\")", "src/test/test-fileio.c"<br>, 417, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(*k, <span class='string_literal'>"PRETTY_NAME"</span>)<span class='expansion'>(strcmp((*k),("PRETTY_NAME")) == 0)</span></span>) <span class='macro'>assert_se(streq(*v, <span class='string_literal'>"Arch Linux"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*v),("Arch Linux")) ==<br> 0))),0))) log_assert_failed("streq(*v, \"Arch Linux\")", "src/test/test-fileio.c"<br>, 418, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(*k, <span class='string_literal'>"ANSI_COLOR"</span>)<span class='expansion'>(strcmp((*k),("ANSI_COLOR")) == 0)</span></span>) <span class='macro'>assert_se(streq(*v, <span class='string_literal'>"0;36"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*v),("0;36")) == 0))<br>),0))) log_assert_failed("streq(*v, \"0;36\")", "src/test/test-fileio.c"<br>, 419, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(*k, <span class='string_literal'>"HOME_URL"</span>)<span class='expansion'>(strcmp((*k),("HOME_URL")) == 0)</span></span>) <span class='macro'>assert_se(streq(*v, <span class='string_literal'>"https://www.archlinux.org/"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*v),("https://www.archlinux.org/"<br>)) == 0))),0))) log_assert_failed("streq(*v, \"https://www.archlinux.org/\")"<br>, "src/test/test-fileio.c", 420, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(*k, <span class='string_literal'>"SUPPORT_URL"</span>)<span class='expansion'>(strcmp((*k),("SUPPORT_URL")) == 0)</span></span>) <span class='macro'>assert_se(streq(*v, <span class='string_literal'>"https://bbs.archlinux.org/"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*v),("https://bbs.archlinux.org/"<br>)) == 0))),0))) log_assert_failed("streq(*v, \"https://bbs.archlinux.org/\")"<br>, "src/test/test-fileio.c", 421, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(*k, <span class='string_literal'>"BUG_REPORT_URL"</span>)<span class='expansion'>(strcmp((*k),("BUG_REPORT_URL")) == 0)</span></span>) <span class='macro'>assert_se(streq(*v, <span class='string_literal'>"https://bugs.archlinux.org/"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*v),("https://bugs.archlinux.org/"<br>)) == 0))),0))) log_assert_failed("streq(*v, \"https://bugs.archlinux.org/\")"<br>, "src/test/test-fileio.c", 422, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">        unlink(fn);</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">        log_parse_environment();</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">        log_open();</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">        test_parse_env_file();</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">        <span class="mrange">test_parse_multiline_env_file()</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Calling 'test_parse_multiline_env_file'</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">        test_executable_is_script();</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">        test_status_field();</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">        test_capeff();</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">        test_write_string_stream();</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">        test_write_string_file();</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">        test_write_string_file_no_create();</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">        test_write_string_file_verify();</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">        test_load_env_file_pairs();</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">}</td></tr>
+</table></body></html>
