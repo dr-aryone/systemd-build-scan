@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'key' -->
+<!-- BUGDESC Potential leak of memory pointed to by 'manager' -->
 
 <!-- BUGTYPE Memory leak -->
 
@@ -64,21 +64,21 @@
 
 <!-- FILENAME udevd.c -->
 
-<!-- FUNCTIONNAME on_ctrl_msg -->
+<!-- FUNCTIONNAME manager_new -->
 
-<!-- BUGLINE 994 -->
+<!-- BUGLINE 1517 -->
 
-<!-- BUGCOLUMN 33 -->
+<!-- BUGCOLUMN 24 -->
 
-<!-- BUGPATHLENGTH 17 -->
+<!-- BUGPATHLENGTH 5 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>udev/udevd.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 994, column 33</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'key'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1517, column 24</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'manager'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -213,7 +213,7 @@
 <tr><td class="num" id="LN128">128</td><td class="line">};</td></tr>
 <tr><td class="num" id="LN129">129</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN130">130</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>inline</span> <span class='keyword'>struct</span> event *node_to_event(<span class='keyword'>struct</span> udev_list_node *node) {</td></tr>
-<tr><td class="num" id="LN131">131</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>container_of(node, <span class='keyword'>struct</span> event, node)<span class='expansion'>__extension__ ({ const typeof( ((struct event*)0)-&gt;node ) *<br>__unique_prefix_A11 = ((node)); (struct event*)( (char *)__unique_prefix_A11<br> - __builtin_offsetof(struct event, node) ); })</span></span>;</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>container_of(node, <span class='keyword'>struct</span> event, node)<span class='expansion'>__extension__ ({ const typeof( ((struct event*)0)-&gt;node ) *<br>__unique_prefix_A14 = ((node)); (struct event*)( (char *)__unique_prefix_A14<br> - __builtin_offsetof(struct event, node) ); })</span></span>;</td></tr>
 <tr><td class="num" id="LN132">132</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN133">133</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN134">134</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> event_queue_cleanup(Manager *manager, <span class='keyword'>enum</span> event_state type);</td></tr>
@@ -766,7 +766,7 @@
 <tr><td class="num" id="LN681">681</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN682">682</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN683">683</td><td class="line">                <span class='comment'>/* compare devpath */</span></td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line">                common = <span class='macro'>MIN(loop_event-&gt;devpath_len, event-&gt;devpath_len)<span class='expansion'>__extension__ ({ const typeof((loop_event-&gt;devpath_len)) __unique_prefix_A12<br> = ((loop_event-&gt;devpath_len)); const typeof((event-&gt;devpath_len<br>)) __unique_prefix_B13 = ((event-&gt;devpath_len)); __unique_prefix_A12<br> &lt; __unique_prefix_B13 ? __unique_prefix_A12 : __unique_prefix_B13<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">                common = <span class='macro'>MIN(loop_event-&gt;devpath_len, event-&gt;devpath_len)<span class='expansion'>__extension__ ({ const typeof((loop_event-&gt;devpath_len)) __unique_prefix_A15<br> = ((loop_event-&gt;devpath_len)); const typeof((event-&gt;devpath_len<br>)) __unique_prefix_B16 = ((event-&gt;devpath_len)); __unique_prefix_A15<br> &lt; __unique_prefix_B16 ? __unique_prefix_A15 : __unique_prefix_B16<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN685">685</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN686">686</td><td class="line">                <span class='comment'>/* one devpath is contained in the other? */</span></td></tr>
 <tr><td class="num" id="LN687">687</td><td class="line">                <span class='keyword'>if</span> (memcmp(loop_event-&gt;devpath, event-&gt;devpath, common) != 0)</td></tr>
@@ -1026,62 +1026,46 @@
 <tr><td class="num" id="LN941">941</td><td class="line">        <span class='macro'>assert(manager)<span class='expansion'>do { if ((__builtin_expect(!!(!(manager)),0))) log_assert_failed<br>("manager", "src/udev/udevd.c", 941, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN942">942</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN943">943</td><td class="line">        ctrl_conn = udev_ctrl_get_connection(manager-&gt;ctrl);</td></tr>
-<tr><td class="num" id="LN944">944</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!ctrl_conn</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'ctrl_conn' is non-null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN944">944</td><td class="line">        <span class='keyword'>if</span> (!ctrl_conn)</td></tr>
 <tr><td class="num" id="LN945">945</td><td class="line">                <span class='keyword'>return</span> 1;</td></tr>
 <tr><td class="num" id="LN946">946</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN947">947</td><td class="line">        ctrl_msg = udev_ctrl_receive_msg(ctrl_conn);</td></tr>
-<tr><td class="num" id="LN948">948</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!ctrl_msg</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'ctrl_msg' is non-null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN948">948</td><td class="line">        <span class='keyword'>if</span> (!ctrl_msg)</td></tr>
 <tr><td class="num" id="LN949">949</td><td class="line">                <span class='keyword'>return</span> 1;</td></tr>
 <tr><td class="num" id="LN950">950</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN951">951</td><td class="line">        i = udev_ctrl_get_set_log_level(ctrl_msg);</td></tr>
-<tr><td class="num" id="LN952">952</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">i &gt;= 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'i' is &lt; 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line">        <span class='keyword'>if</span> (i &gt;= 0) {</td></tr>
 <tr><td class="num" id="LN953">953</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"udevd message (SET_LOG_LEVEL) received, log_priority=%i"</span>, i)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 953, __func__, "udevd message (SET_LOG_LEVEL) received, log_priority=%i"<br>, i) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN954">954</td><td class="line">                log_set_max_level(i);</td></tr>
 <tr><td class="num" id="LN955">955</td><td class="line">                manager_kill_workers(manager);</td></tr>
 <tr><td class="num" id="LN956">956</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN957">957</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN958">958</td><td class="line">        <span class='keyword'>if</span> (udev_ctrl_get_stop_exec_queue(ctrl_msg) &gt; 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN959">959</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"udevd message (STOP_EXEC_QUEUE) received"</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 959, __func__, "udevd message (STOP_EXEC_QUEUE) received") :<br> -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN960">960</td><td class="line">                manager-&gt;stop_exec_queue = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN961">961</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN962">962</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN963">963</td><td class="line">        <span class='keyword'>if</span> (udev_ctrl_get_start_exec_queue(ctrl_msg) &gt; 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN964">964</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"udevd message (START_EXEC_QUEUE) received"</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 964, __func__, "udevd message (START_EXEC_QUEUE) received") :<br> -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN965">965</td><td class="line">                manager-&gt;stop_exec_queue = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN966">966</td><td class="line">                event_queue_start(manager);</td></tr>
 <tr><td class="num" id="LN967">967</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN968">968</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN969">969</td><td class="line">        <span class='keyword'>if</span> (udev_ctrl_get_reload(ctrl_msg) &gt; 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN970">970</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"udevd message (RELOAD) received"</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 970, __func__, "udevd message (RELOAD) received") : -abs(_e)<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN971">971</td><td class="line">                manager_reload(manager);</td></tr>
 <tr><td class="num" id="LN972">972</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN973">973</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN974">974</td><td class="line">        str = udev_ctrl_get_set_env(ctrl_msg);</td></tr>
-<tr><td class="num" id="LN975">975</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">str != <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Assuming 'str' is not equal to null</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN975">975</td><td class="line">        <span class='keyword'>if</span> (str != <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) {</td></tr>
 <tr><td class="num" id="LN976">976</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *key = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN977">977</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN978">978</td><td class="line">                key = <span class="mrange">strdup(str)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:23ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN979">979</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">key</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'key' is non-null</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN978">978</td><td class="line">                key = strdup(str);</td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">                <span class='keyword'>if</span> (key) {</td></tr>
 <tr><td class="num" id="LN980">980</td><td class="line">                        <span class='keyword'>char</span> *val;</td></tr>
 <tr><td class="num" id="LN981">981</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN982">982</td><td class="line">                        val = strchr(key, '=');</td></tr>
-<tr><td class="num" id="LN983">983</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">val != <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'val' is equal to null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line">                        <span class='keyword'>if</span> (val != <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) {</td></tr>
 <tr><td class="num" id="LN984">984</td><td class="line">                                val[0] = '\0';</td></tr>
 <tr><td class="num" id="LN985">985</td><td class="line">                                val = &amp;val[1];</td></tr>
 <tr><td class="num" id="LN986">986</td><td class="line">                                <span class='keyword'>if</span> (val[0] == '\0') {</td></tr>
@@ -1093,9 +1077,6 @@
 <tr><td class="num" id="LN992">992</td><td class="line">                                }</td></tr>
 <tr><td class="num" id="LN993">993</td><td class="line">                        } <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN994">994</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"wrong key format '%s'"</span>, key)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 994, __func__, "wrong key format '%s'", key) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:33ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'key'</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN995">995</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN996">996</td><td class="line">                manager_kill_workers(manager);</td></tr>
 <tr><td class="num" id="LN997">997</td><td class="line">        }</td></tr>
@@ -1609,7 +1590,12 @@
 <tr><td class="num" id="LN1505">1505</td><td class="line">        <span class='macro'>assert(fd_uevent &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd_uevent &gt;= 0)),0))) log_assert_failed<br>("fd_uevent &gt;= 0", "src/udev/udevd.c", 1505, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1506">1506</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1507">1507</td><td class="line">        manager = <span class='macro'>new0(Manager, 1)<span class='expansion'>((Manager*) calloc((1), sizeof(Manager)))</span></span>;</td></tr>
-<tr><td class="num" id="LN1508">1508</td><td class="line">        <span class='keyword'>if</span> (!manager)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:19ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Within the expansion of the macro 'new0':
+</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN1508">1508</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!manager</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'manager' is non-null</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1509">1509</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/udev/udevd.c", 1509, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN1510">1510</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1511">1511</td><td class="line">        manager-&gt;fd_inotify = -1;</td></tr>
@@ -1618,7 +1604,11 @@
 <tr><td class="num" id="LN1514">1514</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1515">1515</td><td class="line">        manager-&gt;udev = udev_new();</td></tr>
 <tr><td class="num" id="LN1516">1516</td><td class="line">        <span class='keyword'>if</span> (!manager-&gt;udev)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1517">1517</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"could not allocate udev context: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c"<br>, 1517, __func__, "could not allocate udev context: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:24ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error_errno':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'manager'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN1518">1518</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1519">1519</td><td class="line">        udev_builtin_init(manager-&gt;udev);</td></tr>
 <tr><td class="num" id="LN1520">1520</td><td class="line"> </td></tr>
@@ -1819,7 +1809,7 @@
 <tr><td class="num" id="LN1715">1715</td><td class="line">                   <span class='comment'>by PID1. otherwise we are not guaranteed to have a dedicated cgroup */</span></td></tr>
 <tr><td class="num" id="LN1716">1716</td><td class="line">                r = cg_pid_get_path(<span class='macro'>SYSTEMD_CGROUP_CONTROLLER<span class='expansion'>"name=systemd"</span></span>, 0, &amp;cgroup);</td></tr>
 <tr><td class="num" id="LN1717">1717</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1718">1718</td><td class="line">                        <span class='keyword'>if</span> (r == -<span class='macro'>ENOENT<span class='expansion'>2</span></span> || r == -<span class='macro'>ENOEXEC<span class='expansion'>8</span></span>)</td></tr>
+<tr><td class="num" id="LN1718">1718</td><td class="line">                        <span class='keyword'>if</span> (r == -<span class='macro'>ENOENT<span class='expansion'>2</span></span> || r == -<span class='macro'>ENOMEDIUM<span class='expansion'>123</span></span>)</td></tr>
 <tr><td class="num" id="LN1719">1719</td><td class="line">                                <span class='macro'>log_debug_errno(r, <span class='string_literal'>"did not find dedicated cgroup: %m"</span>)<span class='expansion'>({ int _level = (7), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1719, __func__, "did not find dedicated cgroup: %m") : -abs(<br>_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1720">1720</td><td class="line">                        <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN1721">1721</td><td class="line">                                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"failed to get cgroup: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c",<br> 1721, __func__, "failed to get cgroup: %m") : -abs(_e); })</span></span>;</td></tr>
