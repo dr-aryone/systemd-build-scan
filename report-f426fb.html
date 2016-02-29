@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Potential leak of memory pointed to by 'our_env' -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/core/execute.c -->
 
 <!-- FILENAME execute.c -->
 
-<!-- FUNCTIONNAME setup_confirm_stdio -->
+<!-- FUNCTIONNAME build_environment -->
 
-<!-- BUGLINE 606 -->
+<!-- BUGLINE 1247 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 33 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 7 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/execute.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 606, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1247, column 33</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'our_env'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -688,8 +688,7 @@
 <tr><td class="num" id="LN603">603</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN604">604</td><td class="line">        <span class='keyword'>if</span> (fd &gt;= 2)</td></tr>
 <tr><td class="num" id="LN605">605</td><td class="line">                safe_close(fd);</td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">        fd = -1;</td></tr>
 <tr><td class="num" id="LN607">607</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN608">608</td><td class="line">        *_saved_stdin = saved_stdin;</td></tr>
 <tr><td class="num" id="LN609">609</td><td class="line">        *_saved_stdout = saved_stdout;</td></tr>
@@ -1323,14 +1322,25 @@
 <tr><td class="num" id="LN1237">1237</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/core/execute.c", 1237, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1238">1238</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1239">1239</td><td class="line">        our_env = <span class='macro'>new0(<span class='keyword'>char</span>*, 11)<span class='expansion'>((char**) calloc((11), sizeof(char*)))</span></span>;</td></tr>
-<tr><td class="num" id="LN1240">1240</td><td class="line">        <span class='keyword'>if</span> (!our_env)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:19ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Within the expansion of the macro 'new0':
+</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN1240">1240</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!our_env</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'our_env' is non-null</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1241">1241</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1242">1242</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1243">1243</td><td class="line">        <span class='keyword'>if</span> (n_fds &gt; 0) {</td></tr>
+<tr><td class="num" id="LN1243">1243</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">n_fds &gt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 'n_fds' is &gt; 0</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1244">1244</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *joined = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1245">1245</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1246">1246</td><td class="line">                <span class='keyword'>if</span> (asprintf(&amp;x, <span class='string_literal'>"LISTEN_PID="</span><span class='macro'>PID_FMT<span class='expansion'>"%" "i"</span></span>, getpid()) &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1247">1247</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:33ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'our_env'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN1248">1248</td><td class="line">                our_env[n_env++] = x;</td></tr>
 <tr><td class="num" id="LN1249">1249</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1250">1250</td><td class="line">                <span class='keyword'>if</span> (asprintf(&amp;x, <span class='string_literal'>"LISTEN_FDS=%u"</span>, n_fds) &lt; 0)</td></tr>
@@ -1962,7 +1972,7 @@
 <tr><td class="num" id="LN1876">1876</td><td class="line">                                 <span class='comment'>* also to the context secure_bits so that we don't try to</span></td></tr>
 <tr><td class="num" id="LN1877">1877</td><td class="line">                                 <span class='comment'>* drop the bit away next. */</span></td></tr>
 <tr><td class="num" id="LN1878">1878</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1879">1879</td><td class="line">                                 secure_bits |= 1&lt;&lt;<span class='macro'>SECURE_KEEP_CAPS<span class='expansion'>4</span></span>;</td></tr>
+<tr><td class="num" id="LN1879">1879</td><td class="line">                                secure_bits |= 1&lt;&lt;<span class='macro'>SECURE_KEEP_CAPS<span class='expansion'>4</span></span>;</td></tr>
 <tr><td class="num" id="LN1880">1880</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN1881">1881</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1882">1882</td><td class="line"> </td></tr>
