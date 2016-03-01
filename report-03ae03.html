@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Dereference of null pointer (loaded from variable 'p') -->
+<!-- BUGDESC Value stored to 'u' is never read -->
 
-<!-- BUGTYPE Dereference of null pointer -->
+<!-- BUGTYPE Dead assignment -->
 
-<!-- BUGCATEGORY Logic error -->
+<!-- BUGCATEGORY Dead store -->
 
 <!-- BUGFILE /home/runner/systemd/src/basic/fileio.c -->
 
 <!-- FILENAME fileio.c -->
 
-<!-- FUNCTIONNAME parse_env_file_internal -->
+<!-- FUNCTIONNAME mkostemp_safe -->
 
-<!-- BUGLINE 331 -->
+<!-- BUGLINE 1077 -->
 
-<!-- BUGCOLUMN 28 -->
+<!-- BUGCOLUMN 9 -->
 
-<!-- BUGPATHLENGTH 13 -->
+<!-- BUGPATHLENGTH 1 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>basic/fileio.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 331, column 28</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Dereference of null pointer (loaded from variable 'p')</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1077, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'u' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -366,17 +366,10 @@
 <tr><td class="num" id="LN281">281</td><td class="line">        <span class='macro'>_cleanup_fclose_<span class='expansion'>__attribute__((cleanup(fclosep)))</span></span> FILE *f = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN282">282</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN283">283</td><td class="line">        <span class='macro'>assert(fn)<span class='expansion'>do { if ((__builtin_expect(!!(!(fn)),0))) log_assert_failed("fn"<br>, "src/basic/fileio.c", 283, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming 'fn' is non-null</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN284">284</td><td class="line">        <span class='macro'>assert(contents)<span class='expansion'>do { if ((__builtin_expect(!!(!(contents)),0))) log_assert_failed<br>("contents", "src/basic/fileio.c", 284, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN285">285</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN286">286</td><td class="line">        f = fopen(fn, <span class='string_literal'>"re"</span>);</td></tr>
-<tr><td class="num" id="LN287">287</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!f</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'f' is null</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
 <tr><td class="num" id="LN288">288</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN289">289</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN290">290</td><td class="line">        <span class='keyword'>return</span> read_full_stream(f, contents, size);</td></tr>
@@ -391,8 +384,7 @@
 <tr><td class="num" id="LN299">299</td><td class="line">                <span class='keyword'>void</span> *userdata,</td></tr>
 <tr><td class="num" id="LN300">300</td><td class="line">                <span class='keyword'>int</span> *n_pushed) {</td></tr>
 <tr><td class="num" id="LN301">301</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN302">302</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *<span class="mrange">contents</span> = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *key = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:30ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>'contents' initialized to a null pointer value</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *contents = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *key = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN303">303</td><td class="line">        size_t key_alloc = 0, n_key = 0, value_alloc = 0, n_value = 0, last_value_whitespace = (size_t) -1, last_key_whitespace = (size_t) -1;</td></tr>
 <tr><td class="num" id="LN304">304</td><td class="line">        <span class='keyword'>char</span> *p, *value = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN305">305</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
@@ -414,22 +406,14 @@
 <tr><td class="num" id="LN321">321</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN322">322</td><td class="line">        <span class='macro'>assert(newline)<span class='expansion'>do { if ((__builtin_expect(!!(!(newline)),0))) log_assert_failed<br>("newline", "src/basic/fileio.c", 322, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN323">323</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN324">324</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">f</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'f' is null</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">        <span class='keyword'>if</span> (f)</td></tr>
 <tr><td class="num" id="LN325">325</td><td class="line">                r = read_full_stream(f, &amp;contents, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN326">326</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN327">327</td><td class="line">                r = <span class="mrange"><span class="mrange">read_full_file(fname, &amp;contents, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Calling 'read_full_file'</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Returning from 'read_full_file'</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN328">328</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">                r = read_full_file(fname, &amp;contents, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN329">329</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN330">330</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN331">331</td><td class="line">        <span class='keyword'>for</span> (<span class="mrange">p = contents</span>; *<span class="mrange">p</span>; p++) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:14ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Null pointer value stored to 'p'</td><td><div class="PathNav"><a href="#EndPath" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:28ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Dereference of null pointer (loaded from variable 'p')</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">        <span class='keyword'>for</span> (p = contents; *p; p++) {</td></tr>
 <tr><td class="num" id="LN332">332</td><td class="line">                <span class='keyword'>char</span> c = *p;</td></tr>
 <tr><td class="num" id="LN333">333</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN334">334</td><td class="line">                <span class='keyword'>switch</span> (state) {</td></tr>
@@ -689,7 +673,7 @@
 <tr><td class="num" id="LN588">588</td><td class="line">        va_list aq, *ap = userdata;</td></tr>
 <tr><td class="num" id="LN589">589</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN590">590</td><td class="line">        <span class='keyword'>if</span> (!utf8_is_valid(key)) {</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN592">592</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN593">593</td><td class="line">                p = utf8_escape_invalid(key);</td></tr>
 <tr><td class="num" id="LN594">594</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"%s:%u: invalid UTF-8 in key '%s', ignoring."</span>, strna(filename), line, p)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/fileio.c"<br>, 594, __func__, "%s:%u: invalid UTF-8 in key '%s', ignoring."<br>, strna(filename), line, p) : -abs(_e); })</span></span>;</td></tr>
@@ -697,7 +681,7 @@
 <tr><td class="num" id="LN596">596</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN598">598</td><td class="line">        <span class='keyword'>if</span> (value &amp;&amp; !utf8_is_valid(value)) {</td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN600">600</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN601">601</td><td class="line">                p = utf8_escape_invalid(value);</td></tr>
 <tr><td class="num" id="LN602">602</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"%s:%u: invalid UTF-8 value for key %s: '%s', ignoring."</span>, strna(filename), line, key, p)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/basic/fileio.c"<br>, 602, __func__, "%s:%u: invalid UTF-8 value for key %s: '%s', ignoring."<br>, strna(filename), line, key, p) : -abs(_e); })</span></span>;</td></tr>
@@ -1170,12 +1154,13 @@
 <tr><td class="num" id="LN1069">1069</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1070">1070</td><td class="line"><span class='comment'>/* This is much like like mkostemp() but is subject to umask(). */</span></td></tr>
 <tr><td class="num" id="LN1071">1071</td><td class="line"><span class='keyword'>int</span> mkostemp_safe(<span class='keyword'>char</span> *pattern, <span class='keyword'>int</span> flags) {</td></tr>
-<tr><td class="num" id="LN1072">1072</td><td class="line">        <span class='macro'>_cleanup_umask_<span class='expansion'>__attribute__((cleanup(umaskp)))</span></span> mode_t u;</td></tr>
+<tr><td class="num" id="LN1072">1072</td><td class="line">        <span class='macro'>_cleanup_umask_<span class='expansion'>__attribute__((cleanup(umaskp)))</span></span> mode_t u = 0;</td></tr>
 <tr><td class="num" id="LN1073">1073</td><td class="line">        <span class='keyword'>int</span> fd;</td></tr>
 <tr><td class="num" id="LN1074">1074</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1075">1075</td><td class="line">        <span class='macro'>assert(pattern)<span class='expansion'>do { if ((__builtin_expect(!!(!(pattern)),0))) log_assert_failed<br>("pattern", "src/basic/fileio.c", 1075, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1076">1076</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1077">1077</td><td class="line">        u = umask(077);</td></tr>
+<tr><td class="num" id="LN1077">1077</td><td class="line">        u = <span class="mrange">umask(077)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'u' is never read</div></td></tr>
 <tr><td class="num" id="LN1078">1078</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1079">1079</td><td class="line">        fd = mkostemp(pattern, flags);</td></tr>
 <tr><td class="num" id="LN1080">1080</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
