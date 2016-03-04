@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'l' -->
+<!-- BUGDESC Potential leak of memory pointed to by 'l_set' -->
 
 <!-- BUGTYPE Memory leak -->
 
@@ -64,21 +64,21 @@
 
 <!-- FILENAME localed.c -->
 
-<!-- FUNCTIONNAME property_get_locale -->
+<!-- FUNCTIONNAME locale_update_system_manager -->
 
-<!-- BUGLINE 876 -->
+<!-- BUGLINE 351 -->
 
-<!-- BUGCOLUMN 33 -->
+<!-- BUGCOLUMN 41 -->
 
-<!-- BUGPATHLENGTH 7 -->
+<!-- BUGPATHLENGTH 9 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>locale/localed.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 876, column 33</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'l'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 351, column 41</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'l_set'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -417,23 +417,36 @@
 <tr><td class="num" id="LN332">332</td><td class="line">        <span class='macro'>assert(bus)<span class='expansion'>do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed(<br>"bus", "src/locale/localed.c", 332, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN333">333</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN334">334</td><td class="line">        l_unset = <span class='macro'>new0(<span class='keyword'>char</span>*, _LOCALE_MAX)<span class='expansion'>((char**) calloc((_LOCALE_MAX), sizeof(char*)))</span></span>;</td></tr>
-<tr><td class="num" id="LN335">335</td><td class="line">        <span class='keyword'>if</span> (!l_unset)</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!l_unset</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'l_unset' is non-null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN336">336</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN337">337</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN338">338</td><td class="line">        l_set = <span class='macro'>new0(<span class='keyword'>char</span>*, _LOCALE_MAX)<span class='expansion'>((char**) calloc((_LOCALE_MAX), sizeof(char*)))</span></span>;</td></tr>
-<tr><td class="num" id="LN339">339</td><td class="line">        <span class='keyword'>if</span> (!l_set)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'new0':
+</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!l_set</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 'l_set' is non-null</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN340">340</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN341">341</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN342">342</td><td class="line">        <span class='keyword'>for</span> (p = 0, c_set = 0, c_unset = 0; p &lt; _LOCALE_MAX; p++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN343">343</td><td class="line">                <span class='macro'>assert(names[p])<span class='expansion'>do { if ((__builtin_expect(!!(!(names[p])),0))) log_assert_failed<br>("names[p]", "src/locale/localed.c", 343, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN345">345</td><td class="line">                <span class='keyword'>if</span> (isempty(c-&gt;locale[p]))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN346">346</td><td class="line">                        l_unset[c_set++] = (<span class='keyword'>char</span>*) names[p];</td></tr>
 <tr><td class="num" id="LN347">347</td><td class="line">                <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN348">348</td><td class="line">                        <span class='keyword'>char</span> *s;</td></tr>
 <tr><td class="num" id="LN349">349</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN350">350</td><td class="line">                        <span class='keyword'>if</span> (asprintf(&amp;s, <span class='string_literal'>"%s=%s"</span>, names[p], c-&gt;locale[p]) &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN351">351</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:41ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'l_set'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN352">352</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN353">353</td><td class="line">                        l_set[c_unset++] = s;</td></tr>
 <tr><td class="num" id="LN354">354</td><td class="line">                }</td></tr>
@@ -815,7 +828,7 @@
 <tr><td class="num" id="LN730">730</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN731">731</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN732">732</td><td class="line">                <span class='comment'>/* The best matching entry so far, then let's save that */</span></td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">                <span class='keyword'>if</span> (matching &gt;= <span class='macro'>MAX(best_matching, 1u)<span class='expansion'>__extension__ ({ const typeof((best_matching)) __unique_prefix_A7<br> = ((best_matching)); const typeof((1u)) __unique_prefix_B8 =<br> ((1u)); __unique_prefix_A7 &gt; __unique_prefix_B8 ? __unique_prefix_A7<br> : __unique_prefix_B8; })</span></span>) {</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">                <span class='keyword'>if</span> (matching &gt;= <span class='macro'>MAX(best_matching, 1u)<span class='expansion'>__extension__ ({ const typeof((best_matching)) __unique_prefix_A5<br> = ((best_matching)); const typeof((1u)) __unique_prefix_B6 =<br> ((1u)); __unique_prefix_A5 &gt; __unique_prefix_B6 ? __unique_prefix_A5<br> : __unique_prefix_B6; })</span></span>) {</td></tr>
 <tr><td class="num" id="LN734">734</td><td class="line">                        <span class='macro'>log_debug(<span class='string_literal'>"Found legacy keymap %s with score %u"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/locale/localed.c"<br>, 735, __func__, "Found legacy keymap %s with score %u", a[0]<br>, matching) : -abs(_e); })</span></span></td></tr>
 <tr><td class="num" id="LN735">735</td><td class="line">                                  <span class='macro'>a[0], matching)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/locale/localed.c"<br>, 735, __func__, "Found legacy keymap %s with score %u", a[0]<br>, matching) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN736">736</td><td class="line"> </td></tr>
@@ -948,28 +961,17 @@
 <tr><td class="num" id="LN863">863</td><td class="line">        <span class='keyword'>int</span> p, q;</td></tr>
 <tr><td class="num" id="LN864">864</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN865">865</td><td class="line">        l = <span class='macro'>new0(<span class='keyword'>char</span>*, _LOCALE_MAX+1)<span class='expansion'>((char**) calloc((_LOCALE_MAX+1), sizeof(char*)))</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:13ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Within the expansion of the macro 'new0':
-</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
-</div></td></tr>
-<tr><td class="num" id="LN866">866</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!l</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'l' is non-null</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line">        <span class='keyword'>if</span> (!l)</td></tr>
 <tr><td class="num" id="LN867">867</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN868">868</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN869">869</td><td class="line">        <span class='keyword'>for</span> (p = 0, q = 0; p &lt; _LOCALE_MAX; p++) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN870">870</td><td class="line">                <span class='keyword'>char</span> *t;</td></tr>
 <tr><td class="num" id="LN871">871</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN872">872</td><td class="line">                <span class='keyword'>if</span> (isempty(c-&gt;locale[p]))</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN873">873</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN874">874</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN875">875</td><td class="line">                <span class='keyword'>if</span> (asprintf(&amp;t, <span class='string_literal'>"%s=%s"</span>, names[p], c-&gt;locale[p]) &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN876">876</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:33ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'l'</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN877">877</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN878">878</td><td class="line">                l[q++] = t;</td></tr>
 <tr><td class="num" id="LN879">879</td><td class="line">        }</td></tr>
@@ -1392,7 +1394,7 @@
 <tr><td class="num" id="LN1296">1296</td><td class="line">        log_open();</td></tr>
 <tr><td class="num" id="LN1297">1297</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1298">1298</td><td class="line">        umask(0022);</td></tr>
-<tr><td class="num" id="LN1299">1299</td><td class="line">        mac_selinux_init(<span class='string_literal'>"/etc"</span>);</td></tr>
+<tr><td class="num" id="LN1299">1299</td><td class="line">        mac_selinux_init();</td></tr>
 <tr><td class="num" id="LN1300">1300</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1301">1301</td><td class="line">        <span class='keyword'>if</span> (argc != 1) {</td></tr>
 <tr><td class="num" id="LN1302">1302</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"This program takes no arguments."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/locale/localed.c"<br>, 1302, __func__, "This program takes no arguments.") : -abs(<br>_e); })</span></span>;</td></tr>
