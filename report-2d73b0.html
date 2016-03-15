@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Value stored to 'loop' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME machine-pool.c -->
 
-<!-- FUNCTIONNAME setup_machine_raw -->
+<!-- FUNCTIONNAME setup_machine_directory -->
 
-<!-- BUGLINE 138 -->
+<!-- BUGLINE 347 -->
 
 <!-- BUGCOLUMN 17 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>shared/machine-pool.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 138, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 347, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'loop' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -220,12 +220,11 @@
 <tr><td class="num" id="LN135">135</td><td class="line">                (<span class='keyword'>void</span>) reset_signal_mask();</td></tr>
 <tr><td class="num" id="LN136">136</td><td class="line">                <span class='macro'>assert_se(prctl(PR_SET_PDEATHSIG, SIGTERM) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(prctl(1, 15) == 0)),0))) log_assert_failed<br>("prctl(PR_SET_PDEATHSIG, SIGTERM) == 0", "src/shared/machine-pool.c"<br>, 136, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN137">137</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN138">138</td><td class="line">                fd = <span class="mrange">safe_close(fd)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">                fd = safe_close(fd);</td></tr>
 <tr><td class="num" id="LN139">139</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN140">140</td><td class="line">                execlp(<span class='string_literal'>"mkfs.btrfs"</span>, <span class='string_literal'>"-Lvar-lib-machines"</span>, tmp, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN141">141</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN142">142</td><td class="line">                        <span class='keyword'>return</span> 99;</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">                        _exit(99);</td></tr>
 <tr><td class="num" id="LN143">143</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN144">144</td><td class="line">                _exit(<span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span>);</td></tr>
 <tr><td class="num" id="LN145">145</td><td class="line">        }</td></tr>
@@ -325,191 +324,190 @@
 <tr><td class="num" id="LN239">239</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN240">240</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN241">241</td><td class="line">        r = mkfs_exists(<span class='string_literal'>"btrfs"</span>);</td></tr>
-<tr><td class="num" id="LN242">242</td><td class="line">        <span class='keyword'>if</span> (r == -<span class='macro'>ENOENT<span class='expansion'>2</span></span>) {</td></tr>
-<tr><td class="num" id="LN243">243</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"mkfs.btrfs is missing, cannot create loopback file for /var/lib/machines."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 243, __func__, "mkfs.btrfs is missing, cannot create loopback file for /var/lib/machines."<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN244">244</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN245">245</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN246">246</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN247">247</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN248">248</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN249">249</td><td class="line">        fd = setup_machine_raw(size, error);</td></tr>
-<tr><td class="num" id="LN250">250</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN251">251</td><td class="line">                <span class='keyword'>return</span> fd;</td></tr>
-<tr><td class="num" id="LN252">252</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN253">253</td><td class="line">        control = open(<span class='string_literal'>"/dev/loop-control"</span>, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>);</td></tr>
-<tr><td class="num" id="LN254">254</td><td class="line">        <span class='keyword'>if</span> (control &lt; 0)</td></tr>
-<tr><td class="num" id="LN255">255</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to open /dev/loop-control: %m"</span>);</td></tr>
-<tr><td class="num" id="LN256">256</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN257">257</td><td class="line">        nr = ioctl(control, <span class='macro'>LOOP_CTL_GET_FREE<span class='expansion'>0x4C82</span></span>);</td></tr>
-<tr><td class="num" id="LN258">258</td><td class="line">        <span class='keyword'>if</span> (nr &lt; 0)</td></tr>
-<tr><td class="num" id="LN259">259</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to allocate loop device: %m"</span>);</td></tr>
-<tr><td class="num" id="LN260">260</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN261">261</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;loopdev, <span class='string_literal'>"/dev/loop%i"</span>, nr) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN262">262</td><td class="line">                r = -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN263">263</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN264">264</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN265">265</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN266">266</td><td class="line">        loop = open(loopdev, <span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>);</td></tr>
-<tr><td class="num" id="LN267">267</td><td class="line">        <span class='keyword'>if</span> (loop &lt; 0) {</td></tr>
-<tr><td class="num" id="LN268">268</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to open loopback device: %m"</span>);</td></tr>
-<tr><td class="num" id="LN269">269</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN270">270</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN271">271</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN272">272</td><td class="line">        <span class='keyword'>if</span> (ioctl(loop, <span class='macro'>LOOP_SET_FD<span class='expansion'>0x4C00</span></span>, fd) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN273">273</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to bind loopback device: %m"</span>);</td></tr>
-<tr><td class="num" id="LN274">274</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN275">275</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN276">276</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN277">277</td><td class="line">        <span class='keyword'>if</span> (ioctl(loop, <span class='macro'>LOOP_SET_STATUS64<span class='expansion'>0x4C04</span></span>, &amp;info) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN278">278</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to enable auto-clear for loopback device: %m"</span>);</td></tr>
-<tr><td class="num" id="LN279">279</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN280">280</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN281">281</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN282">282</td><td class="line">        <span class='comment'>/* We need to make sure the new /var/lib/machines directory</span></td></tr>
-<tr><td class="num" id="LN283">283</td><td class="line">         <span class='comment'>* has an access mode of 0700 at the time it is first made</span></td></tr>
-<tr><td class="num" id="LN284">284</td><td class="line">         <span class='comment'>* available. mkfs will create it with 0755 however. Hence,</span></td></tr>
-<tr><td class="num" id="LN285">285</td><td class="line">         <span class='comment'>* let's mount the directory into an inaccessible directory</span></td></tr>
-<tr><td class="num" id="LN286">286</td><td class="line">         <span class='comment'>* below /tmp first, fix the access mode, and move it to the</span></td></tr>
-<tr><td class="num" id="LN287">287</td><td class="line">         <span class='comment'>* public place then. */</span></td></tr>
-<tr><td class="num" id="LN288">288</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN289">289</td><td class="line">        <span class='keyword'>if</span> (!mkdtemp(tmpdir)) {</td></tr>
-<tr><td class="num" id="LN290">290</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to create temporary mount parent directory: %m"</span>);</td></tr>
-<tr><td class="num" id="LN291">291</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN292">292</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN293">293</td><td class="line">        tmpdir_made = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN294">294</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN295">295</td><td class="line">        mntdir = <span class='macro'>strjoina(tmpdir, <span class='string_literal'>"/mnt"</span>)<span class='expansion'>({ const char *_appendees_[] = { tmpdir, "/mnt" }; char *_d_,<br> *_p_; int _len_ = 0; unsigned _i_; for (_i_ = 0; _i_ &lt; __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
-<tr><td class="num" id="LN296">296</td><td class="line">        <span class='keyword'>if</span> (mkdir(mntdir, 0700) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN297">297</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to create temporary mount directory: %m"</span>);</td></tr>
-<tr><td class="num" id="LN298">298</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN299">299</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN300">300</td><td class="line">        mntdir_made = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN301">301</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN302">302</td><td class="line">        <span class='keyword'>if</span> (mount(loopdev, mntdir, <span class='string_literal'>"btrfs"</span>, 0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN303">303</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to mount loopback device: %m"</span>);</td></tr>
-<tr><td class="num" id="LN304">304</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN305">305</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN306">306</td><td class="line">        mntdir_mounted = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN307">307</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN308">308</td><td class="line">        r = btrfs_quota_enable(mntdir, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN309">309</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN310">310</td><td class="line">                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to enable quota, ignoring: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 310, __func__, "Failed to enable quota, ignoring: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN311">311</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN312">312</td><td class="line">        r = btrfs_subvol_auto_qgroup(mntdir, 0, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN313">313</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN314">314</td><td class="line">                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to set up default quota hierarchy, ignoring: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 314, __func__, "Failed to set up default quota hierarchy, ignoring: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN315">315</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN316">316</td><td class="line">        <span class='keyword'>if</span> (chmod(mntdir, 0700) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN317">317</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to fix owner: %m"</span>);</td></tr>
-<tr><td class="num" id="LN318">318</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN319">319</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">        <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_set_errnof(error, <span class='macro'>ENOENT<span class='expansion'>2</span></span>, <span class='string_literal'>"Cannot set up /var/lib/machines, mkfs.btrfs is missing"</span>);</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">        fd = setup_machine_raw(size, error);</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">                <span class='keyword'>return</span> fd;</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">        control = open(<span class='string_literal'>"/dev/loop-control"</span>, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>);</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">        <span class='keyword'>if</span> (control &lt; 0)</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to open /dev/loop-control: %m"</span>);</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">        nr = ioctl(control, <span class='macro'>LOOP_CTL_GET_FREE<span class='expansion'>0x4C82</span></span>);</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">        <span class='keyword'>if</span> (nr &lt; 0)</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to allocate loop device: %m"</span>);</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;loopdev, <span class='string_literal'>"/dev/loop%i"</span>, nr) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">                r = -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">        loop = open(loopdev, <span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>);</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">        <span class='keyword'>if</span> (loop &lt; 0) {</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to open loopback device: %m"</span>);</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">        <span class='keyword'>if</span> (ioctl(loop, <span class='macro'>LOOP_SET_FD<span class='expansion'>0x4C00</span></span>, fd) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to bind loopback device: %m"</span>);</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">        <span class='keyword'>if</span> (ioctl(loop, <span class='macro'>LOOP_SET_STATUS64<span class='expansion'>0x4C04</span></span>, &amp;info) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to enable auto-clear for loopback device: %m"</span>);</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">        <span class='comment'>/* We need to make sure the new /var/lib/machines directory</span></td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">         <span class='comment'>* has an access mode of 0700 at the time it is first made</span></td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">         <span class='comment'>* available. mkfs will create it with 0755 however. Hence,</span></td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">         <span class='comment'>* let's mount the directory into an inaccessible directory</span></td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">         <span class='comment'>* below /tmp first, fix the access mode, and move it to the</span></td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">         <span class='comment'>* public place then. */</span></td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">        <span class='keyword'>if</span> (!mkdtemp(tmpdir)) {</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to create temporary mount parent directory: %m"</span>);</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">        tmpdir_made = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">        mntdir = <span class='macro'>strjoina(tmpdir, <span class='string_literal'>"/mnt"</span>)<span class='expansion'>({ const char *_appendees_[] = { tmpdir, "/mnt" }; char *_d_,<br> *_p_; int _len_ = 0; unsigned _i_; for (_i_ = 0; _i_ &lt; __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">        <span class='keyword'>if</span> (mkdir(mntdir, 0700) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to create temporary mount directory: %m"</span>);</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">        mntdir_made = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">        <span class='keyword'>if</span> (mount(loopdev, mntdir, <span class='string_literal'>"btrfs"</span>, 0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to mount loopback device: %m"</span>);</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">        mntdir_mounted = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">        r = btrfs_quota_enable(mntdir, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to enable quota, ignoring: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 308, __func__, "Failed to enable quota, ignoring: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">        r = btrfs_subvol_auto_qgroup(mntdir, 0, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">                <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to set up default quota hierarchy, ignoring: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 312, __func__, "Failed to set up default quota hierarchy, ignoring: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">        <span class='keyword'>if</span> (chmod(mntdir, 0700) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to fix owner: %m"</span>);</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">        (<span class='keyword'>void</span>) mkdir_p_label(<span class='string_literal'>"/var/lib/machines"</span>, 0700);</td></tr>
 <tr><td class="num" id="LN320">320</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN321">321</td><td class="line">        (<span class='keyword'>void</span>) mkdir_p_label(<span class='string_literal'>"/var/lib/machines"</span>, 0700);</td></tr>
-<tr><td class="num" id="LN322">322</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN323">323</td><td class="line">        <span class='keyword'>if</span> (mount(mntdir, <span class='string_literal'>"/var/lib/machines"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>MS_BIND<span class='expansion'>MS_BIND</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN324">324</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to mount directory into right place: %m"</span>);</td></tr>
-<tr><td class="num" id="LN325">325</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
-<tr><td class="num" id="LN326">326</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">        <span class='keyword'>if</span> (mount(mntdir, <span class='string_literal'>"/var/lib/machines"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>MS_BIND<span class='expansion'>MS_BIND</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">                r = sd_bus_error_set_errnof(error, <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>, <span class='string_literal'>"Failed to mount directory into right place: %m"</span>);</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">        (<span class='keyword'>void</span>) syncfs(fd);</td></tr>
 <tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN328">328</td><td class="line">        (<span class='keyword'>void</span>) syncfs(fd);</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Set up /var/lib/machines as btrfs loopback file system of size %s mounted on /var/lib/machines.raw."</span>, format_bytes(buf, <span class='keyword'>sizeof</span>(buf), size))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 328, __func__, "Set up /var/lib/machines as btrfs loopback file system of size %s mounted on /var/lib/machines.raw."<br>, format_bytes(buf, sizeof(buf), size)) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN329">329</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN330">330</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Set up /var/lib/machines as btrfs loopback file system of size %s mounted on /var/lib/machines.raw."</span>, format_bytes(buf, <span class='keyword'>sizeof</span>(buf), size))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 330, __func__, "Set up /var/lib/machines as btrfs loopback file system of size %s mounted on /var/lib/machines.raw."<br>, format_bytes(buf, sizeof(buf), size)) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN331">331</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN332">332</td><td class="line">        (<span class='keyword'>void</span>) umount2(mntdir, <span class='macro'>MNT_DETACH<span class='expansion'>MNT_DETACH</span></span>);</td></tr>
-<tr><td class="num" id="LN333">333</td><td class="line">        (<span class='keyword'>void</span>) rmdir(mntdir);</td></tr>
-<tr><td class="num" id="LN334">334</td><td class="line">        (<span class='keyword'>void</span>) rmdir(tmpdir);</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">        (<span class='keyword'>void</span>) umount2(mntdir, <span class='macro'>MNT_DETACH<span class='expansion'>MNT_DETACH</span></span>);</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">        (<span class='keyword'>void</span>) rmdir(mntdir);</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">        (<span class='keyword'>void</span>) rmdir(tmpdir);</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
 <tr><td class="num" id="LN335">335</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN336">336</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN337">337</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN338">338</td><td class="line">fail:</td></tr>
-<tr><td class="num" id="LN339">339</td><td class="line">        <span class='keyword'>if</span> (mntdir_mounted)</td></tr>
-<tr><td class="num" id="LN340">340</td><td class="line">                (<span class='keyword'>void</span>) umount2(mntdir, <span class='macro'>MNT_DETACH<span class='expansion'>MNT_DETACH</span></span>);</td></tr>
-<tr><td class="num" id="LN341">341</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN342">342</td><td class="line">        <span class='keyword'>if</span> (mntdir_made)</td></tr>
-<tr><td class="num" id="LN343">343</td><td class="line">                (<span class='keyword'>void</span>) rmdir(mntdir);</td></tr>
-<tr><td class="num" id="LN344">344</td><td class="line">        <span class='keyword'>if</span> (tmpdir_made)</td></tr>
-<tr><td class="num" id="LN345">345</td><td class="line">                (<span class='keyword'>void</span>) rmdir(tmpdir);</td></tr>
-<tr><td class="num" id="LN346">346</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN347">347</td><td class="line">        <span class='keyword'>if</span> (loop &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN348">348</td><td class="line">                (<span class='keyword'>void</span>) ioctl(loop, <span class='macro'>LOOP_CLR_FD<span class='expansion'>0x4C01</span></span>);</td></tr>
-<tr><td class="num" id="LN349">349</td><td class="line">                loop = safe_close(loop);</td></tr>
-<tr><td class="num" id="LN350">350</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN351">351</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN352">352</td><td class="line">        <span class='keyword'>if</span> (control &gt;= 0 &amp;&amp; nr &gt;= 0)</td></tr>
-<tr><td class="num" id="LN353">353</td><td class="line">                (<span class='keyword'>void</span>) ioctl(control, <span class='macro'>LOOP_CTL_REMOVE<span class='expansion'>0x4C81</span></span>, nr);</td></tr>
-<tr><td class="num" id="LN354">354</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN355">355</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN356">356</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN357">357</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN358">358</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> sync_path(<span class='keyword'>const</span> <span class='keyword'>char</span> *p) {</td></tr>
-<tr><td class="num" id="LN359">359</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
-<tr><td class="num" id="LN360">360</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN361">361</td><td class="line">        fd = open(p, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
-<tr><td class="num" id="LN362">362</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN363">363</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN364">364</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN365">365</td><td class="line">        <span class='keyword'>if</span> (syncfs(fd) &lt; 0)</td></tr>
-<tr><td class="num" id="LN366">366</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN367">367</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN368">368</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN369">369</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN370">370</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN371">371</td><td class="line"><span class='keyword'>int</span> grow_machine_directory(<span class='keyword'>void</span>) {</td></tr>
-<tr><td class="num" id="LN372">372</td><td class="line">        <span class='keyword'>char</span> buf[<span class='macro'>FORMAT_BYTES_MAX<span class='expansion'>8</span></span>];</td></tr>
-<tr><td class="num" id="LN373">373</td><td class="line">        <span class='keyword'>struct</span> statvfs a, b;</td></tr>
-<tr><td class="num" id="LN374">374</td><td class="line">        uint64_t old_size, new_size, max_add;</td></tr>
-<tr><td class="num" id="LN375">375</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN376">376</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN377">377</td><td class="line">        <span class='comment'>/* Ensure the disk space data is accurate */</span></td></tr>
-<tr><td class="num" id="LN378">378</td><td class="line">        sync_path(<span class='string_literal'>"/var/lib/machines"</span>);</td></tr>
-<tr><td class="num" id="LN379">379</td><td class="line">        sync_path(<span class='string_literal'>"/var/lib/machines.raw"</span>);</td></tr>
-<tr><td class="num" id="LN380">380</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN381">381</td><td class="line">        <span class='keyword'>if</span> (statvfs(<span class='string_literal'>"/var/lib/machines.raw"</span>, &amp;a) &lt; 0)</td></tr>
-<tr><td class="num" id="LN382">382</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN384">384</td><td class="line">        <span class='keyword'>if</span> (statvfs(<span class='string_literal'>"/var/lib/machines"</span>, &amp;b) &lt; 0)</td></tr>
-<tr><td class="num" id="LN385">385</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN386">386</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN387">387</td><td class="line">        <span class='comment'>/* Don't grow if not enough disk space is available on the host */</span></td></tr>
-<tr><td class="num" id="LN388">388</td><td class="line">        <span class='keyword'>if</span> (((uint64_t) a.f_bavail * (uint64_t) a.f_bsize) &lt;= <span class='macro'>VAR_LIB_MACHINES_FREE_MIN<span class='expansion'>(1024UL*1024UL*750UL)</span></span>)</td></tr>
-<tr><td class="num" id="LN389">389</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN390">390</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN391">391</td><td class="line">        <span class='comment'>/* Don't grow if at least 1/3th of the fs is still free */</span></td></tr>
-<tr><td class="num" id="LN392">392</td><td class="line">        <span class='keyword'>if</span> (b.f_bavail &gt; b.f_blocks / 3)</td></tr>
-<tr><td class="num" id="LN393">393</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN394">394</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN395">395</td><td class="line">        <span class='comment'>/* Calculate how much we are willing to add at most */</span></td></tr>
-<tr><td class="num" id="LN396">396</td><td class="line">        max_add = ((uint64_t) a.f_bavail * (uint64_t) a.f_bsize) - <span class='macro'>VAR_LIB_MACHINES_FREE_MIN<span class='expansion'>(1024UL*1024UL*750UL)</span></span>;</td></tr>
-<tr><td class="num" id="LN397">397</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">        <span class='comment'>/* Calculate the old size */</span></td></tr>
-<tr><td class="num" id="LN399">399</td><td class="line">        old_size = (uint64_t) b.f_blocks * (uint64_t) b.f_bsize;</td></tr>
-<tr><td class="num" id="LN400">400</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN401">401</td><td class="line">        <span class='comment'>/* Calculate the new size as three times the size of what is used right now */</span></td></tr>
-<tr><td class="num" id="LN402">402</td><td class="line">        new_size = ((uint64_t) b.f_blocks - (uint64_t) b.f_bavail) * (uint64_t) b.f_bsize * 3;</td></tr>
-<tr><td class="num" id="LN403">403</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN404">404</td><td class="line">        <span class='comment'>/* Always, grow at least to the start size */</span></td></tr>
-<tr><td class="num" id="LN405">405</td><td class="line">        <span class='keyword'>if</span> (new_size &lt; <span class='macro'>VAR_LIB_MACHINES_SIZE_START<span class='expansion'>(1024UL*1024UL*500UL)</span></span>)</td></tr>
-<tr><td class="num" id="LN406">406</td><td class="line">                new_size = <span class='macro'>VAR_LIB_MACHINES_SIZE_START<span class='expansion'>(1024UL*1024UL*500UL)</span></span>;</td></tr>
-<tr><td class="num" id="LN407">407</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN408">408</td><td class="line">        <span class='comment'>/* If the new size is smaller than the old size, don't grow */</span></td></tr>
-<tr><td class="num" id="LN409">409</td><td class="line">        <span class='keyword'>if</span> (new_size &lt; old_size)</td></tr>
-<tr><td class="num" id="LN410">410</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN411">411</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN412">412</td><td class="line">        <span class='comment'>/* Ensure we never add more than the maximum */</span></td></tr>
-<tr><td class="num" id="LN413">413</td><td class="line">        <span class='keyword'>if</span> (new_size &gt; old_size + max_add)</td></tr>
-<tr><td class="num" id="LN414">414</td><td class="line">                new_size = old_size + max_add;</td></tr>
-<tr><td class="num" id="LN415">415</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN416">416</td><td class="line">        r = btrfs_resize_loopback(<span class='string_literal'>"/var/lib/machines"</span>, new_size, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN417">417</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
-<tr><td class="num" id="LN418">418</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN419">419</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN420">420</td><td class="line">        <span class='comment'>/* Also bump the quota, of both the subvolume leaf qgroup, as</span></td></tr>
-<tr><td class="num" id="LN421">421</td><td class="line">         <span class='comment'>* well as of any subtree quota group by the same id but a</span></td></tr>
-<tr><td class="num" id="LN422">422</td><td class="line">         <span class='comment'>* higher level, if it exists. */</span></td></tr>
-<tr><td class="num" id="LN423">423</td><td class="line">        (<span class='keyword'>void</span>) btrfs_qgroup_set_limit(<span class='string_literal'>"/var/lib/machines"</span>, 0, new_size);</td></tr>
-<tr><td class="num" id="LN424">424</td><td class="line">        (<span class='keyword'>void</span>) btrfs_subvol_set_subtree_quota_limit(<span class='string_literal'>"/var/lib/machines"</span>, 0, new_size);</td></tr>
-<tr><td class="num" id="LN425">425</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN426">426</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Grew /var/lib/machines btrfs loopback file system to %s."</span>, format_bytes(buf, <span class='keyword'>sizeof</span>(buf), new_size))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 426, __func__, "Grew /var/lib/machines btrfs loopback file system to %s."<br>, format_bytes(buf, sizeof(buf), new_size)) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN427">427</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN428">428</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">fail:</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">        <span class='keyword'>if</span> (mntdir_mounted)</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">                (<span class='keyword'>void</span>) umount2(mntdir, <span class='macro'>MNT_DETACH<span class='expansion'>MNT_DETACH</span></span>);</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">        <span class='keyword'>if</span> (mntdir_made)</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">                (<span class='keyword'>void</span>) rmdir(mntdir);</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">        <span class='keyword'>if</span> (tmpdir_made)</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">                (<span class='keyword'>void</span>) rmdir(tmpdir);</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">        <span class='keyword'>if</span> (loop &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">                (<span class='keyword'>void</span>) ioctl(loop, <span class='macro'>LOOP_CLR_FD<span class='expansion'>0x4C01</span></span>);</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">                loop = <span class="mrange">safe_close(loop)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'loop' is never read</div></td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">        <span class='keyword'>if</span> (control &gt;= 0 &amp;&amp; nr &gt;= 0)</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">                (<span class='keyword'>void</span>) ioctl(control, <span class='macro'>LOOP_CTL_REMOVE<span class='expansion'>0x4C81</span></span>, nr);</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> sync_path(<span class='keyword'>const</span> <span class='keyword'>char</span> *p) {</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">        fd = open(p, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">        <span class='keyword'>if</span> (syncfs(fd) &lt; 0)</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line"><span class='keyword'>int</span> grow_machine_directory(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        <span class='keyword'>char</span> buf[<span class='macro'>FORMAT_BYTES_MAX<span class='expansion'>8</span></span>];</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        <span class='keyword'>struct</span> statvfs a, b;</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">        uint64_t old_size, new_size, max_add;</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">        <span class='comment'>/* Ensure the disk space data is accurate */</span></td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">        sync_path(<span class='string_literal'>"/var/lib/machines"</span>);</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">        sync_path(<span class='string_literal'>"/var/lib/machines.raw"</span>);</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        <span class='keyword'>if</span> (statvfs(<span class='string_literal'>"/var/lib/machines.raw"</span>, &amp;a) &lt; 0)</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">        <span class='keyword'>if</span> (statvfs(<span class='string_literal'>"/var/lib/machines"</span>, &amp;b) &lt; 0)</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">        <span class='comment'>/* Don't grow if not enough disk space is available on the host */</span></td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">        <span class='keyword'>if</span> (((uint64_t) a.f_bavail * (uint64_t) a.f_bsize) &lt;= <span class='macro'>VAR_LIB_MACHINES_FREE_MIN<span class='expansion'>(1024UL*1024UL*750UL)</span></span>)</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        <span class='comment'>/* Don't grow if at least 1/3th of the fs is still free */</span></td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">        <span class='keyword'>if</span> (b.f_bavail &gt; b.f_blocks / 3)</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        <span class='comment'>/* Calculate how much we are willing to add at most */</span></td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">        max_add = ((uint64_t) a.f_bavail * (uint64_t) a.f_bsize) - <span class='macro'>VAR_LIB_MACHINES_FREE_MIN<span class='expansion'>(1024UL*1024UL*750UL)</span></span>;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">        <span class='comment'>/* Calculate the old size */</span></td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">        old_size = (uint64_t) b.f_blocks * (uint64_t) b.f_bsize;</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">        <span class='comment'>/* Calculate the new size as three times the size of what is used right now */</span></td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">        new_size = ((uint64_t) b.f_blocks - (uint64_t) b.f_bavail) * (uint64_t) b.f_bsize * 3;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">        <span class='comment'>/* Always, grow at least to the start size */</span></td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">        <span class='keyword'>if</span> (new_size &lt; <span class='macro'>VAR_LIB_MACHINES_SIZE_START<span class='expansion'>(1024UL*1024UL*500UL)</span></span>)</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">                new_size = <span class='macro'>VAR_LIB_MACHINES_SIZE_START<span class='expansion'>(1024UL*1024UL*500UL)</span></span>;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">        <span class='comment'>/* If the new size is smaller than the old size, don't grow */</span></td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">        <span class='keyword'>if</span> (new_size &lt; old_size)</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">        <span class='comment'>/* Ensure we never add more than the maximum */</span></td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">        <span class='keyword'>if</span> (new_size &gt; old_size + max_add)</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">                new_size = old_size + max_add;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">        r = btrfs_resize_loopback(<span class='string_literal'>"/var/lib/machines"</span>, new_size, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">        <span class='comment'>/* Also bump the quota, of both the subvolume leaf qgroup, as</span></td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">         <span class='comment'>* well as of any subtree quota group by the same id but a</span></td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">         <span class='comment'>* higher level, if it exists. */</span></td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">        (<span class='keyword'>void</span>) btrfs_qgroup_set_limit(<span class='string_literal'>"/var/lib/machines"</span>, 0, new_size);</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">        (<span class='keyword'>void</span>) btrfs_subvol_set_subtree_quota_limit(<span class='string_literal'>"/var/lib/machines"</span>, 0, new_size);</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Grew /var/lib/machines btrfs loopback file system to %s."</span>, format_bytes(buf, <span class='keyword'>sizeof</span>(buf), new_size))<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/machine-pool.c"<br>, 424, __func__, "Grew /var/lib/machines btrfs loopback file system to %s."<br>, format_bytes(buf, sizeof(buf), new_size)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">}</td></tr>
 </table></body></html>
