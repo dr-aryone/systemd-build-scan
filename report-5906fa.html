@@ -785,567 +785,575 @@
 <tr><td class="num" id="LN690">690</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN691">691</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN692">692</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> job_print_status_message(Unit *u, JobType t, JobResult result) {</td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_result_status_table[_JOB_RESULT_MAX] = {</td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line">                [JOB_DONE]        = <span class='macro'>ANSI_GREEN<span class='expansion'>"\x1B[0;32m"</span></span>            <span class='string_literal'>"  OK  "</span> <span class='macro'>ANSI_NORMAL<span class='expansion'>"\x1B[0m"</span></span>,</td></tr>
-<tr><td class="num" id="LN695">695</td><td class="line">                [JOB_TIMEOUT]     = <span class='macro'>ANSI_HIGHLIGHT_RED<span class='expansion'>"\x1B[0;1;31m"</span></span>    <span class='string_literal'>" TIME "</span> <span class='macro'>ANSI_NORMAL<span class='expansion'>"\x1B[0m"</span></span>,</td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line">                [JOB_FAILED]      = <span class='macro'>ANSI_HIGHLIGHT_RED<span class='expansion'>"\x1B[0;1;31m"</span></span>    <span class='string_literal'>"FAILED"</span> <span class='macro'>ANSI_NORMAL<span class='expansion'>"\x1B[0m"</span></span>,</td></tr>
-<tr><td class="num" id="LN697">697</td><td class="line">                [JOB_DEPENDENCY]  = <span class='macro'>ANSI_HIGHLIGHT_YELLOW<span class='expansion'>"\x1B[0;1;33m"</span></span> <span class='string_literal'>"DEPEND"</span> <span class='macro'>ANSI_NORMAL<span class='expansion'>"\x1B[0m"</span></span>,</td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line">                [JOB_SKIPPED]     = <span class='macro'>ANSI_HIGHLIGHT<span class='expansion'>"\x1B[0;1;39m"</span></span>        <span class='string_literal'>" INFO "</span> <span class='macro'>ANSI_NORMAL<span class='expansion'>"\x1B[0m"</span></span>,</td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line">                [JOB_ASSERT]      = <span class='macro'>ANSI_HIGHLIGHT_YELLOW<span class='expansion'>"\x1B[0;1;33m"</span></span> <span class='string_literal'>"ASSERT"</span> <span class='macro'>ANSI_NORMAL<span class='expansion'>"\x1B[0m"</span></span>,</td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line">                [JOB_UNSUPPORTED] = <span class='macro'>ANSI_HIGHLIGHT_YELLOW<span class='expansion'>"\x1B[0;1;33m"</span></span> <span class='string_literal'>"UNSUPP"</span> <span class='macro'>ANSI_NORMAL<span class='expansion'>"\x1B[0m"</span></span>,</td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *format;</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>struct</span> {</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *color, *word;</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">        } <span class='keyword'>const</span> statuses[_JOB_RESULT_MAX] = {</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">                [JOB_DONE]        = {<span class='macro'>ANSI_GREEN<span class='expansion'>"\x1B[0;32m"</span></span>,            <span class='string_literal'>"  OK  "</span>},</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">                [JOB_TIMEOUT]     = {<span class='macro'>ANSI_HIGHLIGHT_RED<span class='expansion'>"\x1B[0;1;31m"</span></span>,    <span class='string_literal'>" TIME "</span>},</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">                [JOB_FAILED]      = {<span class='macro'>ANSI_HIGHLIGHT_RED<span class='expansion'>"\x1B[0;1;31m"</span></span>,    <span class='string_literal'>"FAILED"</span>},</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">                [JOB_DEPENDENCY]  = {<span class='macro'>ANSI_HIGHLIGHT_YELLOW<span class='expansion'>"\x1B[0;1;33m"</span></span>, <span class='string_literal'>"DEPEND"</span>},</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">                [JOB_SKIPPED]     = {<span class='macro'>ANSI_HIGHLIGHT<span class='expansion'>"\x1B[0;1;39m"</span></span>,        <span class='string_literal'>" INFO "</span>},</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">                [JOB_ASSERT]      = {<span class='macro'>ANSI_HIGHLIGHT_YELLOW<span class='expansion'>"\x1B[0;1;33m"</span></span>, <span class='string_literal'>"ASSERT"</span>},</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">                [JOB_UNSUPPORTED] = {<span class='macro'>ANSI_HIGHLIGHT_YELLOW<span class='expansion'>"\x1B[0;1;33m"</span></span>, <span class='string_literal'>"UNSUPP"</span>},</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        };</td></tr>
 <tr><td class="num" id="LN704">704</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/job.c", 705, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN706">706</td><td class="line">        <span class='macro'>assert(t &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &gt;= 0)),0))) log_assert_failed<br>("t &gt;= 0", "src/core/job.c", 706, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN707">707</td><td class="line">        <span class='macro'>assert(t &lt; _JOB_TYPE_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &lt; _JOB_TYPE_MAX)),0))) log_assert_failed<br>("t &lt; _JOB_TYPE_MAX", "src/core/job.c", 707, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN708">708</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line">        <span class='comment'>/* Reload status messages have traditionally not been printed to console. */</span></td></tr>
-<tr><td class="num" id="LN710">710</td><td class="line">        <span class='keyword'>if</span> (t == JOB_RELOAD)</td></tr>
-<tr><td class="num" id="LN711">711</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN712">712</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line">        format = job_get_status_message_format(u, t, result);</td></tr>
-<tr><td class="num" id="LN714">714</td><td class="line">        <span class='keyword'>if</span> (!format)</td></tr>
-<tr><td class="num" id="LN715">715</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line">        <span class='keyword'>if</span> (result != JOB_DONE)</td></tr>
-<tr><td class="num" id="LN718">718</td><td class="line">                manager_flip_auto_status(u-&gt;manager, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *format;</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *status;</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/job.c", 708, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">        <span class='macro'>assert(t &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &gt;= 0)),0))) log_assert_failed<br>("t &gt;= 0", "src/core/job.c", 709, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">        <span class='macro'>assert(t &lt; _JOB_TYPE_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &lt; _JOB_TYPE_MAX)),0))) log_assert_failed<br>("t &lt; _JOB_TYPE_MAX", "src/core/job.c", 710, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">        <span class='comment'>/* Reload status messages have traditionally not been printed to console. */</span></td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">        <span class='keyword'>if</span> (t == JOB_RELOAD)</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">        format = job_get_status_message_format(u, t, result);</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">        <span class='keyword'>if</span> (!format)</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN719">719</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN720">720</td><td class="line">        <span class='macro'>DISABLE_WARNING_FORMAT_NONLITERAL<span class='expansion'>GCC diagnostic push
+<tr><td class="num" id="LN720">720</td><td class="line">        <span class='keyword'>if</span> (log_get_show_color())</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">                status = <span class='macro'>strjoina(statuses[result].color, statuses[result].word, ANSI_NORMAL)<span class='expansion'>({ const char *_appendees_[] = { statuses[result].color, statuses<br>[result].word, "\x1B[0m" }; char *_d_, *_p_; int _len_ = 0; unsigned<br> _i_; for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _len_ += strlen<br>(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca (_len_ + 1);<br> for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr(<br> !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">                status = statuses[result].word;</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">        <span class='keyword'>if</span> (result != JOB_DONE)</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">                manager_flip_auto_status(u-&gt;manager, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">        <span class='macro'>DISABLE_WARNING_FORMAT_NONLITERAL<span class='expansion'>GCC diagnostic push
 ; GCC diagnostic ignored "-Wformat-nonliteral"<br>
 </span></span>;</td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line">        unit_status_printf(u, job_result_status_table[result], format);</td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line">        <span class='macro'>REENABLE_WARNING<span class='expansion'>GCC diagnostic pop
+<tr><td class="num" id="LN729">729</td><td class="line">        unit_status_printf(u, status, format);</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">        <span class='macro'>REENABLE_WARNING<span class='expansion'>GCC diagnostic pop
 </span></span>;</td></tr>
-<tr><td class="num" id="LN723">723</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN724">724</td><td class="line">        <span class='keyword'>if</span> (t == JOB_START &amp;&amp; result == JOB_FAILED) {</td></tr>
-<tr><td class="num" id="LN725">725</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *quoted;</td></tr>
-<tr><td class="num" id="LN726">726</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN727">727</td><td class="line">                quoted = shell_maybe_quote(u-&gt;id);</td></tr>
-<tr><td class="num" id="LN728">728</td><td class="line">                manager_status_printf(u-&gt;manager, STATUS_TYPE_NORMAL, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='string_literal'>"See 'systemctl status %s' for details."</span>, strna(quoted));</td></tr>
-<tr><td class="num" id="LN729">729</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN731">731</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN732">732</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> job_log_status_message(Unit *u, JobType t, JobResult result) {</td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *format;</td></tr>
-<tr><td class="num" id="LN734">734</td><td class="line">        <span class='keyword'>char</span> buf[<span class='macro'>LINE_MAX<span class='expansion'>2048</span></span>];</td></tr>
-<tr><td class="num" id="LN735">735</td><td class="line">        sd_id128_t mid;</td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>int</span> job_result_log_level[_JOB_RESULT_MAX] = {</td></tr>
-<tr><td class="num" id="LN737">737</td><td class="line">                [JOB_DONE]        = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>,</td></tr>
-<tr><td class="num" id="LN738">738</td><td class="line">                [JOB_CANCELED]    = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>,</td></tr>
-<tr><td class="num" id="LN739">739</td><td class="line">                [JOB_TIMEOUT]     = <span class='macro'>LOG_ERR<span class='expansion'>3</span></span>,</td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line">                [JOB_FAILED]      = <span class='macro'>LOG_ERR<span class='expansion'>3</span></span>,</td></tr>
-<tr><td class="num" id="LN741">741</td><td class="line">                [JOB_DEPENDENCY]  = <span class='macro'>LOG_WARNING<span class='expansion'>4</span></span>,</td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">                [JOB_SKIPPED]     = <span class='macro'>LOG_NOTICE<span class='expansion'>5</span></span>,</td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line">                [JOB_INVALID]     = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>,</td></tr>
-<tr><td class="num" id="LN744">744</td><td class="line">                [JOB_ASSERT]      = <span class='macro'>LOG_WARNING<span class='expansion'>4</span></span>,</td></tr>
-<tr><td class="num" id="LN745">745</td><td class="line">                [JOB_UNSUPPORTED] = <span class='macro'>LOG_WARNING<span class='expansion'>4</span></span>,</td></tr>
-<tr><td class="num" id="LN746">746</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN747">747</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN748">748</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/job.c", 748, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN749">749</td><td class="line">        <span class='macro'>assert(t &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &gt;= 0)),0))) log_assert_failed<br>("t &gt;= 0", "src/core/job.c", 749, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN750">750</td><td class="line">        <span class='macro'>assert(t &lt; _JOB_TYPE_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &lt; _JOB_TYPE_MAX)),0))) log_assert_failed<br>("t &lt; _JOB_TYPE_MAX", "src/core/job.c", 750, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN751">751</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN752">752</td><td class="line">        <span class='comment'>/* Skip this if it goes to the console. since we already print</span></td></tr>
-<tr><td class="num" id="LN753">753</td><td class="line">         <span class='comment'>* to the console anyway... */</span></td></tr>
-<tr><td class="num" id="LN754">754</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN755">755</td><td class="line">        <span class='keyword'>if</span> (log_on_console())</td></tr>
-<tr><td class="num" id="LN756">756</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN757">757</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN758">758</td><td class="line">        format = job_get_status_message_format(u, t, result);</td></tr>
-<tr><td class="num" id="LN759">759</td><td class="line">        <span class='keyword'>if</span> (!format)</td></tr>
-<tr><td class="num" id="LN760">760</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN761">761</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN762">762</td><td class="line">        <span class='macro'>DISABLE_WARNING_FORMAT_NONLITERAL<span class='expansion'>GCC diagnostic push
+<tr><td class="num" id="LN732">732</td><td class="line">        <span class='keyword'>if</span> (t == JOB_START &amp;&amp; result == JOB_FAILED) {</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *quoted;</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">                quoted = shell_maybe_quote(u-&gt;id);</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">                manager_status_printf(u-&gt;manager, STATUS_TYPE_NORMAL, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='string_literal'>"See 'systemctl status %s' for details."</span>, strna(quoted));</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> job_log_status_message(Unit *u, JobType t, JobResult result) {</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *format;</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">        <span class='keyword'>char</span> buf[<span class='macro'>LINE_MAX<span class='expansion'>2048</span></span>];</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">        sd_id128_t mid;</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>int</span> job_result_log_level[_JOB_RESULT_MAX] = {</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">                [JOB_DONE]        = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>,</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">                [JOB_CANCELED]    = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>,</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">                [JOB_TIMEOUT]     = <span class='macro'>LOG_ERR<span class='expansion'>3</span></span>,</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">                [JOB_FAILED]      = <span class='macro'>LOG_ERR<span class='expansion'>3</span></span>,</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">                [JOB_DEPENDENCY]  = <span class='macro'>LOG_WARNING<span class='expansion'>4</span></span>,</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">                [JOB_SKIPPED]     = <span class='macro'>LOG_NOTICE<span class='expansion'>5</span></span>,</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">                [JOB_INVALID]     = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>,</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">                [JOB_ASSERT]      = <span class='macro'>LOG_WARNING<span class='expansion'>4</span></span>,</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">                [JOB_UNSUPPORTED] = <span class='macro'>LOG_WARNING<span class='expansion'>4</span></span>,</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/job.c", 756, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">        <span class='macro'>assert(t &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &gt;= 0)),0))) log_assert_failed<br>("t &gt;= 0", "src/core/job.c", 757, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">        <span class='macro'>assert(t &lt; _JOB_TYPE_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &lt; _JOB_TYPE_MAX)),0))) log_assert_failed<br>("t &lt; _JOB_TYPE_MAX", "src/core/job.c", 758, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">        <span class='comment'>/* Skip this if it goes to the console. since we already print</span></td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">         <span class='comment'>* to the console anyway... */</span></td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">        <span class='keyword'>if</span> (log_on_console())</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">        format = job_get_status_message_format(u, t, result);</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">        <span class='keyword'>if</span> (!format)</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">        <span class='macro'>DISABLE_WARNING_FORMAT_NONLITERAL<span class='expansion'>GCC diagnostic push
 ; GCC diagnostic ignored "-Wformat-nonliteral"<br>
 </span></span>;</td></tr>
-<tr><td class="num" id="LN763">763</td><td class="line">        <span class='macro'>xsprintf(buf, format, unit_description(u))<span class='expansion'>do { if ((__builtin_expect(!!(!((size_t) snprintf(buf, __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(buf), typeof(&amp;*(buf))), sizeof(buf)/sizeof((buf)[0]), (void<br>)0)), format, unit_description(u)) &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(buf), typeof(&amp;*(buf<br>))), sizeof(buf)/sizeof((buf)[0]), (void)0)))),0))) log_assert_failed<br>("xsprintf: " "buf" "[] must be big enough", "src/core/job.c"<br>, 763, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN764">764</td><td class="line">        <span class='macro'>REENABLE_WARNING<span class='expansion'>GCC diagnostic pop
+<tr><td class="num" id="LN771">771</td><td class="line">        <span class='macro'>xsprintf(buf, format, unit_description(u))<span class='expansion'>do { if ((__builtin_expect(!!(!((size_t) snprintf(buf, __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(buf), typeof(&amp;*(buf))), sizeof(buf)/sizeof((buf)[0]), (void<br>)0)), format, unit_description(u)) &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(buf), typeof(&amp;*(buf<br>))), sizeof(buf)/sizeof((buf)[0]), (void)0)))),0))) log_assert_failed<br>("xsprintf: " "buf" "[] must be big enough", "src/core/job.c"<br>, 771, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">        <span class='macro'>REENABLE_WARNING<span class='expansion'>GCC diagnostic pop
 </span></span>;</td></tr>
-<tr><td class="num" id="LN765">765</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN766">766</td><td class="line">        <span class='keyword'>switch</span> (t) {</td></tr>
-<tr><td class="num" id="LN767">767</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN768">768</td><td class="line">        <span class='keyword'>case</span> JOB_START:</td></tr>
-<tr><td class="num" id="LN769">769</td><td class="line">                mid = result == JOB_DONE ? <span class='macro'>SD_MESSAGE_UNIT_STARTED<span class='expansion'>((const sd_id128_t) { .bytes = { 0x39, 0xf5, 0x34, 0x79, 0xd3<br>, 0xa0, 0x45, 0xac, 0x8e, 0x11, 0x78, 0x62, 0x48, 0x23, 0x1f,<br> 0xbf }})</span></span> : <span class='macro'>SD_MESSAGE_UNIT_FAILED<span class='expansion'>((const sd_id128_t) { .bytes = { 0xbe, 0x02, 0xcf, 0x68, 0x55<br>, 0xd2, 0x42, 0x8b, 0xa4, 0x0d, 0xf7, 0xe9, 0xd0, 0x22, 0xf0,<br> 0x3d }})</span></span>;</td></tr>
-<tr><td class="num" id="LN770">770</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN771">771</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN772">772</td><td class="line">        <span class='keyword'>case</span> JOB_RELOAD:</td></tr>
-<tr><td class="num" id="LN773">773</td><td class="line">                mid = <span class='macro'>SD_MESSAGE_UNIT_RELOADED<span class='expansion'>((const sd_id128_t) { .bytes = { 0x7b, 0x05, 0xeb, 0xc6, 0x68<br>, 0x38, 0x42, 0x22, 0xba, 0xa8, 0x88, 0x11, 0x79, 0xcf, 0xda,<br> 0x54 }})</span></span>;</td></tr>
-<tr><td class="num" id="LN774">774</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">        <span class='keyword'>switch</span> (t) {</td></tr>
 <tr><td class="num" id="LN775">775</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN776">776</td><td class="line">        <span class='keyword'>case</span> JOB_STOP:</td></tr>
-<tr><td class="num" id="LN777">777</td><td class="line">        <span class='keyword'>case</span> JOB_RESTART:</td></tr>
-<tr><td class="num" id="LN778">778</td><td class="line">                mid = <span class='macro'>SD_MESSAGE_UNIT_STOPPED<span class='expansion'>((const sd_id128_t) { .bytes = { 0x9d, 0x1a, 0xaa, 0x27, 0xd6<br>, 0x01, 0x40, 0xbd, 0x96, 0x36, 0x54, 0x38, 0xaa, 0xd2, 0x02,<br> 0x86 }})</span></span>;</td></tr>
-<tr><td class="num" id="LN779">779</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN780">780</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN781">781</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN782">782</td><td class="line">                <span class='macro'>log_struct(job_result_log_level[result],<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 786, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN783">783</td><td class="line">                           <span class='macro'>LOG_UNIT_ID(u),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 786, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN784">784</td><td class="line">                           <span class='macro'>LOG_MESSAGE(<span class='string_literal'>"%s"</span>, buf),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 786, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN785">785</td><td class="line">                           <span class='string_literal'><span class='macro'>"RESULT=%s"</span>, job_result_to_string(result),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 786, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN786">786</td><td class="line">                           <span class='macro'>NULL)<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 786, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span>;</td></tr>
-<tr><td class="num" id="LN787">787</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN788">788</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN789">789</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN790">790</td><td class="line">        <span class='macro'>log_struct(job_result_log_level[result],<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 795, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN791">791</td><td class="line">                   <span class='macro'>LOG_MESSAGE_ID(mid),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 795, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN792">792</td><td class="line">                   <span class='macro'>LOG_UNIT_ID(u),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 795, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN793">793</td><td class="line">                   <span class='macro'>LOG_MESSAGE(<span class='string_literal'>"%s"</span>, buf),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 795, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN794">794</td><td class="line">                   <span class='string_literal'><span class='macro'>"RESULT=%s"</span>, job_result_to_string(result),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 795, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN795">795</td><td class="line">                   <span class='macro'>NULL)<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 795, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span>;</td></tr>
-<tr><td class="num" id="LN796">796</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">        <span class='keyword'>case</span> JOB_START:</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">                mid = result == JOB_DONE ? <span class='macro'>SD_MESSAGE_UNIT_STARTED<span class='expansion'>((const sd_id128_t) { .bytes = { 0x39, 0xf5, 0x34, 0x79, 0xd3<br>, 0xa0, 0x45, 0xac, 0x8e, 0x11, 0x78, 0x62, 0x48, 0x23, 0x1f,<br> 0xbf }})</span></span> : <span class='macro'>SD_MESSAGE_UNIT_FAILED<span class='expansion'>((const sd_id128_t) { .bytes = { 0xbe, 0x02, 0xcf, 0x68, 0x55<br>, 0xd2, 0x42, 0x8b, 0xa4, 0x0d, 0xf7, 0xe9, 0xd0, 0x22, 0xf0,<br> 0x3d }})</span></span>;</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">        <span class='keyword'>case</span> JOB_RELOAD:</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">                mid = <span class='macro'>SD_MESSAGE_UNIT_RELOADED<span class='expansion'>((const sd_id128_t) { .bytes = { 0x7b, 0x05, 0xeb, 0xc6, 0x68<br>, 0x38, 0x42, 0x22, 0xba, 0xa8, 0x88, 0x11, 0x79, 0xcf, 0xda,<br> 0x54 }})</span></span>;</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">        <span class='keyword'>case</span> JOB_STOP:</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">        <span class='keyword'>case</span> JOB_RESTART:</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">                mid = <span class='macro'>SD_MESSAGE_UNIT_STOPPED<span class='expansion'>((const sd_id128_t) { .bytes = { 0x9d, 0x1a, 0xaa, 0x27, 0xd6<br>, 0x01, 0x40, 0xbd, 0x96, 0x36, 0x54, 0x38, 0xaa, 0xd2, 0x02,<br> 0x86 }})</span></span>;</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">                <span class='macro'>log_struct(job_result_log_level[result],<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 794, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">                           <span class='macro'>LOG_UNIT_ID(u),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 794, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">                           <span class='macro'>LOG_MESSAGE(<span class='string_literal'>"%s"</span>, buf),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 794, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">                           <span class='string_literal'><span class='macro'>"RESULT=%s"</span>, job_result_to_string(result),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 794, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">                           <span class='macro'>NULL)<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 794, __func__, (u)-&gt;manager-&gt;unit_log_format_string, (<br>u)-&gt;id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string<br>(result), ((void*)0))</span></span>;</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN797">797</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN798">798</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> job_emit_status_message(Unit *u, JobType t, JobResult result) {</td></tr>
-<tr><td class="num" id="LN799">799</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN800">800</td><td class="line">        <span class='comment'>/* No message if the job did not actually do anything due to failed condition. */</span></td></tr>
-<tr><td class="num" id="LN801">801</td><td class="line">        <span class='keyword'>if</span> (t == JOB_START &amp;&amp; result == JOB_DONE &amp;&amp; !u-&gt;condition_result)</td></tr>
-<tr><td class="num" id="LN802">802</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN803">803</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN804">804</td><td class="line">        job_log_status_message(u, t, result);</td></tr>
-<tr><td class="num" id="LN805">805</td><td class="line">        job_print_status_message(u, t, result);</td></tr>
-<tr><td class="num" id="LN806">806</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">        <span class='macro'>log_struct(job_result_log_level[result],<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 803, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">                   <span class='macro'>LOG_MESSAGE_ID(mid),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 803, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">                   <span class='macro'>LOG_UNIT_ID(u),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 803, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">                   <span class='macro'>LOG_MESSAGE(<span class='string_literal'>"%s"</span>, buf),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 803, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">                   <span class='string_literal'><span class='macro'>"RESULT=%s"</span>, job_result_to_string(result),<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 803, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">                   <span class='macro'>NULL)<span class='expansion'>log_struct_internal(job_result_log_level[result], 0, "src/core/job.c"<br>, 803, __func__, "MESSAGE_ID=" "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x"<br>, (mid).bytes[0], (mid).bytes[1], (mid).bytes[2], (mid).bytes<br>[3], (mid).bytes[4], (mid).bytes[5], (mid).bytes[6], (mid).bytes<br>[7], (mid).bytes[8], (mid).bytes[9], (mid).bytes[10], (mid).bytes<br>[11], (mid).bytes[12], (mid).bytes[13], (mid).bytes[14], (mid<br>).bytes[15], (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=" "%s", buf, "RESULT=%s", job_result_to_string(result<br>), ((void*)0))</span></span>;</td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> job_emit_status_message(Unit *u, JobType t, JobResult result) {</td></tr>
 <tr><td class="num" id="LN807">807</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN808">808</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> job_fail_dependencies(Unit *u, UnitDependency d) {</td></tr>
-<tr><td class="num" id="LN809">809</td><td class="line">        Unit *other;</td></tr>
-<tr><td class="num" id="LN810">810</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">        <span class='comment'>/* No message if the job did not actually do anything due to failed condition. */</span></td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">        <span class='keyword'>if</span> (t == JOB_START &amp;&amp; result == JOB_DONE &amp;&amp; !u-&gt;condition_result)</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN811">811</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN812">812</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/job.c", 812, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN813">813</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN814">814</td><td class="line">        <span class='macro'>SET_FOREACH(other, u-&gt;dependencies[d], i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((u-&gt;dependencies[d])<br>, &amp;(i), (void**)&amp;(other)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN815">815</td><td class="line">                Job *j = other-&gt;job;</td></tr>
-<tr><td class="num" id="LN816">816</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN817">817</td><td class="line">                <span class='keyword'>if</span> (!j)</td></tr>
-<tr><td class="num" id="LN818">818</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN819">819</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>IN_SET(j-&gt;type, JOB_START, JOB_VERIFY_ACTIVE)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){JOB_START, JOB_VERIFY_ACTIVE})/sizeof(int<br>)]; switch(j-&gt;type) { case JOB_START: case JOB_VERIFY_ACTIVE<br>: _found = 1; break; default: break; } _found; })</span></span>)</td></tr>
-<tr><td class="num" id="LN820">820</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">        job_log_status_message(u, t, result);</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">        job_print_status_message(u, t, result);</td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> job_fail_dependencies(Unit *u, UnitDependency d) {</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">        Unit *other;</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/job.c", 820, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN821">821</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN822">822</td><td class="line">                job_finish_and_invalidate(j, JOB_DEPENDENCY, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN823">823</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN824">824</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN825">825</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN826">826</td><td class="line"><span class='keyword'>int</span> job_finish_and_invalidate(Job *j, JobResult result, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive) {</td></tr>
-<tr><td class="num" id="LN827">827</td><td class="line">        Unit *u;</td></tr>
-<tr><td class="num" id="LN828">828</td><td class="line">        Unit *other;</td></tr>
-<tr><td class="num" id="LN829">829</td><td class="line">        JobType t;</td></tr>
-<tr><td class="num" id="LN830">830</td><td class="line">        Iterator i;</td></tr>
-<tr><td class="num" id="LN831">831</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN832">832</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 832, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN833">833</td><td class="line">        <span class='macro'>assert(j-&gt;installed)<span class='expansion'>do { if ((__builtin_expect(!!(!(j-&gt;installed)),0))) log_assert_failed<br>("j-&gt;installed", "src/core/job.c", 833, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN834">834</td><td class="line">        <span class='macro'>assert(j-&gt;type &lt; _JOB_TYPE_MAX_IN_TRANSACTION)<span class='expansion'>do { if ((__builtin_expect(!!(!(j-&gt;type &lt; _JOB_TYPE_MAX_IN_TRANSACTION<br>)),0))) log_assert_failed("j-&gt;type &lt; _JOB_TYPE_MAX_IN_TRANSACTION"<br>, "src/core/job.c", 834, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN835">835</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN836">836</td><td class="line">        u = j-&gt;unit;</td></tr>
-<tr><td class="num" id="LN837">837</td><td class="line">        t = j-&gt;type;</td></tr>
-<tr><td class="num" id="LN838">838</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN839">839</td><td class="line">        j-&gt;result = result;</td></tr>
-<tr><td class="num" id="LN840">840</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN841">841</td><td class="line">        <span class='macro'>log_unit_debug(u, <span class='string_literal'>"Job %s/%s finished, result=%s"</span>, u-&gt;id, job_type_to_string(t), job_result_to_string(result))<span class='expansion'>({ Unit *_u = (u); _u ? log_object_internal(7, 0, "src/core/job.c"<br>, 841, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Job %s/%s finished, result=%s", u-&gt;id, job_type_to_string<br>(t), job_result_to_string(result)) : log_internal(7, 0, "src/core/job.c"<br>, 841, __func__, "Job %s/%s finished, result=%s", u-&gt;id, job_type_to_string<br>(t), job_result_to_string(result)); })</span></span>;</td></tr>
-<tr><td class="num" id="LN842">842</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN843">843</td><td class="line">        job_emit_status_message(u, t, result);</td></tr>
-<tr><td class="num" id="LN844">844</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN845">845</td><td class="line">        job_add_to_dbus_queue(j);</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">        <span class='macro'>SET_FOREACH(other, u-&gt;dependencies[d], i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((u-&gt;dependencies[d])<br>, &amp;(i), (void**)&amp;(other)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">                Job *j = other-&gt;job;</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line">                <span class='keyword'>if</span> (!j)</td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>IN_SET(j-&gt;type, JOB_START, JOB_VERIFY_ACTIVE)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){JOB_START, JOB_VERIFY_ACTIVE})/sizeof(int<br>)]; switch(j-&gt;type) { case JOB_START: case JOB_VERIFY_ACTIVE<br>: _found = 1; break; default: break; } _found; })</span></span>)</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">                job_finish_and_invalidate(j, JOB_DEPENDENCY, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line"><span class='keyword'>int</span> job_finish_and_invalidate(Job *j, JobResult result, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive) {</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line">        Unit *u;</td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">        Unit *other;</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line">        JobType t;</td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 840, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">        <span class='macro'>assert(j-&gt;installed)<span class='expansion'>do { if ((__builtin_expect(!!(!(j-&gt;installed)),0))) log_assert_failed<br>("j-&gt;installed", "src/core/job.c", 841, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN842">842</td><td class="line">        <span class='macro'>assert(j-&gt;type &lt; _JOB_TYPE_MAX_IN_TRANSACTION)<span class='expansion'>do { if ((__builtin_expect(!!(!(j-&gt;type &lt; _JOB_TYPE_MAX_IN_TRANSACTION<br>)),0))) log_assert_failed("j-&gt;type &lt; _JOB_TYPE_MAX_IN_TRANSACTION"<br>, "src/core/job.c", 842, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN843">843</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN844">844</td><td class="line">        u = j-&gt;unit;</td></tr>
+<tr><td class="num" id="LN845">845</td><td class="line">        t = j-&gt;type;</td></tr>
 <tr><td class="num" id="LN846">846</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN847">847</td><td class="line">        <span class='comment'>/* Patch restart jobs so that they become normal start jobs */</span></td></tr>
-<tr><td class="num" id="LN848">848</td><td class="line">        <span class='keyword'>if</span> (result == JOB_DONE &amp;&amp; t == JOB_RESTART) {</td></tr>
-<tr><td class="num" id="LN849">849</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN850">850</td><td class="line">                job_change_type(j, JOB_START);</td></tr>
-<tr><td class="num" id="LN851">851</td><td class="line">                job_set_state(j, JOB_WAITING);</td></tr>
+<tr><td class="num" id="LN847">847</td><td class="line">        j-&gt;result = result;</td></tr>
+<tr><td class="num" id="LN848">848</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN849">849</td><td class="line">        <span class='macro'>log_unit_debug(u, <span class='string_literal'>"Job %s/%s finished, result=%s"</span>, u-&gt;id, job_type_to_string(t), job_result_to_string(result))<span class='expansion'>({ Unit *_u = (u); _u ? log_object_internal(7, 0, "src/core/job.c"<br>, 849, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Job %s/%s finished, result=%s", u-&gt;id, job_type_to_string<br>(t), job_result_to_string(result)) : log_internal(7, 0, "src/core/job.c"<br>, 849, __func__, "Job %s/%s finished, result=%s", u-&gt;id, job_type_to_string<br>(t), job_result_to_string(result)); })</span></span>;</td></tr>
+<tr><td class="num" id="LN850">850</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">        job_emit_status_message(u, t, result);</td></tr>
 <tr><td class="num" id="LN852">852</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN853">853</td><td class="line">                job_add_to_run_queue(j);</td></tr>
+<tr><td class="num" id="LN853">853</td><td class="line">        job_add_to_dbus_queue(j);</td></tr>
 <tr><td class="num" id="LN854">854</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN855">855</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN856">856</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN855">855</td><td class="line">        <span class='comment'>/* Patch restart jobs so that they become normal start jobs */</span></td></tr>
+<tr><td class="num" id="LN856">856</td><td class="line">        <span class='keyword'>if</span> (result == JOB_DONE &amp;&amp; t == JOB_RESTART) {</td></tr>
 <tr><td class="num" id="LN857">857</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN858">858</td><td class="line">        <span class='keyword'>if</span> (result == JOB_FAILED || result == JOB_INVALID)</td></tr>
-<tr><td class="num" id="LN859">859</td><td class="line">                j-&gt;manager-&gt;n_failed_jobs++;</td></tr>
+<tr><td class="num" id="LN858">858</td><td class="line">                job_change_type(j, JOB_START);</td></tr>
+<tr><td class="num" id="LN859">859</td><td class="line">                job_set_state(j, JOB_WAITING);</td></tr>
 <tr><td class="num" id="LN860">860</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN861">861</td><td class="line">        job_uninstall(j);</td></tr>
-<tr><td class="num" id="LN862">862</td><td class="line">        job_free(j);</td></tr>
-<tr><td class="num" id="LN863">863</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN864">864</td><td class="line">        <span class='comment'>/* Fail depending jobs on failure */</span></td></tr>
-<tr><td class="num" id="LN865">865</td><td class="line">        <span class='keyword'>if</span> (result != JOB_DONE &amp;&amp; recursive) {</td></tr>
-<tr><td class="num" id="LN866">866</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>IN_SET(t, JOB_START, JOB_VERIFY_ACTIVE)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){JOB_START, JOB_VERIFY_ACTIVE})/sizeof(int<br>)]; switch(t) { case JOB_START: case JOB_VERIFY_ACTIVE: _found<br> = 1; break; default: break; } _found; })</span></span>) {</td></tr>
-<tr><td class="num" id="LN867">867</td><td class="line">                        job_fail_dependencies(u, UNIT_REQUIRED_BY);</td></tr>
-<tr><td class="num" id="LN868">868</td><td class="line">                        job_fail_dependencies(u, UNIT_REQUISITE_OF);</td></tr>
-<tr><td class="num" id="LN869">869</td><td class="line">                        job_fail_dependencies(u, UNIT_BOUND_BY);</td></tr>
-<tr><td class="num" id="LN870">870</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (t == JOB_STOP)</td></tr>
-<tr><td class="num" id="LN871">871</td><td class="line">                        job_fail_dependencies(u, UNIT_CONFLICTED_BY);</td></tr>
-<tr><td class="num" id="LN872">872</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN873">873</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN874">874</td><td class="line">        <span class='comment'>/* Trigger OnFailure dependencies that are not generated by</span></td></tr>
-<tr><td class="num" id="LN875">875</td><td class="line">         <span class='comment'>* the unit itself. We don't treat JOB_CANCELED as failure in</span></td></tr>
-<tr><td class="num" id="LN876">876</td><td class="line">         <span class='comment'>* this context. And JOB_FAILURE is already handled by the</span></td></tr>
-<tr><td class="num" id="LN877">877</td><td class="line">         <span class='comment'>* unit itself. */</span></td></tr>
-<tr><td class="num" id="LN878">878</td><td class="line">        <span class='keyword'>if</span> (result == JOB_TIMEOUT || result == JOB_DEPENDENCY) {</td></tr>
-<tr><td class="num" id="LN879">879</td><td class="line">                <span class='macro'>log_struct(LOG_NOTICE,<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN880">880</td><td class="line">                           <span class='string_literal'><span class='macro'>"JOB_TYPE=%s"</span>, job_type_to_string(t),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN881">881</td><td class="line">                           <span class='string_literal'><span class='macro'>"JOB_RESULT=%s"</span>, job_result_to_string(result),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN882">882</td><td class="line">                           <span class='macro'>LOG_UNIT_ID(u),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN883">883</td><td class="line">                           <span class='macro'>LOG_UNIT_MESSAGE(u, <span class='string_literal'>"Job %s/%s failed with result '%s'."</span>,<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN884">884</td><td class="line">                                            <span class='macro'>u-&gt;id,<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN885">885</td><td class="line">                                            <span class='macro'>job_type_to_string(t),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN886">886</td><td class="line">                                            <span class='macro'>job_result_to_string(result)),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
-<tr><td class="num" id="LN887">887</td><td class="line">                           <span class='macro'>NULL)<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 887, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span>;</td></tr>
-<tr><td class="num" id="LN888">888</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN889">889</td><td class="line">                unit_start_on_failure(u);</td></tr>
-<tr><td class="num" id="LN890">890</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN891">891</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN892">892</td><td class="line">        unit_trigger_notify(u);</td></tr>
-<tr><td class="num" id="LN893">893</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN894">894</td><td class="line">finish:</td></tr>
-<tr><td class="num" id="LN895">895</td><td class="line">        <span class='comment'>/* Try to start the next jobs that can be started */</span></td></tr>
-<tr><td class="num" id="LN896">896</td><td class="line">        <span class='macro'>SET_FOREACH(other, u-&gt;dependencies[UNIT_AFTER], i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((u-&gt;dependencies[UNIT_AFTER<br>]), &amp;(i), (void**)&amp;(other)); )</span></span></td></tr>
-<tr><td class="num" id="LN897">897</td><td class="line">                <span class='keyword'>if</span> (other-&gt;job)</td></tr>
-<tr><td class="num" id="LN898">898</td><td class="line">                        job_add_to_run_queue(other-&gt;job);</td></tr>
-<tr><td class="num" id="LN899">899</td><td class="line">        <span class='macro'>SET_FOREACH(other, u-&gt;dependencies[UNIT_BEFORE], i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((u-&gt;dependencies[UNIT_BEFORE<br>]), &amp;(i), (void**)&amp;(other)); )</span></span></td></tr>
-<tr><td class="num" id="LN900">900</td><td class="line">                <span class='keyword'>if</span> (other-&gt;job)</td></tr>
-<tr><td class="num" id="LN901">901</td><td class="line">                        job_add_to_run_queue(other-&gt;job);</td></tr>
-<tr><td class="num" id="LN902">902</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN903">903</td><td class="line">        manager_check_finished(u-&gt;manager);</td></tr>
-<tr><td class="num" id="LN904">904</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN905">905</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN906">906</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN907">907</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN908">908</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> job_dispatch_timer(sd_event_source *s, uint64_t monotonic, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN909">909</td><td class="line">        Job *j = userdata;</td></tr>
-<tr><td class="num" id="LN910">910</td><td class="line">        Unit *u;</td></tr>
-<tr><td class="num" id="LN911">911</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN912">912</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 912, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN913">913</td><td class="line">        <span class='macro'>assert(s == j-&gt;timer_event_source)<span class='expansion'>do { if ((__builtin_expect(!!(!(s == j-&gt;timer_event_source<br>)),0))) log_assert_failed("s == j-&gt;timer_event_source", "src/core/job.c"<br>, 913, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN914">914</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN915">915</td><td class="line">        <span class='macro'>log_unit_warning(j-&gt;unit, <span class='string_literal'>"Job %s/%s timed out."</span>, j-&gt;unit-&gt;id, job_type_to_string(j-&gt;type))<span class='expansion'>({ Unit *_u = (j-&gt;unit); _u ? log_object_internal(4, 0, "src/core/job.c"<br>, 915, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Job %s/%s timed out.", j-&gt;unit-&gt;id, job_type_to_string<br>(j-&gt;type)) : log_internal(4, 0, "src/core/job.c", 915, __func__<br>, "Job %s/%s timed out.", j-&gt;unit-&gt;id, job_type_to_string<br>(j-&gt;type)); })</span></span>;</td></tr>
-<tr><td class="num" id="LN916">916</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN917">917</td><td class="line">        u = j-&gt;unit;</td></tr>
-<tr><td class="num" id="LN918">918</td><td class="line">        job_finish_and_invalidate(j, JOB_TIMEOUT, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN861">861</td><td class="line">                job_add_to_run_queue(j);</td></tr>
+<tr><td class="num" id="LN862">862</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN863">863</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN864">864</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN865">865</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN866">866</td><td class="line">        <span class='keyword'>if</span> (result == JOB_FAILED || result == JOB_INVALID)</td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line">                j-&gt;manager-&gt;n_failed_jobs++;</td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN869">869</td><td class="line">        job_uninstall(j);</td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line">        job_free(j);</td></tr>
+<tr><td class="num" id="LN871">871</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN872">872</td><td class="line">        <span class='comment'>/* Fail depending jobs on failure */</span></td></tr>
+<tr><td class="num" id="LN873">873</td><td class="line">        <span class='keyword'>if</span> (result != JOB_DONE &amp;&amp; recursive) {</td></tr>
+<tr><td class="num" id="LN874">874</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>IN_SET(t, JOB_START, JOB_VERIFY_ACTIVE)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){JOB_START, JOB_VERIFY_ACTIVE})/sizeof(int<br>)]; switch(t) { case JOB_START: case JOB_VERIFY_ACTIVE: _found<br> = 1; break; default: break; } _found; })</span></span>) {</td></tr>
+<tr><td class="num" id="LN875">875</td><td class="line">                        job_fail_dependencies(u, UNIT_REQUIRED_BY);</td></tr>
+<tr><td class="num" id="LN876">876</td><td class="line">                        job_fail_dependencies(u, UNIT_REQUISITE_OF);</td></tr>
+<tr><td class="num" id="LN877">877</td><td class="line">                        job_fail_dependencies(u, UNIT_BOUND_BY);</td></tr>
+<tr><td class="num" id="LN878">878</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (t == JOB_STOP)</td></tr>
+<tr><td class="num" id="LN879">879</td><td class="line">                        job_fail_dependencies(u, UNIT_CONFLICTED_BY);</td></tr>
+<tr><td class="num" id="LN880">880</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN882">882</td><td class="line">        <span class='comment'>/* Trigger OnFailure dependencies that are not generated by</span></td></tr>
+<tr><td class="num" id="LN883">883</td><td class="line">         <span class='comment'>* the unit itself. We don't treat JOB_CANCELED as failure in</span></td></tr>
+<tr><td class="num" id="LN884">884</td><td class="line">         <span class='comment'>* this context. And JOB_FAILURE is already handled by the</span></td></tr>
+<tr><td class="num" id="LN885">885</td><td class="line">         <span class='comment'>* unit itself. */</span></td></tr>
+<tr><td class="num" id="LN886">886</td><td class="line">        <span class='keyword'>if</span> (result == JOB_TIMEOUT || result == JOB_DEPENDENCY) {</td></tr>
+<tr><td class="num" id="LN887">887</td><td class="line">                <span class='macro'>log_struct(LOG_NOTICE,<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN888">888</td><td class="line">                           <span class='string_literal'><span class='macro'>"JOB_TYPE=%s"</span>, job_type_to_string(t),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN889">889</td><td class="line">                           <span class='string_literal'><span class='macro'>"JOB_RESULT=%s"</span>, job_result_to_string(result),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN890">890</td><td class="line">                           <span class='macro'>LOG_UNIT_ID(u),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN891">891</td><td class="line">                           <span class='macro'>LOG_UNIT_MESSAGE(u, <span class='string_literal'>"Job %s/%s failed with result '%s'."</span>,<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN892">892</td><td class="line">                                            <span class='macro'>u-&gt;id,<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN893">893</td><td class="line">                                            <span class='macro'>job_type_to_string(t),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN894">894</td><td class="line">                                            <span class='macro'>job_result_to_string(result)),<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span></td></tr>
+<tr><td class="num" id="LN895">895</td><td class="line">                           <span class='macro'>NULL)<span class='expansion'>log_struct_internal(5, 0, "src/core/job.c", 895, __func__, "JOB_TYPE=%s"<br>, job_type_to_string(t), "JOB_RESULT=%s", job_result_to_string<br>(result), (u)-&gt;manager-&gt;unit_log_format_string, (u)-&gt;<br>id, "MESSAGE=%s: " "Job %s/%s failed with result '%s'.", (u)-&gt;<br>id, u-&gt;id, job_type_to_string(t), job_result_to_string(result<br>), ((void*)0))</span></span>;</td></tr>
+<tr><td class="num" id="LN896">896</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN897">897</td><td class="line">                unit_start_on_failure(u);</td></tr>
+<tr><td class="num" id="LN898">898</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN899">899</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN900">900</td><td class="line">        unit_trigger_notify(u);</td></tr>
+<tr><td class="num" id="LN901">901</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN902">902</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN903">903</td><td class="line">        <span class='comment'>/* Try to start the next jobs that can be started */</span></td></tr>
+<tr><td class="num" id="LN904">904</td><td class="line">        <span class='macro'>SET_FOREACH(other, u-&gt;dependencies[UNIT_AFTER], i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((u-&gt;dependencies[UNIT_AFTER<br>]), &amp;(i), (void**)&amp;(other)); )</span></span></td></tr>
+<tr><td class="num" id="LN905">905</td><td class="line">                <span class='keyword'>if</span> (other-&gt;job)</td></tr>
+<tr><td class="num" id="LN906">906</td><td class="line">                        job_add_to_run_queue(other-&gt;job);</td></tr>
+<tr><td class="num" id="LN907">907</td><td class="line">        <span class='macro'>SET_FOREACH(other, u-&gt;dependencies[UNIT_BEFORE], i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); set_iterate((u-&gt;dependencies[UNIT_BEFORE<br>]), &amp;(i), (void**)&amp;(other)); )</span></span></td></tr>
+<tr><td class="num" id="LN908">908</td><td class="line">                <span class='keyword'>if</span> (other-&gt;job)</td></tr>
+<tr><td class="num" id="LN909">909</td><td class="line">                        job_add_to_run_queue(other-&gt;job);</td></tr>
+<tr><td class="num" id="LN910">910</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN911">911</td><td class="line">        manager_check_finished(u-&gt;manager);</td></tr>
+<tr><td class="num" id="LN912">912</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN913">913</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN914">914</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN915">915</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN916">916</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> job_dispatch_timer(sd_event_source *s, uint64_t monotonic, <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN917">917</td><td class="line">        Job *j = userdata;</td></tr>
+<tr><td class="num" id="LN918">918</td><td class="line">        Unit *u;</td></tr>
 <tr><td class="num" id="LN919">919</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN920">920</td><td class="line">        failure_action(u-&gt;manager, u-&gt;job_timeout_action, u-&gt;job_timeout_reboot_arg);</td></tr>
-<tr><td class="num" id="LN921">921</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN922">922</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN923">923</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN920">920</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 920, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN921">921</td><td class="line">        <span class='macro'>assert(s == j-&gt;timer_event_source)<span class='expansion'>do { if ((__builtin_expect(!!(!(s == j-&gt;timer_event_source<br>)),0))) log_assert_failed("s == j-&gt;timer_event_source", "src/core/job.c"<br>, 921, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN922">922</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN923">923</td><td class="line">        <span class='macro'>log_unit_warning(j-&gt;unit, <span class='string_literal'>"Job %s/%s timed out."</span>, j-&gt;unit-&gt;id, job_type_to_string(j-&gt;type))<span class='expansion'>({ Unit *_u = (j-&gt;unit); _u ? log_object_internal(4, 0, "src/core/job.c"<br>, 923, __func__, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id<br>, "Job %s/%s timed out.", j-&gt;unit-&gt;id, job_type_to_string<br>(j-&gt;type)) : log_internal(4, 0, "src/core/job.c", 923, __func__<br>, "Job %s/%s timed out.", j-&gt;unit-&gt;id, job_type_to_string<br>(j-&gt;type)); })</span></span>;</td></tr>
 <tr><td class="num" id="LN924">924</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN925">925</td><td class="line"><span class='keyword'>int</span> job_start_timer(Job *j) {</td></tr>
-<tr><td class="num" id="LN926">926</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN925">925</td><td class="line">        u = j-&gt;unit;</td></tr>
+<tr><td class="num" id="LN926">926</td><td class="line">        job_finish_and_invalidate(j, JOB_TIMEOUT, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
 <tr><td class="num" id="LN927">927</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN928">928</td><td class="line">        <span class='keyword'>if</span> (j-&gt;timer_event_source)</td></tr>
-<tr><td class="num" id="LN929">929</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN930">930</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN931">931</td><td class="line">        j-&gt;begin_usec = now(<span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN928">928</td><td class="line">        failure_action(u-&gt;manager, u-&gt;job_timeout_action, u-&gt;job_timeout_reboot_arg);</td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN930">930</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN931">931</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN932">932</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN933">933</td><td class="line">        <span class='keyword'>if</span> (j-&gt;unit-&gt;job_timeout == <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>)</td></tr>
-<tr><td class="num" id="LN934">934</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN933">933</td><td class="line"><span class='keyword'>int</span> job_start_timer(Job *j) {</td></tr>
+<tr><td class="num" id="LN934">934</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN935">935</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN936">936</td><td class="line">        r = sd_event_add_time(</td></tr>
-<tr><td class="num" id="LN937">937</td><td class="line">                        j-&gt;manager-&gt;event,</td></tr>
-<tr><td class="num" id="LN938">938</td><td class="line">                        &amp;j-&gt;timer_event_source,</td></tr>
-<tr><td class="num" id="LN939">939</td><td class="line">                        <span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>,</td></tr>
-<tr><td class="num" id="LN940">940</td><td class="line">                        usec_add(j-&gt;begin_usec, j-&gt;unit-&gt;job_timeout), 0,</td></tr>
-<tr><td class="num" id="LN941">941</td><td class="line">                        job_dispatch_timer, j);</td></tr>
-<tr><td class="num" id="LN942">942</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN943">943</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN944">944</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN945">945</td><td class="line">        (<span class='keyword'>void</span>) sd_event_source_set_description(j-&gt;timer_event_source, <span class='string_literal'>"job-start"</span>);</td></tr>
-<tr><td class="num" id="LN946">946</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN947">947</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN948">948</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN949">949</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN950">950</td><td class="line"><span class='keyword'>void</span> job_add_to_run_queue(Job *j) {</td></tr>
-<tr><td class="num" id="LN951">951</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 951, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN952">952</td><td class="line">        <span class='macro'>assert(j-&gt;installed)<span class='expansion'>do { if ((__builtin_expect(!!(!(j-&gt;installed)),0))) log_assert_failed<br>("j-&gt;installed", "src/core/job.c", 952, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN953">953</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN954">954</td><td class="line">        <span class='keyword'>if</span> (j-&gt;in_run_queue)</td></tr>
-<tr><td class="num" id="LN955">955</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN956">956</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN957">957</td><td class="line">        <span class='keyword'>if</span> (!j-&gt;manager-&gt;run_queue)</td></tr>
-<tr><td class="num" id="LN958">958</td><td class="line">                sd_event_source_set_enabled(j-&gt;manager-&gt;run_queue_event_source, SD_EVENT_ONESHOT);</td></tr>
-<tr><td class="num" id="LN959">959</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN960">960</td><td class="line">        <span class='macro'>LIST_PREPEND(run_queue, j-&gt;manager-&gt;run_queue, j)<span class='expansion'>do { typeof(*(j-&gt;manager-&gt;run_queue)) **_head = &amp;(j<br>-&gt;manager-&gt;run_queue), *_item = (j); do { if ((__builtin_expect<br>(!!(!(_item)),0))) log_assert_failed("_item", "src/core/job.c"<br>, 960, __PRETTY_FUNCTION__); } while (0); if ((_item-&gt;run_queue_next<br> = *_head)) _item-&gt;run_queue_next-&gt;run_queue_prev = _item<br>; _item-&gt;run_queue_prev = ((void*)0); *_head = _item; } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN961">961</td><td class="line">        j-&gt;in_run_queue = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN962">962</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN963">963</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN964">964</td><td class="line"><span class='keyword'>void</span> job_add_to_dbus_queue(Job *j) {</td></tr>
-<tr><td class="num" id="LN965">965</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 965, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN966">966</td><td class="line">        <span class='macro'>assert(j-&gt;installed)<span class='expansion'>do { if ((__builtin_expect(!!(!(j-&gt;installed)),0))) log_assert_failed<br>("j-&gt;installed", "src/core/job.c", 966, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN936">936</td><td class="line">        <span class='keyword'>if</span> (j-&gt;timer_event_source)</td></tr>
+<tr><td class="num" id="LN937">937</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN938">938</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN939">939</td><td class="line">        j-&gt;begin_usec = now(<span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN940">940</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN941">941</td><td class="line">        <span class='keyword'>if</span> (j-&gt;unit-&gt;job_timeout == <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>)</td></tr>
+<tr><td class="num" id="LN942">942</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN943">943</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN944">944</td><td class="line">        r = sd_event_add_time(</td></tr>
+<tr><td class="num" id="LN945">945</td><td class="line">                        j-&gt;manager-&gt;event,</td></tr>
+<tr><td class="num" id="LN946">946</td><td class="line">                        &amp;j-&gt;timer_event_source,</td></tr>
+<tr><td class="num" id="LN947">947</td><td class="line">                        <span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN948">948</td><td class="line">                        usec_add(j-&gt;begin_usec, j-&gt;unit-&gt;job_timeout), 0,</td></tr>
+<tr><td class="num" id="LN949">949</td><td class="line">                        job_dispatch_timer, j);</td></tr>
+<tr><td class="num" id="LN950">950</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN951">951</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN952">952</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN953">953</td><td class="line">        (<span class='keyword'>void</span>) sd_event_source_set_description(j-&gt;timer_event_source, <span class='string_literal'>"job-start"</span>);</td></tr>
+<tr><td class="num" id="LN954">954</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN955">955</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN956">956</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN957">957</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN958">958</td><td class="line"><span class='keyword'>void</span> job_add_to_run_queue(Job *j) {</td></tr>
+<tr><td class="num" id="LN959">959</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 959, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN960">960</td><td class="line">        <span class='macro'>assert(j-&gt;installed)<span class='expansion'>do { if ((__builtin_expect(!!(!(j-&gt;installed)),0))) log_assert_failed<br>("j-&gt;installed", "src/core/job.c", 960, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN961">961</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN962">962</td><td class="line">        <span class='keyword'>if</span> (j-&gt;in_run_queue)</td></tr>
+<tr><td class="num" id="LN963">963</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN964">964</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN965">965</td><td class="line">        <span class='keyword'>if</span> (!j-&gt;manager-&gt;run_queue)</td></tr>
+<tr><td class="num" id="LN966">966</td><td class="line">                sd_event_source_set_enabled(j-&gt;manager-&gt;run_queue_event_source, SD_EVENT_ONESHOT);</td></tr>
 <tr><td class="num" id="LN967">967</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN968">968</td><td class="line">        <span class='keyword'>if</span> (j-&gt;in_dbus_queue)</td></tr>
-<tr><td class="num" id="LN969">969</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN970">970</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN971">971</td><td class="line">        <span class='comment'>/* We don't check if anybody is subscribed here, since this</span></td></tr>
-<tr><td class="num" id="LN972">972</td><td class="line">         <span class='comment'>* job might just have been created and not yet assigned to a</span></td></tr>
-<tr><td class="num" id="LN973">973</td><td class="line">         <span class='comment'>* connection/client. */</span></td></tr>
-<tr><td class="num" id="LN974">974</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN975">975</td><td class="line">        <span class='macro'>LIST_PREPEND(dbus_queue, j-&gt;manager-&gt;dbus_job_queue, j)<span class='expansion'>do { typeof(*(j-&gt;manager-&gt;dbus_job_queue)) **_head = &amp;<br>(j-&gt;manager-&gt;dbus_job_queue), *_item = (j); do { if ((__builtin_expect<br>(!!(!(_item)),0))) log_assert_failed("_item", "src/core/job.c"<br>, 975, __PRETTY_FUNCTION__); } while (0); if ((_item-&gt;dbus_queue_next<br> = *_head)) _item-&gt;dbus_queue_next-&gt;dbus_queue_prev = _item<br>; _item-&gt;dbus_queue_prev = ((void*)0); *_head = _item; } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN976">976</td><td class="line">        j-&gt;in_dbus_queue = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN977">977</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN968">968</td><td class="line">        <span class='macro'>LIST_PREPEND(run_queue, j-&gt;manager-&gt;run_queue, j)<span class='expansion'>do { typeof(*(j-&gt;manager-&gt;run_queue)) **_head = &amp;(j<br>-&gt;manager-&gt;run_queue), *_item = (j); do { if ((__builtin_expect<br>(!!(!(_item)),0))) log_assert_failed("_item", "src/core/job.c"<br>, 968, __PRETTY_FUNCTION__); } while (0); if ((_item-&gt;run_queue_next<br> = *_head)) _item-&gt;run_queue_next-&gt;run_queue_prev = _item<br>; _item-&gt;run_queue_prev = ((void*)0); *_head = _item; } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN969">969</td><td class="line">        j-&gt;in_run_queue = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN970">970</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN971">971</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN972">972</td><td class="line"><span class='keyword'>void</span> job_add_to_dbus_queue(Job *j) {</td></tr>
+<tr><td class="num" id="LN973">973</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 973, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN974">974</td><td class="line">        <span class='macro'>assert(j-&gt;installed)<span class='expansion'>do { if ((__builtin_expect(!!(!(j-&gt;installed)),0))) log_assert_failed<br>("j-&gt;installed", "src/core/job.c", 974, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN975">975</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN976">976</td><td class="line">        <span class='keyword'>if</span> (j-&gt;in_dbus_queue)</td></tr>
+<tr><td class="num" id="LN977">977</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN978">978</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN979">979</td><td class="line"><span class='keyword'>char</span> *job_dbus_path(Job *j) {</td></tr>
-<tr><td class="num" id="LN980">980</td><td class="line">        <span class='keyword'>char</span> *p;</td></tr>
-<tr><td class="num" id="LN981">981</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN982">982</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 982, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN983">983</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN984">984</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;p, <span class='string_literal'>"/org/freedesktop/systemd1/job/%"</span><span class='macro'>PRIu32<span class='expansion'>"u"</span></span>, j-&gt;id) &lt; 0)</td></tr>
-<tr><td class="num" id="LN985">985</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN979">979</td><td class="line">        <span class='comment'>/* We don't check if anybody is subscribed here, since this</span></td></tr>
+<tr><td class="num" id="LN980">980</td><td class="line">         <span class='comment'>* job might just have been created and not yet assigned to a</span></td></tr>
+<tr><td class="num" id="LN981">981</td><td class="line">         <span class='comment'>* connection/client. */</span></td></tr>
+<tr><td class="num" id="LN982">982</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN983">983</td><td class="line">        <span class='macro'>LIST_PREPEND(dbus_queue, j-&gt;manager-&gt;dbus_job_queue, j)<span class='expansion'>do { typeof(*(j-&gt;manager-&gt;dbus_job_queue)) **_head = &amp;<br>(j-&gt;manager-&gt;dbus_job_queue), *_item = (j); do { if ((__builtin_expect<br>(!!(!(_item)),0))) log_assert_failed("_item", "src/core/job.c"<br>, 983, __PRETTY_FUNCTION__); } while (0); if ((_item-&gt;dbus_queue_next<br> = *_head)) _item-&gt;dbus_queue_next-&gt;dbus_queue_prev = _item<br>; _item-&gt;dbus_queue_prev = ((void*)0); *_head = _item; } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN984">984</td><td class="line">        j-&gt;in_dbus_queue = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN985">985</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN986">986</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN987">987</td><td class="line">        <span class='keyword'>return</span> p;</td></tr>
-<tr><td class="num" id="LN988">988</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN987">987</td><td class="line"><span class='keyword'>char</span> *job_dbus_path(Job *j) {</td></tr>
+<tr><td class="num" id="LN988">988</td><td class="line">        <span class='keyword'>char</span> *p;</td></tr>
 <tr><td class="num" id="LN989">989</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN990">990</td><td class="line"><span class='keyword'>int</span> job_serialize(Job *j, FILE *f, FDSet *fds) {</td></tr>
-<tr><td class="num" id="LN991">991</td><td class="line">        fprintf(f, <span class='string_literal'>"job-id=%u\n"</span>, j-&gt;id);</td></tr>
-<tr><td class="num" id="LN992">992</td><td class="line">        fprintf(f, <span class='string_literal'>"job-type=%s\n"</span>, job_type_to_string(j-&gt;type));</td></tr>
-<tr><td class="num" id="LN993">993</td><td class="line">        fprintf(f, <span class='string_literal'>"job-state=%s\n"</span>, job_state_to_string(j-&gt;state));</td></tr>
-<tr><td class="num" id="LN994">994</td><td class="line">        fprintf(f, <span class='string_literal'>"job-irreversible=%s\n"</span>, yes_no(j-&gt;irreversible));</td></tr>
-<tr><td class="num" id="LN995">995</td><td class="line">        fprintf(f, <span class='string_literal'>"job-sent-dbus-new-signal=%s\n"</span>, yes_no(j-&gt;sent_dbus_new_signal));</td></tr>
-<tr><td class="num" id="LN996">996</td><td class="line">        fprintf(f, <span class='string_literal'>"job-ignore-order=%s\n"</span>, yes_no(j-&gt;ignore_order));</td></tr>
+<tr><td class="num" id="LN990">990</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 990, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN991">991</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN992">992</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;p, <span class='string_literal'>"/org/freedesktop/systemd1/job/%"</span><span class='macro'>PRIu32<span class='expansion'>"u"</span></span>, j-&gt;id) &lt; 0)</td></tr>
+<tr><td class="num" id="LN993">993</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN994">994</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN995">995</td><td class="line">        <span class='keyword'>return</span> p;</td></tr>
+<tr><td class="num" id="LN996">996</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN997">997</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN998">998</td><td class="line">        <span class='keyword'>if</span> (j-&gt;begin_usec &gt; 0)</td></tr>
-<tr><td class="num" id="LN999">999</td><td class="line">                fprintf(f, <span class='string_literal'>"job-begin="</span><span class='macro'>USEC_FMT<span class='expansion'>"%" "l" "u"</span></span><span class='string_literal'>"\n"</span>, j-&gt;begin_usec);</td></tr>
-<tr><td class="num" id="LN1000">1000</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1001">1001</td><td class="line">        bus_track_serialize(j-&gt;clients, f);</td></tr>
-<tr><td class="num" id="LN1002">1002</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1003">1003</td><td class="line">        <span class='comment'>/* End marker */</span></td></tr>
-<tr><td class="num" id="LN1004">1004</td><td class="line">        fputc('\n', f);</td></tr>
-<tr><td class="num" id="LN1005">1005</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1006">1006</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1007">1007</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1008">1008</td><td class="line"><span class='keyword'>int</span> job_deserialize(Job *j, FILE *f, FDSet *fds) {</td></tr>
-<tr><td class="num" id="LN1009">1009</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 1009, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN998">998</td><td class="line"><span class='keyword'>int</span> job_serialize(Job *j, FILE *f, FDSet *fds) {</td></tr>
+<tr><td class="num" id="LN999">999</td><td class="line">        fprintf(f, <span class='string_literal'>"job-id=%u\n"</span>, j-&gt;id);</td></tr>
+<tr><td class="num" id="LN1000">1000</td><td class="line">        fprintf(f, <span class='string_literal'>"job-type=%s\n"</span>, job_type_to_string(j-&gt;type));</td></tr>
+<tr><td class="num" id="LN1001">1001</td><td class="line">        fprintf(f, <span class='string_literal'>"job-state=%s\n"</span>, job_state_to_string(j-&gt;state));</td></tr>
+<tr><td class="num" id="LN1002">1002</td><td class="line">        fprintf(f, <span class='string_literal'>"job-irreversible=%s\n"</span>, yes_no(j-&gt;irreversible));</td></tr>
+<tr><td class="num" id="LN1003">1003</td><td class="line">        fprintf(f, <span class='string_literal'>"job-sent-dbus-new-signal=%s\n"</span>, yes_no(j-&gt;sent_dbus_new_signal));</td></tr>
+<tr><td class="num" id="LN1004">1004</td><td class="line">        fprintf(f, <span class='string_literal'>"job-ignore-order=%s\n"</span>, yes_no(j-&gt;ignore_order));</td></tr>
+<tr><td class="num" id="LN1005">1005</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1006">1006</td><td class="line">        <span class='keyword'>if</span> (j-&gt;begin_usec &gt; 0)</td></tr>
+<tr><td class="num" id="LN1007">1007</td><td class="line">                fprintf(f, <span class='string_literal'>"job-begin="</span><span class='macro'>USEC_FMT<span class='expansion'>"%" "l" "u"</span></span><span class='string_literal'>"\n"</span>, j-&gt;begin_usec);</td></tr>
+<tr><td class="num" id="LN1008">1008</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1009">1009</td><td class="line">        bus_track_serialize(j-&gt;clients, f);</td></tr>
 <tr><td class="num" id="LN1010">1010</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1011">1011</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN1012">1012</td><td class="line">                <span class='keyword'>char</span> line[<span class='macro'>LINE_MAX<span class='expansion'>2048</span></span>], *l, *v;</td></tr>
-<tr><td class="num" id="LN1013">1013</td><td class="line">                size_t k;</td></tr>
-<tr><td class="num" id="LN1014">1014</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1015">1015</td><td class="line">                <span class='keyword'>if</span> (!fgets(line, <span class='keyword'>sizeof</span>(line), f)) {</td></tr>
-<tr><td class="num" id="LN1016">1016</td><td class="line">                        <span class='keyword'>if</span> (feof(f))</td></tr>
-<tr><td class="num" id="LN1017">1017</td><td class="line">                                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1018">1018</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1019">1019</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1020">1020</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1021">1021</td><td class="line">                <span class='macro'>char_array_0(line)<span class='expansion'>line[sizeof(line)-1] = 0;</span></span>;</td></tr>
-<tr><td class="num" id="LN1022">1022</td><td class="line">                l = strstrip(line);</td></tr>
-<tr><td class="num" id="LN1023">1023</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1024">1024</td><td class="line">                <span class='comment'>/* End marker */</span></td></tr>
-<tr><td class="num" id="LN1025">1025</td><td class="line">                <span class='keyword'>if</span> (l[0] == 0)</td></tr>
-<tr><td class="num" id="LN1026">1026</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1027">1027</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1028">1028</td><td class="line">                k = strcspn(l, <span class='string_literal'>"="</span>);</td></tr>
-<tr><td class="num" id="LN1029">1029</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1030">1030</td><td class="line">                <span class='keyword'>if</span> (l[k] == '=') {</td></tr>
-<tr><td class="num" id="LN1031">1031</td><td class="line">                        l[k] = 0;</td></tr>
-<tr><td class="num" id="LN1032">1032</td><td class="line">                        v = l+k+1;</td></tr>
-<tr><td class="num" id="LN1033">1033</td><td class="line">                } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1034">1034</td><td class="line">                        v = l+k;</td></tr>
+<tr><td class="num" id="LN1011">1011</td><td class="line">        <span class='comment'>/* End marker */</span></td></tr>
+<tr><td class="num" id="LN1012">1012</td><td class="line">        fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN1013">1013</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1014">1014</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1015">1015</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1016">1016</td><td class="line"><span class='keyword'>int</span> job_deserialize(Job *j, FILE *f, FDSet *fds) {</td></tr>
+<tr><td class="num" id="LN1017">1017</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 1017, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1018">1018</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1019">1019</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN1020">1020</td><td class="line">                <span class='keyword'>char</span> line[<span class='macro'>LINE_MAX<span class='expansion'>2048</span></span>], *l, *v;</td></tr>
+<tr><td class="num" id="LN1021">1021</td><td class="line">                size_t k;</td></tr>
+<tr><td class="num" id="LN1022">1022</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1023">1023</td><td class="line">                <span class='keyword'>if</span> (!fgets(line, <span class='keyword'>sizeof</span>(line), f)) {</td></tr>
+<tr><td class="num" id="LN1024">1024</td><td class="line">                        <span class='keyword'>if</span> (feof(f))</td></tr>
+<tr><td class="num" id="LN1025">1025</td><td class="line">                                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1026">1026</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN1027">1027</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1028">1028</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1029">1029</td><td class="line">                <span class='macro'>char_array_0(line)<span class='expansion'>line[sizeof(line)-1] = 0;</span></span>;</td></tr>
+<tr><td class="num" id="LN1030">1030</td><td class="line">                l = strstrip(line);</td></tr>
+<tr><td class="num" id="LN1031">1031</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1032">1032</td><td class="line">                <span class='comment'>/* End marker */</span></td></tr>
+<tr><td class="num" id="LN1033">1033</td><td class="line">                <span class='keyword'>if</span> (l[0] == 0)</td></tr>
+<tr><td class="num" id="LN1034">1034</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1035">1035</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1036">1036</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-id"</span>)<span class='expansion'>(strcmp((l),("job-id")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1036">1036</td><td class="line">                k = strcspn(l, <span class='string_literal'>"="</span>);</td></tr>
 <tr><td class="num" id="LN1037">1037</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1038">1038</td><td class="line">                        <span class='keyword'>if</span> (safe_atou32(v, &amp;j-&gt;id) &lt; 0)</td></tr>
-<tr><td class="num" id="LN1039">1039</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job id value %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1039<br>, __func__, "Failed to parse job id value %s", v) : -abs(_e);<br> })</span></span>;</td></tr>
-<tr><td class="num" id="LN1040">1040</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1041">1041</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-type"</span>)<span class='expansion'>(strcmp((l),("job-type")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN1042">1042</td><td class="line">                        JobType t;</td></tr>
+<tr><td class="num" id="LN1038">1038</td><td class="line">                <span class='keyword'>if</span> (l[k] == '=') {</td></tr>
+<tr><td class="num" id="LN1039">1039</td><td class="line">                        l[k] = 0;</td></tr>
+<tr><td class="num" id="LN1040">1040</td><td class="line">                        v = l+k+1;</td></tr>
+<tr><td class="num" id="LN1041">1041</td><td class="line">                } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1042">1042</td><td class="line">                        v = l+k;</td></tr>
 <tr><td class="num" id="LN1043">1043</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1044">1044</td><td class="line">                        t = job_type_from_string(v);</td></tr>
-<tr><td class="num" id="LN1045">1045</td><td class="line">                        <span class='keyword'>if</span> (t &lt; 0)</td></tr>
-<tr><td class="num" id="LN1046">1046</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job type %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1046<br>, __func__, "Failed to parse job type %s", v) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1047">1047</td><td class="line">                        <span class='keyword'>else</span> <span class='keyword'>if</span> (t &gt;= _JOB_TYPE_MAX_IN_TRANSACTION)</td></tr>
-<tr><td class="num" id="LN1048">1048</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Cannot deserialize job of type %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1048<br>, __func__, "Cannot deserialize job of type %s", v) : -abs(_e<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1049">1049</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1050">1050</td><td class="line">                                j-&gt;type = t;</td></tr>
+<tr><td class="num" id="LN1044">1044</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-id"</span>)<span class='expansion'>(strcmp((l),("job-id")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1045">1045</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1046">1046</td><td class="line">                        <span class='keyword'>if</span> (safe_atou32(v, &amp;j-&gt;id) &lt; 0)</td></tr>
+<tr><td class="num" id="LN1047">1047</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job id value %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1047<br>, __func__, "Failed to parse job id value %s", v) : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN1048">1048</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1049">1049</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-type"</span>)<span class='expansion'>(strcmp((l),("job-type")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1050">1050</td><td class="line">                        JobType t;</td></tr>
 <tr><td class="num" id="LN1051">1051</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1052">1052</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-state"</span>)<span class='expansion'>(strcmp((l),("job-state")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN1053">1053</td><td class="line">                        JobState s;</td></tr>
-<tr><td class="num" id="LN1054">1054</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1055">1055</td><td class="line">                        s = job_state_from_string(v);</td></tr>
-<tr><td class="num" id="LN1056">1056</td><td class="line">                        <span class='keyword'>if</span> (s &lt; 0)</td></tr>
-<tr><td class="num" id="LN1057">1057</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job state %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1057<br>, __func__, "Failed to parse job state %s", v) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1058">1058</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1059">1059</td><td class="line">                                job_set_state(j, s);</td></tr>
-<tr><td class="num" id="LN1060">1060</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1061">1061</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-irreversible"</span>)<span class='expansion'>(strcmp((l),("job-irreversible")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN1062">1062</td><td class="line">                        <span class='keyword'>int</span> b;</td></tr>
-<tr><td class="num" id="LN1063">1063</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1064">1064</td><td class="line">                        b = parse_boolean(v);</td></tr>
-<tr><td class="num" id="LN1065">1065</td><td class="line">                        <span class='keyword'>if</span> (b &lt; 0)</td></tr>
-<tr><td class="num" id="LN1066">1066</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job irreversible flag %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1066<br>, __func__, "Failed to parse job irreversible flag %s", v) : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1067">1067</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1068">1068</td><td class="line">                                j-&gt;irreversible = j-&gt;irreversible || b;</td></tr>
-<tr><td class="num" id="LN1069">1069</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1070">1070</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-sent-dbus-new-signal"</span>)<span class='expansion'>(strcmp((l),("job-sent-dbus-new-signal")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN1071">1071</td><td class="line">                        <span class='keyword'>int</span> b;</td></tr>
-<tr><td class="num" id="LN1072">1072</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1073">1073</td><td class="line">                        b = parse_boolean(v);</td></tr>
-<tr><td class="num" id="LN1074">1074</td><td class="line">                        <span class='keyword'>if</span> (b &lt; 0)</td></tr>
-<tr><td class="num" id="LN1075">1075</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job sent_dbus_new_signal flag %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1075<br>, __func__, "Failed to parse job sent_dbus_new_signal flag %s"<br>, v) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1076">1076</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1077">1077</td><td class="line">                                j-&gt;sent_dbus_new_signal = j-&gt;sent_dbus_new_signal || b;</td></tr>
-<tr><td class="num" id="LN1078">1078</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1079">1079</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-ignore-order"</span>)<span class='expansion'>(strcmp((l),("job-ignore-order")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN1080">1080</td><td class="line">                        <span class='keyword'>int</span> b;</td></tr>
-<tr><td class="num" id="LN1081">1081</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1082">1082</td><td class="line">                        b = parse_boolean(v);</td></tr>
-<tr><td class="num" id="LN1083">1083</td><td class="line">                        <span class='keyword'>if</span> (b &lt; 0)</td></tr>
-<tr><td class="num" id="LN1084">1084</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job ignore_order flag %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1084<br>, __func__, "Failed to parse job ignore_order flag %s", v) : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1085">1085</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1086">1086</td><td class="line">                                j-&gt;ignore_order = j-&gt;ignore_order || b;</td></tr>
-<tr><td class="num" id="LN1087">1087</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1088">1088</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-begin"</span>)<span class='expansion'>(strcmp((l),("job-begin")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN1089">1089</td><td class="line">                        <span class='keyword'>unsigned</span> <span class='keyword'>long</span> <span class='keyword'>long</span> ull;</td></tr>
-<tr><td class="num" id="LN1090">1090</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1091">1091</td><td class="line">                        <span class='keyword'>if</span> (sscanf(v, <span class='string_literal'>"%llu"</span>, &amp;ull) != 1)</td></tr>
-<tr><td class="num" id="LN1092">1092</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job-begin value %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1092<br>, __func__, "Failed to parse job-begin value %s", v) : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1052">1052</td><td class="line">                        t = job_type_from_string(v);</td></tr>
+<tr><td class="num" id="LN1053">1053</td><td class="line">                        <span class='keyword'>if</span> (t &lt; 0)</td></tr>
+<tr><td class="num" id="LN1054">1054</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job type %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1054<br>, __func__, "Failed to parse job type %s", v) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1055">1055</td><td class="line">                        <span class='keyword'>else</span> <span class='keyword'>if</span> (t &gt;= _JOB_TYPE_MAX_IN_TRANSACTION)</td></tr>
+<tr><td class="num" id="LN1056">1056</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Cannot deserialize job of type %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1056<br>, __func__, "Cannot deserialize job of type %s", v) : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1057">1057</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1058">1058</td><td class="line">                                j-&gt;type = t;</td></tr>
+<tr><td class="num" id="LN1059">1059</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1060">1060</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-state"</span>)<span class='expansion'>(strcmp((l),("job-state")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1061">1061</td><td class="line">                        JobState s;</td></tr>
+<tr><td class="num" id="LN1062">1062</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1063">1063</td><td class="line">                        s = job_state_from_string(v);</td></tr>
+<tr><td class="num" id="LN1064">1064</td><td class="line">                        <span class='keyword'>if</span> (s &lt; 0)</td></tr>
+<tr><td class="num" id="LN1065">1065</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job state %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1065<br>, __func__, "Failed to parse job state %s", v) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1066">1066</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1067">1067</td><td class="line">                                job_set_state(j, s);</td></tr>
+<tr><td class="num" id="LN1068">1068</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1069">1069</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-irreversible"</span>)<span class='expansion'>(strcmp((l),("job-irreversible")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line">                        <span class='keyword'>int</span> b;</td></tr>
+<tr><td class="num" id="LN1071">1071</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1072">1072</td><td class="line">                        b = parse_boolean(v);</td></tr>
+<tr><td class="num" id="LN1073">1073</td><td class="line">                        <span class='keyword'>if</span> (b &lt; 0)</td></tr>
+<tr><td class="num" id="LN1074">1074</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job irreversible flag %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1074<br>, __func__, "Failed to parse job irreversible flag %s", v) : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1075">1075</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1076">1076</td><td class="line">                                j-&gt;irreversible = j-&gt;irreversible || b;</td></tr>
+<tr><td class="num" id="LN1077">1077</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1078">1078</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-sent-dbus-new-signal"</span>)<span class='expansion'>(strcmp((l),("job-sent-dbus-new-signal")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1079">1079</td><td class="line">                        <span class='keyword'>int</span> b;</td></tr>
+<tr><td class="num" id="LN1080">1080</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1081">1081</td><td class="line">                        b = parse_boolean(v);</td></tr>
+<tr><td class="num" id="LN1082">1082</td><td class="line">                        <span class='keyword'>if</span> (b &lt; 0)</td></tr>
+<tr><td class="num" id="LN1083">1083</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job sent_dbus_new_signal flag %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1083<br>, __func__, "Failed to parse job sent_dbus_new_signal flag %s"<br>, v) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1084">1084</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1085">1085</td><td class="line">                                j-&gt;sent_dbus_new_signal = j-&gt;sent_dbus_new_signal || b;</td></tr>
+<tr><td class="num" id="LN1086">1086</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1087">1087</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-ignore-order"</span>)<span class='expansion'>(strcmp((l),("job-ignore-order")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1088">1088</td><td class="line">                        <span class='keyword'>int</span> b;</td></tr>
+<tr><td class="num" id="LN1089">1089</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1090">1090</td><td class="line">                        b = parse_boolean(v);</td></tr>
+<tr><td class="num" id="LN1091">1091</td><td class="line">                        <span class='keyword'>if</span> (b &lt; 0)</td></tr>
+<tr><td class="num" id="LN1092">1092</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job ignore_order flag %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1092<br>, __func__, "Failed to parse job ignore_order flag %s", v) : -<br>abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1093">1093</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1094">1094</td><td class="line">                                j-&gt;begin_usec = ull;</td></tr>
+<tr><td class="num" id="LN1094">1094</td><td class="line">                                j-&gt;ignore_order = j-&gt;ignore_order || b;</td></tr>
 <tr><td class="num" id="LN1095">1095</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1096">1096</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"subscribed"</span>)<span class='expansion'>(strcmp((l),("subscribed")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN1097">1097</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1098">1098</td><td class="line">                        <span class='keyword'>if</span> (strv_extend(&amp;j-&gt;deserialized_clients, v) &lt; 0)</td></tr>
-<tr><td class="num" id="LN1099">1099</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/core/job.c", 1099, __func__)</span></span>;</td></tr>
-<tr><td class="num" id="LN1100">1100</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1101">1101</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1102">1102</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1096">1096</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"job-begin"</span>)<span class='expansion'>(strcmp((l),("job-begin")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1097">1097</td><td class="line">                        <span class='keyword'>unsigned</span> <span class='keyword'>long</span> <span class='keyword'>long</span> ull;</td></tr>
+<tr><td class="num" id="LN1098">1098</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1099">1099</td><td class="line">                        <span class='keyword'>if</span> (sscanf(v, <span class='string_literal'>"%llu"</span>, &amp;ull) != 1)</td></tr>
+<tr><td class="num" id="LN1100">1100</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse job-begin value %s"</span>, v)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1100<br>, __func__, "Failed to parse job-begin value %s", v) : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1101">1101</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1102">1102</td><td class="line">                                j-&gt;begin_usec = ull;</td></tr>
 <tr><td class="num" id="LN1103">1103</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1104">1104</td><td class="line"><span class='keyword'>int</span> job_coldplug(Job *j) {</td></tr>
-<tr><td class="num" id="LN1105">1105</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN1106">1106</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1107">1107</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 1107, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1108">1108</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1109">1109</td><td class="line">        <span class='comment'>/* After deserialization is complete and the bus connection</span></td></tr>
-<tr><td class="num" id="LN1110">1110</td><td class="line">         <span class='comment'>* set up again, let's start watching our subscribers again */</span></td></tr>
-<tr><td class="num" id="LN1111">1111</td><td class="line">        r = bus_track_coldplug(j-&gt;manager, &amp;j-&gt;clients, &amp;j-&gt;deserialized_clients);</td></tr>
-<tr><td class="num" id="LN1112">1112</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1113">1113</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1104">1104</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(l, <span class='string_literal'>"subscribed"</span>)<span class='expansion'>(strcmp((l),("subscribed")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN1105">1105</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1106">1106</td><td class="line">                        <span class='keyword'>if</span> (strv_extend(&amp;j-&gt;deserialized_clients, v) &lt; 0)</td></tr>
+<tr><td class="num" id="LN1107">1107</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/core/job.c", 1107, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN1108">1108</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1109">1109</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1110">1110</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1111">1111</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1112">1112</td><td class="line"><span class='keyword'>int</span> job_coldplug(Job *j) {</td></tr>
+<tr><td class="num" id="LN1113">1113</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN1114">1114</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1115">1115</td><td class="line">        <span class='keyword'>if</span> (j-&gt;state == JOB_WAITING)</td></tr>
-<tr><td class="num" id="LN1116">1116</td><td class="line">                job_add_to_run_queue(j);</td></tr>
-<tr><td class="num" id="LN1117">1117</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1118">1118</td><td class="line">        <span class='keyword'>if</span> (j-&gt;begin_usec == 0 || j-&gt;unit-&gt;job_timeout == <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>)</td></tr>
-<tr><td class="num" id="LN1119">1119</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1120">1120</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1121">1121</td><td class="line">        j-&gt;timer_event_source = sd_event_source_unref(j-&gt;timer_event_source);</td></tr>
+<tr><td class="num" id="LN1115">1115</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 1115, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1116">1116</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1117">1117</td><td class="line">        <span class='comment'>/* After deserialization is complete and the bus connection</span></td></tr>
+<tr><td class="num" id="LN1118">1118</td><td class="line">         <span class='comment'>* set up again, let's start watching our subscribers again */</span></td></tr>
+<tr><td class="num" id="LN1119">1119</td><td class="line">        r = bus_track_coldplug(j-&gt;manager, &amp;j-&gt;clients, &amp;j-&gt;deserialized_clients);</td></tr>
+<tr><td class="num" id="LN1120">1120</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1121">1121</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1122">1122</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1123">1123</td><td class="line">        r = sd_event_add_time(</td></tr>
-<tr><td class="num" id="LN1124">1124</td><td class="line">                        j-&gt;manager-&gt;event,</td></tr>
-<tr><td class="num" id="LN1125">1125</td><td class="line">                        &amp;j-&gt;timer_event_source,</td></tr>
-<tr><td class="num" id="LN1126">1126</td><td class="line">                        <span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>,</td></tr>
-<tr><td class="num" id="LN1127">1127</td><td class="line">                        usec_add(j-&gt;begin_usec, j-&gt;unit-&gt;job_timeout), 0,</td></tr>
-<tr><td class="num" id="LN1128">1128</td><td class="line">                        job_dispatch_timer, j);</td></tr>
-<tr><td class="num" id="LN1129">1129</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1130">1130</td><td class="line">                <span class='macro'>log_debug_errno(r, <span class='string_literal'>"Failed to restart timeout for job: %m"</span>)<span class='expansion'>({ int _level = (7), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1130<br>, __func__, "Failed to restart timeout for job: %m") : -abs(_e<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1131">1131</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1132">1132</td><td class="line">        (<span class='keyword'>void</span>) sd_event_source_set_description(j-&gt;timer_event_source, <span class='string_literal'>"job-timeout"</span>);</td></tr>
-<tr><td class="num" id="LN1133">1133</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1134">1134</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1135">1135</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1136">1136</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1137">1137</td><td class="line"><span class='keyword'>void</span> job_shutdown_magic(Job *j) {</td></tr>
-<tr><td class="num" id="LN1138">1138</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 1138, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1123">1123</td><td class="line">        <span class='keyword'>if</span> (j-&gt;state == JOB_WAITING)</td></tr>
+<tr><td class="num" id="LN1124">1124</td><td class="line">                job_add_to_run_queue(j);</td></tr>
+<tr><td class="num" id="LN1125">1125</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1126">1126</td><td class="line">        <span class='keyword'>if</span> (j-&gt;begin_usec == 0 || j-&gt;unit-&gt;job_timeout == <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>)</td></tr>
+<tr><td class="num" id="LN1127">1127</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1128">1128</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1129">1129</td><td class="line">        j-&gt;timer_event_source = sd_event_source_unref(j-&gt;timer_event_source);</td></tr>
+<tr><td class="num" id="LN1130">1130</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1131">1131</td><td class="line">        r = sd_event_add_time(</td></tr>
+<tr><td class="num" id="LN1132">1132</td><td class="line">                        j-&gt;manager-&gt;event,</td></tr>
+<tr><td class="num" id="LN1133">1133</td><td class="line">                        &amp;j-&gt;timer_event_source,</td></tr>
+<tr><td class="num" id="LN1134">1134</td><td class="line">                        <span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN1135">1135</td><td class="line">                        usec_add(j-&gt;begin_usec, j-&gt;unit-&gt;job_timeout), 0,</td></tr>
+<tr><td class="num" id="LN1136">1136</td><td class="line">                        job_dispatch_timer, j);</td></tr>
+<tr><td class="num" id="LN1137">1137</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1138">1138</td><td class="line">                <span class='macro'>log_debug_errno(r, <span class='string_literal'>"Failed to restart timeout for job: %m"</span>)<span class='expansion'>({ int _level = (7), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/job.c", 1138<br>, __func__, "Failed to restart timeout for job: %m") : -abs(_e<br>); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1139">1139</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1140">1140</td><td class="line">        <span class='comment'>/* The shutdown target gets some special treatment here: we</span></td></tr>
-<tr><td class="num" id="LN1141">1141</td><td class="line">         <span class='comment'>* tell the kernel to begin with flushing its disk caches, to</span></td></tr>
-<tr><td class="num" id="LN1142">1142</td><td class="line">         <span class='comment'>* optimize shutdown time a bit. Ideally we wouldn't hardcode</span></td></tr>
-<tr><td class="num" id="LN1143">1143</td><td class="line">         <span class='comment'>* this magic into PID 1. However all other processes aren't</span></td></tr>
-<tr><td class="num" id="LN1144">1144</td><td class="line">         <span class='comment'>* options either since they'd exit much sooner than PID 1 and</span></td></tr>
-<tr><td class="num" id="LN1145">1145</td><td class="line">         <span class='comment'>* asynchronous sync() would cause their exit to be</span></td></tr>
-<tr><td class="num" id="LN1146">1146</td><td class="line">         <span class='comment'>* delayed. */</span></td></tr>
+<tr><td class="num" id="LN1140">1140</td><td class="line">        (<span class='keyword'>void</span>) sd_event_source_set_description(j-&gt;timer_event_source, <span class='string_literal'>"job-timeout"</span>);</td></tr>
+<tr><td class="num" id="LN1141">1141</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1142">1142</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1143">1143</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1144">1144</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1145">1145</td><td class="line"><span class='keyword'>void</span> job_shutdown_magic(Job *j) {</td></tr>
+<tr><td class="num" id="LN1146">1146</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/job.c", 1146, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1147">1147</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1148">1148</td><td class="line">        <span class='keyword'>if</span> (j-&gt;type != JOB_START)</td></tr>
-<tr><td class="num" id="LN1149">1149</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN1150">1150</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1151">1151</td><td class="line">        <span class='keyword'>if</span> (j-&gt;unit-&gt;manager-&gt;running_as != MANAGER_SYSTEM)</td></tr>
-<tr><td class="num" id="LN1152">1152</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN1153">1153</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1154">1154</td><td class="line">        <span class='keyword'>if</span> (!unit_has_name(j-&gt;unit, <span class='macro'>SPECIAL_SHUTDOWN_TARGET<span class='expansion'>"shutdown.target"</span></span>))</td></tr>
-<tr><td class="num" id="LN1155">1155</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN1156">1156</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1157">1157</td><td class="line">        <span class='comment'>/* In case messages on console has been disabled on boot */</span></td></tr>
-<tr><td class="num" id="LN1158">1158</td><td class="line">        j-&gt;unit-&gt;manager-&gt;no_console_output = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN1159">1159</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1160">1160</td><td class="line">        <span class='keyword'>if</span> (detect_container() &gt; 0)</td></tr>
-<tr><td class="num" id="LN1161">1161</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN1162">1162</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1163">1163</td><td class="line">        asynchronous_sync();</td></tr>
-<tr><td class="num" id="LN1164">1164</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1165">1165</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1166">1166</td><td class="line"><span class='keyword'>int</span> job_get_timeout(Job *j, usec_t *timeout) {</td></tr>
-<tr><td class="num" id="LN1167">1167</td><td class="line">        usec_t x = <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>, y = <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>;</td></tr>
-<tr><td class="num" id="LN1168">1168</td><td class="line">        Unit *u = j-&gt;unit;</td></tr>
-<tr><td class="num" id="LN1169">1169</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN1148">1148</td><td class="line">        <span class='comment'>/* The shutdown target gets some special treatment here: we</span></td></tr>
+<tr><td class="num" id="LN1149">1149</td><td class="line">         <span class='comment'>* tell the kernel to begin with flushing its disk caches, to</span></td></tr>
+<tr><td class="num" id="LN1150">1150</td><td class="line">         <span class='comment'>* optimize shutdown time a bit. Ideally we wouldn't hardcode</span></td></tr>
+<tr><td class="num" id="LN1151">1151</td><td class="line">         <span class='comment'>* this magic into PID 1. However all other processes aren't</span></td></tr>
+<tr><td class="num" id="LN1152">1152</td><td class="line">         <span class='comment'>* options either since they'd exit much sooner than PID 1 and</span></td></tr>
+<tr><td class="num" id="LN1153">1153</td><td class="line">         <span class='comment'>* asynchronous sync() would cause their exit to be</span></td></tr>
+<tr><td class="num" id="LN1154">1154</td><td class="line">         <span class='comment'>* delayed. */</span></td></tr>
+<tr><td class="num" id="LN1155">1155</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1156">1156</td><td class="line">        <span class='keyword'>if</span> (j-&gt;type != JOB_START)</td></tr>
+<tr><td class="num" id="LN1157">1157</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN1158">1158</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1159">1159</td><td class="line">        <span class='keyword'>if</span> (j-&gt;unit-&gt;manager-&gt;running_as != MANAGER_SYSTEM)</td></tr>
+<tr><td class="num" id="LN1160">1160</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN1161">1161</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1162">1162</td><td class="line">        <span class='keyword'>if</span> (!unit_has_name(j-&gt;unit, <span class='macro'>SPECIAL_SHUTDOWN_TARGET<span class='expansion'>"shutdown.target"</span></span>))</td></tr>
+<tr><td class="num" id="LN1163">1163</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN1164">1164</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1165">1165</td><td class="line">        <span class='comment'>/* In case messages on console has been disabled on boot */</span></td></tr>
+<tr><td class="num" id="LN1166">1166</td><td class="line">        j-&gt;unit-&gt;manager-&gt;no_console_output = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1167">1167</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1168">1168</td><td class="line">        <span class='keyword'>if</span> (detect_container() &gt; 0)</td></tr>
+<tr><td class="num" id="LN1169">1169</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN1170">1170</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1171">1171</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/job.c", 1171, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1172">1172</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1173">1173</td><td class="line">        <span class='keyword'>if</span> (j-&gt;timer_event_source) {</td></tr>
-<tr><td class="num" id="LN1174">1174</td><td class="line">                r = sd_event_source_get_time(j-&gt;timer_event_source, &amp;x);</td></tr>
-<tr><td class="num" id="LN1175">1175</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1176">1176</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1177">1177</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1171">1171</td><td class="line">        asynchronous_sync();</td></tr>
+<tr><td class="num" id="LN1172">1172</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1173">1173</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1174">1174</td><td class="line"><span class='keyword'>int</span> job_get_timeout(Job *j, usec_t *timeout) {</td></tr>
+<tr><td class="num" id="LN1175">1175</td><td class="line">        usec_t x = <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>, y = <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>;</td></tr>
+<tr><td class="num" id="LN1176">1176</td><td class="line">        Unit *u = j-&gt;unit;</td></tr>
+<tr><td class="num" id="LN1177">1177</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN1178">1178</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1179">1179</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>UNIT_VTABLE(u)<span class='expansion'>unit_vtable[(u)-&gt;type]</span></span>-&gt;get_timeout) {</td></tr>
-<tr><td class="num" id="LN1180">1180</td><td class="line">                r = <span class='macro'>UNIT_VTABLE(u)<span class='expansion'>unit_vtable[(u)-&gt;type]</span></span>-&gt;get_timeout(u, &amp;y);</td></tr>
-<tr><td class="num" id="LN1181">1181</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1182">1182</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1183">1183</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1184">1184</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1185">1185</td><td class="line">        <span class='keyword'>if</span> (x == <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span> &amp;&amp; y == <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>)</td></tr>
-<tr><td class="num" id="LN1186">1186</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1187">1187</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1188">1188</td><td class="line">        *timeout = <span class='macro'>MIN(x, y)<span class='expansion'>__extension__ ({ const typeof((x)) __unique_prefix_A2 = ((x))<br>; const typeof((y)) __unique_prefix_B3 = ((y)); __unique_prefix_A2<br> &lt; __unique_prefix_B3 ? __unique_prefix_A2 : __unique_prefix_B3<br>; })</span></span>;</td></tr>
-<tr><td class="num" id="LN1189">1189</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN1190">1190</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1191">1191</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1192">1192</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_state_table[_JOB_STATE_MAX] = {</td></tr>
-<tr><td class="num" id="LN1193">1193</td><td class="line">        [JOB_WAITING] = <span class='string_literal'>"waiting"</span>,</td></tr>
-<tr><td class="num" id="LN1194">1194</td><td class="line">        [JOB_RUNNING] = <span class='string_literal'>"running"</span></td></tr>
-<tr><td class="num" id="LN1195">1195</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1196">1196</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1197">1197</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(job_state, JobState)<span class='expansion'>const char *job_state_to_string(JobState i) { if (i &lt; 0 ||<br> i &gt;= (JobState) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_state_table), typeof(&amp;*(job_state_table))), sizeof<br>(job_state_table)/sizeof((job_state_table)[0]), (void)0))) return<br> ((void*)0); return job_state_table[i]; } JobState job_state_from_string<br>(const char *s) { return (JobState) string_table_lookup(job_state_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_state_table), typeof(&amp;*(job_state_table))), sizeof<br>(job_state_table)/sizeof((job_state_table)[0]), (void)0)), s)<br>; } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN1198">1198</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1199">1199</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_type_table[_JOB_TYPE_MAX] = {</td></tr>
-<tr><td class="num" id="LN1200">1200</td><td class="line">        [JOB_START] = <span class='string_literal'>"start"</span>,</td></tr>
-<tr><td class="num" id="LN1201">1201</td><td class="line">        [JOB_VERIFY_ACTIVE] = <span class='string_literal'>"verify-active"</span>,</td></tr>
-<tr><td class="num" id="LN1202">1202</td><td class="line">        [JOB_STOP] = <span class='string_literal'>"stop"</span>,</td></tr>
-<tr><td class="num" id="LN1203">1203</td><td class="line">        [JOB_RELOAD] = <span class='string_literal'>"reload"</span>,</td></tr>
-<tr><td class="num" id="LN1204">1204</td><td class="line">        [JOB_RELOAD_OR_START] = <span class='string_literal'>"reload-or-start"</span>,</td></tr>
-<tr><td class="num" id="LN1205">1205</td><td class="line">        [JOB_RESTART] = <span class='string_literal'>"restart"</span>,</td></tr>
-<tr><td class="num" id="LN1206">1206</td><td class="line">        [JOB_TRY_RESTART] = <span class='string_literal'>"try-restart"</span>,</td></tr>
-<tr><td class="num" id="LN1207">1207</td><td class="line">        [JOB_TRY_RELOAD] = <span class='string_literal'>"try-reload"</span>,</td></tr>
-<tr><td class="num" id="LN1208">1208</td><td class="line">        [JOB_NOP] = <span class='string_literal'>"nop"</span>,</td></tr>
-<tr><td class="num" id="LN1209">1209</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1210">1210</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1211">1211</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(job_type, JobType)<span class='expansion'>const char *job_type_to_string(JobType i) { if (i &lt; 0 || i<br> &gt;= (JobType) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_type_table), typeof(&amp;*(job_type_table))), sizeof<br>(job_type_table)/sizeof((job_type_table)[0]), (void)0))) return<br> ((void*)0); return job_type_table[i]; } JobType job_type_from_string<br>(const char *s) { return (JobType) string_table_lookup(job_type_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_type_table), typeof(&amp;*(job_type_table))), sizeof<br>(job_type_table)/sizeof((job_type_table)[0]), (void)0)), s); }<br> struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN1212">1212</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1213">1213</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_mode_table[_JOB_MODE_MAX] = {</td></tr>
-<tr><td class="num" id="LN1214">1214</td><td class="line">        [JOB_FAIL] = <span class='string_literal'>"fail"</span>,</td></tr>
-<tr><td class="num" id="LN1215">1215</td><td class="line">        [JOB_REPLACE] = <span class='string_literal'>"replace"</span>,</td></tr>
-<tr><td class="num" id="LN1216">1216</td><td class="line">        [JOB_REPLACE_IRREVERSIBLY] = <span class='string_literal'>"replace-irreversibly"</span>,</td></tr>
-<tr><td class="num" id="LN1217">1217</td><td class="line">        [JOB_ISOLATE] = <span class='string_literal'>"isolate"</span>,</td></tr>
-<tr><td class="num" id="LN1218">1218</td><td class="line">        [JOB_FLUSH] = <span class='string_literal'>"flush"</span>,</td></tr>
-<tr><td class="num" id="LN1219">1219</td><td class="line">        [JOB_IGNORE_DEPENDENCIES] = <span class='string_literal'>"ignore-dependencies"</span>,</td></tr>
-<tr><td class="num" id="LN1220">1220</td><td class="line">        [JOB_IGNORE_REQUIREMENTS] = <span class='string_literal'>"ignore-requirements"</span>,</td></tr>
-<tr><td class="num" id="LN1221">1221</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1222">1222</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1223">1223</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(job_mode, JobMode)<span class='expansion'>const char *job_mode_to_string(JobMode i) { if (i &lt; 0 || i<br> &gt;= (JobMode) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_mode_table), typeof(&amp;*(job_mode_table))), sizeof<br>(job_mode_table)/sizeof((job_mode_table)[0]), (void)0))) return<br> ((void*)0); return job_mode_table[i]; } JobMode job_mode_from_string<br>(const char *s) { return (JobMode) string_table_lookup(job_mode_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_mode_table), typeof(&amp;*(job_mode_table))), sizeof<br>(job_mode_table)/sizeof((job_mode_table)[0]), (void)0)), s); }<br> struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN1224">1224</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1225">1225</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_result_table[_JOB_RESULT_MAX] = {</td></tr>
-<tr><td class="num" id="LN1226">1226</td><td class="line">        [JOB_DONE] = <span class='string_literal'>"done"</span>,</td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">        [JOB_CANCELED] = <span class='string_literal'>"canceled"</span>,</td></tr>
-<tr><td class="num" id="LN1228">1228</td><td class="line">        [JOB_TIMEOUT] = <span class='string_literal'>"timeout"</span>,</td></tr>
-<tr><td class="num" id="LN1229">1229</td><td class="line">        [JOB_FAILED] = <span class='string_literal'>"failed"</span>,</td></tr>
-<tr><td class="num" id="LN1230">1230</td><td class="line">        [JOB_DEPENDENCY] = <span class='string_literal'>"dependency"</span>,</td></tr>
-<tr><td class="num" id="LN1231">1231</td><td class="line">        [JOB_SKIPPED] = <span class='string_literal'>"skipped"</span>,</td></tr>
-<tr><td class="num" id="LN1232">1232</td><td class="line">        [JOB_INVALID] = <span class='string_literal'>"invalid"</span>,</td></tr>
-<tr><td class="num" id="LN1233">1233</td><td class="line">        [JOB_ASSERT] = <span class='string_literal'>"assert"</span>,</td></tr>
-<tr><td class="num" id="LN1234">1234</td><td class="line">        [JOB_UNSUPPORTED] = <span class='string_literal'>"unsupported"</span>,</td></tr>
-<tr><td class="num" id="LN1235">1235</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN1236">1236</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1237">1237</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(job_result, JobResult)<span class='expansion'>const char *job_result_to_string(JobResult i) { if (i &lt; 0 ||<br> i &gt;= (JobResult) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_result_table), typeof(&amp;*(job_result_table))),<br> sizeof(job_result_table)/sizeof((job_result_table)[0]), (void<br>)0))) return ((void*)0); return job_result_table[i]; } JobResult<br> job_result_from_string(const char *s) { return (JobResult) string_table_lookup<br>(job_result_table, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_result_table), typeof(&amp;*(job_result_table))),<br> sizeof(job_result_table)/sizeof((job_result_table)[0]), (void<br>)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN1238">1238</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1239">1239</td><td class="line"><span class='keyword'>const</span> <span class='keyword'>char</span>* job_type_to_access_method(JobType t) {</td></tr>
-<tr><td class="num" id="LN1240">1240</td><td class="line">        <span class='macro'>assert(t &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &gt;= 0)),0))) log_assert_failed<br>("t &gt;= 0", "src/core/job.c", 1240, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1241">1241</td><td class="line">        <span class='macro'>assert(t &lt; _JOB_TYPE_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &lt; _JOB_TYPE_MAX)),0))) log_assert_failed<br>("t &lt; _JOB_TYPE_MAX", "src/core/job.c", 1241, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1242">1242</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1243">1243</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>IN_SET(t, JOB_START, JOB_RESTART, JOB_TRY_RESTART)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){JOB_START, JOB_RESTART, JOB_TRY_RESTART}<br>)/sizeof(int)]; switch(t) { case JOB_START: case JOB_RESTART:<br> case JOB_TRY_RESTART: _found = 1; break; default: break; } _found<br>; })</span></span>)</td></tr>
-<tr><td class="num" id="LN1244">1244</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"start"</span>;</td></tr>
-<tr><td class="num" id="LN1245">1245</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (t == JOB_STOP)</td></tr>
-<tr><td class="num" id="LN1246">1246</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"stop"</span>;</td></tr>
-<tr><td class="num" id="LN1247">1247</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1248">1248</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"reload"</span>;</td></tr>
-<tr><td class="num" id="LN1249">1249</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1179">1179</td><td class="line">        <span class='macro'>assert(u)<span class='expansion'>do { if ((__builtin_expect(!!(!(u)),0))) log_assert_failed("u"<br>, "src/core/job.c", 1179, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1180">1180</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1181">1181</td><td class="line">        <span class='keyword'>if</span> (j-&gt;timer_event_source) {</td></tr>
+<tr><td class="num" id="LN1182">1182</td><td class="line">                r = sd_event_source_get_time(j-&gt;timer_event_source, &amp;x);</td></tr>
+<tr><td class="num" id="LN1183">1183</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1184">1184</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1185">1185</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1186">1186</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1187">1187</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>UNIT_VTABLE(u)<span class='expansion'>unit_vtable[(u)-&gt;type]</span></span>-&gt;get_timeout) {</td></tr>
+<tr><td class="num" id="LN1188">1188</td><td class="line">                r = <span class='macro'>UNIT_VTABLE(u)<span class='expansion'>unit_vtable[(u)-&gt;type]</span></span>-&gt;get_timeout(u, &amp;y);</td></tr>
+<tr><td class="num" id="LN1189">1189</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1190">1190</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1191">1191</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1192">1192</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1193">1193</td><td class="line">        <span class='keyword'>if</span> (x == <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span> &amp;&amp; y == <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>)</td></tr>
+<tr><td class="num" id="LN1194">1194</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1195">1195</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1196">1196</td><td class="line">        *timeout = <span class='macro'>MIN(x, y)<span class='expansion'>__extension__ ({ const typeof((x)) __unique_prefix_A2 = ((x))<br>; const typeof((y)) __unique_prefix_B3 = ((y)); __unique_prefix_A2<br> &lt; __unique_prefix_B3 ? __unique_prefix_A2 : __unique_prefix_B3<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN1197">1197</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN1198">1198</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1199">1199</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1200">1200</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_state_table[_JOB_STATE_MAX] = {</td></tr>
+<tr><td class="num" id="LN1201">1201</td><td class="line">        [JOB_WAITING] = <span class='string_literal'>"waiting"</span>,</td></tr>
+<tr><td class="num" id="LN1202">1202</td><td class="line">        [JOB_RUNNING] = <span class='string_literal'>"running"</span></td></tr>
+<tr><td class="num" id="LN1203">1203</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1204">1204</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1205">1205</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(job_state, JobState)<span class='expansion'>const char *job_state_to_string(JobState i) { if (i &lt; 0 ||<br> i &gt;= (JobState) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_state_table), typeof(&amp;*(job_state_table))), sizeof<br>(job_state_table)/sizeof((job_state_table)[0]), (void)0))) return<br> ((void*)0); return job_state_table[i]; } JobState job_state_from_string<br>(const char *s) { return (JobState) string_table_lookup(job_state_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_state_table), typeof(&amp;*(job_state_table))), sizeof<br>(job_state_table)/sizeof((job_state_table)[0]), (void)0)), s)<br>; } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1206">1206</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1207">1207</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_type_table[_JOB_TYPE_MAX] = {</td></tr>
+<tr><td class="num" id="LN1208">1208</td><td class="line">        [JOB_START] = <span class='string_literal'>"start"</span>,</td></tr>
+<tr><td class="num" id="LN1209">1209</td><td class="line">        [JOB_VERIFY_ACTIVE] = <span class='string_literal'>"verify-active"</span>,</td></tr>
+<tr><td class="num" id="LN1210">1210</td><td class="line">        [JOB_STOP] = <span class='string_literal'>"stop"</span>,</td></tr>
+<tr><td class="num" id="LN1211">1211</td><td class="line">        [JOB_RELOAD] = <span class='string_literal'>"reload"</span>,</td></tr>
+<tr><td class="num" id="LN1212">1212</td><td class="line">        [JOB_RELOAD_OR_START] = <span class='string_literal'>"reload-or-start"</span>,</td></tr>
+<tr><td class="num" id="LN1213">1213</td><td class="line">        [JOB_RESTART] = <span class='string_literal'>"restart"</span>,</td></tr>
+<tr><td class="num" id="LN1214">1214</td><td class="line">        [JOB_TRY_RESTART] = <span class='string_literal'>"try-restart"</span>,</td></tr>
+<tr><td class="num" id="LN1215">1215</td><td class="line">        [JOB_TRY_RELOAD] = <span class='string_literal'>"try-reload"</span>,</td></tr>
+<tr><td class="num" id="LN1216">1216</td><td class="line">        [JOB_NOP] = <span class='string_literal'>"nop"</span>,</td></tr>
+<tr><td class="num" id="LN1217">1217</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1218">1218</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1219">1219</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(job_type, JobType)<span class='expansion'>const char *job_type_to_string(JobType i) { if (i &lt; 0 || i<br> &gt;= (JobType) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_type_table), typeof(&amp;*(job_type_table))), sizeof<br>(job_type_table)/sizeof((job_type_table)[0]), (void)0))) return<br> ((void*)0); return job_type_table[i]; } JobType job_type_from_string<br>(const char *s) { return (JobType) string_table_lookup(job_type_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_type_table), typeof(&amp;*(job_type_table))), sizeof<br>(job_type_table)/sizeof((job_type_table)[0]), (void)0)), s); }<br> struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1220">1220</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1221">1221</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_mode_table[_JOB_MODE_MAX] = {</td></tr>
+<tr><td class="num" id="LN1222">1222</td><td class="line">        [JOB_FAIL] = <span class='string_literal'>"fail"</span>,</td></tr>
+<tr><td class="num" id="LN1223">1223</td><td class="line">        [JOB_REPLACE] = <span class='string_literal'>"replace"</span>,</td></tr>
+<tr><td class="num" id="LN1224">1224</td><td class="line">        [JOB_REPLACE_IRREVERSIBLY] = <span class='string_literal'>"replace-irreversibly"</span>,</td></tr>
+<tr><td class="num" id="LN1225">1225</td><td class="line">        [JOB_ISOLATE] = <span class='string_literal'>"isolate"</span>,</td></tr>
+<tr><td class="num" id="LN1226">1226</td><td class="line">        [JOB_FLUSH] = <span class='string_literal'>"flush"</span>,</td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line">        [JOB_IGNORE_DEPENDENCIES] = <span class='string_literal'>"ignore-dependencies"</span>,</td></tr>
+<tr><td class="num" id="LN1228">1228</td><td class="line">        [JOB_IGNORE_REQUIREMENTS] = <span class='string_literal'>"ignore-requirements"</span>,</td></tr>
+<tr><td class="num" id="LN1229">1229</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1230">1230</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1231">1231</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(job_mode, JobMode)<span class='expansion'>const char *job_mode_to_string(JobMode i) { if (i &lt; 0 || i<br> &gt;= (JobMode) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_mode_table), typeof(&amp;*(job_mode_table))), sizeof<br>(job_mode_table)/sizeof((job_mode_table)[0]), (void)0))) return<br> ((void*)0); return job_mode_table[i]; } JobMode job_mode_from_string<br>(const char *s) { return (JobMode) string_table_lookup(job_mode_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_mode_table), typeof(&amp;*(job_mode_table))), sizeof<br>(job_mode_table)/sizeof((job_mode_table)[0]), (void)0)), s); }<br> struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1232">1232</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1233">1233</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> job_result_table[_JOB_RESULT_MAX] = {</td></tr>
+<tr><td class="num" id="LN1234">1234</td><td class="line">        [JOB_DONE] = <span class='string_literal'>"done"</span>,</td></tr>
+<tr><td class="num" id="LN1235">1235</td><td class="line">        [JOB_CANCELED] = <span class='string_literal'>"canceled"</span>,</td></tr>
+<tr><td class="num" id="LN1236">1236</td><td class="line">        [JOB_TIMEOUT] = <span class='string_literal'>"timeout"</span>,</td></tr>
+<tr><td class="num" id="LN1237">1237</td><td class="line">        [JOB_FAILED] = <span class='string_literal'>"failed"</span>,</td></tr>
+<tr><td class="num" id="LN1238">1238</td><td class="line">        [JOB_DEPENDENCY] = <span class='string_literal'>"dependency"</span>,</td></tr>
+<tr><td class="num" id="LN1239">1239</td><td class="line">        [JOB_SKIPPED] = <span class='string_literal'>"skipped"</span>,</td></tr>
+<tr><td class="num" id="LN1240">1240</td><td class="line">        [JOB_INVALID] = <span class='string_literal'>"invalid"</span>,</td></tr>
+<tr><td class="num" id="LN1241">1241</td><td class="line">        [JOB_ASSERT] = <span class='string_literal'>"assert"</span>,</td></tr>
+<tr><td class="num" id="LN1242">1242</td><td class="line">        [JOB_UNSUPPORTED] = <span class='string_literal'>"unsupported"</span>,</td></tr>
+<tr><td class="num" id="LN1243">1243</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1244">1244</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1245">1245</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(job_result, JobResult)<span class='expansion'>const char *job_result_to_string(JobResult i) { if (i &lt; 0 ||<br> i &gt;= (JobResult) __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_result_table), typeof(&amp;*(job_result_table))),<br> sizeof(job_result_table)/sizeof((job_result_table)[0]), (void<br>)0))) return ((void*)0); return job_result_table[i]; } JobResult<br> job_result_from_string(const char *s) { return (JobResult) string_table_lookup<br>(job_result_table, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(job_result_table), typeof(&amp;*(job_result_table))),<br> sizeof(job_result_table)/sizeof((job_result_table)[0]), (void<br>)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN1246">1246</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1247">1247</td><td class="line"><span class='keyword'>const</span> <span class='keyword'>char</span>* job_type_to_access_method(JobType t) {</td></tr>
+<tr><td class="num" id="LN1248">1248</td><td class="line">        <span class='macro'>assert(t &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &gt;= 0)),0))) log_assert_failed<br>("t &gt;= 0", "src/core/job.c", 1248, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1249">1249</td><td class="line">        <span class='macro'>assert(t &lt; _JOB_TYPE_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(t &lt; _JOB_TYPE_MAX)),0))) log_assert_failed<br>("t &lt; _JOB_TYPE_MAX", "src/core/job.c", 1249, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1250">1250</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1251">1251</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>IN_SET(t, JOB_START, JOB_RESTART, JOB_TRY_RESTART)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){JOB_START, JOB_RESTART, JOB_TRY_RESTART}<br>)/sizeof(int)]; switch(t) { case JOB_START: case JOB_RESTART:<br> case JOB_TRY_RESTART: _found = 1; break; default: break; } _found<br>; })</span></span>)</td></tr>
+<tr><td class="num" id="LN1252">1252</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"start"</span>;</td></tr>
+<tr><td class="num" id="LN1253">1253</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (t == JOB_STOP)</td></tr>
+<tr><td class="num" id="LN1254">1254</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"stop"</span>;</td></tr>
+<tr><td class="num" id="LN1255">1255</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1256">1256</td><td class="line">                <span class='keyword'>return</span> <span class='string_literal'>"reload"</span>;</td></tr>
+<tr><td class="num" id="LN1257">1257</td><td class="line">}</td></tr>
 </table></body></html>
