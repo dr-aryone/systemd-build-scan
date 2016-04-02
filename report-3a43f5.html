@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'mount_point' -->
+<!-- BUGDESC Potential leak of memory pointed to by 'cipher' -->
 
 <!-- BUGTYPE Memory leak -->
 
@@ -64,21 +64,21 @@
 
 <!-- FILENAME cryptsetup.c -->
 
-<!-- FUNCTIONNAME get_password -->
+<!-- FUNCTIONNAME attach_luks_or_plain -->
 
-<!-- BUGLINE 341 -->
+<!-- BUGLINE 535 -->
 
 <!-- BUGCOLUMN 19 -->
 
-<!-- BUGPATHLENGTH 11 -->
+<!-- BUGPATHLENGTH 13 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>cryptsetup/cryptsetup.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 341, column 19</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'mount_point'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 535, column 19</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'cipher'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -387,21 +387,15 @@
 <tr><td class="num" id="LN302">302</td><td class="line">        <span class='comment'>/* Yeah, we don't support native systemd unit files here for now */</span></td></tr>
 <tr><td class="num" id="LN303">303</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN304">304</td><td class="line">        <span class='keyword'>if</span> (asprintf(&amp;device, <span class='string_literal'>"/dev/mapper/%s"</span>, label) &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN305">305</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN306">306</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN307">307</td><td class="line">        f = setmntent(<span class='string_literal'>"/etc/fstab"</span>, <span class='string_literal'>"r"</span>);</td></tr>
-<tr><td class="num" id="LN308">308</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!f</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'f' is non-null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
 <tr><td class="num" id="LN309">309</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN310">310</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN311">311</td><td class="line">        <span class='keyword'>while</span> ((m = getmntent(f)))</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN312">312</td><td class="line">                <span class='keyword'>if</span> (path_equal(m-&gt;mnt_fsname, device))</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN313">313</td><td class="line">                        <span class='keyword'>return</span> <span class="mrange">strdup(m-&gt;mnt_dir)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:32ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">                        <span class='keyword'>return</span> strdup(m-&gt;mnt_dir);</td></tr>
 <tr><td class="num" id="LN314">314</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN315">315</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN316">316</td><td class="line">}</td></tr>
@@ -418,9 +412,7 @@
 <tr><td class="num" id="LN327">327</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/cryptsetup/cryptsetup.c", 327, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN328">328</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN329">329</td><td class="line">        description = disk_description(src);</td></tr>
-<tr><td class="num" id="LN330">330</td><td class="line">        mount_point = <span class="mrange"><span class="mrange">disk_mount_point(vol)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:23ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Calling 'disk_mount_point'</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:23ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Returned allocated memory</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">        mount_point = disk_mount_point(vol);</td></tr>
 <tr><td class="num" id="LN331">331</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN332">332</td><td class="line">        <span class='keyword'>if</span> (description &amp;&amp; <span class='macro'>streq(vol, description)<span class='expansion'>(strcmp((vol),(description)) == 0)</span></span>)</td></tr>
 <tr><td class="num" id="LN333">333</td><td class="line">                <span class='comment'>/* If the description string is simply the</span></td></tr>
@@ -429,12 +421,9 @@
 <tr><td class="num" id="LN336">336</td><td class="line">                description = mfree(description);</td></tr>
 <tr><td class="num" id="LN337">337</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN338">338</td><td class="line">        <span class='keyword'>if</span> (mount_point &amp;&amp; description)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN339">339</td><td class="line">                r = asprintf(&amp;name_buffer, <span class='string_literal'>"%s (%s) on %s"</span>, description, vol, mount_point);</td></tr>
 <tr><td class="num" id="LN340">340</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (mount_point)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:14ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN341">341</td><td class="line">                r = asprintf(&amp;name_buffer, <span class='string_literal'>"%s on %s"</span>, vol, mount_point);</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'mount_point'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN342">342</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (description)</td></tr>
 <tr><td class="num" id="LN343">343</td><td class="line">                r = asprintf(&amp;name_buffer, <span class='string_literal'>"%s (%s)"</span>, description, vol);</td></tr>
 <tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
@@ -574,7 +563,9 @@
 <tr><td class="num" id="LN478">478</td><td class="line">        <span class='macro'>assert(name)<span class='expansion'>do { if ((__builtin_expect(!!(!(name)),0))) log_assert_failed<br>("name", "src/cryptsetup/cryptsetup.c", 478, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN479">479</td><td class="line">        <span class='macro'>assert(key_file || passwords)<span class='expansion'>do { if ((__builtin_expect(!!(!(key_file || passwords)),0))) log_assert_failed<br>("key_file || passwords", "src/cryptsetup/cryptsetup.c", 479,<br> __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN480">480</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN481">481</td><td class="line">        <span class='keyword'>if</span> (!arg_type || <span class='macro'>streq(arg_type, CRYPT_LUKS1)<span class='expansion'>(strcmp((arg_type),("LUKS1")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!arg_type</span> || <span class='macro'>streq(arg_type, CRYPT_LUKS1)<span class='expansion'>(strcmp((arg_type),("LUKS1")) == 0)</span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'arg_type' is non-null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN482">482</td><td class="line">                r = crypt_load(cd, <span class='macro'>CRYPT_LUKS1<span class='expansion'>"LUKS1"</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN483">483</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
 <tr><td class="num" id="LN484">484</td><td class="line">                        <span class='macro'>log_error(<span class='string_literal'>"crypt_load() failed on device %s.\n"</span>, crypt_get_device_name(cd))<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/cryptsetup/cryptsetup.c"<br>, 484, __func__, "crypt_load() failed on device %s.\n", crypt_get_device_name<br>(cd)) : -abs(_e); })</span></span>;</td></tr>
@@ -586,6 +577,7 @@
 <tr><td class="num" id="LN490">490</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN491">491</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN492">492</td><td class="line">        <span class='keyword'>if</span> ((!arg_type &amp;&amp; r &lt; 0) || streq_ptr(arg_type, <span class='macro'>CRYPT_PLAIN<span class='expansion'>"PLAIN"</span></span>)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN493">493</td><td class="line">                <span class='keyword'>struct</span> crypt_params_plain params = {</td></tr>
 <tr><td class="num" id="LN494">494</td><td class="line">                        .offset = arg_offset,</td></tr>
 <tr><td class="num" id="LN495">495</td><td class="line">                        .skip = arg_skip,</td></tr>
@@ -593,25 +585,34 @@
 <tr><td class="num" id="LN497">497</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *cipher, *cipher_mode;</td></tr>
 <tr><td class="num" id="LN498">498</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *truncated_cipher = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN499">499</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN500">500</td><td class="line">                <span class='keyword'>if</span> (arg_hash) {</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">arg_hash</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 'arg_hash' is null</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN501">501</td><td class="line">                        <span class='comment'>/* plain isn't a real hash type. it just means "use no hash" */</span></td></tr>
 <tr><td class="num" id="LN502">502</td><td class="line">                        <span class='keyword'>if</span> (!<span class='macro'>streq(arg_hash, <span class='string_literal'>"plain"</span>)<span class='expansion'>(strcmp((arg_hash),("plain")) == 0)</span></span>)</td></tr>
 <tr><td class="num" id="LN503">503</td><td class="line">                                params.hash = arg_hash;</td></tr>
 <tr><td class="num" id="LN504">504</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (!key_file)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN505">505</td><td class="line">                        <span class='comment'>/* for CRYPT_PLAIN, the behaviour of cryptsetup</span></td></tr>
 <tr><td class="num" id="LN506">506</td><td class="line">                         <span class='comment'>* package is to not hash when a key file is provided */</span></td></tr>
 <tr><td class="num" id="LN507">507</td><td class="line">                        params.hash = <span class='string_literal'>"ripemd160"</span>;</td></tr>
 <tr><td class="num" id="LN508">508</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line">                <span class='keyword'>if</span> (arg_cipher) {</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">arg_cipher</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'arg_cipher' is non-null</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN510">510</td><td class="line">                        size_t l;</td></tr>
 <tr><td class="num" id="LN511">511</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN512">512</td><td class="line">                        l = strcspn(arg_cipher, <span class='string_literal'>"-"</span>);</td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line">                        truncated_cipher = strndup(arg_cipher, l);</td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line">                        <span class='keyword'>if</span> (!truncated_cipher)</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">                        truncated_cipher = <span class="mrange">strndup(arg_cipher, l)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:44ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!truncated_cipher</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Assuming 'truncated_cipher' is non-null</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN515">515</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/cryptsetup/cryptsetup.c", 515, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN516">516</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN517">517</td><td class="line">                        cipher = truncated_cipher;</td></tr>
 <tr><td class="num" id="LN518">518</td><td class="line">                        cipher_mode = arg_cipher[l] ? arg_cipher+l+1 : <span class='string_literal'>"plain"</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:39ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>'?' condition is true</td><td><div class="PathNav"><a href="#EndPath" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN519">519</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN520">520</td><td class="line">                        cipher = <span class='string_literal'>"aes"</span>;</td></tr>
 <tr><td class="num" id="LN521">521</td><td class="line">                        cipher_mode = <span class='string_literal'>"cbc-essiv:sha256"</span>;</td></tr>
@@ -629,6 +630,7 @@
 <tr><td class="num" id="LN533">533</td><td class="line">                 <span class='comment'>* parameters when used for plain</span></td></tr>
 <tr><td class="num" id="LN534">534</td><td class="line">                 <span class='comment'>* mode. */</span></td></tr>
 <tr><td class="num" id="LN535">535</td><td class="line">                r = crypt_format(cd, <span class='macro'>CRYPT_PLAIN<span class='expansion'>"PLAIN"</span></span>, cipher, cipher_mode, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, arg_keyfile_size, &amp;params);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'cipher'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN536">536</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN537">537</td><td class="line">                <span class='comment'>/* hash == NULL implies the user passed "plain" */</span></td></tr>
 <tr><td class="num" id="LN538">538</td><td class="line">                pass_volume_key = (params.hash == <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
@@ -815,36 +817,40 @@
 <tr><td class="num" id="LN719">719</td><td class="line">                <span class='keyword'>int</span> k;</td></tr>
 <tr><td class="num" id="LN720">720</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN721">721</td><td class="line">                k = crypt_init_by_name(&amp;cd, argv[2]);</td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line">                <span class='keyword'>if</span> (k) {</td></tr>
-<tr><td class="num" id="LN723">723</td><td class="line">                        <span class='macro'>log_error_errno(k, <span class='string_literal'>"crypt_init() failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (k); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/cryptsetup/cryptsetup.c"<br>, 723, __func__, "crypt_init() failed: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN724">724</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN725">725</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN726">726</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN727">727</td><td class="line">                crypt_set_log_callback(cd, log_glue, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN729">729</td><td class="line">                k = crypt_deactivate(cd, argv[2]);</td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0) {</td></tr>
-<tr><td class="num" id="LN731">731</td><td class="line">                        <span class='macro'>log_error_errno(k, <span class='string_literal'>"Failed to deactivate: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (k); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/cryptsetup/cryptsetup.c"<br>, 731, __func__, "Failed to deactivate: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN732">732</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN734">734</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN735">735</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Unknown verb %s."</span>, argv[1])<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/cryptsetup/cryptsetup.c"<br>, 736, __func__, "Unknown verb %s.", argv[1]) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN737">737</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN738">738</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN739">739</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line">        r = <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN741">741</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">                <span class='keyword'>if</span> (k == -<span class='macro'>ENODEV<span class='expansion'>19</span></span>) {</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">                        <span class='macro'>log_info(<span class='string_literal'>"Volume %s already inactive."</span>, argv[2])<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/cryptsetup/cryptsetup.c"<br>, 723, __func__, "Volume %s already inactive.", argv[2]) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">                        r = <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (k) {</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">                        <span class='macro'>log_error_errno(k, <span class='string_literal'>"crypt_init_by_name() failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (k); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/cryptsetup/cryptsetup.c"<br>, 727, __func__, "crypt_init_by_name() failed: %m") : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">                crypt_set_log_callback(cd, log_glue, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">                k = crypt_deactivate(cd, argv[2]);</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0) {</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">                        <span class='macro'>log_error_errno(k, <span class='string_literal'>"Failed to deactivate: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (k); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/cryptsetup/cryptsetup.c"<br>, 735, __func__, "Failed to deactivate: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Unknown verb %s."</span>, argv[1])<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/cryptsetup/cryptsetup.c"<br>, 740, __func__, "Unknown verb %s.", argv[1]) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN743">743</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN744">744</td><td class="line">        <span class='keyword'>if</span> (cd)</td></tr>
-<tr><td class="num" id="LN745">745</td><td class="line">                crypt_free(cd);</td></tr>
-<tr><td class="num" id="LN746">746</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN747">747</td><td class="line">        free(arg_cipher);</td></tr>
-<tr><td class="num" id="LN748">748</td><td class="line">        free(arg_hash);</td></tr>
-<tr><td class="num" id="LN749">749</td><td class="line">        free(arg_header);</td></tr>
-<tr><td class="num" id="LN750">750</td><td class="line">        strv_free(arg_tcrypt_keyfiles);</td></tr>
-<tr><td class="num" id="LN751">751</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN752">752</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN753">753</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">        r = <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">        <span class='keyword'>if</span> (cd)</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">                crypt_free(cd);</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">        free(arg_cipher);</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">        free(arg_hash);</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">        free(arg_header);</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">        strv_free(arg_tcrypt_keyfiles);</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">}</td></tr>
 </table></body></html>
