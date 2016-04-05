@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'service' -->
+<!-- BUGDESC Potential leak of memory pointed to by 'timer' -->
 
 <!-- BUGTYPE Memory leak -->
 
@@ -66,7 +66,7 @@
 
 <!-- FUNCTIONNAME start_transient_timer -->
 
-<!-- BUGLINE 1076 -->
+<!-- BUGLINE 1086 -->
 
 <!-- BUGCOLUMN 40 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>run/run.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1076, column 40</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'service'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1086, column 40</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'timer'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -963,7 +963,7 @@
 <tr><td class="num" id="LN878">878</td><td class="line">                (<span class='keyword'>void</span>) sd_event_add_signal(event, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>SIGTERM<span class='expansion'>15</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN879">879</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN880">880</td><td class="line">                <span class='keyword'>if</span> (!arg_quiet)</td></tr>
-<tr><td class="num" id="LN881">881</td><td class="line">                        <span class='macro'>log_info(<span class='string_literal'>"Running as unit %s\nPress ^] three times within 1s to disconnect TTY."</span>, service)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 881<br>, __func__, "Running as unit %s\nPress ^] three times within 1s to disconnect TTY."<br>, service) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN881">881</td><td class="line">                        <span class='macro'>log_info(<span class='string_literal'>"Running as unit: %s\nPress ^] three times within 1s to disconnect TTY."</span>, service)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 881<br>, __func__, "Running as unit: %s\nPress ^] three times within 1s to disconnect TTY."<br>, service) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN882">882</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN883">883</td><td class="line">                r = pty_forward_new(event, master, PTY_FORWARD_IGNORE_INITIAL_VHANGUP, &amp;forward);</td></tr>
 <tr><td class="num" id="LN884">884</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
@@ -981,7 +981,7 @@
 <tr><td class="num" id="LN896">896</td><td class="line">                        fputc('\n', <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
 <tr><td class="num" id="LN897">897</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN898">898</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (!arg_quiet)</td></tr>
-<tr><td class="num" id="LN899">899</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Running as unit %s"</span>, service)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 899<br>, __func__, "Running as unit %s", service) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN899">899</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Running as unit: %s"</span>, service)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 899<br>, __func__, "Running as unit: %s", service) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN900">900</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN901">901</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN902">902</td><td class="line">}</td></tr>
@@ -1123,7 +1123,7 @@
 <tr><td class="num" id="LN1038">1038</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1039">1039</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1040">1040</td><td class="line">        <span class='keyword'>if</span> (!arg_quiet)</td></tr>
-<tr><td class="num" id="LN1041">1041</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Running scope as unit %s"</span>, scope)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1041<br>, __func__, "Running scope as unit %s", scope) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1041">1041</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Running scope as unit: %s"</span>, scope)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1041<br>, __func__, "Running scope as unit: %s", scope) : -abs(_e); }<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN1042">1042</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1043">1043</td><td class="line">        execvpe(argv[0], argv, env);</td></tr>
 <tr><td class="num" id="LN1044">1044</td><td class="line"> </td></tr>
@@ -1154,34 +1154,34 @@
 <tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'arg_unit' is non-null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1067">1067</td><td class="line">                <span class='keyword'>switch</span> (unit_name_to_type(arg_unit)) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Control jumps to 'case UNIT_SERVICE:'  at line 1069</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Control jumps to 'case UNIT_TIMER:'  at line 1079</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1068">1068</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1069">1069</td><td class="line">                <span class='keyword'>case</span> UNIT_SERVICE:</td></tr>
-<tr><td class="num" id="LN1070">1070</td><td class="line">                        service = <span class="mrange">strdup(arg_unit)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:35ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1071">1071</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!service</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'service' is non-null</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1070">1070</td><td class="line">                        service = strdup(arg_unit);</td></tr>
+<tr><td class="num" id="LN1071">1071</td><td class="line">                        <span class='keyword'>if</span> (!service)</td></tr>
 <tr><td class="num" id="LN1072">1072</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/run/run.c", 1072, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN1073">1073</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1074">1074</td><td class="line">                        r = unit_name_change_suffix(service, <span class='string_literal'>".timer"</span>, &amp;timer);</td></tr>
-<tr><td class="num" id="LN1075">1075</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1075">1075</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1076">1076</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to change unit suffix: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1076<br>, __func__, "Failed to change unit suffix: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:40ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error_errno':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'service'</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN1077">1077</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1078">1078</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1079">1079</td><td class="line">                <span class='keyword'>case</span> UNIT_TIMER:</td></tr>
-<tr><td class="num" id="LN1080">1080</td><td class="line">                        timer = strdup(arg_unit);</td></tr>
-<tr><td class="num" id="LN1081">1081</td><td class="line">                        <span class='keyword'>if</span> (!timer)</td></tr>
+<tr><td class="num" id="LN1080">1080</td><td class="line">                        timer = <span class="mrange">strdup(arg_unit)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1081">1081</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!timer</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'timer' is non-null</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1082">1082</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/run/run.c", 1082, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN1083">1083</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1084">1084</td><td class="line">                        r = unit_name_change_suffix(timer, <span class='string_literal'>".service"</span>, &amp;service);</td></tr>
-<tr><td class="num" id="LN1085">1085</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1085">1085</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1086">1086</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to change unit suffix: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1086<br>, __func__, "Failed to change unit suffix: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:40ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error_errno':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'timer'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN1087">1087</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1088">1088</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1089">1089</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
@@ -1287,9 +1287,9 @@
 <tr><td class="num" id="LN1189">1189</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1190">1190</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1191">1191</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1192">1192</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Running timer as unit %s"</span>, timer)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1192<br>, __func__, "Running timer as unit %s", timer) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1192">1192</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Running timer as unit: %s"</span>, timer)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1192<br>, __func__, "Running timer as unit: %s", timer) : -abs(_e); }<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN1193">1193</td><td class="line">        <span class='keyword'>if</span> (argv[0])</td></tr>
-<tr><td class="num" id="LN1194">1194</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Will run service as unit %s"</span>, service)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1194<br>, __func__, "Will run service as unit %s", service) : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1194">1194</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Will run service as unit: %s"</span>, service)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1194<br>, __func__, "Will run service as unit: %s", service) : -abs(_e<br>); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1195">1195</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1196">1196</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1197">1197</td><td class="line">}</td></tr>
