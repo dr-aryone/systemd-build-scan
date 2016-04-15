@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'stream' is never read -->
+<!-- BUGDESC Value stored to 'fd' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME coredump.c -->
 
-<!-- FUNCTIONNAME compose_open_fds -->
+<!-- FUNCTIONNAME save_external_coredump -->
 
-<!-- BUGLINE 552 -->
+<!-- BUGLINE 436 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>coredump/coredump.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 552, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'stream' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 436, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -417,7 +417,7 @@
 <tr><td class="num" id="LN329">329</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN330">330</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN331">331</td><td class="line">        <span class='comment'>/* Never store more than the process configured, or than we actually shall keep or process */</span></td></tr>
-<tr><td class="num" id="LN332">332</td><td class="line">        max_size = <span class='macro'>MIN(rlimit, MAX(arg_process_size_max, arg_external_size_max))<span class='expansion'>__extension__ ({ const typeof((rlimit)) __unique_prefix_A16 =<br> ((rlimit)); const typeof((__extension__ ({ const typeof((arg_process_size_max<br>)) __unique_prefix_A14 = ((arg_process_size_max)); const typeof<br>((arg_external_size_max)) __unique_prefix_B15 = ((arg_external_size_max<br>)); __unique_prefix_A14 &gt; __unique_prefix_B15 ? __unique_prefix_A14<br> : __unique_prefix_B15; }))) __unique_prefix_B17 = ((__extension__<br> ({ const typeof((arg_process_size_max)) __unique_prefix_A14 =<br> ((arg_process_size_max)); const typeof((arg_external_size_max<br>)) __unique_prefix_B15 = ((arg_external_size_max)); __unique_prefix_A14<br> &gt; __unique_prefix_B15 ? __unique_prefix_A14 : __unique_prefix_B15<br>; }))); __unique_prefix_A16 &lt; __unique_prefix_B17 ? __unique_prefix_A16<br> : __unique_prefix_B17; })</span></span>;</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">        max_size = <span class='macro'>MIN(rlimit, MAX(arg_process_size_max, arg_external_size_max))<span class='expansion'>__extension__ ({ const typeof((rlimit)) __unique_prefix_A12 =<br> ((rlimit)); const typeof((__extension__ ({ const typeof((arg_process_size_max<br>)) __unique_prefix_A10 = ((arg_process_size_max)); const typeof<br>((arg_external_size_max)) __unique_prefix_B11 = ((arg_external_size_max<br>)); __unique_prefix_A10 &gt; __unique_prefix_B11 ? __unique_prefix_A10<br> : __unique_prefix_B11; }))) __unique_prefix_B13 = ((__extension__<br> ({ const typeof((arg_process_size_max)) __unique_prefix_A10 =<br> ((arg_process_size_max)); const typeof((arg_external_size_max<br>)) __unique_prefix_B11 = ((arg_external_size_max)); __unique_prefix_A10<br> &gt; __unique_prefix_B11 ? __unique_prefix_A10 : __unique_prefix_B11<br>; }))); __unique_prefix_A12 &lt; __unique_prefix_B13 ? __unique_prefix_A12<br> : __unique_prefix_B13; })</span></span>;</td></tr>
 <tr><td class="num" id="LN333">333</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN334">334</td><td class="line">        r = make_filename(context, &amp;fn);</td></tr>
 <tr><td class="num" id="LN335">335</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
@@ -521,7 +521,8 @@
 <tr><td class="num" id="LN433">433</td><td class="line">        *ret_size = (uint64_t) st.st_size;</td></tr>
 <tr><td class="num" id="LN434">434</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN435">435</td><td class="line">        fn = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN436">436</td><td class="line">        fd = -1;</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
 <tr><td class="num" id="LN437">437</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN438">438</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN439">439</td><td class="line"> </td></tr>
@@ -637,8 +638,7 @@
 <tr><td class="num" id="LN549">549</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN550">550</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN551">551</td><td class="line">        <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> = 0;</td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">        stream = <span class="mrange">safe_fclose(stream)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'stream' is never read</div></td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">        stream = safe_fclose(stream);</td></tr>
 <tr><td class="num" id="LN553">553</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN554">554</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> &gt; 0)</td></tr>
 <tr><td class="num" id="LN555">555</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
@@ -1184,7 +1184,7 @@
 <tr><td class="num" id="LN1095">1095</td><td class="line">                        <span class='macro'>IOVEC_SET_STRING(iovec[n_iovec++], core_environ)<span class='expansion'>do { struct iovec *_i = &amp;(iovec[n_iovec++]); char *_s = (<br>char *)(core_environ); _i-&gt;iov_base = _s; _i-&gt;iov_len =<br> strlen(_s); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1096">1096</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1097">1097</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1098">1098</td><td class="line">        core_timestamp = <span class='macro'>strjoina(<span class='string_literal'>"COREDUMP_TIMESTAMP="</span>, context[CONTEXT_TIMESTAMP], <span class='string_literal'>"000000"</span>, NULL)<span class='expansion'>({ const char *_appendees_[] = { "COREDUMP_TIMESTAMP=", context<br>[CONTEXT_TIMESTAMP], "000000", ((void*)0) }; char *_d_, *_p_;<br> int _len_ = 0; unsigned _i_; for (_i_ = 0; _i_ &lt; __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN1098">1098</td><td class="line">        core_timestamp = <span class='macro'>strjoina(<span class='string_literal'>"COREDUMP_TIMESTAMP="</span>, context[CONTEXT_TIMESTAMP], <span class='string_literal'>"000000"</span>)<span class='expansion'>({ const char *_appendees_[] = { "COREDUMP_TIMESTAMP=", context<br>[CONTEXT_TIMESTAMP], "000000" }; char *_d_, *_p_; int _len_ =<br> 0; unsigned _i_; for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _len_ += strlen<br>(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca (_len_ + 1);<br> for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr(<br> !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
 <tr><td class="num" id="LN1099">1099</td><td class="line">        <span class='macro'>IOVEC_SET_STRING(iovec[n_iovec++], core_timestamp)<span class='expansion'>do { struct iovec *_i = &amp;(iovec[n_iovec++]); char *_s = (<br>char *)(core_timestamp); _i-&gt;iov_base = _s; _i-&gt;iov_len<br> = strlen(_s); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1100">1100</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1101">1101</td><td class="line">        <span class='macro'>IOVEC_SET_STRING(iovec[n_iovec++], <span class='string_literal'>"MESSAGE_ID=fc2e22bc6ee647b6b90729ab34a250b1"</span>)<span class='expansion'>do { struct iovec *_i = &amp;(iovec[n_iovec++]); char *_s = (<br>char *)("MESSAGE_ID=fc2e22bc6ee647b6b90729ab34a250b1"); _i-&gt;<br>iov_base = _s; _i-&gt;iov_len = strlen(_s); } while (0)</span></span>;</td></tr>

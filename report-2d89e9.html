@@ -64,9 +64,9 @@
 
 <!-- FILENAME machine-id-setup.c -->
 
-<!-- FUNCTIONNAME machine_id_setup -->
+<!-- FUNCTIONNAME machine_id_commit -->
 
-<!-- BUGLINE 257 -->
+<!-- BUGLINE 318 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/machine-id-setup.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 257, column 9</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 318, column 9</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -339,103 +339,104 @@
 <tr><td class="num" id="LN254">254</td><td class="line">                <span class='keyword'>if</span> (write_machine_id(fd, id) &gt;= 0)</td></tr>
 <tr><td class="num" id="LN255">255</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN256">256</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN257">257</td><td class="line">        fd = <span class="mrange">safe_close(fd)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">        fd = safe_close(fd);</td></tr>
 <tr><td class="num" id="LN258">258</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN259">259</td><td class="line">        <span class='comment'>/* Hmm, we couldn't write it? So let's write it to</span></td></tr>
 <tr><td class="num" id="LN260">260</td><td class="line">         <span class='comment'>* /run/machine-id as a replacement */</span></td></tr>
 <tr><td class="num" id="LN261">261</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN262">262</td><td class="line">        <span class='macro'>RUN_WITH_UMASK(0022)<span class='expansion'>for (__attribute__((cleanup(_reset_umask_))) struct _umask_struct_<br> _saved_umask_ = { umask(0022), 0 }; !_saved_umask_.quit ; _saved_umask_<br>.quit = 1)</span></span></td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">        <span class='macro'>RUN_WITH_UMASK(0022)<span class='expansion'>for (__attribute__((cleanup(_reset_umask_))) struct _umask_struct_<br> _saved_umask_ = { umask(0022), 0 }; !_saved_umask_.quit ; _saved_umask_<br>.quit = 1)</span></span> {</td></tr>
 <tr><td class="num" id="LN263">263</td><td class="line">                r = write_string_file(run_machine_id, id, WRITE_STRING_FILE_CREATE);</td></tr>
-<tr><td class="num" id="LN264">264</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN265">265</td><td class="line">                (<span class='keyword'>void</span>) unlink(run_machine_id);</td></tr>
-<tr><td class="num" id="LN266">266</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Cannot write %s: %m"</span>, run_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 266, __func__, "Cannot write %s: %m", run_machine_id) : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN267">267</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN268">268</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN269">269</td><td class="line">        <span class='comment'>/* And now, let's mount it over */</span></td></tr>
-<tr><td class="num" id="LN270">270</td><td class="line">        <span class='keyword'>if</span> (mount(run_machine_id, etc_machine_id, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>MS_BIND<span class='expansion'>MS_BIND</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN271">271</td><td class="line">                (<span class='keyword'>void</span>) unlink_noerrno(run_machine_id);</td></tr>
-<tr><td class="num" id="LN272">272</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to mount %s: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 272, __func__, "Failed to mount %s: %m", etc_machine_id) : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN273">273</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN274">274</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN275">275</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Installed transient %s file."</span>, etc_machine_id)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 275, __func__, "Installed transient %s file.", etc_machine_id<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN276">276</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN277">277</td><td class="line">        <span class='comment'>/* Mark the mount read-only */</span></td></tr>
-<tr><td class="num" id="LN278">278</td><td class="line">        <span class='keyword'>if</span> (mount(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, etc_machine_id, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>MS_BIND<span class='expansion'>MS_BIND</span></span>|<span class='macro'>MS_RDONLY<span class='expansion'>MS_RDONLY</span></span>|<span class='macro'>MS_REMOUNT<span class='expansion'>MS_REMOUNT</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0)</td></tr>
-<tr><td class="num" id="LN279">279</td><td class="line">                <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to make transient %s read-only: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 279, __func__, "Failed to make transient %s read-only: %m",<br> etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN280">280</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN281">281</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN282">282</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN283">283</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN284">284</td><td class="line"><span class='keyword'>int</span> machine_id_commit(<span class='keyword'>const</span> <span class='keyword'>char</span> *root) {</td></tr>
-<tr><td class="num" id="LN285">285</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1, initial_mntns_fd = -1;</td></tr>
-<tr><td class="num" id="LN286">286</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *etc_machine_id;</td></tr>
-<tr><td class="num" id="LN287">287</td><td class="line">        <span class='keyword'>char</span> id[34]; <span class='comment'>/* 32 + \n + \0 */</span></td></tr>
-<tr><td class="num" id="LN288">288</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN289">289</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN290">290</td><td class="line">        etc_machine_id = <span class='macro'>prefix_roota(root, <span class='string_literal'>"/etc/machine-id"</span>)<span class='expansion'>({ const char* _path = ("/etc/machine-id"), *_root = (root), *<br>_ret; char *_p, *_n; size_t _l; while (_path[0] == '/' &amp;&amp;<br> _path[1] == '/') _path ++; if (isempty(_root) || path_equal(<br>_root, "/")) _ret = _path; else { _l = strlen(_root) + 1 + strlen<br>(_path) + 1; _n = __builtin_alloca (_l); _p = stpcpy(_n, _root<br>); while (_p &gt; _n &amp;&amp; _p[-1] == '/') _p--; if (_path<br>[0] != '/') *(_p++) = '/'; strcpy(_p, _path); _ret = _n; } _ret<br>; })</span></span>;</td></tr>
-<tr><td class="num" id="LN291">291</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN292">292</td><td class="line">        r = path_is_mount_point(etc_machine_id, 0);</td></tr>
-<tr><td class="num" id="LN293">293</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN294">294</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine whether %s is a mount point: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 294, __func__, "Failed to determine whether %s is a mount point: %m"<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN295">295</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
-<tr><td class="num" id="LN296">296</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"%s is is not a mount point. Nothing to do."</span>, etc_machine_id)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 296, __func__, "%s is is not a mount point. Nothing to do."<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN297">297</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN298">298</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN299">299</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN300">300</td><td class="line">        <span class='comment'>/* Read existing machine-id */</span></td></tr>
-<tr><td class="num" id="LN301">301</td><td class="line">        fd = open(etc_machine_id, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
-<tr><td class="num" id="LN302">302</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN303">303</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Cannot open %s: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 303, __func__, "Cannot open %s: %m", etc_machine_id) : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN304">304</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN305">305</td><td class="line">        r = read_machine_id(fd, id);</td></tr>
-<tr><td class="num" id="LN306">306</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN307">307</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"We didn't find a valid machine ID in %s."</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 307, __func__, "We didn't find a valid machine ID in %s.", etc_machine_id<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN308">308</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN309">309</td><td class="line">        r = fd_is_temporary_fs(fd);</td></tr>
-<tr><td class="num" id="LN310">310</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN311">311</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine whether %s is on a temporary file system: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 311, __func__, "Failed to determine whether %s is on a temporary file system: %m"<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN312">312</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
-<tr><td class="num" id="LN313">313</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"%s is not on a temporary file system."</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 313, __func__, "%s is not on a temporary file system.", etc_machine_id<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN314">314</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EROFS<span class='expansion'>30</span></span>;</td></tr>
-<tr><td class="num" id="LN315">315</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN316">316</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN317">317</td><td class="line">        fd = safe_close(fd);</td></tr>
-<tr><td class="num" id="LN318">318</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN319">319</td><td class="line">        <span class='comment'>/* Store current mount namespace */</span></td></tr>
-<tr><td class="num" id="LN320">320</td><td class="line">        r = namespace_open(0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;initial_mntns_fd, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN321">321</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN322">322</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Can't fetch current mount namespace: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 322, __func__, "Can't fetch current mount namespace: %m") :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN323">323</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN324">324</td><td class="line">        <span class='comment'>/* Switch to a new mount namespace, isolate ourself and unmount etc_machine_id in our new namespace */</span></td></tr>
-<tr><td class="num" id="LN325">325</td><td class="line">        <span class='keyword'>if</span> (unshare(<span class='macro'>CLONE_NEWNS<span class='expansion'>0x00020000</span></span>) &lt; 0)</td></tr>
-<tr><td class="num" id="LN326">326</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to enter new namespace: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 326, __func__, "Failed to enter new namespace: %m") : -abs(<br>_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN328">328</td><td class="line">        <span class='keyword'>if</span> (mount(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='string_literal'>"/"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>MS_SLAVE<span class='expansion'>MS_SLAVE</span></span> | <span class='macro'>MS_REC<span class='expansion'>MS_REC</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0)</td></tr>
-<tr><td class="num" id="LN329">329</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Couldn't make-rslave / mountpoint in our private namespace: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 329, __func__, "Couldn't make-rslave / mountpoint in our private namespace: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN330">330</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN331">331</td><td class="line">        <span class='keyword'>if</span> (umount(etc_machine_id) &lt; 0)</td></tr>
-<tr><td class="num" id="LN332">332</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to unmount transient %s file in our private namespace: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 332, __func__, "Failed to unmount transient %s file in our private namespace: %m"<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN333">333</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN334">334</td><td class="line">        <span class='comment'>/* Update a persistent version of etc_machine_id */</span></td></tr>
-<tr><td class="num" id="LN335">335</td><td class="line">        fd = open(etc_machine_id, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CREAT<span class='expansion'>0100</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>, 0444);</td></tr>
-<tr><td class="num" id="LN336">336</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN337">337</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Cannot open for writing %s. This is mandatory to get a persistent machine-id: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 337, __func__, "Cannot open for writing %s. This is mandatory to get a persistent machine-id: %m"<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN338">338</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN339">339</td><td class="line">        r = write_machine_id(fd, id);</td></tr>
-<tr><td class="num" id="LN340">340</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN341">341</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Cannot write %s: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 341, __func__, "Cannot write %s: %m", etc_machine_id) : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN342">342</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN343">343</td><td class="line">        fd = safe_close(fd);</td></tr>
-<tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN345">345</td><td class="line">        <span class='comment'>/* Return to initial namespace and proceed a lazy tmpfs unmount */</span></td></tr>
-<tr><td class="num" id="LN346">346</td><td class="line">        r = namespace_enter(-1, initial_mntns_fd, -1, -1, -1);</td></tr>
-<tr><td class="num" id="LN347">347</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN348">348</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to switch back to initial mount namespace: %m.\nWe'll keep transient %s file until next reboot."</span>, etc_machine_id)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 348, __func__, "Failed to switch back to initial mount namespace: %m.\nWe'll keep transient %s file until next reboot."<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN349">349</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN350">350</td><td class="line">        <span class='keyword'>if</span> (umount2(etc_machine_id, <span class='macro'>MNT_DETACH<span class='expansion'>MNT_DETACH</span></span>) &lt; 0)</td></tr>
-<tr><td class="num" id="LN351">351</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to unmount transient %s file: %m.\nWe keep that mount until next reboot."</span>, etc_machine_id)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 351, __func__, "Failed to unmount transient %s file: %m.\nWe keep that mount until next reboot."<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN352">352</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN353">353</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN354">354</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">                        (<span class='keyword'>void</span>) unlink(run_machine_id);</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Cannot write %s: %m"</span>, run_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 266, __func__, "Cannot write %s: %m", run_machine_id) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">        <span class='comment'>/* And now, let's mount it over */</span></td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">        <span class='keyword'>if</span> (mount(run_machine_id, etc_machine_id, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>MS_BIND<span class='expansion'>MS_BIND</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">                (<span class='keyword'>void</span>) unlink_noerrno(run_machine_id);</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to mount %s: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 273, __func__, "Failed to mount %s: %m", etc_machine_id) : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Installed transient %s file."</span>, etc_machine_id)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 276, __func__, "Installed transient %s file.", etc_machine_id<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">        <span class='comment'>/* Mark the mount read-only */</span></td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">        <span class='keyword'>if</span> (mount(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, etc_machine_id, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>MS_BIND<span class='expansion'>MS_BIND</span></span>|<span class='macro'>MS_RDONLY<span class='expansion'>MS_RDONLY</span></span>|<span class='macro'>MS_REMOUNT<span class='expansion'>MS_REMOUNT</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">                <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to make transient %s read-only: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 280, __func__, "Failed to make transient %s read-only: %m",<br> etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line"><span class='keyword'>int</span> machine_id_commit(<span class='keyword'>const</span> <span class='keyword'>char</span> *root) {</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1, initial_mntns_fd = -1;</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *etc_machine_id;</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">        <span class='keyword'>char</span> id[34]; <span class='comment'>/* 32 + \n + \0 */</span></td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">        etc_machine_id = <span class='macro'>prefix_roota(root, <span class='string_literal'>"/etc/machine-id"</span>)<span class='expansion'>({ const char* _path = ("/etc/machine-id"), *_root = (root), *<br>_ret; char *_p, *_n; size_t _l; while (_path[0] == '/' &amp;&amp;<br> _path[1] == '/') _path ++; if (isempty(_root) || path_equal(<br>_root, "/")) _ret = _path; else { _l = strlen(_root) + 1 + strlen<br>(_path) + 1; _n = __builtin_alloca (_l); _p = stpcpy(_n, _root<br>); while (_p &gt; _n &amp;&amp; _p[-1] == '/') _p--; if (_path<br>[0] != '/') *(_p++) = '/'; strcpy(_p, _path); _ret = _n; } _ret<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">        r = path_is_mount_point(etc_machine_id, 0);</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine whether %s is a mount point: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 295, __func__, "Failed to determine whether %s is a mount point: %m"<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"%s is is not a mount point. Nothing to do."</span>, etc_machine_id)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 297, __func__, "%s is is not a mount point. Nothing to do."<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">        <span class='comment'>/* Read existing machine-id */</span></td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">        fd = open(etc_machine_id, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Cannot open %s: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 304, __func__, "Cannot open %s: %m", etc_machine_id) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">        r = read_machine_id(fd, id);</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"We didn't find a valid machine ID in %s."</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 308, __func__, "We didn't find a valid machine ID in %s.", etc_machine_id<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">        r = fd_is_temporary_fs(fd);</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine whether %s is on a temporary file system: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 312, __func__, "Failed to determine whether %s is on a temporary file system: %m"<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"%s is not on a temporary file system."</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 314, __func__, "%s is not on a temporary file system.", etc_machine_id<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EROFS<span class='expansion'>30</span></span>;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">        fd = <span class="mrange">safe_close(fd)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">        <span class='comment'>/* Store current mount namespace */</span></td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">        r = namespace_open(0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;initial_mntns_fd, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Can't fetch current mount namespace: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 323, __func__, "Can't fetch current mount namespace: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">        <span class='comment'>/* Switch to a new mount namespace, isolate ourself and unmount etc_machine_id in our new namespace */</span></td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">        <span class='keyword'>if</span> (unshare(<span class='macro'>CLONE_NEWNS<span class='expansion'>0x00020000</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to enter new namespace: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 327, __func__, "Failed to enter new namespace: %m") : -abs(<br>_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">        <span class='keyword'>if</span> (mount(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='string_literal'>"/"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>MS_SLAVE<span class='expansion'>MS_SLAVE</span></span> | <span class='macro'>MS_REC<span class='expansion'>MS_REC</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Couldn't make-rslave / mountpoint in our private namespace: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 330, __func__, "Couldn't make-rslave / mountpoint in our private namespace: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">        <span class='keyword'>if</span> (umount(etc_machine_id) &lt; 0)</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to unmount transient %s file in our private namespace: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 333, __func__, "Failed to unmount transient %s file in our private namespace: %m"<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">        <span class='comment'>/* Update a persistent version of etc_machine_id */</span></td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">        fd = open(etc_machine_id, <span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_CREAT<span class='expansion'>0100</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>, 0444);</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Cannot open for writing %s. This is mandatory to get a persistent machine-id: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 338, __func__, "Cannot open for writing %s. This is mandatory to get a persistent machine-id: %m"<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">        r = write_machine_id(fd, id);</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Cannot write %s: %m"</span>, etc_machine_id)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 342, __func__, "Cannot write %s: %m", etc_machine_id) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">        fd = safe_close(fd);</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">        <span class='comment'>/* Return to initial namespace and proceed a lazy tmpfs unmount */</span></td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">        r = namespace_enter(-1, initial_mntns_fd, -1, -1, -1);</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to switch back to initial mount namespace: %m.\nWe'll keep transient %s file until next reboot."</span>, etc_machine_id)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 349, __func__, "Failed to switch back to initial mount namespace: %m.\nWe'll keep transient %s file until next reboot."<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">        <span class='keyword'>if</span> (umount2(etc_machine_id, <span class='macro'>MNT_DETACH<span class='expansion'>MNT_DETACH</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to unmount transient %s file: %m.\nWe keep that mount until next reboot."</span>, etc_machine_id)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/machine-id-setup.c"<br>, 352, __func__, "Failed to unmount transient %s file: %m.\nWe keep that mount until next reboot."<br>, etc_machine_id) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">}</td></tr>
 </table></body></html>

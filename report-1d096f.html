@@ -334,7 +334,7 @@
 <tr><td class="num" id="LN249">249</td><td class="line">                <span class='keyword'>if</span> (!e)</td></tr>
 <tr><td class="num" id="LN250">250</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENXIO<span class='expansion'>6</span></span>;</td></tr>
 <tr><td class="num" id="LN251">251</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN252">252</td><td class="line">                prefix = <span class='macro'>strjoina(e, <span class='string_literal'>"/systemd/"</span>, NULL)<span class='expansion'>({ const char *_appendees_[] = { e, "/systemd/", ((void*)0) }<br>; char *_d_, *_p_; int _len_ = 0; unsigned _i_; for (_i_ = 0;<br> _i_ &lt; __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">                prefix = <span class='macro'>strjoina(e, <span class='string_literal'>"/systemd/"</span>)<span class='expansion'>({ const char *_appendees_[] = { e, "/systemd/" }; char *_d_,<br> *_p_; int _len_ = 0; unsigned _i_; for (_i_ = 0; _i_ &lt; __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
 <tr><td class="num" id="LN253">253</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN254">254</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
@@ -543,7 +543,7 @@
 <tr><td class="num" id="LN451">451</td><td class="line">                *transient = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
 <tr><td class="num" id="LN452">452</td><td class="line">                *persistent_control = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *runtime_control = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN453">453</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> append = <span class='macro'>false<span class='expansion'>0</span></span>; <span class='comment'>/* Add items from SYSTEMD_UNIT_PATH before normal directories */</span></td></tr>
-<tr><td class="num" id="LN454">454</td><td class="line">        <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **paths = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN455">455</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *e;</td></tr>
 <tr><td class="num" id="LN456">456</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN457">457</td><td class="line"> </td></tr>
@@ -598,317 +598,311 @@
 <tr><td class="num" id="LN506">506</td><td class="line">                <span class='comment'>/* FIXME: empty components in other places should be</span></td></tr>
 <tr><td class="num" id="LN507">507</td><td class="line">                 <span class='comment'>* rejected. */</span></td></tr>
 <tr><td class="num" id="LN508">508</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line">                r = path_split_and_make_absolute(e, &amp;l);</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                r = path_split_and_make_absolute(e, &amp;paths);</td></tr>
 <tr><td class="num" id="LN510">510</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN511">511</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN512">512</td><td class="line">        } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line">                l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN515">515</td><td class="line">        <span class='keyword'>if</span> (!l || append) {</td></tr>
-<tr><td class="num" id="LN516">516</td><td class="line">                <span class='comment'>/* Let's figure something out. */</span></td></tr>
-<tr><td class="num" id="LN517">517</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN518">518</td><td class="line">                <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **add = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN519">519</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line">                <span class='comment'>/* For the user units we include share/ in the search</span></td></tr>
-<tr><td class="num" id="LN521">521</td><td class="line">                 <span class='comment'>* path in order to comply with the XDG basedir spec.</span></td></tr>
-<tr><td class="num" id="LN522">522</td><td class="line">                 <span class='comment'>* For the system stuff we avoid such nonsense. OTOH</span></td></tr>
-<tr><td class="num" id="LN523">523</td><td class="line">                 <span class='comment'>* we include /lib in the search path for the system</span></td></tr>
-<tr><td class="num" id="LN524">524</td><td class="line">                 <span class='comment'>* stuff but avoid it for user stuff. */</span></td></tr>
-<tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN526">526</td><td class="line">                <span class='keyword'>switch</span> (scope) {</td></tr>
-<tr><td class="num" id="LN527">527</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN528">528</td><td class="line">                <span class='keyword'>case</span> UNIT_FILE_SYSTEM:</td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line">                        add = strv_new(</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line">                                        <span class='comment'>/* If you modify this you also want to modify</span></td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line">                                         <span class='comment'>* systemdsystemunitpath= in systemd.pc.in! */</span></td></tr>
-<tr><td class="num" id="LN532">532</td><td class="line">                                        STRV_IFNOTNULL(persistent_control),</td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">                                        STRV_IFNOTNULL(runtime_control),</td></tr>
-<tr><td class="num" id="LN534">534</td><td class="line">                                        STRV_IFNOTNULL(transient),</td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line">                                        STRV_IFNOTNULL(generator_early),</td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line">                                        persistent_config,</td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">                                        <span class='macro'>SYSTEM_CONFIG_UNIT_PATH<span class='expansion'>"/usr/etc/systemd/system"</span></span>,</td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line">                                        <span class='string_literal'>"/etc/systemd/system"</span>,</td></tr>
-<tr><td class="num" id="LN539">539</td><td class="line">                                        runtime_config,</td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line">                                        <span class='string_literal'>"/run/systemd/system"</span>,</td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">                                        STRV_IFNOTNULL(generator),</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line">                                        <span class='string_literal'>"/usr/local/lib/systemd/system"</span>,</td></tr>
-<tr><td class="num" id="LN543">543</td><td class="line">                                        <span class='macro'>SYSTEM_DATA_UNIT_PATH<span class='expansion'>"/usr/lib/systemd/system"</span></span>,</td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line">                                        <span class='string_literal'>"/usr/lib/systemd/system"</span>,</td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line"><span class='directive'>#ifdef HAVE_SPLIT_USR</span></td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">                                        <span class='string_literal'>"/lib/systemd/system"</span>,</td></tr>
-<tr><td class="num" id="LN547">547</td><td class="line"><span class='directive'>#endif</span></td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line">                                        STRV_IFNOTNULL(generator_late),</td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line">                                        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">                <span class='keyword'>case</span> UNIT_FILE_GLOBAL:</td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line">                        add = strv_new(</td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line">                                        <span class='comment'>/* If you modify this you also want to modify</span></td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">                                         <span class='comment'>* systemduserunitpath= in systemd.pc.in, and</span></td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">                                         <span class='comment'>* the arrays in user_dirs() above! */</span></td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line">                                        STRV_IFNOTNULL(persistent_control),</td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line">                                        STRV_IFNOTNULL(runtime_control),</td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">                                        STRV_IFNOTNULL(transient),</td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line">                                        STRV_IFNOTNULL(generator_early),</td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line">                                        persistent_config,</td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line">                                        <span class='macro'>USER_CONFIG_UNIT_PATH<span class='expansion'>"/usr/etc/systemd/user"</span></span>,</td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line">                                        <span class='string_literal'>"/etc/systemd/user"</span>,</td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line">                                        runtime_config,</td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line">                                        <span class='string_literal'>"/run/systemd/user"</span>,</td></tr>
-<tr><td class="num" id="LN566">566</td><td class="line">                                        STRV_IFNOTNULL(generator),</td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">                                        <span class='string_literal'>"/usr/local/lib/systemd/user"</span>,</td></tr>
-<tr><td class="num" id="LN568">568</td><td class="line">                                        <span class='string_literal'>"/usr/local/share/systemd/user"</span>,</td></tr>
-<tr><td class="num" id="LN569">569</td><td class="line">                                        <span class='macro'>USER_DATA_UNIT_PATH<span class='expansion'>"/usr/lib/systemd/user"</span></span>,</td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line">                                        <span class='string_literal'>"/usr/lib/systemd/user"</span>,</td></tr>
-<tr><td class="num" id="LN571">571</td><td class="line">                                        <span class='string_literal'>"/usr/share/systemd/user"</span>,</td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line">                                        STRV_IFNOTNULL(generator_late),</td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">                                        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line">                <span class='keyword'>case</span> UNIT_FILE_USER:</td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line">                        add = user_dirs(persistent_config, runtime_config,</td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">                                        generator, generator_early, generator_late,</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line">                                        transient,</td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">                                        persistent_config, runtime_control);</td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN584">584</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Hmm, unexpected scope?"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Hmm, unexpected scope?", "src/shared/path-lookup.c"<br>, 584, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">                <span class='keyword'>if</span> (!add)</td></tr>
-<tr><td class="num" id="LN588">588</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN589">589</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN590">590</td><td class="line">                <span class='keyword'>if</span> (l) {</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line">                        r = strv_extend_strv(&amp;l, add, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN592">592</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN593">593</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN594">594</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line">                        l = add;</td></tr>
-<tr><td class="num" id="LN596">596</td><td class="line">                        add = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN597">597</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN598">598</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN600">600</td><td class="line">        r = patch_root_prefix(&amp;persistent_config, root);</td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN602">602</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN603">603</td><td class="line">        r = patch_root_prefix(&amp;runtime_config, root);</td></tr>
-<tr><td class="num" id="LN604">604</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN605">605</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line">        r = patch_root_prefix(&amp;generator, root);</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">        <span class='keyword'>if</span> (!paths || append) {</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">                <span class='comment'>/* Let's figure something out. */</span></td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">                <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **add = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">                <span class='comment'>/* For the user units we include share/ in the search</span></td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">                 <span class='comment'>* path in order to comply with the XDG basedir spec.</span></td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">                 <span class='comment'>* For the system stuff we avoid such nonsense. OTOH</span></td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">                 <span class='comment'>* we include /lib in the search path for the system</span></td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">                 <span class='comment'>* stuff but avoid it for user stuff. */</span></td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">                <span class='keyword'>switch</span> (scope) {</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">                <span class='keyword'>case</span> UNIT_FILE_SYSTEM:</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                        add = strv_new(</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">                                        <span class='comment'>/* If you modify this you also want to modify</span></td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">                                         <span class='comment'>* systemdsystemunitpath= in systemd.pc.in! */</span></td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">                                        STRV_IFNOTNULL(persistent_control),</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">                                        STRV_IFNOTNULL(runtime_control),</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">                                        STRV_IFNOTNULL(transient),</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">                                        STRV_IFNOTNULL(generator_early),</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">                                        persistent_config,</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">                                        <span class='macro'>SYSTEM_CONFIG_UNIT_PATH<span class='expansion'>"/usr/etc/systemd/system"</span></span>,</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">                                        <span class='string_literal'>"/etc/systemd/system"</span>,</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">                                        runtime_config,</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">                                        <span class='string_literal'>"/run/systemd/system"</span>,</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">                                        STRV_IFNOTNULL(generator),</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">                                        <span class='string_literal'>"/usr/local/lib/systemd/system"</span>,</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">                                        <span class='macro'>SYSTEM_DATA_UNIT_PATH<span class='expansion'>"/usr/lib/systemd/system"</span></span>,</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">                                        <span class='string_literal'>"/usr/lib/systemd/system"</span>,</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line"><span class='directive'>#ifdef HAVE_SPLIT_USR</span></td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">                                        <span class='string_literal'>"/lib/systemd/system"</span>,</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">                                        STRV_IFNOTNULL(generator_late),</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">                                        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">                <span class='keyword'>case</span> UNIT_FILE_GLOBAL:</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">                        add = strv_new(</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">                                        <span class='comment'>/* If you modify this you also want to modify</span></td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                                         <span class='comment'>* systemduserunitpath= in systemd.pc.in, and</span></td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">                                         <span class='comment'>* the arrays in user_dirs() above! */</span></td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">                                        STRV_IFNOTNULL(persistent_control),</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">                                        STRV_IFNOTNULL(runtime_control),</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">                                        STRV_IFNOTNULL(transient),</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">                                        STRV_IFNOTNULL(generator_early),</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">                                        persistent_config,</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">                                        <span class='macro'>USER_CONFIG_UNIT_PATH<span class='expansion'>"/usr/etc/systemd/user"</span></span>,</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">                                        <span class='string_literal'>"/etc/systemd/user"</span>,</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">                                        runtime_config,</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">                                        <span class='string_literal'>"/run/systemd/user"</span>,</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">                                        STRV_IFNOTNULL(generator),</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">                                        <span class='string_literal'>"/usr/local/lib/systemd/user"</span>,</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">                                        <span class='string_literal'>"/usr/local/share/systemd/user"</span>,</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">                                        <span class='macro'>USER_DATA_UNIT_PATH<span class='expansion'>"/usr/lib/systemd/user"</span></span>,</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">                                        <span class='string_literal'>"/usr/lib/systemd/user"</span>,</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">                                        <span class='string_literal'>"/usr/share/systemd/user"</span>,</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">                                        STRV_IFNOTNULL(generator_late),</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">                                        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">                <span class='keyword'>case</span> UNIT_FILE_USER:</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">                        add = user_dirs(persistent_config, runtime_config,</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">                                        generator, generator_early, generator_late,</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">                                        transient,</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">                                        persistent_config, runtime_control);</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Hmm, unexpected scope?"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Hmm, unexpected scope?", "src/shared/path-lookup.c"<br>, 583, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">                <span class='keyword'>if</span> (!add)</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">                r = strv_extend_strv(&amp;paths, add, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">        r = patch_root_prefix(&amp;persistent_config, root);</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">        r = patch_root_prefix(&amp;runtime_config, root);</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">        r = patch_root_prefix(&amp;generator, root);</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">        r = patch_root_prefix(&amp;generator_early, root);</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">        r = patch_root_prefix(&amp;generator_late, root);</td></tr>
 <tr><td class="num" id="LN608">608</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN609">609</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN610">610</td><td class="line">        r = patch_root_prefix(&amp;generator_early, root);</td></tr>
-<tr><td class="num" id="LN611">611</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN613">613</td><td class="line">        r = patch_root_prefix(&amp;generator_late, root);</td></tr>
-<tr><td class="num" id="LN614">614</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN615">615</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN616">616</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN617">617</td><td class="line">        r = patch_root_prefix(&amp;transient, root);</td></tr>
-<tr><td class="num" id="LN618">618</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN619">619</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN620">620</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN621">621</td><td class="line">        r = patch_root_prefix(&amp;persistent_control, root);</td></tr>
-<tr><td class="num" id="LN622">622</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN623">623</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN625">625</td><td class="line">        r = patch_root_prefix(&amp;runtime_control, root);</td></tr>
-<tr><td class="num" id="LN626">626</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN627">627</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line">        r = patch_root_prefix_strv(l, root);</td></tr>
-<tr><td class="num" id="LN630">630</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN633">633</td><td class="line">        p-&gt;search_path = strv_uniq(l);</td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line">        l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN636">636</td><td class="line">        p-&gt;persistent_config = persistent_config;</td></tr>
-<tr><td class="num" id="LN637">637</td><td class="line">        p-&gt;runtime_config = runtime_config;</td></tr>
-<tr><td class="num" id="LN638">638</td><td class="line">        persistent_config = runtime_config = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN640">640</td><td class="line">        p-&gt;generator = generator;</td></tr>
-<tr><td class="num" id="LN641">641</td><td class="line">        p-&gt;generator_early = generator_early;</td></tr>
-<tr><td class="num" id="LN642">642</td><td class="line">        p-&gt;generator_late = generator_late;</td></tr>
-<tr><td class="num" id="LN643">643</td><td class="line">        generator = generator_early = generator_late = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN644">644</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN645">645</td><td class="line">        p-&gt;transient = transient;</td></tr>
-<tr><td class="num" id="LN646">646</td><td class="line">        transient = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN647">647</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN648">648</td><td class="line">        p-&gt;persistent_control = persistent_control;</td></tr>
-<tr><td class="num" id="LN649">649</td><td class="line">        p-&gt;runtime_control = runtime_control;</td></tr>
-<tr><td class="num" id="LN650">650</td><td class="line">        persistent_control = runtime_control = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">        r = patch_root_prefix(&amp;transient, root);</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">        r = patch_root_prefix(&amp;persistent_control, root);</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">        r = patch_root_prefix(&amp;runtime_control, root);</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">        r = patch_root_prefix_strv(paths, root);</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">        p-&gt;search_path = strv_uniq(paths);</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">        paths = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">        p-&gt;persistent_config = persistent_config;</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">        p-&gt;runtime_config = runtime_config;</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">        persistent_config = runtime_config = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">        p-&gt;generator = generator;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">        p-&gt;generator_early = generator_early;</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">        p-&gt;generator_late = generator_late;</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">        generator = generator_early = generator_late = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">        p-&gt;transient = transient;</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">        transient = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">        p-&gt;persistent_control = persistent_control;</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">        p-&gt;runtime_control = runtime_control;</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">        persistent_control = runtime_control = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">        p-&gt;root_dir = root;</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">        root = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN651">651</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN652">652</td><td class="line">        p-&gt;root_dir = root;</td></tr>
-<tr><td class="num" id="LN653">653</td><td class="line">        root = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN654">654</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN655">655</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN656">656</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line"><span class='keyword'>void</span> lookup_paths_free(LookupPaths *p) {</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">        <span class='keyword'>if</span> (!p)</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">        p-&gt;search_path = strv_free(p-&gt;search_path);</td></tr>
 <tr><td class="num" id="LN657">657</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN658">658</td><td class="line"><span class='keyword'>void</span> lookup_paths_free(LookupPaths *p) {</td></tr>
-<tr><td class="num" id="LN659">659</td><td class="line">        <span class='keyword'>if</span> (!p)</td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN661">661</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN662">662</td><td class="line">        p-&gt;search_path = strv_free(p-&gt;search_path);</td></tr>
-<tr><td class="num" id="LN663">663</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN664">664</td><td class="line">        p-&gt;persistent_config = mfree(p-&gt;persistent_config);</td></tr>
-<tr><td class="num" id="LN665">665</td><td class="line">        p-&gt;runtime_config = mfree(p-&gt;runtime_config);</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">        p-&gt;persistent_config = mfree(p-&gt;persistent_config);</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">        p-&gt;runtime_config = mfree(p-&gt;runtime_config);</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">        p-&gt;generator = mfree(p-&gt;generator);</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">        p-&gt;generator_early = mfree(p-&gt;generator_early);</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">        p-&gt;generator_late = mfree(p-&gt;generator_late);</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">        p-&gt;transient = mfree(p-&gt;transient);</td></tr>
 <tr><td class="num" id="LN666">666</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN667">667</td><td class="line">        p-&gt;generator = mfree(p-&gt;generator);</td></tr>
-<tr><td class="num" id="LN668">668</td><td class="line">        p-&gt;generator_early = mfree(p-&gt;generator_early);</td></tr>
-<tr><td class="num" id="LN669">669</td><td class="line">        p-&gt;generator_late = mfree(p-&gt;generator_late);</td></tr>
-<tr><td class="num" id="LN670">670</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN671">671</td><td class="line">        p-&gt;transient = mfree(p-&gt;transient);</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">        p-&gt;persistent_control = mfree(p-&gt;persistent_control);</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">        p-&gt;runtime_control = mfree(p-&gt;runtime_control);</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">        p-&gt;root_dir = mfree(p-&gt;root_dir);</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN672">672</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN673">673</td><td class="line">        p-&gt;persistent_control = mfree(p-&gt;persistent_control);</td></tr>
-<tr><td class="num" id="LN674">674</td><td class="line">        p-&gt;runtime_control = mfree(p-&gt;runtime_control);</td></tr>
-<tr><td class="num" id="LN675">675</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN676">676</td><td class="line">        p-&gt;root_dir = mfree(p-&gt;root_dir);</td></tr>
-<tr><td class="num" id="LN677">677</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line"><span class='keyword'>int</span> lookup_paths_reduce(LookupPaths *p) {</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>struct</span> stat *stats = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line">        size_t n_stats = 0, allocated = 0;</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">        <span class='keyword'>unsigned</span> c = 0;</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN678">678</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN679">679</td><td class="line"><span class='keyword'>int</span> lookup_paths_reduce(LookupPaths *p) {</td></tr>
-<tr><td class="num" id="LN680">680</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>struct</span> stat *stats = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN681">681</td><td class="line">        size_t n_stats = 0, allocated = 0;</td></tr>
-<tr><td class="num" id="LN682">682</td><td class="line">        <span class='keyword'>unsigned</span> c = 0;</td></tr>
-<tr><td class="num" id="LN683">683</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN685">685</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/shared/path-lookup.c", 685, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN686">686</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN687">687</td><td class="line">        <span class='comment'>/* Drop duplicates and non-existing directories from the search path. We figure out whether two directories are</span></td></tr>
-<tr><td class="num" id="LN688">688</td><td class="line">         <span class='comment'>* the same by comparing their device and inode numbers. Note one special tweak: when we have a root path set,</span></td></tr>
-<tr><td class="num" id="LN689">689</td><td class="line">         <span class='comment'>* we do not follow symlinks when retrieving them, because the kernel wouldn't take the root prefix into</span></td></tr>
-<tr><td class="num" id="LN690">690</td><td class="line">         <span class='comment'>* account when following symlinks. When we have no root path set this restriction does not apply however. */</span></td></tr>
-<tr><td class="num" id="LN691">691</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN692">692</td><td class="line">        <span class='keyword'>if</span> (!p-&gt;search_path)</td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN695">695</td><td class="line">        <span class='keyword'>while</span> (p-&gt;search_path[c]) {</td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line">                <span class='keyword'>struct</span> stat st;</td></tr>
-<tr><td class="num" id="LN697">697</td><td class="line">                <span class='keyword'>unsigned</span> k;</td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line">                <span class='keyword'>if</span> (p-&gt;root_dir)</td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line">                        r = lstat(p-&gt;search_path[c], &amp;st);</td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line">                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line">                        r = stat(p-&gt;search_path[c], &amp;st);</td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN704">704</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line">                                <span class='keyword'>goto</span> remove_item;</td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/shared/path-lookup.c", 679, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">        <span class='comment'>/* Drop duplicates and non-existing directories from the search path. We figure out whether two directories are</span></td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">         <span class='comment'>* the same by comparing their device and inode numbers. Note one special tweak: when we have a root path set,</span></td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">         <span class='comment'>* we do not follow symlinks when retrieving them, because the kernel wouldn't take the root prefix into</span></td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">         <span class='comment'>* account when following symlinks. When we have no root path set this restriction does not apply however. */</span></td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">        <span class='keyword'>if</span> (!p-&gt;search_path)</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">        <span class='keyword'>while</span> (p-&gt;search_path[c]) {</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">                <span class='keyword'>struct</span> stat st;</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">                <span class='keyword'>unsigned</span> k;</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">                <span class='keyword'>if</span> (p-&gt;root_dir)</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">                        r = lstat(p-&gt;search_path[c], &amp;st);</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">                        r = stat(p-&gt;search_path[c], &amp;st);</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">                                <span class='keyword'>goto</span> remove_item;</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">                        <span class='comment'>/* If something we don't grok happened, let's better leave it in. */</span></td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">                        <span class='macro'>log_debug_errno(errno, <span class='string_literal'>"Failed to stat %s: %m"</span>, p-&gt;search_path[c])<span class='expansion'>({ int _level = (7), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/path-lookup.c"<br>, 702, __func__, "Failed to stat %s: %m", p-&gt;search_path[c<br>]) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">                        c++;</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN706">706</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN707">707</td><td class="line">                        <span class='comment'>/* If something we don't grok happened, let's better leave it in. */</span></td></tr>
-<tr><td class="num" id="LN708">708</td><td class="line">                        <span class='macro'>log_debug_errno(errno, <span class='string_literal'>"Failed to stat %s: %m"</span>, p-&gt;search_path[c])<span class='expansion'>({ int _level = (7), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/path-lookup.c"<br>, 708, __func__, "Failed to stat %s: %m", p-&gt;search_path[c<br>]) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line">                        c++;</td></tr>
-<tr><td class="num" id="LN710">710</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">                <span class='keyword'>for</span> (k = 0; k &lt; n_stats; k++) {</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">                        <span class='keyword'>if</span> (stats[k].st_dev == st.st_dev &amp;&amp;</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">                            stats[k].st_ino == st.st_ino)</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN711">711</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN712">712</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line">                <span class='keyword'>for</span> (k = 0; k &lt; n_stats; k++) {</td></tr>
-<tr><td class="num" id="LN714">714</td><td class="line">                        <span class='keyword'>if</span> (stats[k].st_dev == st.st_dev &amp;&amp;</td></tr>
-<tr><td class="num" id="LN715">715</td><td class="line">                            stats[k].st_ino == st.st_ino)</td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">                <span class='keyword'>if</span> (k &lt; n_stats) <span class='comment'>/* Is there already an entry with the same device/inode? */</span></td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">                        <span class='keyword'>goto</span> remove_item;</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(stats, allocated, n_stats+1)<span class='expansion'>greedy_realloc((void**) &amp;(stats), &amp;(allocated), (n_stats<br>+1), sizeof((stats)[0]))</span></span>)</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN718">718</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line">                <span class='keyword'>if</span> (k &lt; n_stats) <span class='comment'>/* Is there already an entry with the same device/inode? */</span></td></tr>
-<tr><td class="num" id="LN720">720</td><td class="line">                        <span class='keyword'>goto</span> remove_item;</td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(stats, allocated, n_stats+1)<span class='expansion'>greedy_realloc((void**) &amp;(stats), &amp;(allocated), (n_stats<br>+1), sizeof((stats)[0]))</span></span>)</td></tr>
-<tr><td class="num" id="LN723">723</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN724">724</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN725">725</td><td class="line">                stats[n_stats++] = st;</td></tr>
-<tr><td class="num" id="LN726">726</td><td class="line">                c++;</td></tr>
-<tr><td class="num" id="LN727">727</td><td class="line">                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN729">729</td><td class="line">        remove_item:</td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">                free(p-&gt;search_path[c]);</td></tr>
-<tr><td class="num" id="LN731">731</td><td class="line">                memmove(p-&gt;search_path + c,</td></tr>
-<tr><td class="num" id="LN732">732</td><td class="line">                        p-&gt;search_path + c + 1,</td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">                        (strv_length(p-&gt;search_path + c + 1) + 1) * <span class='keyword'>sizeof</span>(<span class='keyword'>char</span>*));</td></tr>
-<tr><td class="num" id="LN734">734</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">                stats[n_stats++] = st;</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">                c++;</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">        remove_item:</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">                free(p-&gt;search_path[c]);</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">                memmove(p-&gt;search_path + c,</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">                        p-&gt;search_path + c + 1,</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">                        (strv_length(p-&gt;search_path + c + 1) + 1) * <span class='keyword'>sizeof</span>(<span class='keyword'>char</span>*));</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">        <span class='keyword'>if</span> (strv_isempty(p-&gt;search_path)) {</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Ignoring unit files."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/path-lookup.c"<br>, 731, __func__, "Ignoring unit files.") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">                p-&gt;search_path = strv_free(p-&gt;search_path);</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t;</td></tr>
 <tr><td class="num" id="LN735">735</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line">        <span class='keyword'>if</span> (strv_isempty(p-&gt;search_path)) {</td></tr>
-<tr><td class="num" id="LN737">737</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Ignoring unit files."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/path-lookup.c"<br>, 737, __func__, "Ignoring unit files.") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN738">738</td><td class="line">                p-&gt;search_path = strv_free(p-&gt;search_path);</td></tr>
-<tr><td class="num" id="LN739">739</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t;</td></tr>
-<tr><td class="num" id="LN741">741</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">                t = strv_join(p-&gt;search_path, <span class='string_literal'>"\n\t"</span>);</td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
-<tr><td class="num" id="LN744">744</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">                t = strv_join(p-&gt;search_path, <span class='string_literal'>"\n\t"</span>);</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Looking for unit files in (higher priority first):\n\t%s"</span>, t)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/path-lookup.c"<br>, 740, __func__, "Looking for unit files in (higher priority first):\n\t%s"<br>, t) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN745">745</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN746">746</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Looking for unit files in (higher priority first):\n\t%s"</span>, t)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/path-lookup.c"<br>, 746, __func__, "Looking for unit files in (higher priority first):\n\t%s"<br>, t) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN747">747</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line"><span class='keyword'>int</span> lookup_paths_mkdir_generator(LookupPaths *p) {</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">        <span class='keyword'>int</span> r, q;</td></tr>
 <tr><td class="num" id="LN748">748</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN749">749</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN750">750</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN751">751</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN752">752</td><td class="line"><span class='keyword'>int</span> lookup_paths_mkdir_generator(LookupPaths *p) {</td></tr>
-<tr><td class="num" id="LN753">753</td><td class="line">        <span class='keyword'>int</span> r, q;</td></tr>
-<tr><td class="num" id="LN754">754</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN755">755</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/shared/path-lookup.c", 755, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN756">756</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN757">757</td><td class="line">        <span class='keyword'>if</span> (!p-&gt;generator || !p-&gt;generator_early || !p-&gt;generator_late)</td></tr>
-<tr><td class="num" id="LN758">758</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/shared/path-lookup.c", 749, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">        <span class='keyword'>if</span> (!p-&gt;generator || !p-&gt;generator_early || !p-&gt;generator_late)</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">        r = mkdir_p_label(p-&gt;generator, 0755);</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">        q = mkdir_p_label(p-&gt;generator_early, 0755);</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">        <span class='keyword'>if</span> (q &lt; 0 &amp;&amp; r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">                r = q;</td></tr>
 <tr><td class="num" id="LN759">759</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN760">760</td><td class="line">        r = mkdir_p_label(p-&gt;generator, 0755);</td></tr>
-<tr><td class="num" id="LN761">761</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN762">762</td><td class="line">        q = mkdir_p_label(p-&gt;generator_early, 0755);</td></tr>
-<tr><td class="num" id="LN763">763</td><td class="line">        <span class='keyword'>if</span> (q &lt; 0 &amp;&amp; r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN764">764</td><td class="line">                r = q;</td></tr>
-<tr><td class="num" id="LN765">765</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN766">766</td><td class="line">        q = mkdir_p_label(p-&gt;generator_late, 0755);</td></tr>
-<tr><td class="num" id="LN767">767</td><td class="line">        <span class='keyword'>if</span> (q &lt; 0 &amp;&amp; r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN768">768</td><td class="line">                r = q;</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">        q = mkdir_p_label(p-&gt;generator_late, 0755);</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">        <span class='keyword'>if</span> (q &lt; 0 &amp;&amp; r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">                r = q;</td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line"><span class='keyword'>void</span> lookup_paths_trim_generator(LookupPaths *p) {</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/shared/path-lookup.c", 768, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN769">769</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN770">770</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN771">771</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN772">772</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN773">773</td><td class="line"><span class='keyword'>void</span> lookup_paths_trim_generator(LookupPaths *p) {</td></tr>
-<tr><td class="num" id="LN774">774</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/shared/path-lookup.c", 774, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN775">775</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN776">776</td><td class="line">        <span class='comment'>/* Trim empty dirs */</span></td></tr>
-<tr><td class="num" id="LN777">777</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN778">778</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator)</td></tr>
-<tr><td class="num" id="LN779">779</td><td class="line">                (<span class='keyword'>void</span>) rmdir(p-&gt;generator);</td></tr>
-<tr><td class="num" id="LN780">780</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator_early)</td></tr>
-<tr><td class="num" id="LN781">781</td><td class="line">                (<span class='keyword'>void</span>) rmdir(p-&gt;generator_early);</td></tr>
-<tr><td class="num" id="LN782">782</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator_late)</td></tr>
-<tr><td class="num" id="LN783">783</td><td class="line">                (<span class='keyword'>void</span>) rmdir(p-&gt;generator_late);</td></tr>
-<tr><td class="num" id="LN784">784</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN785">785</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN786">786</td><td class="line"><span class='keyword'>void</span> lookup_paths_flush_generator(LookupPaths *p) {</td></tr>
-<tr><td class="num" id="LN787">787</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/shared/path-lookup.c", 787, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN788">788</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN789">789</td><td class="line">        <span class='comment'>/* Flush the generated unit files in full */</span></td></tr>
-<tr><td class="num" id="LN790">790</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN791">791</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator)</td></tr>
-<tr><td class="num" id="LN792">792</td><td class="line">                (<span class='keyword'>void</span>) rm_rf(p-&gt;generator, REMOVE_ROOT);</td></tr>
-<tr><td class="num" id="LN793">793</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator_early)</td></tr>
-<tr><td class="num" id="LN794">794</td><td class="line">                (<span class='keyword'>void</span>) rm_rf(p-&gt;generator_early, REMOVE_ROOT);</td></tr>
-<tr><td class="num" id="LN795">795</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator_late)</td></tr>
-<tr><td class="num" id="LN796">796</td><td class="line">                (<span class='keyword'>void</span>) rm_rf(p-&gt;generator_late, REMOVE_ROOT);</td></tr>
-<tr><td class="num" id="LN797">797</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN798">798</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN799">799</td><td class="line"><span class='keyword'>char</span> **generator_binary_paths(UnitFileScope scope) {</td></tr>
-<tr><td class="num" id="LN800">800</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN801">801</td><td class="line">        <span class='keyword'>switch</span> (scope) {</td></tr>
-<tr><td class="num" id="LN802">802</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN803">803</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_SYSTEM:</td></tr>
-<tr><td class="num" id="LN804">804</td><td class="line">                <span class='keyword'>return</span> strv_new(<span class='string_literal'>"/run/systemd/system-generators"</span>,</td></tr>
-<tr><td class="num" id="LN805">805</td><td class="line">                                <span class='string_literal'>"/etc/systemd/system-generators"</span>,</td></tr>
-<tr><td class="num" id="LN806">806</td><td class="line">                                <span class='string_literal'>"/usr/local/lib/systemd/system-generators"</span>,</td></tr>
-<tr><td class="num" id="LN807">807</td><td class="line">                                <span class='macro'>SYSTEM_GENERATOR_PATH<span class='expansion'>"/usr/lib/systemd/system-generators"</span></span>,</td></tr>
-<tr><td class="num" id="LN808">808</td><td class="line">                                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN809">809</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN810">810</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_GLOBAL:</td></tr>
-<tr><td class="num" id="LN811">811</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_USER:</td></tr>
-<tr><td class="num" id="LN812">812</td><td class="line">                <span class='keyword'>return</span> strv_new(<span class='string_literal'>"/run/systemd/user-generators"</span>,</td></tr>
-<tr><td class="num" id="LN813">813</td><td class="line">                                <span class='string_literal'>"/etc/systemd/user-generators"</span>,</td></tr>
-<tr><td class="num" id="LN814">814</td><td class="line">                                <span class='string_literal'>"/usr/local/lib/systemd/user-generators"</span>,</td></tr>
-<tr><td class="num" id="LN815">815</td><td class="line">                                <span class='macro'>USER_GENERATOR_PATH<span class='expansion'>"/usr/lib/systemd/user-generators"</span></span>,</td></tr>
-<tr><td class="num" id="LN816">816</td><td class="line">                                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN817">817</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN818">818</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN819">819</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Hmm, unexpected scope."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Hmm, unexpected scope.", "src/shared/path-lookup.c"<br>, 819, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN820">820</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN821">821</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">        <span class='comment'>/* Trim empty dirs */</span></td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator)</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">                (<span class='keyword'>void</span>) rmdir(p-&gt;generator);</td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator_early)</td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">                (<span class='keyword'>void</span>) rmdir(p-&gt;generator_early);</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator_late)</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">                (<span class='keyword'>void</span>) rmdir(p-&gt;generator_late);</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line"><span class='keyword'>void</span> lookup_paths_flush_generator(LookupPaths *p) {</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/shared/path-lookup.c", 781, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">        <span class='comment'>/* Flush the generated unit files in full */</span></td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator)</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">                (<span class='keyword'>void</span>) rm_rf(p-&gt;generator, REMOVE_ROOT);</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator_early)</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">                (<span class='keyword'>void</span>) rm_rf(p-&gt;generator_early, REMOVE_ROOT);</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">        <span class='keyword'>if</span> (p-&gt;generator_late)</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">                (<span class='keyword'>void</span>) rm_rf(p-&gt;generator_late, REMOVE_ROOT);</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line"><span class='keyword'>char</span> **generator_binary_paths(UnitFileScope scope) {</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">        <span class='keyword'>switch</span> (scope) {</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_SYSTEM:</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">                <span class='keyword'>return</span> strv_new(<span class='string_literal'>"/run/systemd/system-generators"</span>,</td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">                                <span class='string_literal'>"/etc/systemd/system-generators"</span>,</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">                                <span class='string_literal'>"/usr/local/lib/systemd/system-generators"</span>,</td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">                                <span class='macro'>SYSTEM_GENERATOR_PATH<span class='expansion'>"/usr/lib/systemd/system-generators"</span></span>,</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">                                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_GLOBAL:</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">        <span class='keyword'>case</span> UNIT_FILE_USER:</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">                <span class='keyword'>return</span> strv_new(<span class='string_literal'>"/run/systemd/user-generators"</span>,</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">                                <span class='string_literal'>"/etc/systemd/user-generators"</span>,</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">                                <span class='string_literal'>"/usr/local/lib/systemd/user-generators"</span>,</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">                                <span class='macro'>USER_GENERATOR_PATH<span class='expansion'>"/usr/lib/systemd/user-generators"</span></span>,</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">                                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Hmm, unexpected scope."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Hmm, unexpected scope.", "src/shared/path-lookup.c"<br>, 813, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">}</td></tr>
 </table></body></html>

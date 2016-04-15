@@ -3342,7 +3342,7 @@
 <tr><td class="num" id="LN3254">3254</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3255">3255</td><td class="line">        <span class='comment'>/* --fail was specified */</span></td></tr>
 <tr><td class="num" id="LN3256">3256</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(arg_job_mode, <span class='string_literal'>"fail"</span>)<span class='expansion'>(strcmp((arg_job_mode),("fail")) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN3257">3257</td><td class="line">                kill_who = <span class='macro'>strjoina(arg_kill_who, <span class='string_literal'>"-fail"</span>, NULL)<span class='expansion'>({ const char *_appendees_[] = { arg_kill_who, "-fail", ((void<br>*)0) }; char *_d_, *_p_; int _len_ = 0; unsigned _i_; for (_i_<br> = 0; _i_ &lt; __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
+<tr><td class="num" id="LN3257">3257</td><td class="line">                kill_who = <span class='macro'>strjoina(arg_kill_who, <span class='string_literal'>"-fail"</span>)<span class='expansion'>({ const char *_appendees_[] = { arg_kill_who, "-fail" }; char<br> *_d_, *_p_; int _len_ = 0; unsigned _i_; for (_i_ = 0; _i_ &lt;<br> __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
 <tr><td class="num" id="LN3258">3258</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3259">3259</td><td class="line">        r = expand_names(bus, strv_skip(argv, 1), <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;names);</td></tr>
 <tr><td class="num" id="LN3260">3260</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
@@ -6196,30 +6196,30 @@
 <tr><td class="num" id="LN6087">6087</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN6088">6088</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN6089">6089</td><td class="line">        <span class='macro'>STRV_FOREACH(name, names)<span class='expansion'>for ((name) = (names); (name) &amp;&amp; *(name); (name)++)</span></span> {</td></tr>
-<tr><td class="num" id="LN6090">6090</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN6091">6091</td><td class="line">                <span class='keyword'>char</span> *new_path, *tmp_path;</td></tr>
-<tr><td class="num" id="LN6092">6092</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN6093">6093</td><td class="line">                r = unit_find_paths(bus, *name, &amp;lp, &amp;path, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN6094">6094</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN6095">6095</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN6096">6096</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN6097">6097</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOENT<span class='expansion'>2</span></span>;</td></tr>
-<tr><td class="num" id="LN6098">6098</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (!path) {</td></tr>
-<tr><td class="num" id="LN6099">6099</td><td class="line">                        <span class='comment'>// FIXME: support units with path==NULL (no FragmentPath)</span></td></tr>
-<tr><td class="num" id="LN6100">6100</td><td class="line">                        <span class='macro'>log_error(<span class='string_literal'>"No fragment exists for %s."</span>, *name)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/systemctl/systemctl.c"<br>, 6100, __func__, "No fragment exists for %s.", *name) : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN6101">6101</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOENT<span class='expansion'>2</span></span>;</td></tr>
-<tr><td class="num" id="LN6102">6102</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN6103">6103</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN6104">6104</td><td class="line">                <span class='keyword'>if</span> (arg_full)</td></tr>
-<tr><td class="num" id="LN6105">6105</td><td class="line">                        r = unit_file_create_copy(&amp;lp, *name, path, &amp;new_path, &amp;tmp_path);</td></tr>
-<tr><td class="num" id="LN6106">6106</td><td class="line">                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN6107">6107</td><td class="line">                        r = unit_file_create_dropin(&amp;lp, *name, &amp;new_path, &amp;tmp_path);</td></tr>
-<tr><td class="num" id="LN6108">6108</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN6109">6109</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN6110">6110</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN6111">6111</td><td class="line">                r = strv_push_pair(paths, new_path, tmp_path);</td></tr>
-<tr><td class="num" id="LN6112">6112</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN6113">6113</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/systemctl/systemctl.c", 6113, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN6090">6090</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *new_path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *tmp_path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN6091">6091</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6092">6092</td><td class="line">                r = unit_find_paths(bus, *name, &amp;lp, &amp;path, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN6093">6093</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN6094">6094</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN6095">6095</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN6096">6096</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOENT<span class='expansion'>2</span></span>;</td></tr>
+<tr><td class="num" id="LN6097">6097</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (!path) {</td></tr>
+<tr><td class="num" id="LN6098">6098</td><td class="line">                        <span class='comment'>// FIXME: support units with path==NULL (no FragmentPath)</span></td></tr>
+<tr><td class="num" id="LN6099">6099</td><td class="line">                        <span class='macro'>log_error(<span class='string_literal'>"No fragment exists for %s."</span>, *name)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/systemctl/systemctl.c"<br>, 6099, __func__, "No fragment exists for %s.", *name) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN6100">6100</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOENT<span class='expansion'>2</span></span>;</td></tr>
+<tr><td class="num" id="LN6101">6101</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN6102">6102</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6103">6103</td><td class="line">                <span class='keyword'>if</span> (arg_full)</td></tr>
+<tr><td class="num" id="LN6104">6104</td><td class="line">                        r = unit_file_create_copy(&amp;lp, *name, path, &amp;new_path, &amp;tmp_path);</td></tr>
+<tr><td class="num" id="LN6105">6105</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN6106">6106</td><td class="line">                        r = unit_file_create_dropin(&amp;lp, *name, &amp;new_path, &amp;tmp_path);</td></tr>
+<tr><td class="num" id="LN6107">6107</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN6108">6108</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN6109">6109</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6110">6110</td><td class="line">                r = strv_push_pair(paths, new_path, tmp_path);</td></tr>
+<tr><td class="num" id="LN6111">6111</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN6112">6112</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/systemctl/systemctl.c", 6112, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN6113">6113</td><td class="line">                new_path = tmp_path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN6114">6114</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN6115">6115</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN6116">6116</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
