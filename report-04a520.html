@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'timer' -->
+<!-- BUGDESC Potential leak of memory pointed to by 'pty_path' -->
 
 <!-- BUGTYPE Memory leak -->
 
@@ -64,21 +64,21 @@
 
 <!-- FILENAME run.c -->
 
-<!-- FUNCTIONNAME start_transient_timer -->
+<!-- FUNCTIONNAME start_transient_service -->
 
-<!-- BUGLINE 1086 -->
+<!-- BUGLINE 798 -->
 
-<!-- BUGCOLUMN 40 -->
+<!-- BUGCOLUMN 32 -->
 
-<!-- BUGPATHLENGTH 11 -->
+<!-- BUGPATHLENGTH 22 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>run/run.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1086, column 40</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'timer'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 798, column 32</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'pty_path'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -210,50 +210,50 @@
 <tr><td class="num" id="LN125">125</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN126">126</td><td class="line">        <span class='keyword'>enum</span> {</td></tr>
 <tr><td class="num" id="LN127">127</td><td class="line">                ARG_VERSION = 0x100,</td></tr>
-<tr><td class="num" id="LN128">128</td><td class="line">                ARG_NO_ASK_PASSWORD,</td></tr>
-<tr><td class="num" id="LN129">129</td><td class="line">                ARG_USER,</td></tr>
-<tr><td class="num" id="LN130">130</td><td class="line">                ARG_SYSTEM,</td></tr>
-<tr><td class="num" id="LN131">131</td><td class="line">                ARG_SCOPE,</td></tr>
-<tr><td class="num" id="LN132">132</td><td class="line">                ARG_UNIT,</td></tr>
-<tr><td class="num" id="LN133">133</td><td class="line">                ARG_DESCRIPTION,</td></tr>
-<tr><td class="num" id="LN134">134</td><td class="line">                ARG_SLICE,</td></tr>
-<tr><td class="num" id="LN135">135</td><td class="line">                ARG_SEND_SIGHUP,</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">                ARG_USER,</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">                ARG_SYSTEM,</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">                ARG_SCOPE,</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">                ARG_UNIT,</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">                ARG_DESCRIPTION,</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">                ARG_SLICE,</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">                ARG_SEND_SIGHUP,</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">                ARG_SERVICE_TYPE,</td></tr>
 <tr><td class="num" id="LN136">136</td><td class="line">                ARG_EXEC_USER,</td></tr>
 <tr><td class="num" id="LN137">137</td><td class="line">                ARG_EXEC_GROUP,</td></tr>
-<tr><td class="num" id="LN138">138</td><td class="line">                ARG_SERVICE_TYPE,</td></tr>
-<tr><td class="num" id="LN139">139</td><td class="line">                ARG_NICE,</td></tr>
-<tr><td class="num" id="LN140">140</td><td class="line">                ARG_SETENV,</td></tr>
-<tr><td class="num" id="LN141">141</td><td class="line">                ARG_TTY,</td></tr>
-<tr><td class="num" id="LN142">142</td><td class="line">                ARG_ON_ACTIVE,</td></tr>
-<tr><td class="num" id="LN143">143</td><td class="line">                ARG_ON_BOOT,</td></tr>
-<tr><td class="num" id="LN144">144</td><td class="line">                ARG_ON_STARTUP,</td></tr>
-<tr><td class="num" id="LN145">145</td><td class="line">                ARG_ON_UNIT_ACTIVE,</td></tr>
-<tr><td class="num" id="LN146">146</td><td class="line">                ARG_ON_UNIT_INACTIVE,</td></tr>
-<tr><td class="num" id="LN147">147</td><td class="line">                ARG_ON_CALENDAR,</td></tr>
-<tr><td class="num" id="LN148">148</td><td class="line">                ARG_TIMER_PROPERTY,</td></tr>
-<tr><td class="num" id="LN149">149</td><td class="line">                ARG_NO_BLOCK,</td></tr>
-<tr><td class="num" id="LN150">150</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN151">151</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN152">152</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>struct</span> option options[] = {</td></tr>
-<tr><td class="num" id="LN153">153</td><td class="line">                { <span class='string_literal'>"help"</span>,              <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'h'                  },</td></tr>
-<tr><td class="num" id="LN154">154</td><td class="line">                { <span class='string_literal'>"version"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VERSION          },</td></tr>
-<tr><td class="num" id="LN155">155</td><td class="line">                { <span class='string_literal'>"user"</span>,              <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_USER             },</td></tr>
-<tr><td class="num" id="LN156">156</td><td class="line">                { <span class='string_literal'>"system"</span>,            <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SYSTEM           },</td></tr>
-<tr><td class="num" id="LN157">157</td><td class="line">                { <span class='string_literal'>"scope"</span>,             <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SCOPE            },</td></tr>
-<tr><td class="num" id="LN158">158</td><td class="line">                { <span class='string_literal'>"unit"</span>,              <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_UNIT             },</td></tr>
-<tr><td class="num" id="LN159">159</td><td class="line">                { <span class='string_literal'>"description"</span>,       <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_DESCRIPTION      },</td></tr>
-<tr><td class="num" id="LN160">160</td><td class="line">                { <span class='string_literal'>"slice"</span>,             <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SLICE            },</td></tr>
-<tr><td class="num" id="LN161">161</td><td class="line">                { <span class='string_literal'>"remain-after-exit"</span>, <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'r'                  },</td></tr>
-<tr><td class="num" id="LN162">162</td><td class="line">                { <span class='string_literal'>"send-sighup"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SEND_SIGHUP      },</td></tr>
-<tr><td class="num" id="LN163">163</td><td class="line">                { <span class='string_literal'>"host"</span>,              <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'H'                  },</td></tr>
-<tr><td class="num" id="LN164">164</td><td class="line">                { <span class='string_literal'>"machine"</span>,           <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'M'                  },</td></tr>
-<tr><td class="num" id="LN165">165</td><td class="line">                { <span class='string_literal'>"service-type"</span>,      <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SERVICE_TYPE     },</td></tr>
-<tr><td class="num" id="LN166">166</td><td class="line">                { <span class='string_literal'>"uid"</span>,               <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_EXEC_USER        },</td></tr>
-<tr><td class="num" id="LN167">167</td><td class="line">                { <span class='string_literal'>"gid"</span>,               <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_EXEC_GROUP       },</td></tr>
-<tr><td class="num" id="LN168">168</td><td class="line">                { <span class='string_literal'>"nice"</span>,              <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NICE             },</td></tr>
-<tr><td class="num" id="LN169">169</td><td class="line">                { <span class='string_literal'>"setenv"</span>,            <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SETENV           },</td></tr>
-<tr><td class="num" id="LN170">170</td><td class="line">                { <span class='string_literal'>"property"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'p'                  },</td></tr>
-<tr><td class="num" id="LN171">171</td><td class="line">                { <span class='string_literal'>"tty"</span>,               <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 't'                  },</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">                ARG_NICE,</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">                ARG_SETENV,</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">                ARG_ON_ACTIVE,</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">                ARG_ON_BOOT,</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">                ARG_ON_STARTUP,</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">                ARG_ON_UNIT_ACTIVE,</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">                ARG_ON_UNIT_INACTIVE,</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">                ARG_ON_CALENDAR,</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">                ARG_TIMER_PROPERTY,</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">                ARG_NO_BLOCK,</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">                ARG_NO_ASK_PASSWORD,</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>struct</span> option options[] = {</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">                { <span class='string_literal'>"help"</span>,              <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'h'                  },</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">                { <span class='string_literal'>"version"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VERSION          },</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">                { <span class='string_literal'>"user"</span>,              <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_USER             },</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">                { <span class='string_literal'>"system"</span>,            <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SYSTEM           },</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">                { <span class='string_literal'>"scope"</span>,             <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SCOPE            },</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">                { <span class='string_literal'>"unit"</span>,              <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_UNIT             },</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line">                { <span class='string_literal'>"description"</span>,       <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_DESCRIPTION      },</td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">                { <span class='string_literal'>"slice"</span>,             <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SLICE            },</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">                { <span class='string_literal'>"remain-after-exit"</span>, <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'r'                  },</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">                { <span class='string_literal'>"send-sighup"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SEND_SIGHUP      },</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">                { <span class='string_literal'>"host"</span>,              <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'H'                  },</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">                { <span class='string_literal'>"machine"</span>,           <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'M'                  },</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">                { <span class='string_literal'>"service-type"</span>,      <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SERVICE_TYPE     },</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">                { <span class='string_literal'>"uid"</span>,               <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_EXEC_USER        },</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">                { <span class='string_literal'>"gid"</span>,               <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_EXEC_GROUP       },</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">                { <span class='string_literal'>"nice"</span>,              <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NICE             },</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">                { <span class='string_literal'>"setenv"</span>,            <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_SETENV           },</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">                { <span class='string_literal'>"property"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'p'                  },</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">                { <span class='string_literal'>"tty"</span>,               <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 't'                  }, <span class='comment'>/* deprecated */</span></td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">                { <span class='string_literal'>"pty"</span>,               <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 't'                  },</td></tr>
 <tr><td class="num" id="LN172">172</td><td class="line">                { <span class='string_literal'>"quiet"</span>,             <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'q'                  },</td></tr>
 <tr><td class="num" id="LN173">173</td><td class="line">                { <span class='string_literal'>"on-active"</span>,         <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_ON_ACTIVE        },</td></tr>
 <tr><td class="num" id="LN174">174</td><td class="line">                { <span class='string_literal'>"on-boot"</span>,           <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_ON_BOOT          },</td></tr>
@@ -825,9 +825,13 @@
 <tr><td class="num" id="LN740">740</td><td class="line">        <span class='macro'>assert(bus)<span class='expansion'>do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed(<br>"bus", "src/run/run.c", 740, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN741">741</td><td class="line">        <span class='macro'>assert(argv)<span class='expansion'>do { if ((__builtin_expect(!!(!(argv)),0))) log_assert_failed<br>("argv", "src/run/run.c", 741, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
 <tr><td class="num" id="LN742">742</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line">        <span class='keyword'>if</span> (arg_pty) {</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">arg_pty</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'arg_pty' is not equal to 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN744">744</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN745">745</td><td class="line">                <span class='keyword'>if</span> (arg_transport == BUS_TRANSPORT_LOCAL) {</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">arg_transport == BUS_TRANSPORT_LOCAL</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'arg_transport' is not equal to BUS_TRANSPORT_LOCAL</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN746">746</td><td class="line">                        master = posix_openpt(<span class='macro'>O_RDWR<span class='expansion'>02</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NDELAY<span class='expansion'>04000</span></span>);</td></tr>
 <tr><td class="num" id="LN747">747</td><td class="line">                        <span class='keyword'>if</span> (master &lt; 0)</td></tr>
 <tr><td class="num" id="LN748">748</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to acquire pseudo tty: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c"<br>, 748, __func__, "Failed to acquire pseudo tty: %m") : -abs(_e<br>); })</span></span>;</td></tr>
@@ -839,12 +843,16 @@
 <tr><td class="num" id="LN754">754</td><td class="line">                        <span class='keyword'>if</span> (unlockpt(master) &lt; 0)</td></tr>
 <tr><td class="num" id="LN755">755</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to unlock tty: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c"<br>, 755, __func__, "Failed to unlock tty: %m") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN756">756</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN757">757</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_transport == BUS_TRANSPORT_MACHINE) {</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class="mrange">arg_transport == BUS_TRANSPORT_MACHINE</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:28ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'arg_transport' is equal to BUS_TRANSPORT_MACHINE</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN758">758</td><td class="line">                        <span class='macro'>_cleanup_(sd_bus_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_unrefp)))</span></span> sd_bus *system_bus = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN759">759</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>char</span> *s;</td></tr>
 <tr><td class="num" id="LN760">760</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN761">761</td><td class="line">                        r = sd_bus_default_system(&amp;system_bus);</td></tr>
-<tr><td class="num" id="LN762">762</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN763">763</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to connect to system bus: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 763<br>, __func__, "Failed to connect to system bus: %m") : -abs(_e)<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN764">764</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN765">765</td><td class="line">                        r = sd_bus_call_method(system_bus,</td></tr>
@@ -855,32 +863,48 @@
 <tr><td class="num" id="LN770">770</td><td class="line">                                               &amp;error,</td></tr>
 <tr><td class="num" id="LN771">771</td><td class="line">                                               &amp;reply,</td></tr>
 <tr><td class="num" id="LN772">772</td><td class="line">                                               <span class='string_literal'>"s"</span>, arg_host);</td></tr>
-<tr><td class="num" id="LN773">773</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN774">774</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to get machine PTY: %s"</span>, bus_error_message(&amp;error, -r))<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 774<br>, __func__, "Failed to get machine PTY: %s", bus_error_message<br>(&amp;error, -r)) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN775">775</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN776">776</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN777">777</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN778">778</td><td class="line">                        r = sd_bus_message_read(reply, <span class='string_literal'>"hs"</span>, &amp;master, &amp;s);</td></tr>
-<tr><td class="num" id="LN779">779</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN780">780</td><td class="line">                                <span class='keyword'>return</span> bus_log_parse_error(r);</td></tr>
 <tr><td class="num" id="LN781">781</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN782">782</td><td class="line">                        reply = sd_bus_message_unref(reply);</td></tr>
 <tr><td class="num" id="LN783">783</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN784">784</td><td class="line">                        master = fcntl(master, <span class='macro'>F_DUPFD_CLOEXEC<span class='expansion'>1030</span></span>, 3);</td></tr>
-<tr><td class="num" id="LN785">785</td><td class="line">                        <span class='keyword'>if</span> (master &lt; 0)</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">master &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'master' is &gt;= 0</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN786">786</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to duplicate master fd: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c"<br>, 786, __func__, "Failed to duplicate master fd: %m") : -abs(<br>_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN787">787</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN788">788</td><td class="line">                        pty_path = strdup(s);</td></tr>
-<tr><td class="num" id="LN789">789</td><td class="line">                        <span class='keyword'>if</span> (!pty_path)</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">                        pty_path = <span class="mrange">strdup(s)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:36ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!pty_path</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Assuming 'pty_path' is non-null</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN790">790</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/run/run.c", 790, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN791">791</td><td class="line">                } <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN792">792</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Can't allocate tty via ssh"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Can't allocate tty via ssh"<br>, "src/run/run.c", 792, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN793">793</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN794">794</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN795">795</td><td class="line">        <span class='keyword'>if</span> (!arg_no_block) {</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!arg_no_block</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Assuming 'arg_no_block' is 0</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN796">796</td><td class="line">                r = bus_wait_for_jobs_new(bus, &amp;w);</td></tr>
-<tr><td class="num" id="LN797">797</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN798">798</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not watch jobs: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 798<br>, __func__, "Could not watch jobs: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:32ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error_errno':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'pty_path'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN799">799</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN800">800</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN801">801</td><td class="line">        <span class='keyword'>if</span> (arg_unit) {</td></tr>
@@ -1145,16 +1169,11 @@
 <tr><td class="num" id="LN1060">1060</td><td class="line">        <span class='macro'>assert(argv)<span class='expansion'>do { if ((__builtin_expect(!!(!(argv)),0))) log_assert_failed<br>("argv", "src/run/run.c", 1060, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1061">1061</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1062">1062</td><td class="line">        r = bus_wait_for_jobs_new(bus, &amp;w);</td></tr>
-<tr><td class="num" id="LN1063">1063</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1063">1063</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1064">1064</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/run/run.c", 1064, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN1065">1065</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1066">1066</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">arg_unit</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'arg_unit' is non-null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1066">1066</td><td class="line">        <span class='keyword'>if</span> (arg_unit) {</td></tr>
 <tr><td class="num" id="LN1067">1067</td><td class="line">                <span class='keyword'>switch</span> (unit_name_to_type(arg_unit)) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Control jumps to 'case UNIT_TIMER:'  at line 1079</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1068">1068</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1069">1069</td><td class="line">                <span class='keyword'>case</span> UNIT_SERVICE:</td></tr>
 <tr><td class="num" id="LN1070">1070</td><td class="line">                        service = strdup(arg_unit);</td></tr>
@@ -1167,21 +1186,13 @@
 <tr><td class="num" id="LN1077">1077</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1078">1078</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1079">1079</td><td class="line">                <span class='keyword'>case</span> UNIT_TIMER:</td></tr>
-<tr><td class="num" id="LN1080">1080</td><td class="line">                        timer = <span class="mrange">strdup(arg_unit)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1081">1081</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!timer</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Assuming 'timer' is non-null</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1080">1080</td><td class="line">                        timer = strdup(arg_unit);</td></tr>
+<tr><td class="num" id="LN1081">1081</td><td class="line">                        <span class='keyword'>if</span> (!timer)</td></tr>
 <tr><td class="num" id="LN1082">1082</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/run/run.c", 1082, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN1083">1083</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1084">1084</td><td class="line">                        r = unit_name_change_suffix(timer, <span class='string_literal'>".service"</span>, &amp;service);</td></tr>
-<tr><td class="num" id="LN1085">1085</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1085">1085</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1086">1086</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to change unit suffix: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1086<br>, __func__, "Failed to change unit suffix: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:40ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error_errno':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'timer'</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN1087">1087</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN1088">1088</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1089">1089</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
