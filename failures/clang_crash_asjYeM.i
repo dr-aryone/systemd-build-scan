@@ -9084,9 +9084,9 @@ static __inline__ char *btrfs_err_str(enum btrfs_err_code err_code)
  }
 }
 # 51 "./src/basic/missing.h" 2
-# 953 "./src/basic/missing.h"
+# 957 "./src/basic/missing.h"
 typedef int32_t key_serial_t;
-# 1008 "./src/basic/missing.h"
+# 1012 "./src/basic/missing.h"
 # 1 "./src/basic/missing_syscall.h" 1
 # 26 "./src/basic/missing_syscall.h"
 static inline int pivot_root(const char *new_root, const char *put_old) {
@@ -9203,7 +9203,7 @@ static inline ssize_t copy_file_range(int fd_in, loff_t *off_in,
 
 
 }
-# 1009 "./src/basic/missing.h" 2
+# 1013 "./src/basic/missing.h" 2
 # 47 "./src/basic/util.h" 2
 # 1 "./src/basic/time-util.h" 1
 # 24 "./src/basic/time-util.h"
@@ -16972,6 +16972,8 @@ int same_fd(int a, int b);
 void cmsg_close_all(struct msghdr *mh);
 
 _Bool fdname_is_valid(const char *s);
+
+int fd_get_path(int fd, char **ret);
 # 36 "src/core/dbus-manager.c" 2
 # 1 "./src/basic/fileio.h" 1
 # 24 "./src/basic/fileio.h"

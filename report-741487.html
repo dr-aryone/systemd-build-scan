@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fdf' is never read -->
+<!-- BUGDESC Value stored to 'fdt' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME copy.c -->
 
-<!-- FUNCTIONNAME fd_copy_directory -->
+<!-- FUNCTIONNAME fd_copy_regular -->
 
-<!-- BUGLINE 312 -->
+<!-- BUGLINE 236 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>basic/copy.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 312, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fdf' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 236, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'fdt' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -187,7 +187,7 @@
 <tr><td class="num" id="LN102">102</td><td class="line">                <span class='keyword'>if</span> (try_cfr) {</td></tr>
 <tr><td class="num" id="LN103">103</td><td class="line">                        n = try_copy_file_range(fdf, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, fdt, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, m, 0u);</td></tr>
 <tr><td class="num" id="LN104">104</td><td class="line">                        <span class='keyword'>if</span> (n &lt; 0) {</td></tr>
-<tr><td class="num" id="LN105">105</td><td class="line">                                <span class='keyword'>if</span> (!<span class='macro'>IN_SET(n, -EINVAL, -ENOSYS, -EXDEV)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){-22, -38, -18})/sizeof(int)]; switch(n) {<br> case -22: case -38: case -18: _found = 1; break; default: break<br>; } _found; })</span></span>)</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">                                <span class='keyword'>if</span> (!<span class='macro'>IN_SET(n, -EINVAL, -ENOSYS, -EXDEV, -EBADF)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){-22, -38, -18, -9})/sizeof(int)]; switch<br>(n) { case -22: case -38: case -18: case -9: _found = 1; break<br>; default: break; } _found; })</span></span>)</td></tr>
 <tr><td class="num" id="LN106">106</td><td class="line">                                        <span class='keyword'>return</span> n;</td></tr>
 <tr><td class="num" id="LN107">107</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN108">108</td><td class="line">                                try_cfr = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
@@ -233,7 +233,7 @@
 <tr><td class="num" id="LN148">148</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN149">149</td><td class="line">                <span class='comment'>/* As a fallback just copy bits by hand */</span></td></tr>
 <tr><td class="num" id="LN150">150</td><td class="line">                {</td></tr>
-<tr><td class="num" id="LN151">151</td><td class="line">                        uint8_t buf[<span class='macro'>MIN(m, COPY_BUFFER_SIZE)<span class='expansion'>__extension__ ({ const typeof((m)) __unique_prefix_A14 = ((m)<br>); const typeof(((16*1024u))) __unique_prefix_B15 = (((16*1024u<br>))); __unique_prefix_A14 &lt; __unique_prefix_B15 ? __unique_prefix_A14<br> : __unique_prefix_B15; })</span></span>];</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">                        uint8_t buf[<span class='macro'>MIN(m, COPY_BUFFER_SIZE)<span class='expansion'>__extension__ ({ const typeof((m)) __unique_prefix_A8 = ((m))<br>; const typeof(((16*1024u))) __unique_prefix_B9 = (((16*1024u<br>))); __unique_prefix_A8 &lt; __unique_prefix_B9 ? __unique_prefix_A8<br> : __unique_prefix_B9; })</span></span>];</td></tr>
 <tr><td class="num" id="LN152">152</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN153">153</td><td class="line">                        n = read(fdf, buf, <span class='keyword'>sizeof</span> buf);</td></tr>
 <tr><td class="num" id="LN154">154</td><td class="line">                        <span class='keyword'>if</span> (n &lt; 0)</td></tr>
@@ -255,7 +255,7 @@
 <tr><td class="num" id="LN170">170</td><td class="line">                 <span class='comment'>* so reduce our maximum by the amount we already copied,</span></td></tr>
 <tr><td class="num" id="LN171">171</td><td class="line">                 <span class='comment'>* but don't go below our copy buffer size, unless we are</span></td></tr>
 <tr><td class="num" id="LN172">172</td><td class="line">                 <span class='comment'>* close the the limit of bytes we are allowed to copy. */</span></td></tr>
-<tr><td class="num" id="LN173">173</td><td class="line">                m = <span class='macro'>MAX(MIN(COPY_BUFFER_SIZE, max_bytes), m - n)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>((16*1024u))) __unique_prefix_A16 = (((16*1024u))); const typeof<br>((max_bytes)) __unique_prefix_B17 = ((max_bytes)); __unique_prefix_A16<br> &lt; __unique_prefix_B17 ? __unique_prefix_A16 : __unique_prefix_B17<br>; }))) __unique_prefix_A18 = ((__extension__ ({ const typeof(<br>((16*1024u))) __unique_prefix_A16 = (((16*1024u))); const typeof<br>((max_bytes)) __unique_prefix_B17 = ((max_bytes)); __unique_prefix_A16<br> &lt; __unique_prefix_B17 ? __unique_prefix_A16 : __unique_prefix_B17<br>; }))); const typeof((m - n)) __unique_prefix_B19 = ((m - n))<br>; __unique_prefix_A18 &gt; __unique_prefix_B19 ? __unique_prefix_A18<br> : __unique_prefix_B19; })</span></span>;</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">                m = <span class='macro'>MAX(MIN(COPY_BUFFER_SIZE, max_bytes), m - n)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>((16*1024u))) __unique_prefix_A10 = (((16*1024u))); const typeof<br>((max_bytes)) __unique_prefix_B11 = ((max_bytes)); __unique_prefix_A10<br> &lt; __unique_prefix_B11 ? __unique_prefix_A10 : __unique_prefix_B11<br>; }))) __unique_prefix_A12 = ((__extension__ ({ const typeof(<br>((16*1024u))) __unique_prefix_A10 = (((16*1024u))); const typeof<br>((max_bytes)) __unique_prefix_B11 = ((max_bytes)); __unique_prefix_A10<br> &lt; __unique_prefix_B11 ? __unique_prefix_A10 : __unique_prefix_B11<br>; }))); const typeof((m - n)) __unique_prefix_B13 = ((m - n))<br>; __unique_prefix_A12 &gt; __unique_prefix_B13 ? __unique_prefix_A12<br> : __unique_prefix_B13; })</span></span>;</td></tr>
 <tr><td class="num" id="LN174">174</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN175">175</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN176">176</td><td class="line">        <span class='keyword'>return</span> 0; <span class='comment'>/* return 0 if we hit EOF earlier than the size limit */</span></td></tr>
@@ -318,7 +318,8 @@
 <tr><td class="num" id="LN233">233</td><td class="line">        (<span class='keyword'>void</span>) copy_xattr(fdf, fdt);</td></tr>
 <tr><td class="num" id="LN234">234</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN235">235</td><td class="line">        q = close(fdt);</td></tr>
-<tr><td class="num" id="LN236">236</td><td class="line">        fdt = -1;</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line">        fdt = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fdt' is never read</div></td></tr>
 <tr><td class="num" id="LN237">237</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN238">238</td><td class="line">        <span class='keyword'>if</span> (q &lt; 0) {</td></tr>
 <tr><td class="num" id="LN239">239</td><td class="line">                r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
@@ -394,8 +395,7 @@
 <tr><td class="num" id="LN309">309</td><td class="line">        d = fdopendir(fdf);</td></tr>
 <tr><td class="num" id="LN310">310</td><td class="line">        <span class='keyword'>if</span> (!d)</td></tr>
 <tr><td class="num" id="LN311">311</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN312">312</td><td class="line">        fdf = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fdf' is never read</div></td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">        fdf = -1;</td></tr>
 <tr><td class="num" id="LN313">313</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN314">314</td><td class="line">        r = mkdirat(dt, to, st-&gt;st_mode &amp; 07777);</td></tr>
 <tr><td class="num" id="LN315">315</td><td class="line">        <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
