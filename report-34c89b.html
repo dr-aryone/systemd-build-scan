@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'e' is never read -->
+<!-- BUGDESC Value stored to 'etc_passwd_lock' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME dissect_image -->
+<!-- FUNCTIONNAME main -->
 
-<!-- BUGLINE 1991 -->
+<!-- BUGLINE 3888 -->
 
 <!-- BUGCOLUMN 17 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1991, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'e' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3888, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'etc_passwd_lock' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -2073,8 +2073,7 @@
 <tr><td class="num" id="LN1988">1988</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to reread partition table: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 1988, __func__, "Failed to reread partition table: %m") : -<br>abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1989">1989</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1990">1990</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1991">1991</td><td class="line">                e = <span class="mrange">udev_enumerate_unref(e)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'e' is never read</div></td></tr>
+<tr><td class="num" id="LN1991">1991</td><td class="line">                e = udev_enumerate_unref(e);</td></tr>
 <tr><td class="num" id="LN1992">1992</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1993">1993</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1994">1994</td><td class="line">        first = udev_enumerate_get_list_entry(e);</td></tr>
@@ -3425,7 +3424,7 @@
 <tr><td class="num" id="LN3339">3339</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> master = -1, image_fd = -1;</td></tr>
 <tr><td class="num" id="LN3340">3340</td><td class="line">        <span class='macro'>_cleanup_fdset_free_<span class='expansion'>__attribute__((cleanup(fdset_freep)))</span></span> FDSet *fds = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN3341">3341</td><td class="line">        <span class='keyword'>int</span> r, n_fd_passed, loop_nr = -1;</td></tr>
-<tr><td class="num" id="LN3342">3342</td><td class="line">        <span class='keyword'>char</span> veth_name[<span class='macro'>IFNAMSIZ<span class='expansion'>16</span></span>];</td></tr>
+<tr><td class="num" id="LN3342">3342</td><td class="line">        <span class='keyword'>char</span> veth_name[<span class='macro'>IFNAMSIZ<span class='expansion'>16</span></span>] = <span class='string_literal'>""</span>;</td></tr>
 <tr><td class="num" id="LN3343">3343</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> secondary = <span class='macro'>false<span class='expansion'>0</span></span>, remove_subvol = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN3344">3344</td><td class="line">        sigset_t mask_chld;</td></tr>
 <tr><td class="num" id="LN3345">3345</td><td class="line">        pid_t pid = 0;</td></tr>
@@ -3971,7 +3970,8 @@
 <tr><td class="num" id="LN3885">3885</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3886">3886</td><td class="line">                <span class='comment'>/* At this point we have made use of the UID we picked, and thus nss-mymachines will make them appear</span></td></tr>
 <tr><td class="num" id="LN3887">3887</td><td class="line">                 <span class='comment'>* in getpwuid(), thus we can release the /etc/passwd lock. */</span></td></tr>
-<tr><td class="num" id="LN3888">3888</td><td class="line">                etc_passwd_lock = safe_close(etc_passwd_lock);</td></tr>
+<tr><td class="num" id="LN3888">3888</td><td class="line">                etc_passwd_lock = <span class="mrange">safe_close(etc_passwd_lock)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'etc_passwd_lock' is never read</div></td></tr>
 <tr><td class="num" id="LN3889">3889</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3890">3890</td><td class="line">                sd_notifyf(<span class='macro'>false<span class='expansion'>0</span></span>,</td></tr>
 <tr><td class="num" id="LN3891">3891</td><td class="line">                           <span class='string_literal'>"READY=1\n"</span></td></tr>

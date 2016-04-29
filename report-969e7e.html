@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'etc_passwd_lock' is never read -->
+<!-- BUGDESC Value stored to 'u' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,11 +64,11 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME main -->
+<!-- FUNCTIONNAME setup_kmsg -->
 
-<!-- BUGLINE 3888 -->
+<!-- BUGLINE 1387 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 9 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3888, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'etc_passwd_lock' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1387, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'u' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1469,7 +1469,8 @@
 <tr><td class="num" id="LN1384">1384</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1385">1385</td><td class="line">        <span class='macro'>assert(kmsg_socket &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(kmsg_socket &gt;= 0)),0))) log_assert_failed<br>("kmsg_socket &gt;= 0", "src/nspawn/nspawn.c", 1385, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1386">1386</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1387">1387</td><td class="line">        u = umask(0000);</td></tr>
+<tr><td class="num" id="LN1387">1387</td><td class="line">        u = <span class="mrange">umask(0000)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'u' is never read</div></td></tr>
 <tr><td class="num" id="LN1388">1388</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1389">1389</td><td class="line">        <span class='comment'>/* We create the kmsg FIFO as /run/kmsg, but immediately</span></td></tr>
 <tr><td class="num" id="LN1390">1390</td><td class="line">         <span class='comment'>* delete it after bind mounting it to /proc/kmsg. While FIFOs</span></td></tr>
@@ -3424,7 +3425,7 @@
 <tr><td class="num" id="LN3339">3339</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> master = -1, image_fd = -1;</td></tr>
 <tr><td class="num" id="LN3340">3340</td><td class="line">        <span class='macro'>_cleanup_fdset_free_<span class='expansion'>__attribute__((cleanup(fdset_freep)))</span></span> FDSet *fds = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN3341">3341</td><td class="line">        <span class='keyword'>int</span> r, n_fd_passed, loop_nr = -1;</td></tr>
-<tr><td class="num" id="LN3342">3342</td><td class="line">        <span class='keyword'>char</span> veth_name[<span class='macro'>IFNAMSIZ<span class='expansion'>16</span></span>];</td></tr>
+<tr><td class="num" id="LN3342">3342</td><td class="line">        <span class='keyword'>char</span> veth_name[<span class='macro'>IFNAMSIZ<span class='expansion'>16</span></span>] = <span class='string_literal'>""</span>;</td></tr>
 <tr><td class="num" id="LN3343">3343</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> secondary = <span class='macro'>false<span class='expansion'>0</span></span>, remove_subvol = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN3344">3344</td><td class="line">        sigset_t mask_chld;</td></tr>
 <tr><td class="num" id="LN3345">3345</td><td class="line">        pid_t pid = 0;</td></tr>
@@ -3970,8 +3971,7 @@
 <tr><td class="num" id="LN3885">3885</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3886">3886</td><td class="line">                <span class='comment'>/* At this point we have made use of the UID we picked, and thus nss-mymachines will make them appear</span></td></tr>
 <tr><td class="num" id="LN3887">3887</td><td class="line">                 <span class='comment'>* in getpwuid(), thus we can release the /etc/passwd lock. */</span></td></tr>
-<tr><td class="num" id="LN3888">3888</td><td class="line">                etc_passwd_lock = <span class="mrange">safe_close(etc_passwd_lock)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'etc_passwd_lock' is never read</div></td></tr>
+<tr><td class="num" id="LN3888">3888</td><td class="line">                etc_passwd_lock = safe_close(etc_passwd_lock);</td></tr>
 <tr><td class="num" id="LN3889">3889</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3890">3890</td><td class="line">                sd_notifyf(<span class='macro'>false<span class='expansion'>0</span></span>,</td></tr>
 <tr><td class="num" id="LN3891">3891</td><td class="line">                           <span class='string_literal'>"READY=1\n"</span></td></tr>

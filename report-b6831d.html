@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Value stored to 'u' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,11 +64,11 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME setup_image -->
+<!-- FUNCTIONNAME copy_devnodes -->
 
-<!-- BUGLINE 1772 -->
+<!-- BUGLINE 1258 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 9 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1772, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1258, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'u' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1340,7 +1340,8 @@
 <tr><td class="num" id="LN1255">1255</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1256">1256</td><td class="line">        <span class='macro'>assert(dest)<span class='expansion'>do { if ((__builtin_expect(!!(!(dest)),0))) log_assert_failed<br>("dest", "src/nspawn/nspawn.c", 1256, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1257">1257</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1258">1258</td><td class="line">        u = umask(0000);</td></tr>
+<tr><td class="num" id="LN1258">1258</td><td class="line">        u = <span class="mrange">umask(0000)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'u' is never read</div></td></tr>
 <tr><td class="num" id="LN1259">1259</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1260">1260</td><td class="line">        <span class='comment'>/* Create /dev/net, so that we can create /dev/net/tun in it */</span></td></tr>
 <tr><td class="num" id="LN1261">1261</td><td class="line">        <span class='keyword'>if</span> (userns_mkdir(dest, <span class='string_literal'>"/dev/net"</span>, 0755, 0, 0) &lt; 0)</td></tr>
@@ -1854,8 +1855,7 @@
 <tr><td class="num" id="LN1769">1769</td><td class="line">                *loop_nr = -1;</td></tr>
 <tr><td class="num" id="LN1770">1770</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1771">1771</td><td class="line">                r = fd;</td></tr>
-<tr><td class="num" id="LN1772">1772</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN1772">1772</td><td class="line">                fd = -1;</td></tr>
 <tr><td class="num" id="LN1773">1773</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1774">1774</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1775">1775</td><td class="line">        }</td></tr>
@@ -3425,7 +3425,7 @@
 <tr><td class="num" id="LN3339">3339</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> master = -1, image_fd = -1;</td></tr>
 <tr><td class="num" id="LN3340">3340</td><td class="line">        <span class='macro'>_cleanup_fdset_free_<span class='expansion'>__attribute__((cleanup(fdset_freep)))</span></span> FDSet *fds = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN3341">3341</td><td class="line">        <span class='keyword'>int</span> r, n_fd_passed, loop_nr = -1;</td></tr>
-<tr><td class="num" id="LN3342">3342</td><td class="line">        <span class='keyword'>char</span> veth_name[<span class='macro'>IFNAMSIZ<span class='expansion'>16</span></span>];</td></tr>
+<tr><td class="num" id="LN3342">3342</td><td class="line">        <span class='keyword'>char</span> veth_name[<span class='macro'>IFNAMSIZ<span class='expansion'>16</span></span>] = <span class='string_literal'>""</span>;</td></tr>
 <tr><td class="num" id="LN3343">3343</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> secondary = <span class='macro'>false<span class='expansion'>0</span></span>, remove_subvol = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN3344">3344</td><td class="line">        sigset_t mask_chld;</td></tr>
 <tr><td class="num" id="LN3345">3345</td><td class="line">        pid_t pid = 0;</td></tr>
