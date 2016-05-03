@@ -13206,6 +13206,9 @@ static inline _Bool UNIT_FILE_INSTALL_INFO_HAS_ALSO(UnitFileInstallInfo *i) {
         return !strv_isempty(i->also);
 }
 
+_Bool unit_type_may_alias(UnitType type) __attribute__ ((const));
+_Bool unit_type_may_template(UnitType type) __attribute__ ((const));
+
 int unit_file_enable(
                 UnitFileScope scope,
                 _Bool runtime,
@@ -16508,17 +16511,11 @@ struct UnitVTable {
         UnitStatusMessageFormats status_message_formats;
 
 
-        _Bool no_alias:1;
-
-
-        _Bool no_instances:1;
-
-
         _Bool can_transient:1;
 };
 
 extern const UnitVTable * const unit_vtable[_UNIT_TYPE_MAX];
-# 451 "./src/core/unit.h"
+# 445 "./src/core/unit.h"
 static inline Service* SERVICE(Unit *u) { if ((__builtin_expect(!!(!u || u->type != UNIT_SERVICE),0))) return ((void*)0); return (Service*) u; };
 static inline Socket* SOCKET(Unit *u) { if ((__builtin_expect(!!(!u || u->type != UNIT_SOCKET),0))) return ((void*)0); return (Socket*) u; };
 static inline BusName* BUSNAME(Unit *u) { if ((__builtin_expect(!!(!u || u->type != UNIT_BUSNAME),0))) return ((void*)0); return (BusName*) u; };

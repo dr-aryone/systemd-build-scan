@@ -66,7 +66,7 @@
 
 <!-- FUNCTIONNAME fd_copy_directory -->
 
-<!-- BUGLINE 312 -->
+<!-- BUGLINE 314 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>basic/copy.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 312, column 9</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 314, column 9</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Value stored to 'fdf' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -390,285 +390,301 @@
 <tr><td class="num" id="LN305">305</td><td class="line">                fdf = openat(df, from, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>);</td></tr>
 <tr><td class="num" id="LN306">306</td><td class="line">        <span class='keyword'>else</span></td></tr>
 <tr><td class="num" id="LN307">307</td><td class="line">                fdf = fcntl(df, <span class='macro'>F_DUPFD_CLOEXEC<span class='expansion'>1030</span></span>, 3);</td></tr>
-<tr><td class="num" id="LN308">308</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN309">309</td><td class="line">        d = fdopendir(fdf);</td></tr>
-<tr><td class="num" id="LN310">310</td><td class="line">        <span class='keyword'>if</span> (!d)</td></tr>
-<tr><td class="num" id="LN311">311</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN312">312</td><td class="line">        fdf = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">        <span class='keyword'>if</span> (fdf &lt; 0)</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">        d = fdopendir(fdf);</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">        <span class='keyword'>if</span> (!d)</td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">        fdf = <span class="mrange">-1</span>;</td></tr>
 <tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fdf' is never read</div></td></tr>
-<tr><td class="num" id="LN313">313</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN314">314</td><td class="line">        r = mkdirat(dt, to, st-&gt;st_mode &amp; 07777);</td></tr>
-<tr><td class="num" id="LN315">315</td><td class="line">        <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN316">316</td><td class="line">                created = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN317">317</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EEXIST<span class='expansion'>17</span></span> &amp;&amp; merge)</td></tr>
-<tr><td class="num" id="LN318">318</td><td class="line">                created = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN319">319</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN320">320</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN321">321</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN322">322</td><td class="line">        fdt = openat(dt, to, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>);</td></tr>
-<tr><td class="num" id="LN323">323</td><td class="line">        <span class='keyword'>if</span> (fdt &lt; 0)</td></tr>
-<tr><td class="num" id="LN324">324</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN325">325</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN326">326</td><td class="line">        r = 0;</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">        r = mkdirat(dt, to, st-&gt;st_mode &amp; 07777);</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">        <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">                created = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EEXIST<span class='expansion'>17</span></span> &amp;&amp; merge)</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">                created = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">        fdt = openat(dt, to, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>|<span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>);</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">        <span class='keyword'>if</span> (fdt &lt; 0)</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN328">328</td><td class="line">        <span class='keyword'>if</span> (created) {</td></tr>
-<tr><td class="num" id="LN329">329</td><td class="line">                <span class='keyword'>struct</span> timespec ut[2] = {</td></tr>
-<tr><td class="num" id="LN330">330</td><td class="line">                        st-&gt;st_atim,</td></tr>
-<tr><td class="num" id="LN331">331</td><td class="line">                        st-&gt;st_mtim</td></tr>
-<tr><td class="num" id="LN332">332</td><td class="line">                };</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">        r = 0;</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">        <span class='macro'>FOREACH_DIRENT_ALL(de, d, <span class='keyword'>return</span> -errno)<span class='expansion'>for ((*__errno_location ()) = 0, de = readdir(d);; (*__errno_location<br> ()) = 0, de = readdir(d)) if (!de) { if ((*__errno_location (<br>)) &gt; 0) { return -(*__errno_location ()); } break; } else</span></span> {</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">                <span class='keyword'>struct</span> stat buf;</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">                <span class='keyword'>int</span> q;</td></tr>
 <tr><td class="num" id="LN333">333</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN334">334</td><td class="line">                <span class='keyword'>if</span> (fchown(fdt, st-&gt;st_uid, st-&gt;st_gid) &lt; 0)</td></tr>
-<tr><td class="num" id="LN335">335</td><td class="line">                        r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>STR_IN_SET(de-&gt;d_name, <span class='string_literal'>"."</span>, <span class='string_literal'>".."</span>)<span class='expansion'>(!!strv_find((((char**) ((const char*[]) { ".", "..", ((void*<br>)0) }))), (de-&gt;d_name)))</span></span>)</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN337">337</td><td class="line">                <span class='keyword'>if</span> (fchmod(fdt, st-&gt;st_mode &amp; 07777) &lt; 0)</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">                <span class='keyword'>if</span> (fstatat(dirfd(d), de-&gt;d_name, &amp;buf, <span class='macro'>AT_SYMLINK_NOFOLLOW<span class='expansion'>0x100</span></span>) &lt; 0) {</td></tr>
 <tr><td class="num" id="LN338">338</td><td class="line">                        r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN339">339</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN340">340</td><td class="line">                (<span class='keyword'>void</span>) futimens(fdt, ut);</td></tr>
-<tr><td class="num" id="LN341">341</td><td class="line">                (<span class='keyword'>void</span>) copy_xattr(dirfd(d), fdt);</td></tr>
-<tr><td class="num" id="LN342">342</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN343">343</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN344">344</td><td class="line">        <span class='macro'>FOREACH_DIRENT_ALL(de, d, <span class='keyword'>return</span> -errno)<span class='expansion'>for ((*__errno_location ()) = 0, de = readdir(d);; (*__errno_location<br> ()) = 0, de = readdir(d)) if (!de) { if ((*__errno_location (<br>)) &gt; 0) { return -(*__errno_location ()); } break; } else</span></span> {</td></tr>
-<tr><td class="num" id="LN345">345</td><td class="line">                <span class='keyword'>struct</span> stat buf;</td></tr>
-<tr><td class="num" id="LN346">346</td><td class="line">                <span class='keyword'>int</span> q;</td></tr>
-<tr><td class="num" id="LN347">347</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN348">348</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>STR_IN_SET(de-&gt;d_name, <span class='string_literal'>"."</span>, <span class='string_literal'>".."</span>)<span class='expansion'>(!!strv_find((((char**) ((const char*[]) { ".", "..", ((void*<br>)0) }))), (de-&gt;d_name)))</span></span>)</td></tr>
-<tr><td class="num" id="LN349">349</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN350">350</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN351">351</td><td class="line">                <span class='keyword'>if</span> (fstatat(dirfd(d), de-&gt;d_name, &amp;buf, <span class='macro'>AT_SYMLINK_NOFOLLOW<span class='expansion'>0x100</span></span>) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN352">352</td><td class="line">                        r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN353">353</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN354">354</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN355">355</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN356">356</td><td class="line">                <span class='keyword'>if</span> (buf.st_dev != original_device)</td></tr>
-<tr><td class="num" id="LN357">357</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN358">358</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN359">359</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>S_ISREG(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0100000))</span></span>)</td></tr>
-<tr><td class="num" id="LN360">360</td><td class="line">                        q = fd_copy_regular(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name);</td></tr>
-<tr><td class="num" id="LN361">361</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISDIR(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
-<tr><td class="num" id="LN362">362</td><td class="line">                        q = fd_copy_directory(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name, original_device, merge);</td></tr>
-<tr><td class="num" id="LN363">363</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISLNK(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0120000))</span></span>)</td></tr>
-<tr><td class="num" id="LN364">364</td><td class="line">                        q = fd_copy_symlink(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name);</td></tr>
-<tr><td class="num" id="LN365">365</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISFIFO(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0010000))</span></span>)</td></tr>
-<tr><td class="num" id="LN366">366</td><td class="line">                        q = fd_copy_fifo(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name);</td></tr>
-<tr><td class="num" id="LN367">367</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISBLK(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0060000))</span></span> || <span class='macro'>S_ISCHR(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0020000))</span></span> || <span class='macro'>S_ISSOCK(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0140000))</span></span>)</td></tr>
-<tr><td class="num" id="LN368">368</td><td class="line">                        q = fd_copy_node(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name);</td></tr>
-<tr><td class="num" id="LN369">369</td><td class="line">                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN370">370</td><td class="line">                        q = -<span class='macro'>EOPNOTSUPP<span class='expansion'>95</span></span>;</td></tr>
-<tr><td class="num" id="LN371">371</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN372">372</td><td class="line">                <span class='keyword'>if</span> (q == -<span class='macro'>EEXIST<span class='expansion'>17</span></span> &amp;&amp; merge)</td></tr>
-<tr><td class="num" id="LN373">373</td><td class="line">                        q = 0;</td></tr>
-<tr><td class="num" id="LN374">374</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN375">375</td><td class="line">                <span class='keyword'>if</span> (q &lt; 0)</td></tr>
-<tr><td class="num" id="LN376">376</td><td class="line">                        r = q;</td></tr>
-<tr><td class="num" id="LN377">377</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN378">378</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN379">379</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN380">380</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN381">381</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN382">382</td><td class="line"><span class='keyword'>int</span> copy_tree_at(<span class='keyword'>int</span> fdf, <span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>int</span> fdt, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='macro'>bool<span class='expansion'>_Bool</span></span> merge) {</td></tr>
-<tr><td class="num" id="LN383">383</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
-<tr><td class="num" id="LN384">384</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN385">385</td><td class="line">        <span class='macro'>assert(from)<span class='expansion'>do { if ((__builtin_expect(!!(!(from)),0))) log_assert_failed<br>("from", "src/basic/copy.c", 385, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN386">386</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 386, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN387">387</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN388">388</td><td class="line">        <span class='keyword'>if</span> (fstatat(fdf, from, &amp;st, <span class='macro'>AT_SYMLINK_NOFOLLOW<span class='expansion'>0x100</span></span>) &lt; 0)</td></tr>
-<tr><td class="num" id="LN389">389</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN390">390</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN391">391</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>S_ISREG(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0100000))</span></span>)</td></tr>
-<tr><td class="num" id="LN392">392</td><td class="line">                <span class='keyword'>return</span> fd_copy_regular(fdf, from, &amp;st, fdt, to);</td></tr>
-<tr><td class="num" id="LN393">393</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
-<tr><td class="num" id="LN394">394</td><td class="line">                <span class='keyword'>return</span> fd_copy_directory(fdf, from, &amp;st, fdt, to, st.st_dev, merge);</td></tr>
-<tr><td class="num" id="LN395">395</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISLNK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0120000))</span></span>)</td></tr>
-<tr><td class="num" id="LN396">396</td><td class="line">                <span class='keyword'>return</span> fd_copy_symlink(fdf, from, &amp;st, fdt, to);</td></tr>
-<tr><td class="num" id="LN397">397</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISFIFO(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0010000))</span></span>)</td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">                <span class='keyword'>return</span> fd_copy_fifo(fdf, from, &amp;st, fdt, to);</td></tr>
-<tr><td class="num" id="LN399">399</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISBLK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0060000))</span></span> || <span class='macro'>S_ISCHR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0020000))</span></span> || <span class='macro'>S_ISSOCK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0140000))</span></span>)</td></tr>
-<tr><td class="num" id="LN400">400</td><td class="line">                <span class='keyword'>return</span> fd_copy_node(fdf, from, &amp;st, fdt, to);</td></tr>
-<tr><td class="num" id="LN401">401</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN402">402</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EOPNOTSUPP<span class='expansion'>95</span></span>;</td></tr>
-<tr><td class="num" id="LN403">403</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN404">404</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN405">405</td><td class="line"><span class='keyword'>int</span> copy_tree(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='macro'>bool<span class='expansion'>_Bool</span></span> merge) {</td></tr>
-<tr><td class="num" id="LN406">406</td><td class="line">        <span class='keyword'>return</span> copy_tree_at(<span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, from, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to, merge);</td></tr>
-<tr><td class="num" id="LN407">407</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN408">408</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN409">409</td><td class="line"><span class='keyword'>int</span> copy_directory_fd(<span class='keyword'>int</span> dirfd, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='macro'>bool<span class='expansion'>_Bool</span></span> merge) {</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">                <span class='keyword'>if</span> (buf.st_dev != original_device)</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>S_ISREG(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0100000))</span></span>)</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">                        q = fd_copy_regular(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name);</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISDIR(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">                        q = fd_copy_directory(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name, original_device, merge);</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISLNK(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0120000))</span></span>)</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">                        q = fd_copy_symlink(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name);</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISFIFO(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0010000))</span></span>)</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">                        q = fd_copy_fifo(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name);</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISBLK(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0060000))</span></span> || <span class='macro'>S_ISCHR(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0020000))</span></span> || <span class='macro'>S_ISSOCK(buf.st_mode)<span class='expansion'>((((buf.st_mode)) &amp; 0170000) == (0140000))</span></span>)</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">                        q = fd_copy_node(dirfd(d), de-&gt;d_name, &amp;buf, fdt, de-&gt;d_name);</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">                        q = -<span class='macro'>EOPNOTSUPP<span class='expansion'>95</span></span>;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">                <span class='keyword'>if</span> (q == -<span class='macro'>EEXIST<span class='expansion'>17</span></span> &amp;&amp; merge)</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">                        q = 0;</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">                <span class='keyword'>if</span> (q &lt; 0)</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">                        r = q;</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">        <span class='keyword'>if</span> (created) {</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">                <span class='keyword'>struct</span> timespec ut[2] = {</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">                        st-&gt;st_atim,</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">                        st-&gt;st_mtim</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">                };</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">                <span class='keyword'>if</span> (fchown(fdt, st-&gt;st_uid, st-&gt;st_gid) &lt; 0)</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">                        r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">                <span class='keyword'>if</span> (fchmod(fdt, st-&gt;st_mode &amp; 07777) &lt; 0)</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">                        r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">                (<span class='keyword'>void</span>) copy_xattr(dirfd(d), fdt);</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">                (<span class='keyword'>void</span>) futimens(fdt, ut);</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line"><span class='keyword'>int</span> copy_tree_at(<span class='keyword'>int</span> fdf, <span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>int</span> fdt, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='macro'>bool<span class='expansion'>_Bool</span></span> merge) {</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">        <span class='macro'>assert(from)<span class='expansion'>do { if ((__builtin_expect(!!(!(from)),0))) log_assert_failed<br>("from", "src/basic/copy.c", 387, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 388, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">        <span class='keyword'>if</span> (fstatat(fdf, from, &amp;st, <span class='macro'>AT_SYMLINK_NOFOLLOW<span class='expansion'>0x100</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>S_ISREG(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0100000))</span></span>)</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">                <span class='keyword'>return</span> fd_copy_regular(fdf, from, &amp;st, fdt, to);</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">                <span class='keyword'>return</span> fd_copy_directory(fdf, from, &amp;st, fdt, to, st.st_dev, merge);</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISLNK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0120000))</span></span>)</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">                <span class='keyword'>return</span> fd_copy_symlink(fdf, from, &amp;st, fdt, to);</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISFIFO(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0010000))</span></span>)</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">                <span class='keyword'>return</span> fd_copy_fifo(fdf, from, &amp;st, fdt, to);</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>S_ISBLK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0060000))</span></span> || <span class='macro'>S_ISCHR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0020000))</span></span> || <span class='macro'>S_ISSOCK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0140000))</span></span>)</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">                <span class='keyword'>return</span> fd_copy_node(fdf, from, &amp;st, fdt, to);</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EOPNOTSUPP<span class='expansion'>95</span></span>;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line"><span class='keyword'>int</span> copy_tree(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='macro'>bool<span class='expansion'>_Bool</span></span> merge) {</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">        <span class='keyword'>return</span> copy_tree_at(<span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, from, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to, merge);</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN410">410</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN411">411</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
-<tr><td class="num" id="LN412">412</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN413">413</td><td class="line">        <span class='macro'>assert(dirfd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(dirfd &gt;= 0)),0))) log_assert_failed<br>("dirfd &gt;= 0", "src/basic/copy.c", 413, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN414">414</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 414, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN415">415</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN416">416</td><td class="line">        <span class='keyword'>if</span> (fstat(dirfd, &amp;st) &lt; 0)</td></tr>
-<tr><td class="num" id="LN417">417</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN418">418</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN419">419</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
-<tr><td class="num" id="LN420">420</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOTDIR<span class='expansion'>20</span></span>;</td></tr>
-<tr><td class="num" id="LN421">421</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN422">422</td><td class="line">        <span class='keyword'>return</span> fd_copy_directory(dirfd, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;st, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to, st.st_dev, merge);</td></tr>
-<tr><td class="num" id="LN423">423</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN424">424</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN425">425</td><td class="line"><span class='keyword'>int</span> copy_file_fd(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>int</span> fdt, <span class='macro'>bool<span class='expansion'>_Bool</span></span> try_reflink) {</td></tr>
-<tr><td class="num" id="LN426">426</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fdf = -1;</td></tr>
-<tr><td class="num" id="LN427">427</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line"><span class='keyword'>int</span> copy_directory_fd(<span class='keyword'>int</span> dirfd, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='macro'>bool<span class='expansion'>_Bool</span></span> merge) {</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">        <span class='macro'>assert(dirfd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(dirfd &gt;= 0)),0))) log_assert_failed<br>("dirfd &gt;= 0", "src/basic/copy.c", 414, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 415, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">        <span class='keyword'>if</span> (fstat(dirfd, &amp;st) &lt; 0)</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOTDIR<span class='expansion'>20</span></span>;</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">        <span class='keyword'>return</span> fd_copy_directory(dirfd, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;st, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to, st.st_dev, merge);</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line"><span class='keyword'>int</span> copy_directory(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='macro'>bool<span class='expansion'>_Bool</span></span> merge) {</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
 <tr><td class="num" id="LN428">428</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN429">429</td><td class="line">        <span class='macro'>assert(from)<span class='expansion'>do { if ((__builtin_expect(!!(!(from)),0))) log_assert_failed<br>("from", "src/basic/copy.c", 429, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN430">430</td><td class="line">        <span class='macro'>assert(fdt &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fdt &gt;= 0)),0))) log_assert_failed<br>("fdt &gt;= 0", "src/basic/copy.c", 430, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 430, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN431">431</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN432">432</td><td class="line">        fdf = open(from, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
-<tr><td class="num" id="LN433">433</td><td class="line">        <span class='keyword'>if</span> (fdf &lt; 0)</td></tr>
-<tr><td class="num" id="LN434">434</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN435">435</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN436">436</td><td class="line">        r = copy_bytes(fdf, fdt, (uint64_t) -1, try_reflink);</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">        <span class='keyword'>if</span> (lstat(from, &amp;st) &lt; 0)</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>S_ISDIR(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0040000))</span></span>)</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOTDIR<span class='expansion'>20</span></span>;</td></tr>
 <tr><td class="num" id="LN437">437</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN438">438</td><td class="line">        (<span class='keyword'>void</span>) copy_times(fdf, fdt);</td></tr>
-<tr><td class="num" id="LN439">439</td><td class="line">        (<span class='keyword'>void</span>) copy_xattr(fdf, fdt);</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">        <span class='keyword'>return</span> fd_copy_directory(<span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, from, &amp;st, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to, st.st_dev, merge);</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN440">440</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN441">441</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN442">442</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN443">443</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN444">444</td><td class="line"><span class='keyword'>int</span> copy_file(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='keyword'>int</span> flags, mode_t mode, <span class='keyword'>unsigned</span> chattr_flags) {</td></tr>
-<tr><td class="num" id="LN445">445</td><td class="line">        <span class='keyword'>int</span> fdt = -1, r;</td></tr>
-<tr><td class="num" id="LN446">446</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN447">447</td><td class="line">        <span class='macro'>assert(from)<span class='expansion'>do { if ((__builtin_expect(!!(!(from)),0))) log_assert_failed<br>("from", "src/basic/copy.c", 447, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN448">448</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 448, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN449">449</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN450">450</td><td class="line">        <span class='macro'>RUN_WITH_UMASK(0000)<span class='expansion'>for (__attribute__((cleanup(_reset_umask_))) struct _umask_struct_<br> _saved_umask_ = { umask(0000), 0 }; !_saved_umask_.quit ; _saved_umask_<br>.quit = 1)</span></span> {</td></tr>
-<tr><td class="num" id="LN451">451</td><td class="line">                fdt = open(to, flags|<span class='macro'>O_WRONLY<span class='expansion'>01</span></span>|<span class='macro'>O_CREAT<span class='expansion'>0100</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>, mode);</td></tr>
-<tr><td class="num" id="LN452">452</td><td class="line">                <span class='keyword'>if</span> (fdt &lt; 0)</td></tr>
-<tr><td class="num" id="LN453">453</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN454">454</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN455">455</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN456">456</td><td class="line">        <span class='keyword'>if</span> (chattr_flags != 0)</td></tr>
-<tr><td class="num" id="LN457">457</td><td class="line">                (<span class='keyword'>void</span>) chattr_fd(fdt, chattr_flags, (<span class='keyword'>unsigned</span>) -1);</td></tr>
-<tr><td class="num" id="LN458">458</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN459">459</td><td class="line">        r = copy_file_fd(from, fdt, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN460">460</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN461">461</td><td class="line">                close(fdt);</td></tr>
-<tr><td class="num" id="LN462">462</td><td class="line">                unlink(to);</td></tr>
-<tr><td class="num" id="LN463">463</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN464">464</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line"><span class='keyword'>int</span> copy_file_fd(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>int</span> fdt, <span class='macro'>bool<span class='expansion'>_Bool</span></span> try_reflink) {</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fdf = -1;</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">        <span class='macro'>assert(from)<span class='expansion'>do { if ((__builtin_expect(!!(!(from)),0))) log_assert_failed<br>("from", "src/basic/copy.c", 445, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">        <span class='macro'>assert(fdt &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fdt &gt;= 0)),0))) log_assert_failed<br>("fdt &gt;= 0", "src/basic/copy.c", 446, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">        fdf = open(from, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>);</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">        <span class='keyword'>if</span> (fdf &lt; 0)</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">        r = copy_bytes(fdf, fdt, (uint64_t) -1, try_reflink);</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">        (<span class='keyword'>void</span>) copy_times(fdf, fdt);</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">        (<span class='keyword'>void</span>) copy_xattr(fdf, fdt);</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line"><span class='keyword'>int</span> copy_file(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, <span class='keyword'>int</span> flags, mode_t mode, <span class='keyword'>unsigned</span> chattr_flags) {</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">        <span class='keyword'>int</span> fdt = -1, r;</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">        <span class='macro'>assert(from)<span class='expansion'>do { if ((__builtin_expect(!!(!(from)),0))) log_assert_failed<br>("from", "src/basic/copy.c", 463, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 464, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN465">465</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN466">466</td><td class="line">        <span class='keyword'>if</span> (close(fdt) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN467">467</td><td class="line">                unlink_noerrno(to);</td></tr>
-<tr><td class="num" id="LN468">468</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN469">469</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN470">470</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN471">471</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN472">472</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN473">473</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN474">474</td><td class="line"><span class='keyword'>int</span> copy_file_atomic(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, mode_t mode, <span class='macro'>bool<span class='expansion'>_Bool</span></span> replace, <span class='keyword'>unsigned</span> chattr_flags) {</td></tr>
-<tr><td class="num" id="LN475">475</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN476">476</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN477">477</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN478">478</td><td class="line">        <span class='macro'>assert(from)<span class='expansion'>do { if ((__builtin_expect(!!(!(from)),0))) log_assert_failed<br>("from", "src/basic/copy.c", 478, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN479">479</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 479, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN480">480</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN481">481</td><td class="line">        r = tempfn_random(to, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;t);</td></tr>
-<tr><td class="num" id="LN482">482</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN483">483</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN484">484</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN485">485</td><td class="line">        r = copy_file(from, t, <span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>|<span class='macro'>O_EXCL<span class='expansion'>0200</span></span>, mode, chattr_flags);</td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN487">487</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN488">488</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN489">489</td><td class="line">        <span class='keyword'>if</span> (replace) {</td></tr>
-<tr><td class="num" id="LN490">490</td><td class="line">                r = renameat(<span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, t, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to);</td></tr>
-<tr><td class="num" id="LN491">491</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN492">492</td><td class="line">                        r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN493">493</td><td class="line">        } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN494">494</td><td class="line">                r = rename_noreplace(<span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, t, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to);</td></tr>
-<tr><td class="num" id="LN495">495</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN496">496</td><td class="line">                (<span class='keyword'>void</span>) unlink_noerrno(t);</td></tr>
-<tr><td class="num" id="LN497">497</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN498">498</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN499">499</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN500">500</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN501">501</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN502">502</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN503">503</td><td class="line"><span class='keyword'>int</span> copy_times(<span class='keyword'>int</span> fdf, <span class='keyword'>int</span> fdt) {</td></tr>
-<tr><td class="num" id="LN504">504</td><td class="line">        <span class='keyword'>struct</span> timespec ut[2];</td></tr>
-<tr><td class="num" id="LN505">505</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
-<tr><td class="num" id="LN506">506</td><td class="line">        usec_t crtime = 0;</td></tr>
-<tr><td class="num" id="LN507">507</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN508">508</td><td class="line">        <span class='macro'>assert(fdf &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fdf &gt;= 0)),0))) log_assert_failed<br>("fdf &gt;= 0", "src/basic/copy.c", 508, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line">        <span class='macro'>assert(fdt &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fdt &gt;= 0)),0))) log_assert_failed<br>("fdt &gt;= 0", "src/basic/copy.c", 509, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN510">510</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN511">511</td><td class="line">        <span class='keyword'>if</span> (fstat(fdf, &amp;st) &lt; 0)</td></tr>
-<tr><td class="num" id="LN512">512</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line">        ut[0] = st.st_atim;</td></tr>
-<tr><td class="num" id="LN515">515</td><td class="line">        ut[1] = st.st_mtim;</td></tr>
-<tr><td class="num" id="LN516">516</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN517">517</td><td class="line">        <span class='keyword'>if</span> (futimens(fdt, ut) &lt; 0)</td></tr>
-<tr><td class="num" id="LN518">518</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN519">519</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line">        <span class='keyword'>if</span> (fd_getcrtime(fdf, &amp;crtime) &gt;= 0)</td></tr>
-<tr><td class="num" id="LN521">521</td><td class="line">                (<span class='keyword'>void</span>) fd_setcrtime(fdt, crtime);</td></tr>
-<tr><td class="num" id="LN522">522</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN523">523</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN524">524</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN526">526</td><td class="line"><span class='keyword'>int</span> copy_xattr(<span class='keyword'>int</span> fdf, <span class='keyword'>int</span> fdt) {</td></tr>
-<tr><td class="num" id="LN527">527</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *bufa = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *bufb = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN528">528</td><td class="line">        size_t sza = 100, szb = 100;</td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line">        ssize_t n;</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line">        <span class='keyword'>int</span> ret = 0;</td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">        <span class='macro'>RUN_WITH_UMASK(0000)<span class='expansion'>for (__attribute__((cleanup(_reset_umask_))) struct _umask_struct_<br> _saved_umask_ = { umask(0000), 0 }; !_saved_umask_.quit ; _saved_umask_<br>.quit = 1)</span></span> {</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">                fdt = open(to, flags|<span class='macro'>O_WRONLY<span class='expansion'>01</span></span>|<span class='macro'>O_CREAT<span class='expansion'>0100</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOCTTY<span class='expansion'>0400</span></span>, mode);</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">                <span class='keyword'>if</span> (fdt &lt; 0)</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">        <span class='keyword'>if</span> (chattr_flags != 0)</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">                (<span class='keyword'>void</span>) chattr_fd(fdt, chattr_flags, (<span class='keyword'>unsigned</span>) -1);</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">        r = copy_file_fd(from, fdt, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">                close(fdt);</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">                unlink(to);</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">        <span class='keyword'>if</span> (close(fdt) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">                unlink_noerrno(to);</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line"><span class='keyword'>int</span> copy_file_atomic(<span class='keyword'>const</span> <span class='keyword'>char</span> *from, <span class='keyword'>const</span> <span class='keyword'>char</span> *to, mode_t mode, <span class='macro'>bool<span class='expansion'>_Bool</span></span> replace, <span class='keyword'>unsigned</span> chattr_flags) {</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        <span class='macro'>assert(from)<span class='expansion'>do { if ((__builtin_expect(!!(!(from)),0))) log_assert_failed<br>("from", "src/basic/copy.c", 494, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">        <span class='macro'>assert(to)<span class='expansion'>do { if ((__builtin_expect(!!(!(to)),0))) log_assert_failed("to"<br>, "src/basic/copy.c", 495, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">        r = tempfn_random(to, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;t);</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">        r = copy_file(from, t, <span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>|<span class='macro'>O_EXCL<span class='expansion'>0200</span></span>, mode, chattr_flags);</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">        <span class='keyword'>if</span> (replace) {</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">                r = renameat(<span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, t, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to);</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">                        r = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">                r = rename_noreplace(<span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, t, <span class='macro'>AT_FDCWD<span class='expansion'>-100</span></span>, to);</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">                (<span class='keyword'>void</span>) unlink_noerrno(t);</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line"><span class='keyword'>int</span> copy_times(<span class='keyword'>int</span> fdf, <span class='keyword'>int</span> fdt) {</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">        <span class='keyword'>struct</span> timespec ut[2];</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">        <span class='keyword'>struct</span> stat st;</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">        usec_t crtime = 0;</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">        <span class='macro'>assert(fdf &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fdf &gt;= 0)),0))) log_assert_failed<br>("fdf &gt;= 0", "src/basic/copy.c", 524, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">        <span class='macro'>assert(fdt &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fdt &gt;= 0)),0))) log_assert_failed<br>("fdt &gt;= 0", "src/basic/copy.c", 525, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">        <span class='keyword'>if</span> (fstat(fdf, &amp;st) &lt; 0)</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        ut[0] = st.st_atim;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">        ut[1] = st.st_mtim;</td></tr>
 <tr><td class="num" id="LN532">532</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN534">534</td><td class="line">                bufa = malloc(sza);</td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line">                <span class='keyword'>if</span> (!bufa)</td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line">                n = flistxattr(fdf, bufa, sza);</td></tr>
-<tr><td class="num" id="LN539">539</td><td class="line">                <span class='keyword'>if</span> (n == 0)</td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">                <span class='keyword'>if</span> (n &gt; 0)</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN543">543</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ERANGE<span class='expansion'>34</span></span>)</td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">                sza *= 2;</td></tr>
-<tr><td class="num" id="LN547">547</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line">                bufa = mfree(bufa);</td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line">        p = bufa;</td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">        <span class='keyword'>while</span> (n &gt; 0) {</td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line">                size_t l;</td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">                l = strlen(p);</td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">                <span class='macro'>assert(l &lt; (size_t) n)<span class='expansion'>do { if ((__builtin_expect(!!(!(l &lt; (size_t) n)),0))) log_assert_failed<br>("l &lt; (size_t) n", "src/basic/copy.c", 556, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line">                <span class='keyword'>if</span> (startswith(p, <span class='string_literal'>"user."</span>)) {</td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">                        ssize_t m;</td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line">                        <span class='keyword'>if</span> (!bufb) {</td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line">                                bufb = malloc(szb);</td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line">                                <span class='keyword'>if</span> (!bufb)</td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">        <span class='keyword'>if</span> (futimens(fdt, ut) &lt; 0)</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">        <span class='keyword'>if</span> (fd_getcrtime(fdf, &amp;crtime) &gt;= 0)</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">                (<span class='keyword'>void</span>) fd_setcrtime(fdt, crtime);</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line"><span class='keyword'>int</span> copy_xattr(<span class='keyword'>int</span> fdf, <span class='keyword'>int</span> fdt) {</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *bufa = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *bufb = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">        size_t sza = 100, szb = 100;</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">        ssize_t n;</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">        <span class='keyword'>int</span> ret = 0;</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">                bufa = malloc(sza);</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">                <span class='keyword'>if</span> (!bufa)</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                n = flistxattr(fdf, bufa, sza);</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">                <span class='keyword'>if</span> (n == 0)</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">                <span class='keyword'>if</span> (n &gt; 0)</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ERANGE<span class='expansion'>34</span></span>)</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">                sza *= 2;</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">                bufa = mfree(bufa);</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN566">566</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">                        m = fgetxattr(fdf, p, bufb, szb);</td></tr>
-<tr><td class="num" id="LN568">568</td><td class="line">                        <span class='keyword'>if</span> (m &lt; 0) {</td></tr>
-<tr><td class="num" id="LN569">569</td><td class="line">                                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ERANGE<span class='expansion'>34</span></span>) {</td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line">                                        szb *= 2;</td></tr>
-<tr><td class="num" id="LN571">571</td><td class="line">                                        bufb = mfree(bufb);</td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line">                                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">                        <span class='keyword'>if</span> (fsetxattr(fdt, p, bufb, m, 0) &lt; 0)</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line">                                ret = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">                p += l + 1;</td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line">                n -= l + 1;</td></tr>
-<tr><td class="num" id="LN584">584</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line">        <span class='keyword'>return</span> ret;</td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">        p = bufa;</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">        <span class='keyword'>while</span> (n &gt; 0) {</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">                size_t l;</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">                l = strlen(p);</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">                <span class='macro'>assert(l &lt; (size_t) n)<span class='expansion'>do { if ((__builtin_expect(!!(!(l &lt; (size_t) n)),0))) log_assert_failed<br>("l &lt; (size_t) n", "src/basic/copy.c", 572, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">                <span class='keyword'>if</span> (startswith(p, <span class='string_literal'>"user."</span>)) {</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">                        ssize_t m;</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">                        <span class='keyword'>if</span> (!bufb) {</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">                                bufb = malloc(szb);</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">                                <span class='keyword'>if</span> (!bufb)</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">                        m = fgetxattr(fdf, p, bufb, szb);</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">                        <span class='keyword'>if</span> (m &lt; 0) {</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">                                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ERANGE<span class='expansion'>34</span></span>) {</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">                                        szb *= 2;</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                                        bufb = mfree(bufb);</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">                                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">                        <span class='keyword'>if</span> (fsetxattr(fdt, p, bufb, m, 0) &lt; 0)</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">                                ret = -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">                p += l + 1;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">                n -= l + 1;</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">        <span class='keyword'>return</span> ret;</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">}</td></tr>
 </table></body></html>

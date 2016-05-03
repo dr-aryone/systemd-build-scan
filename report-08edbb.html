@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'null_fd' is never read -->
+<!-- BUGDESC Value stored to 'pid' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -66,9 +66,9 @@
 
 <!-- FUNCTIONNAME pull_verify -->
 
-<!-- BUGLINE 492 -->
+<!-- BUGLINE 530 -->
 
-<!-- BUGCOLUMN 25 -->
+<!-- BUGCOLUMN 9 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>import/pull-common.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 492, column 25</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'null_fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 530, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'pid' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -415,7 +415,7 @@
 <tr><td class="num" id="LN330">330</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> sig_file = -1;</td></tr>
 <tr><td class="num" id="LN331">331</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p, *line;</td></tr>
 <tr><td class="num" id="LN332">332</td><td class="line">        <span class='keyword'>char</span> sig_file_path[] = <span class='string_literal'>"/tmp/sigXXXXXX"</span>, gpg_home[] = <span class='string_literal'>"/tmp/gpghomeXXXXXX"</span>;</td></tr>
-<tr><td class="num" id="LN333">333</td><td class="line">        <span class='macro'>_cleanup_sigkill_wait_<span class='expansion'>__attribute__((cleanup(sigkill_wait)))</span></span> pid_t pid = 0;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">        <span class='macro'>_cleanup_(sigkill_waitp)<span class='expansion'>__attribute__((cleanup(sigkill_waitp)))</span></span> pid_t pid = 0;</td></tr>
 <tr><td class="num" id="LN334">334</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> gpg_home_created = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN335">335</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
@@ -574,8 +574,7 @@
 <tr><td class="num" id="LN489">489</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN490">490</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN491">491</td><td class="line">                <span class='keyword'>if</span> (null_fd != <span class='macro'>STDOUT_FILENO<span class='expansion'>1</span></span>)</td></tr>
-<tr><td class="num" id="LN492">492</td><td class="line">                        null_fd = <span class="mrange">safe_close(null_fd)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:25ex">Value stored to 'null_fd' is never read</div></td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">                        null_fd = safe_close(null_fd);</td></tr>
 <tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN494">494</td><td class="line">                cmd[k++] = <span class='macro'>strjoina(<span class='string_literal'>"--homedir="</span>, gpg_home)<span class='expansion'>({ const char *_appendees_[] = { "--homedir=", gpg_home }; char<br> *_d_, *_p_; int _len_ = 0; unsigned _i_; for (_i_ = 0; _i_ &lt;<br> __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
 <tr><td class="num" id="LN495">495</td><td class="line"> </td></tr>
@@ -613,7 +612,8 @@
 <tr><td class="num" id="LN527">527</td><td class="line">        gpg_pipe[1] = safe_close(gpg_pipe[1]);</td></tr>
 <tr><td class="num" id="LN528">528</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN529">529</td><td class="line">        r = wait_for_terminate_and_warn(<span class='string_literal'>"gpg"</span>, pid, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line">        pid = 0;</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        pid = <span class="mrange">0</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'pid' is never read</div></td></tr>
 <tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN532">532</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
 <tr><td class="num" id="LN533">533</td><td class="line">        <span class='keyword'>if</span> (r &gt; 0) {</td></tr>

@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'o' -->
+<!-- BUGDESC Potential leak of memory pointed to by 'w' -->
 
 <!-- BUGTYPE Memory leak -->
 
@@ -70,7 +70,7 @@
 
 <!-- BUGCOLUMN 22 -->
 
-<!-- BUGPATHLENGTH 12 -->
+<!-- BUGPATHLENGTH 13 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
@@ -78,7 +78,7 @@
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/mount.c</td></tr>
 <tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1457, column 22</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'o'</td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'w'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1544,15 +1544,16 @@
 <tr><td class="num" id="LN1450">1450</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1451">1451</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1452">1452</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1453">1453</td><td class="line">        w = strdup(what);</td></tr>
-<tr><td class="num" id="LN1454">1454</td><td class="line">        o = <span class="mrange">strdup(options)</span>;</td></tr>
+<tr><td class="num" id="LN1453">1453</td><td class="line">        w = <span class="mrange">strdup(what)</span>;</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1454">1454</td><td class="line">        o = strdup(options);</td></tr>
 <tr><td class="num" id="LN1455">1455</td><td class="line">        f = strdup(fstype);</td></tr>
-<tr><td class="num" id="LN1456">1456</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!w</span> || !o || !f) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'w' is null</td><td><div class="PathNav"><a href="#EndPath" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1456">1456</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!w</span> || <span class="mrange">!o</span> || !f) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'w' is non-null</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgEvent" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Assuming 'o' is null</td><td><div class="PathNav"><a href="#EndPath" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1457">1457</td><td class="line">                r = -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:22ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'o'</td></tr></table></div>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:22ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'w'</td></tr></table></div>
 </div></td></tr>
 <tr><td class="num" id="LN1458">1458</td><td class="line">                <span class='keyword'>goto</span> fail;</td></tr>
 <tr><td class="num" id="LN1459">1459</td><td class="line">        }</td></tr>
@@ -1938,63 +1939,60 @@
 <tr><td class="num" id="LN1839">1839</td><td class="line">                <span class='string_literal'>"Install\0"</span>,</td></tr>
 <tr><td class="num" id="LN1840">1840</td><td class="line">        .private_section = <span class='string_literal'>"Mount"</span>,</td></tr>
 <tr><td class="num" id="LN1841">1841</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1842">1842</td><td class="line">        .no_alias = <span class='macro'>true<span class='expansion'>1</span></span>,</td></tr>
-<tr><td class="num" id="LN1843">1843</td><td class="line">        .no_instances = <span class='macro'>true<span class='expansion'>1</span></span>,</td></tr>
-<tr><td class="num" id="LN1844">1844</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1845">1845</td><td class="line">        .init = mount_init,</td></tr>
-<tr><td class="num" id="LN1846">1846</td><td class="line">        .load = mount_load,</td></tr>
-<tr><td class="num" id="LN1847">1847</td><td class="line">        .done = mount_done,</td></tr>
-<tr><td class="num" id="LN1848">1848</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1849">1849</td><td class="line">        .coldplug = mount_coldplug,</td></tr>
-<tr><td class="num" id="LN1850">1850</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1851">1851</td><td class="line">        .dump = mount_dump,</td></tr>
-<tr><td class="num" id="LN1852">1852</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1853">1853</td><td class="line">        .start = mount_start,</td></tr>
-<tr><td class="num" id="LN1854">1854</td><td class="line">        .stop = mount_stop,</td></tr>
-<tr><td class="num" id="LN1855">1855</td><td class="line">        .reload = mount_reload,</td></tr>
-<tr><td class="num" id="LN1856">1856</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1857">1857</td><td class="line">        .kill = mount_kill,</td></tr>
+<tr><td class="num" id="LN1842">1842</td><td class="line">        .init = mount_init,</td></tr>
+<tr><td class="num" id="LN1843">1843</td><td class="line">        .load = mount_load,</td></tr>
+<tr><td class="num" id="LN1844">1844</td><td class="line">        .done = mount_done,</td></tr>
+<tr><td class="num" id="LN1845">1845</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1846">1846</td><td class="line">        .coldplug = mount_coldplug,</td></tr>
+<tr><td class="num" id="LN1847">1847</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1848">1848</td><td class="line">        .dump = mount_dump,</td></tr>
+<tr><td class="num" id="LN1849">1849</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1850">1850</td><td class="line">        .start = mount_start,</td></tr>
+<tr><td class="num" id="LN1851">1851</td><td class="line">        .stop = mount_stop,</td></tr>
+<tr><td class="num" id="LN1852">1852</td><td class="line">        .reload = mount_reload,</td></tr>
+<tr><td class="num" id="LN1853">1853</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1854">1854</td><td class="line">        .kill = mount_kill,</td></tr>
+<tr><td class="num" id="LN1855">1855</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1856">1856</td><td class="line">        .serialize = mount_serialize,</td></tr>
+<tr><td class="num" id="LN1857">1857</td><td class="line">        .deserialize_item = mount_deserialize_item,</td></tr>
 <tr><td class="num" id="LN1858">1858</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1859">1859</td><td class="line">        .serialize = mount_serialize,</td></tr>
-<tr><td class="num" id="LN1860">1860</td><td class="line">        .deserialize_item = mount_deserialize_item,</td></tr>
+<tr><td class="num" id="LN1859">1859</td><td class="line">        .active_state = mount_active_state,</td></tr>
+<tr><td class="num" id="LN1860">1860</td><td class="line">        .sub_state_to_string = mount_sub_state_to_string,</td></tr>
 <tr><td class="num" id="LN1861">1861</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1862">1862</td><td class="line">        .active_state = mount_active_state,</td></tr>
-<tr><td class="num" id="LN1863">1863</td><td class="line">        .sub_state_to_string = mount_sub_state_to_string,</td></tr>
-<tr><td class="num" id="LN1864">1864</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1865">1865</td><td class="line">        .check_gc = mount_check_gc,</td></tr>
-<tr><td class="num" id="LN1866">1866</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1867">1867</td><td class="line">        .sigchld_event = mount_sigchld_event,</td></tr>
-<tr><td class="num" id="LN1868">1868</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1869">1869</td><td class="line">        .reset_failed = mount_reset_failed,</td></tr>
-<tr><td class="num" id="LN1870">1870</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1871">1871</td><td class="line">        .control_pid = mount_control_pid,</td></tr>
-<tr><td class="num" id="LN1872">1872</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1873">1873</td><td class="line">        .bus_vtable = bus_mount_vtable,</td></tr>
-<tr><td class="num" id="LN1874">1874</td><td class="line">        .bus_set_property = bus_mount_set_property,</td></tr>
-<tr><td class="num" id="LN1875">1875</td><td class="line">        .bus_commit_properties = bus_mount_commit_properties,</td></tr>
-<tr><td class="num" id="LN1876">1876</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1877">1877</td><td class="line">        .get_timeout = mount_get_timeout,</td></tr>
-<tr><td class="num" id="LN1878">1878</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1879">1879</td><td class="line">        .can_transient = <span class='macro'>true<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN1862">1862</td><td class="line">        .check_gc = mount_check_gc,</td></tr>
+<tr><td class="num" id="LN1863">1863</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1864">1864</td><td class="line">        .sigchld_event = mount_sigchld_event,</td></tr>
+<tr><td class="num" id="LN1865">1865</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1866">1866</td><td class="line">        .reset_failed = mount_reset_failed,</td></tr>
+<tr><td class="num" id="LN1867">1867</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1868">1868</td><td class="line">        .control_pid = mount_control_pid,</td></tr>
+<tr><td class="num" id="LN1869">1869</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1870">1870</td><td class="line">        .bus_vtable = bus_mount_vtable,</td></tr>
+<tr><td class="num" id="LN1871">1871</td><td class="line">        .bus_set_property = bus_mount_set_property,</td></tr>
+<tr><td class="num" id="LN1872">1872</td><td class="line">        .bus_commit_properties = bus_mount_commit_properties,</td></tr>
+<tr><td class="num" id="LN1873">1873</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1874">1874</td><td class="line">        .get_timeout = mount_get_timeout,</td></tr>
+<tr><td class="num" id="LN1875">1875</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1876">1876</td><td class="line">        .can_transient = <span class='macro'>true<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN1877">1877</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1878">1878</td><td class="line">        .enumerate = mount_enumerate,</td></tr>
+<tr><td class="num" id="LN1879">1879</td><td class="line">        .shutdown = mount_shutdown,</td></tr>
 <tr><td class="num" id="LN1880">1880</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1881">1881</td><td class="line">        .enumerate = mount_enumerate,</td></tr>
-<tr><td class="num" id="LN1882">1882</td><td class="line">        .shutdown = mount_shutdown,</td></tr>
-<tr><td class="num" id="LN1883">1883</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1884">1884</td><td class="line">        .status_message_formats = {</td></tr>
-<tr><td class="num" id="LN1885">1885</td><td class="line">                .starting_stopping = {</td></tr>
-<tr><td class="num" id="LN1886">1886</td><td class="line">                        [0] = <span class='string_literal'>"Mounting %s..."</span>,</td></tr>
-<tr><td class="num" id="LN1887">1887</td><td class="line">                        [1] = <span class='string_literal'>"Unmounting %s..."</span>,</td></tr>
-<tr><td class="num" id="LN1888">1888</td><td class="line">                },</td></tr>
-<tr><td class="num" id="LN1889">1889</td><td class="line">                .finished_start_job = {</td></tr>
-<tr><td class="num" id="LN1890">1890</td><td class="line">                        [JOB_DONE]       = <span class='string_literal'>"Mounted %s."</span>,</td></tr>
-<tr><td class="num" id="LN1891">1891</td><td class="line">                        [JOB_FAILED]     = <span class='string_literal'>"Failed to mount %s."</span>,</td></tr>
-<tr><td class="num" id="LN1892">1892</td><td class="line">                        [JOB_TIMEOUT]    = <span class='string_literal'>"Timed out mounting %s."</span>,</td></tr>
-<tr><td class="num" id="LN1893">1893</td><td class="line">                },</td></tr>
-<tr><td class="num" id="LN1894">1894</td><td class="line">                .finished_stop_job = {</td></tr>
-<tr><td class="num" id="LN1895">1895</td><td class="line">                        [JOB_DONE]       = <span class='string_literal'>"Unmounted %s."</span>,</td></tr>
-<tr><td class="num" id="LN1896">1896</td><td class="line">                        [JOB_FAILED]     = <span class='string_literal'>"Failed unmounting %s."</span>,</td></tr>
-<tr><td class="num" id="LN1897">1897</td><td class="line">                        [JOB_TIMEOUT]    = <span class='string_literal'>"Timed out unmounting %s."</span>,</td></tr>
-<tr><td class="num" id="LN1898">1898</td><td class="line">                },</td></tr>
-<tr><td class="num" id="LN1899">1899</td><td class="line">        },</td></tr>
-<tr><td class="num" id="LN1900">1900</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN1881">1881</td><td class="line">        .status_message_formats = {</td></tr>
+<tr><td class="num" id="LN1882">1882</td><td class="line">                .starting_stopping = {</td></tr>
+<tr><td class="num" id="LN1883">1883</td><td class="line">                        [0] = <span class='string_literal'>"Mounting %s..."</span>,</td></tr>
+<tr><td class="num" id="LN1884">1884</td><td class="line">                        [1] = <span class='string_literal'>"Unmounting %s..."</span>,</td></tr>
+<tr><td class="num" id="LN1885">1885</td><td class="line">                },</td></tr>
+<tr><td class="num" id="LN1886">1886</td><td class="line">                .finished_start_job = {</td></tr>
+<tr><td class="num" id="LN1887">1887</td><td class="line">                        [JOB_DONE]       = <span class='string_literal'>"Mounted %s."</span>,</td></tr>
+<tr><td class="num" id="LN1888">1888</td><td class="line">                        [JOB_FAILED]     = <span class='string_literal'>"Failed to mount %s."</span>,</td></tr>
+<tr><td class="num" id="LN1889">1889</td><td class="line">                        [JOB_TIMEOUT]    = <span class='string_literal'>"Timed out mounting %s."</span>,</td></tr>
+<tr><td class="num" id="LN1890">1890</td><td class="line">                },</td></tr>
+<tr><td class="num" id="LN1891">1891</td><td class="line">                .finished_stop_job = {</td></tr>
+<tr><td class="num" id="LN1892">1892</td><td class="line">                        [JOB_DONE]       = <span class='string_literal'>"Unmounted %s."</span>,</td></tr>
+<tr><td class="num" id="LN1893">1893</td><td class="line">                        [JOB_FAILED]     = <span class='string_literal'>"Failed unmounting %s."</span>,</td></tr>
+<tr><td class="num" id="LN1894">1894</td><td class="line">                        [JOB_TIMEOUT]    = <span class='string_literal'>"Timed out unmounting %s."</span>,</td></tr>
+<tr><td class="num" id="LN1895">1895</td><td class="line">                },</td></tr>
+<tr><td class="num" id="LN1896">1896</td><td class="line">        },</td></tr>
+<tr><td class="num" id="LN1897">1897</td><td class="line">};</td></tr>
 </table></body></html>
