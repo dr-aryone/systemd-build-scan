@@ -879,9 +879,57 @@
 <tr><td class="num" id="LN774">774</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN775">775</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN776">776</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN777">777</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> address_is_ready(<span class='keyword'>const</span> Address *a) {</td></tr>
-<tr><td class="num" id="LN778">778</td><td class="line">        <span class='macro'>assert(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/network/networkd-address.c", 778, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN779">779</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN780">780</td><td class="line">        <span class='keyword'>return</span> !(a-&gt;flags &amp; (<span class='macro'>IFA_F_TENTATIVE<span class='expansion'>0x40</span></span> | <span class='macro'>IFA_F_DEPRECATED<span class='expansion'>0x20</span></span>));</td></tr>
-<tr><td class="num" id="LN781">781</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line"><span class='keyword'>int</span> config_parse_lifetime(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">                          <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">                          <span class='keyword'>unsigned</span> line,</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">                          <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">                          <span class='keyword'>unsigned</span> section_line,</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">                          <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">                          <span class='keyword'>int</span> ltype,</td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">                          <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">                          <span class='keyword'>void</span> *data,</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">                          <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line">        Network *network = userdata;</td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">        <span class='macro'>_cleanup_address_free_<span class='expansion'>__attribute__((cleanup(address_freep)))</span></span> Address *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">        <span class='keyword'>unsigned</span> k;</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-address.c", 792, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-address.c", 793, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-address.c", 794, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-address.c", 795, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-address.c", 796, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line">        r = address_new_static(network, section_line, &amp;n);</td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>STR_IN_SET(rvalue, <span class='string_literal'>"forever"</span>, <span class='string_literal'>"infinity"</span>)<span class='expansion'>(!!strv_find((((char**) ((const char*[]) { "forever", "infinity"<br>, ((void*)0) }))), (rvalue)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line">                n-&gt;cinfo.ifa_prefered = <span class='macro'>CACHE_INFO_INFINITY_LIFE_TIME<span class='expansion'>0xFFFFFFFFU</span></span>;</td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line">                n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">        r = safe_atou(rvalue, &amp;k);</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, r, <span class='string_literal'>"Failed to parse PreferredLifetime, ignoring: %s"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-address.c", 811, __func__, "Failed to parse PreferredLifetime, ignoring: %s"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">        <span class='keyword'>if</span> (k != 0)</td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, 0, <span class='string_literal'>"Invalid PreferredLifetime value, ignoring: %d"</span>, k)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-address.c", 816, __func__, "Invalid PreferredLifetime value, ignoring: %d"<br>, k) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line">                n-&gt;cinfo.ifa_prefered = k;</td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">                n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line"><span class='macro'>bool<span class='expansion'>_Bool</span></span> address_is_ready(<span class='keyword'>const</span> Address *a) {</td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">        <span class='macro'>assert(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/network/networkd-address.c", 826, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line">        <span class='keyword'>return</span> !(a-&gt;flags &amp; (<span class='macro'>IFA_F_TENTATIVE<span class='expansion'>0x40</span></span> | <span class='macro'>IFA_F_DEPRECATED<span class='expansion'>0x20</span></span>));</td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">}</td></tr>
 </table></body></html>

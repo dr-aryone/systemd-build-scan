@@ -547,330 +547,392 @@
 <tr><td class="num" id="LN451">451</td><td class="line">                        r = sd_netlink_message_append_in6_addr(req, RTA_GATEWAY, &amp;route-&gt;gw.in6);</td></tr>
 <tr><td class="num" id="LN452">452</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN453">453</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_GATEWAY attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 453, __func__, "Could not append RTA_GATEWAY attribute: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN454">454</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN455">455</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN456">456</td><td class="line">        <span class='keyword'>if</span> (route-&gt;dst_prefixlen) {</td></tr>
-<tr><td class="num" id="LN457">457</td><td class="line">                <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN458">458</td><td class="line">                        r = sd_netlink_message_append_in_addr(req, RTA_DST, &amp;route-&gt;dst.in);</td></tr>
-<tr><td class="num" id="LN459">459</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
-<tr><td class="num" id="LN460">460</td><td class="line">                        r = sd_netlink_message_append_in6_addr(req, RTA_DST, &amp;route-&gt;dst.in6);</td></tr>
-<tr><td class="num" id="LN461">461</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN462">462</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_DST attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 462, __func__, "Could not append RTA_DST attribute: %m") : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN463">463</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN464">464</td><td class="line">                r = sd_rtnl_message_route_set_dst_prefixlen(req, route-&gt;dst_prefixlen);</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">                r = sd_rtnl_message_route_set_family(req, route-&gt;family);</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set route family: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 457, __func__, "Could not set route family: %m") : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">        <span class='keyword'>if</span> (route-&gt;dst_prefixlen) {</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">                <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">                        r = sd_netlink_message_append_in_addr(req, RTA_DST, &amp;route-&gt;dst.in);</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">                        r = sd_netlink_message_append_in6_addr(req, RTA_DST, &amp;route-&gt;dst.in6);</td></tr>
 <tr><td class="num" id="LN465">465</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN466">466</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set destination prefix length: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 466, __func__, "Could not set destination prefix length: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN467">467</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN468">468</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN469">469</td><td class="line">        <span class='keyword'>if</span> (route-&gt;src_prefixlen) {</td></tr>
-<tr><td class="num" id="LN470">470</td><td class="line">                <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN471">471</td><td class="line">                        r = sd_netlink_message_append_in_addr(req, RTA_SRC, &amp;route-&gt;src.in);</td></tr>
-<tr><td class="num" id="LN472">472</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
-<tr><td class="num" id="LN473">473</td><td class="line">                        r = sd_netlink_message_append_in6_addr(req, RTA_SRC, &amp;route-&gt;src.in6);</td></tr>
-<tr><td class="num" id="LN474">474</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN475">475</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_SRC attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 475, __func__, "Could not append RTA_SRC attribute: %m") : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN476">476</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN477">477</td><td class="line">                r = sd_rtnl_message_route_set_src_prefixlen(req, route-&gt;src_prefixlen);</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_DST attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 466, __func__, "Could not append RTA_DST attribute: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">                r = sd_rtnl_message_route_set_dst_prefixlen(req, route-&gt;dst_prefixlen);</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set destination prefix length: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 470, __func__, "Could not set destination prefix length: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">        <span class='keyword'>if</span> (route-&gt;src_prefixlen) {</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">                <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">                        r = sd_netlink_message_append_in_addr(req, RTA_SRC, &amp;route-&gt;src.in);</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">                        r = sd_netlink_message_append_in6_addr(req, RTA_SRC, &amp;route-&gt;src.in6);</td></tr>
 <tr><td class="num" id="LN478">478</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN479">479</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set source prefix length: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 479, __func__, "Could not set source prefix length: %m") : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN480">480</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN481">481</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN482">482</td><td class="line">        <span class='keyword'>if</span> (!in_addr_is_null(route-&gt;family, &amp;route-&gt;prefsrc)) {</td></tr>
-<tr><td class="num" id="LN483">483</td><td class="line">                <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN484">484</td><td class="line">                        r = sd_netlink_message_append_in_addr(req, RTA_PREFSRC, &amp;route-&gt;prefsrc.in);</td></tr>
-<tr><td class="num" id="LN485">485</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line">                        r = sd_netlink_message_append_in6_addr(req, RTA_PREFSRC, &amp;route-&gt;prefsrc.in6);</td></tr>
-<tr><td class="num" id="LN487">487</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN488">488</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_PREFSRC attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 488, __func__, "Could not append RTA_PREFSRC attribute: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN489">489</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN490">490</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN491">491</td><td class="line">        r = sd_rtnl_message_route_set_scope(req, route-&gt;scope);</td></tr>
-<tr><td class="num" id="LN492">492</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN493">493</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set scope: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 493, __func__, "Could not set scope: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_SRC attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 479, __func__, "Could not append RTA_SRC attribute: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">                r = sd_rtnl_message_route_set_src_prefixlen(req, route-&gt;src_prefixlen);</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set source prefix length: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 483, __func__, "Could not set source prefix length: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        <span class='keyword'>if</span> (!in_addr_is_null(route-&gt;family, &amp;route-&gt;prefsrc)) {</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">                <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">                        r = sd_netlink_message_append_in_addr(req, RTA_PREFSRC, &amp;route-&gt;prefsrc.in);</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (route-&gt;family == <span class='macro'>AF_INET6<span class='expansion'>10</span></span>)</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">                        r = sd_netlink_message_append_in6_addr(req, RTA_PREFSRC, &amp;route-&gt;prefsrc.in6);</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_PREFSRC attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 492, __func__, "Could not append RTA_PREFSRC attribute: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN494">494</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN495">495</td><td class="line">        r = sd_rtnl_message_route_set_flags(req, route-&gt;flags);</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">        r = sd_rtnl_message_route_set_scope(req, route-&gt;scope);</td></tr>
 <tr><td class="num" id="LN496">496</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN497">497</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Colud not set flags: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 497, __func__, "Colud not set flags: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set scope: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 497, __func__, "Could not set scope: %m") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN498">498</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN499">499</td><td class="line">        r = sd_netlink_message_append_u32(req, RTA_PRIORITY, route-&gt;priority);</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">        r = sd_rtnl_message_route_set_flags(req, route-&gt;flags);</td></tr>
 <tr><td class="num" id="LN500">500</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN501">501</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_PRIORITY attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 501, __func__, "Could not append RTA_PRIORITY attribute: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set flags: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 501, __func__, "Could not set flags: %m") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN502">502</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN503">503</td><td class="line">        r = sd_netlink_message_append_u8(req, <span class='macro'>RTA_PREF<span class='expansion'>20</span></span>, route-&gt;pref);</td></tr>
-<tr><td class="num" id="LN504">504</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN505">505</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_PREF attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 505, __func__, "Could not append RTA_PREF attribute: %m") :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN506">506</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN507">507</td><td class="line">        r = sd_netlink_message_append_u32(req, RTA_OIF, link-&gt;ifindex);</td></tr>
-<tr><td class="num" id="LN508">508</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_OIF attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 509, __func__, "Could not append RTA_OIF attribute: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">        <span class='keyword'>if</span> (route-&gt;table != RT_TABLE_DEFAULT) {</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">                <span class='keyword'>if</span> (route-&gt;table &lt; 256) {</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">                        r = sd_rtnl_message_route_set_table(req, route-&gt;table);</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set route table: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 508, __func__, "Could not set route table: %m") : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">                } <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN510">510</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN511">511</td><td class="line">        r = sd_netlink_call_async(link-&gt;manager-&gt;rtnl, req, callback, link, 0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN512">512</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not send rtnetlink message: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 513, __func__, "Could not send rtnetlink message: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">                        r = sd_rtnl_message_route_set_table(req, RT_TABLE_UNSPEC);</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not set route table: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 513, __func__, "Could not set route table: %m") : -abs(_e);<br> })</span></span>;</td></tr>
 <tr><td class="num" id="LN514">514</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN515">515</td><td class="line">        link_ref(link);</td></tr>
-<tr><td class="num" id="LN516">516</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN517">517</td><td class="line">        lifetime = route-&gt;lifetime;</td></tr>
-<tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN519">519</td><td class="line">        r = route_add(link, route-&gt;family, &amp;route-&gt;dst, route-&gt;dst_prefixlen, route-&gt;tos, route-&gt;priority, route-&gt;table, &amp;route);</td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN521">521</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not add route: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 521, __func__, "Could not add route: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN522">522</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN523">523</td><td class="line">        <span class='comment'>/* TODO: drop expiration handling once it can be pushed into the kernel */</span></td></tr>
-<tr><td class="num" id="LN524">524</td><td class="line">        route-&gt;lifetime = lifetime;</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">                        <span class='comment'>/* Table attribute to allow allow more than 256. */</span></td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">                        r = sd_netlink_message_append_data(req, RTA_TABLE, &amp;route-&gt;table, <span class='keyword'>sizeof</span>(route-&gt;table));</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_TABLE attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 518, __func__, "Could not append RTA_TABLE attribute: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">        r = sd_netlink_message_append_u32(req, RTA_PRIORITY, route-&gt;priority);</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_PRIORITY attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 524, __func__, "Could not append RTA_PRIORITY attribute: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN526">526</td><td class="line">        <span class='keyword'>if</span> (route-&gt;lifetime != <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>) {</td></tr>
-<tr><td class="num" id="LN527">527</td><td class="line">                r = sd_event_add_time(link-&gt;manager-&gt;event, &amp;expire, clock_boottime_or_monotonic(),</td></tr>
-<tr><td class="num" id="LN528">528</td><td class="line">                                      route-&gt;lifetime, 0, route_expire_handler, route);</td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not arm expiration timer: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 530, __func__, "Could not arm expiration timer: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN532">532</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">        sd_event_source_unref(route-&gt;expire);</td></tr>
-<tr><td class="num" id="LN534">534</td><td class="line">        route-&gt;expire = expire;</td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line">        expire = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">        r = sd_netlink_message_append_u8(req, <span class='macro'>RTA_PREF<span class='expansion'>20</span></span>, route-&gt;pref);</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_PREF attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 528, __func__, "Could not append RTA_PREF attribute: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        r = sd_netlink_message_append_u32(req, RTA_OIF, link-&gt;ifindex);</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not append RTA_OIF attribute: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 532, __func__, "Could not append RTA_OIF attribute: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">        r = sd_netlink_call_async(link-&gt;manager-&gt;rtnl, req, callback, link, 0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not send rtnetlink message: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 536, __func__, "Could not send rtnetlink message: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">        link_ref(link);</td></tr>
 <tr><td class="num" id="LN539">539</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line"><span class='keyword'>int</span> config_parse_gateway(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line">                <span class='keyword'>unsigned</span> line,</td></tr>
-<tr><td class="num" id="LN543">543</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line">                <span class='keyword'>unsigned</span> section_line,</td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">                <span class='keyword'>int</span> ltype,</td></tr>
-<tr><td class="num" id="LN547">547</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line">                <span class='keyword'>void</span> *data,</td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line">                <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line">        Network *network = userdata;</td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line">        <span class='keyword'>union</span> in_addr_union buffer;</td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line">        <span class='keyword'>int</span> r, f;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">        lifetime = route-&gt;lifetime;</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">        r = route_add(link, route-&gt;family, &amp;route-&gt;dst, route-&gt;dst_prefixlen, route-&gt;tos, route-&gt;priority, route-&gt;table, &amp;route);</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not add route: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 544, __func__, "Could not add route: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">        <span class='comment'>/* TODO: drop expiration handling once it can be pushed into the kernel */</span></td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">        route-&gt;lifetime = lifetime;</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">        <span class='keyword'>if</span> (route-&gt;lifetime != <span class='macro'>USEC_INFINITY<span class='expansion'>((usec_t) -1)</span></span>) {</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">                r = sd_event_add_time(link-&gt;manager-&gt;event, &amp;expire, clock_boottime_or_monotonic(),</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">                                      route-&gt;lifetime, 0, route_expire_handler, route);</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Could not arm expiration timer: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-route.c"<br>, 553, __func__, "Could not arm expiration timer: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN555">555</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 556, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 557, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 558, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 559, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 560, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(section, <span class='string_literal'>"Network"</span>)<span class='expansion'>(strcmp((section),("Network")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line">                <span class='comment'>/* we are not in an Route section, so treat</span></td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line">                 <span class='comment'>* this as the special '0' section */</span></td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line">                section_line = 0;</td></tr>
-<tr><td class="num" id="LN566">566</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN568">568</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
-<tr><td class="num" id="LN569">569</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN571">571</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line">        r = in_addr_from_string_auto(rvalue, &amp;f, &amp;buffer);</td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, r, <span class='string_literal'>"Route is invalid, ignoring assignment: %s"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 574, __func__, "Route is invalid, ignoring assignment: %s"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">        n-&gt;family = f;</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line">        n-&gt;gw = buffer;</td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">        sd_event_source_unref(route-&gt;expire);</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">        route-&gt;expire = expire;</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">        expire = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line"><span class='keyword'>int</span> config_parse_gateway(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">                <span class='keyword'>unsigned</span> line,</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">                <span class='keyword'>unsigned</span> section_line,</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">                <span class='keyword'>int</span> ltype,</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">                <span class='keyword'>void</span> *data,</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">                <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">        Network *network = userdata;</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">        <span class='keyword'>union</span> in_addr_union buffer;</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">        <span class='keyword'>int</span> r, f;</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 579, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 580, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 581, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 582, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 583, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN584">584</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line"><span class='keyword'>int</span> config_parse_preferred_src(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">                <span class='keyword'>unsigned</span> line,</td></tr>
-<tr><td class="num" id="LN588">588</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
-<tr><td class="num" id="LN589">589</td><td class="line">                <span class='keyword'>unsigned</span> section_line,</td></tr>
-<tr><td class="num" id="LN590">590</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line">                <span class='keyword'>int</span> ltype,</td></tr>
-<tr><td class="num" id="LN592">592</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
-<tr><td class="num" id="LN593">593</td><td class="line">                <span class='keyword'>void</span> *data,</td></tr>
-<tr><td class="num" id="LN594">594</td><td class="line">                <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN596">596</td><td class="line">        Network *network = userdata;</td></tr>
-<tr><td class="num" id="LN597">597</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN598">598</td><td class="line">        <span class='keyword'>union</span> in_addr_union buffer;</td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line">        <span class='keyword'>int</span> r, f;</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(section, <span class='string_literal'>"Network"</span>)<span class='expansion'>(strcmp((section),("Network")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">                <span class='comment'>/* we are not in an Route section, so treat</span></td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                 <span class='comment'>* this as the special '0' section */</span></td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">                section_line = 0;</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">        r = in_addr_from_string_auto(rvalue, &amp;f, &amp;buffer);</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, r, <span class='string_literal'>"Route is invalid, ignoring assignment: %s"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 597, __func__, "Route is invalid, ignoring assignment: %s"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN600">600</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 601, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN602">602</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 602, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN603">603</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 603, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN604">604</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 604, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN605">605</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 605, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
-<tr><td class="num" id="LN608">608</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN609">609</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN611">611</td><td class="line">        r = in_addr_from_string_auto(rvalue, &amp;f, &amp;buffer);</td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN613">613</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, EINVAL,<span class='expansion'>({ int _level = (3), _e = (22); (log_get_max_level() &gt;= ((<br>_level) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename<br>, line, _e, "src/network/networkd-route.c", 614, __func__, "Preferred source is invalid, ignoring assignment: %s"<br>, rvalue) : -abs(_e); })</span></span></td></tr>
-<tr><td class="num" id="LN614">614</td><td class="line">                           <span class='string_literal'><span class='macro'>"Preferred source is invalid, ignoring assignment: %s"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (22); (log_get_max_level() &gt;= ((<br>_level) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename<br>, line, _e, "src/network/networkd-route.c", 614, __func__, "Preferred source is invalid, ignoring assignment: %s"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN615">615</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN616">616</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN617">617</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN618">618</td><td class="line">        n-&gt;family = f;</td></tr>
-<tr><td class="num" id="LN619">619</td><td class="line">        n-&gt;prefsrc = buffer;</td></tr>
-<tr><td class="num" id="LN620">620</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN621">621</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN622">622</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN623">623</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN625">625</td><td class="line"><span class='keyword'>int</span> config_parse_destination(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
-<tr><td class="num" id="LN626">626</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
-<tr><td class="num" id="LN627">627</td><td class="line">                <span class='keyword'>unsigned</span> line,</td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line">                <span class='keyword'>unsigned</span> section_line,</td></tr>
-<tr><td class="num" id="LN630">630</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line">                <span class='keyword'>int</span> ltype,</td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
-<tr><td class="num" id="LN633">633</td><td class="line">                <span class='keyword'>void</span> *data,</td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line">                <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN636">636</td><td class="line">        Network *network = userdata;</td></tr>
-<tr><td class="num" id="LN637">637</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN638">638</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *address, *e;</td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line">        <span class='keyword'>union</span> in_addr_union buffer;</td></tr>
-<tr><td class="num" id="LN640">640</td><td class="line">        <span class='keyword'>unsigned</span> <span class='keyword'>char</span> prefixlen;</td></tr>
-<tr><td class="num" id="LN641">641</td><td class="line">        <span class='keyword'>int</span> r, f;</td></tr>
-<tr><td class="num" id="LN642">642</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN643">643</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 643, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN644">644</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 644, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN645">645</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 645, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN646">646</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 646, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN647">647</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 647, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN648">648</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN649">649</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
-<tr><td class="num" id="LN650">650</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN651">651</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN652">652</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN653">653</td><td class="line">        <span class='comment'>/* Destination|Source=address/prefixlen */</span></td></tr>
-<tr><td class="num" id="LN654">654</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN655">655</td><td class="line">        <span class='comment'>/* address */</span></td></tr>
-<tr><td class="num" id="LN656">656</td><td class="line">        e = strchr(rvalue, '/');</td></tr>
-<tr><td class="num" id="LN657">657</td><td class="line">        <span class='keyword'>if</span> (e)</td></tr>
-<tr><td class="num" id="LN658">658</td><td class="line">                address = <span class='macro'>strndupa(rvalue, e - rvalue)<span class='expansion'>(__extension__ ({ const char *__old = (rvalue); size_t __len =<br> strnlen (__old, (e - rvalue)); char *__new = (char *) __builtin_alloca<br> (__len + 1); __new[__len] = '\0'; (char *) memcpy (__new, __old<br>, __len); }))</span></span>;</td></tr>
-<tr><td class="num" id="LN659">659</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line">                address = rvalue;</td></tr>
-<tr><td class="num" id="LN661">661</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN662">662</td><td class="line">        r = in_addr_from_string_auto(address, &amp;f, &amp;buffer);</td></tr>
-<tr><td class="num" id="LN663">663</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN664">664</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, r, <span class='string_literal'>"Destination is invalid, ignoring assignment: %s"</span>, address)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 664, __func__, "Destination is invalid, ignoring assignment: %s"<br>, address) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN665">665</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN666">666</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN667">667</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN668">668</td><td class="line">        <span class='keyword'>if</span> (f != <span class='macro'>AF_INET<span class='expansion'>2</span></span> &amp;&amp; f != <span class='macro'>AF_INET6<span class='expansion'>10</span></span>) {</td></tr>
-<tr><td class="num" id="LN669">669</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, 0, <span class='string_literal'>"Unknown address family, ignoring assignment: %s"</span>, address)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 669, __func__, "Unknown address family, ignoring assignment: %s"<br>, address) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN670">670</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN671">671</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN672">672</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN673">673</td><td class="line">        <span class='comment'>/* prefixlen */</span></td></tr>
-<tr><td class="num" id="LN674">674</td><td class="line">        <span class='keyword'>if</span> (e) {</td></tr>
-<tr><td class="num" id="LN675">675</td><td class="line">                r = safe_atou8(e + 1, &amp;prefixlen);</td></tr>
-<tr><td class="num" id="LN676">676</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN677">677</td><td class="line">                        <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, r, <span class='string_literal'>"Route destination prefix length is invalid, ignoring assignment: %s"</span>, e + 1)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 677, __func__, "Route destination prefix length is invalid, ignoring assignment: %s"<br>, e + 1) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN678">678</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN679">679</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN680">680</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN681">681</td><td class="line">                <span class='keyword'>switch</span> (f) {</td></tr>
-<tr><td class="num" id="LN682">682</td><td class="line">                        <span class='keyword'>case</span> <span class='macro'>AF_INET<span class='expansion'>2</span></span>:</td></tr>
-<tr><td class="num" id="LN683">683</td><td class="line">                                prefixlen = 32;</td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN685">685</td><td class="line">                        <span class='keyword'>case</span> <span class='macro'>AF_INET6<span class='expansion'>10</span></span>:</td></tr>
-<tr><td class="num" id="LN686">686</td><td class="line">                                prefixlen = 128;</td></tr>
-<tr><td class="num" id="LN687">687</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN688">688</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">        n-&gt;family = f;</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">        n-&gt;gw = buffer;</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line"><span class='keyword'>int</span> config_parse_preferred_src(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">                <span class='keyword'>unsigned</span> line,</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">                <span class='keyword'>unsigned</span> section_line,</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">                <span class='keyword'>int</span> ltype,</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">                <span class='keyword'>void</span> *data,</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">                <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">        Network *network = userdata;</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">        <span class='keyword'>union</span> in_addr_union buffer;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">        <span class='keyword'>int</span> r, f;</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 624, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 625, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 626, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 627, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 628, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">        r = in_addr_from_string_auto(rvalue, &amp;f, &amp;buffer);</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, EINVAL,<span class='expansion'>({ int _level = (3), _e = (22); (log_get_max_level() &gt;= ((<br>_level) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename<br>, line, _e, "src/network/networkd-route.c", 637, __func__, "Preferred source is invalid, ignoring assignment: %s"<br>, rvalue) : -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">                           <span class='string_literal'><span class='macro'>"Preferred source is invalid, ignoring assignment: %s"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (22); (log_get_max_level() &gt;= ((<br>_level) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename<br>, line, _e, "src/network/networkd-route.c", 637, __func__, "Preferred source is invalid, ignoring assignment: %s"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">        n-&gt;family = f;</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">        n-&gt;prefsrc = buffer;</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line"><span class='keyword'>int</span> config_parse_destination(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">                <span class='keyword'>unsigned</span> line,</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">                <span class='keyword'>unsigned</span> section_line,</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">                <span class='keyword'>int</span> ltype,</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">                <span class='keyword'>void</span> *data,</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">                <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">        Network *network = userdata;</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *address, *e;</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">        <span class='keyword'>union</span> in_addr_union buffer;</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">        <span class='keyword'>unsigned</span> <span class='keyword'>char</span> prefixlen;</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">        <span class='keyword'>int</span> r, f;</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 666, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 667, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 668, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 669, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 670, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">        <span class='comment'>/* Destination|Source=address/prefixlen */</span></td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">        <span class='comment'>/* address */</span></td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">        e = strchr(rvalue, '/');</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">        <span class='keyword'>if</span> (e)</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">                address = <span class='macro'>strndupa(rvalue, e - rvalue)<span class='expansion'>(__extension__ ({ const char *__old = (rvalue); size_t __len =<br> strnlen (__old, (e - rvalue)); char *__new = (char *) __builtin_alloca<br> (__len + 1); __new[__len] = '\0'; (char *) memcpy (__new, __old<br>, __len); }))</span></span>;</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">                address = rvalue;</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">        r = in_addr_from_string_auto(address, &amp;f, &amp;buffer);</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, r, <span class='string_literal'>"Destination is invalid, ignoring assignment: %s"</span>, address)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 687, __func__, "Destination is invalid, ignoring assignment: %s"<br>, address) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN689">689</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN690">690</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN691">691</td><td class="line">        n-&gt;family = f;</td></tr>
-<tr><td class="num" id="LN692">692</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(lvalue, <span class='string_literal'>"Destination"</span>)<span class='expansion'>(strcmp((lvalue),("Destination")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">                n-&gt;dst = buffer;</td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line">                n-&gt;dst_prefixlen = prefixlen;</td></tr>
-<tr><td class="num" id="LN695">695</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(lvalue, <span class='string_literal'>"Source"</span>)<span class='expansion'>(strcmp((lvalue),("Source")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line">                n-&gt;src = buffer;</td></tr>
-<tr><td class="num" id="LN697">697</td><td class="line">                n-&gt;src_prefixlen = prefixlen;</td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line">        } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line">                <span class='macro'>assert_not_reached(lvalue)<span class='expansion'>do { log_assert_failed_unreachable(lvalue, "src/network/networkd-route.c"<br>, 699, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN704">704</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN706">706</td><td class="line"><span class='keyword'>int</span> config_parse_route_priority(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
-<tr><td class="num" id="LN707">707</td><td class="line">                                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
-<tr><td class="num" id="LN708">708</td><td class="line">                                <span class='keyword'>unsigned</span> line,</td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line">                                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
-<tr><td class="num" id="LN710">710</td><td class="line">                                <span class='keyword'>unsigned</span> section_line,</td></tr>
-<tr><td class="num" id="LN711">711</td><td class="line">                                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
-<tr><td class="num" id="LN712">712</td><td class="line">                                <span class='keyword'>int</span> ltype,</td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line">                                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
-<tr><td class="num" id="LN714">714</td><td class="line">                                <span class='keyword'>void</span> *data,</td></tr>
-<tr><td class="num" id="LN715">715</td><td class="line">                                <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line">        Network *network = userdata;</td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN718">718</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN720">720</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 720, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 721, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 722, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN723">723</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 723, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN724">724</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 724, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">        <span class='keyword'>if</span> (f != <span class='macro'>AF_INET<span class='expansion'>2</span></span> &amp;&amp; f != <span class='macro'>AF_INET6<span class='expansion'>10</span></span>) {</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, 0, <span class='string_literal'>"Unknown address family, ignoring assignment: %s"</span>, address)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 692, __func__, "Unknown address family, ignoring assignment: %s"<br>, address) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">        <span class='comment'>/* prefixlen */</span></td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">        <span class='keyword'>if</span> (e) {</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line">                r = safe_atou8(e + 1, &amp;prefixlen);</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">                        <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, r, <span class='string_literal'>"Route destination prefix length is invalid, ignoring assignment: %s"</span>, e + 1)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 700, __func__, "Route destination prefix length is invalid, ignoring assignment: %s"<br>, e + 1) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">                <span class='keyword'>switch</span> (f) {</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">                        <span class='keyword'>case</span> <span class='macro'>AF_INET<span class='expansion'>2</span></span>:</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">                                prefixlen = 32;</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">                        <span class='keyword'>case</span> <span class='macro'>AF_INET6<span class='expansion'>10</span></span>:</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">                                prefixlen = 128;</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">        n-&gt;family = f;</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(lvalue, <span class='string_literal'>"Destination"</span>)<span class='expansion'>(strcmp((lvalue),("Destination")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">                n-&gt;dst = buffer;</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">                n-&gt;dst_prefixlen = prefixlen;</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(lvalue, <span class='string_literal'>"Source"</span>)<span class='expansion'>(strcmp((lvalue),("Source")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">                n-&gt;src = buffer;</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">                n-&gt;src_prefixlen = prefixlen;</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">                <span class='macro'>assert_not_reached(lvalue)<span class='expansion'>do { log_assert_failed_unreachable(lvalue, "src/network/networkd-route.c"<br>, 722, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN725">725</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN726">726</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
-<tr><td class="num" id="LN727">727</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN728">728</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN729">729</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">        r = config_parse_uint32(unit, filename, line, section,</td></tr>
-<tr><td class="num" id="LN731">731</td><td class="line">                                section_line, lvalue, ltype,</td></tr>
-<tr><td class="num" id="LN732">732</td><td class="line">                                rvalue, &amp;n-&gt;priority, userdata);</td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN734">734</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN735">735</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN737">737</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN738">738</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN739">739</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN741">741</td><td class="line"><span class='keyword'>int</span> config_parse_route_scope(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line">                             <span class='keyword'>unsigned</span> line,</td></tr>
-<tr><td class="num" id="LN744">744</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
-<tr><td class="num" id="LN745">745</td><td class="line">                             <span class='keyword'>unsigned</span> section_line,</td></tr>
-<tr><td class="num" id="LN746">746</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
-<tr><td class="num" id="LN747">747</td><td class="line">                             <span class='keyword'>int</span> ltype,</td></tr>
-<tr><td class="num" id="LN748">748</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
-<tr><td class="num" id="LN749">749</td><td class="line">                             <span class='keyword'>void</span> *data,</td></tr>
-<tr><td class="num" id="LN750">750</td><td class="line">                             <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN751">751</td><td class="line">        Network *network = userdata;</td></tr>
-<tr><td class="num" id="LN752">752</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN753">753</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN754">754</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN755">755</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 755, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN756">756</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 756, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN757">757</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 757, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN758">758</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 758, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN759">759</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 759, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line"><span class='keyword'>int</span> config_parse_route_priority(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">                                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">                                <span class='keyword'>unsigned</span> line,</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">                                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">                                <span class='keyword'>unsigned</span> section_line,</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">                                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">                                <span class='keyword'>int</span> ltype,</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">                                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">                                <span class='keyword'>void</span> *data,</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">                                <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">        Network *network = userdata;</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 743, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 744, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 745, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 746, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 747, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">        r = config_parse_uint32(unit, filename, line, section,</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">                                section_line, lvalue, ltype,</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">                                rvalue, &amp;n-&gt;priority, userdata);</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN760">760</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN761">761</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
-<tr><td class="num" id="LN762">762</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN763">763</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN764">764</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN765">765</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"host"</span>)<span class='expansion'>(strcmp((rvalue),("host")) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN766">766</td><td class="line">                n-&gt;scope = RT_SCOPE_HOST;</td></tr>
-<tr><td class="num" id="LN767">767</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"link"</span>)<span class='expansion'>(strcmp((rvalue),("link")) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN768">768</td><td class="line">                n-&gt;scope = RT_SCOPE_LINK;</td></tr>
-<tr><td class="num" id="LN769">769</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"global"</span>)<span class='expansion'>(strcmp((rvalue),("global")) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN770">770</td><td class="line">                n-&gt;scope = RT_SCOPE_UNIVERSE;</td></tr>
-<tr><td class="num" id="LN771">771</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN772">772</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, 0, <span class='string_literal'>"Unknown route scope: %s"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 772, __func__, "Unknown route scope: %s"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN773">773</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN774">774</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN775">775</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN776">776</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line"><span class='keyword'>int</span> config_parse_route_scope(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">                             <span class='keyword'>unsigned</span> line,</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">                             <span class='keyword'>unsigned</span> section_line,</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">                             <span class='keyword'>int</span> ltype,</td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">                             <span class='keyword'>void</span> *data,</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line">                             <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">        Network *network = userdata;</td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN777">777</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN778">778</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN779">779</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 778, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 779, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 780, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 781, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 782, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN784">784</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"host"</span>)<span class='expansion'>(strcmp((rvalue),("host")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN789">789</td><td class="line">                n-&gt;scope = RT_SCOPE_HOST;</td></tr>
+<tr><td class="num" id="LN790">790</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"link"</span>)<span class='expansion'>(strcmp((rvalue),("link")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN791">791</td><td class="line">                n-&gt;scope = RT_SCOPE_LINK;</td></tr>
+<tr><td class="num" id="LN792">792</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"global"</span>)<span class='expansion'>(strcmp((rvalue),("global")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN793">793</td><td class="line">                n-&gt;scope = RT_SCOPE_UNIVERSE;</td></tr>
+<tr><td class="num" id="LN794">794</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, 0, <span class='string_literal'>"Unknown route scope: %s"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 795, __func__, "Unknown route scope: %s"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN796">796</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN797">797</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN798">798</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN799">799</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN800">800</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN801">801</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN802">802</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN803">803</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN804">804</td><td class="line"><span class='keyword'>int</span> config_parse_route_table(<span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN805">805</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
+<tr><td class="num" id="LN806">806</td><td class="line">                             <span class='keyword'>unsigned</span> line,</td></tr>
+<tr><td class="num" id="LN807">807</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
+<tr><td class="num" id="LN808">808</td><td class="line">                             <span class='keyword'>unsigned</span> section_line,</td></tr>
+<tr><td class="num" id="LN809">809</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
+<tr><td class="num" id="LN810">810</td><td class="line">                             <span class='keyword'>int</span> ltype,</td></tr>
+<tr><td class="num" id="LN811">811</td><td class="line">                             <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
+<tr><td class="num" id="LN812">812</td><td class="line">                             <span class='keyword'>void</span> *data,</td></tr>
+<tr><td class="num" id="LN813">813</td><td class="line">                             <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN814">814</td><td class="line">        <span class='macro'>_cleanup_route_free_<span class='expansion'>__attribute__((cleanup(route_freep)))</span></span> Route *n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN815">815</td><td class="line">        Network *network = userdata;</td></tr>
+<tr><td class="num" id="LN816">816</td><td class="line">        uint32_t k;</td></tr>
+<tr><td class="num" id="LN817">817</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN818">818</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN819">819</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-route.c", 819, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN820">820</td><td class="line">        <span class='macro'>assert(section)<span class='expansion'>do { if ((__builtin_expect(!!(!(section)),0))) log_assert_failed<br>("section", "src/network/networkd-route.c", 820, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN821">821</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-route.c", 821, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN822">822</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-route.c", 822, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN823">823</td><td class="line">        <span class='macro'>assert(data)<span class='expansion'>do { if ((__builtin_expect(!!(!(data)),0))) log_assert_failed<br>("data", "src/network/networkd-route.c", 823, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN824">824</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN825">825</td><td class="line">        r = route_new_static(network, section_line, &amp;n);</td></tr>
+<tr><td class="num" id="LN826">826</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN827">827</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN828">828</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN829">829</td><td class="line">        r = safe_atou32(rvalue, &amp;k);</td></tr>
+<tr><td class="num" id="LN830">830</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN831">831</td><td class="line">                <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, r,<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 832, __func__, "Could not parse route table number \"%s\", ignoring assignment: %m"<br>, rvalue) : -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN832">832</td><td class="line">                           <span class='string_literal'><span class='macro'>"Could not parse route table number \"%s\", ignoring assignment: %m"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-route.c", 832, __func__, "Could not parse route table number \"%s\", ignoring assignment: %m"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN833">833</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN834">834</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN835">835</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN836">836</td><td class="line">        n-&gt;table = k;</td></tr>
+<tr><td class="num" id="LN837">837</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN838">838</td><td class="line">        n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN839">839</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN840">840</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN841">841</td><td class="line">}</td></tr>
 </table></body></html>
