@@ -15852,6 +15852,8 @@ int send_one_fd_sa(int transport_fd,
 int receive_one_fd(int transport_fd, int flags);
 
 ssize_t next_datagram_size_fd(int fd);
+
+int flush_accept(int fd);
 # 27 "./src/core/socket.h" 2
 
 typedef enum SocketExecCommand {
