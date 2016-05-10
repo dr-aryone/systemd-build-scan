@@ -216,7 +216,7 @@
 <tr><td class="num" id="LN131">131</td><td class="line">        <span class='keyword'>return</span> link-&gt;network-&gt;lldp_mode != LLDP_MODE_NO;</td></tr>
 <tr><td class="num" id="LN132">132</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN133">133</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN134">134</td><td class="line"><span class='keyword'>static</span> <span class='macro'>bool<span class='expansion'>_Bool</span></span> link_lldp_tx_enabled(Link *link) {</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line"><span class='keyword'>static</span> <span class='macro'>bool<span class='expansion'>_Bool</span></span> link_lldp_emit_enabled(Link *link) {</td></tr>
 <tr><td class="num" id="LN135">135</td><td class="line">        <span class='macro'>assert(link)<span class='expansion'>do { if ((__builtin_expect(!!(!(link)),0))) log_assert_failed<br>("link", "src/network/networkd-link.c", 135, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN136">136</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN137">137</td><td class="line">        <span class='keyword'>if</span> (link-&gt;flags &amp; <span class='macro'>IFF_LOOPBACK<span class='expansion'>0x8</span></span>)</td></tr>
@@ -228,7 +228,7 @@
 <tr><td class="num" id="LN143">143</td><td class="line">        <span class='keyword'>if</span> (!link-&gt;network)</td></tr>
 <tr><td class="num" id="LN144">144</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
 <tr><td class="num" id="LN145">145</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN146">146</td><td class="line">        <span class='keyword'>return</span> link-&gt;network-&gt;lldp_emit;</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">        <span class='keyword'>return</span> link-&gt;network-&gt;lldp_emit != LLDP_EMIT_NO;</td></tr>
 <tr><td class="num" id="LN147">147</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN148">148</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN149">149</td><td class="line"><span class='keyword'>static</span> <span class='macro'>bool<span class='expansion'>_Bool</span></span> link_ipv4_forward_enabled(Link *link) {</td></tr>
@@ -597,7 +597,7 @@
 <tr><td class="num" id="LN491">491</td><td class="line">        sd_dhcp_client_unref(link-&gt;dhcp_client);</td></tr>
 <tr><td class="num" id="LN492">492</td><td class="line">        sd_dhcp_lease_unref(link-&gt;dhcp_lease);</td></tr>
 <tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN494">494</td><td class="line">        link_lldp_tx_stop(link);</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        link_lldp_emit_stop(link);</td></tr>
 <tr><td class="num" id="LN495">495</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN496">496</td><td class="line">        free(link-&gt;lease_file);</td></tr>
 <tr><td class="num" id="LN497">497</td><td class="line"> </td></tr>
@@ -724,7 +724,7 @@
 <tr><td class="num" id="LN618">618</td><td class="line">                        r = <span class='macro'>log_link_warning_errno(link, k, <span class='string_literal'>"Could not stop IPv6 Router Discovery: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, k, "src/network/networkd-link.c"<br>, 618, __func__, "INTERFACE=", _l-&gt;ifname, "Could not stop IPv6 Router Discovery: %m"<br>) : log_internal(4, k, "src/network/networkd-link.c", 618, __func__<br>, "Could not stop IPv6 Router Discovery: %m"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN619">619</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN620">620</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN621">621</td><td class="line">        link_lldp_tx_stop(link);</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">        link_lldp_emit_stop(link);</td></tr>
 <tr><td class="num" id="LN622">622</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN623">623</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN624">624</td><td class="line"> </td></tr>
@@ -1517,12 +1517,12 @@
 <tr><td class="num" id="LN1411">1411</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1412">1412</td><td class="line">        (<span class='keyword'>void</span>) link_lldp_save(link);</td></tr>
 <tr><td class="num" id="LN1413">1413</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1414">1414</td><td class="line">        <span class='keyword'>if</span> (link_lldp_tx_enabled(link) &amp;&amp; event == SD_LLDP_EVENT_ADDED) {</td></tr>
+<tr><td class="num" id="LN1414">1414</td><td class="line">        <span class='keyword'>if</span> (link_lldp_emit_enabled(link) &amp;&amp; event == SD_LLDP_EVENT_ADDED) {</td></tr>
 <tr><td class="num" id="LN1415">1415</td><td class="line">                <span class='comment'>/* If we received information about a new neighbor, restart the LLDP "fast" logic */</span></td></tr>
 <tr><td class="num" id="LN1416">1416</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1417">1417</td><td class="line">                <span class='macro'>log_link_debug(link, <span class='string_literal'>"Received LLDP datagram from previously unknown neighbor, restarting 'fast' LLDP transmission."</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(7, 0, "src/network/networkd-link.c"<br>, 1417, __func__, "INTERFACE=", _l-&gt;ifname, "Received LLDP datagram from previously unknown neighbor, restarting 'fast' LLDP transmission."<br>) : log_internal(7, 0, "src/network/networkd-link.c", 1417, __func__<br>, "Received LLDP datagram from previously unknown neighbor, restarting 'fast' LLDP transmission."<br>); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1418">1418</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1419">1419</td><td class="line">                r = link_lldp_tx_start(link);</td></tr>
+<tr><td class="num" id="LN1419">1419</td><td class="line">                r = link_lldp_emit_start(link);</td></tr>
 <tr><td class="num" id="LN1420">1420</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1421">1421</td><td class="line">                        <span class='macro'>log_link_warning_errno(link, r, <span class='string_literal'>"Failed to restart LLDP transmission: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, r, "src/network/networkd-link.c"<br>, 1421, __func__, "INTERFACE=", _l-&gt;ifname, "Failed to restart LLDP transmission: %m"<br>) : log_internal(4, r, "src/network/networkd-link.c", 1421, __func__<br>, "Failed to restart LLDP transmission: %m"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1422">1422</td><td class="line">        }</td></tr>
@@ -1607,8 +1607,8 @@
 <tr><td class="num" id="LN1501">1501</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1502">1502</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1503">1503</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1504">1504</td><td class="line">        <span class='keyword'>if</span> (link_lldp_tx_enabled(link)) {</td></tr>
-<tr><td class="num" id="LN1505">1505</td><td class="line">                r = link_lldp_tx_start(link);</td></tr>
+<tr><td class="num" id="LN1504">1504</td><td class="line">        <span class='keyword'>if</span> (link_lldp_emit_enabled(link)) {</td></tr>
+<tr><td class="num" id="LN1505">1505</td><td class="line">                r = link_lldp_emit_start(link);</td></tr>
 <tr><td class="num" id="LN1506">1506</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1507">1507</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_link_warning_errno(link, r, <span class='string_literal'>"Failed to start LLDP transmission: %m"</span>)<span class='expansion'>({ Link *_l = (link); _l ? log_object_internal(4, r, "src/network/networkd-link.c"<br>, 1507, __func__, "INTERFACE=", _l-&gt;ifname, "Failed to start LLDP transmission: %m"<br>) : log_internal(4, r, "src/network/networkd-link.c", 1507, __func__<br>, "Failed to start LLDP transmission: %m"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1508">1508</td><td class="line">        }</td></tr>
