@@ -54,9 +54,9 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Use of memory after it is freed -->
+<!-- BUGDESC Potential leak of memory pointed to by 'mac' -->
 
-<!-- BUGTYPE Use-after-free -->
+<!-- BUGTYPE Memory leak -->
 
 <!-- BUGCATEGORY Memory Error -->
 
@@ -64,21 +64,21 @@
 
 <!-- FILENAME networkd-netdev.c -->
 
-<!-- FUNCTIONNAME netdev_cancel_callbacks -->
+<!-- FUNCTIONNAME netdev_get_mac -->
 
-<!-- BUGLINE 97 -->
+<!-- BUGLINE 431 -->
 
-<!-- BUGCOLUMN 25 -->
+<!-- BUGCOLUMN 24 -->
 
-<!-- BUGPATHLENGTH 14 -->
+<!-- BUGPATHLENGTH 27 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>network/networkd-netdev.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 97, column 25</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Use of memory after it is freed</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 431, column 24</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'mac'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -173,22 +173,13 @@
 <tr><td class="num" id="LN88">88</td><td class="line">        netdev_join_callback *callback;</td></tr>
 <tr><td class="num" id="LN89">89</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN90">90</td><td class="line">        <span class='keyword'>if</span> (!netdev)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN91">91</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN92">92</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN93">93</td><td class="line">        rtnl_message_new_synthetic_error(-<span class='macro'>ENODEV<span class='expansion'>19</span></span>, 0, &amp;m);</td></tr>
 <tr><td class="num" id="LN94">94</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN95">95</td><td class="line">        <span class='keyword'>while</span> ((callback = netdev-&gt;callbacks)) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN96">96</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">m</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'm' is non-null</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">                <span class='keyword'>if</span> (m) {</td></tr>
 <tr><td class="num" id="LN97">97</td><td class="line">                        <span class='macro'>assert(callback-&gt;link)<span class='expansion'>do { if ((__builtin_expect(!!(!(callback-&gt;link)),0))) log_assert_failed<br>("callback-&gt;link", "src/network/networkd-netdev.c", 97, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:25ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Use of memory after it is freed</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN98">98</td><td class="line">                        <span class='macro'>assert(callback-&gt;callback)<span class='expansion'>do { if ((__builtin_expect(!!(!(callback-&gt;callback)),0))) log_assert_failed<br>("callback-&gt;callback", "src/network/networkd-netdev.c", 98<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN99">99</td><td class="line">                        <span class='macro'>assert(netdev-&gt;manager)<span class='expansion'>do { if ((__builtin_expect(!!(!(netdev-&gt;manager)),0))) log_assert_failed<br>("netdev-&gt;manager", "src/network/networkd-netdev.c", 99, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN100">100</td><td class="line">                        <span class='macro'>assert(netdev-&gt;manager-&gt;rtnl)<span class='expansion'>do { if ((__builtin_expect(!!(!(netdev-&gt;manager-&gt;rtnl))<br>,0))) log_assert_failed("netdev-&gt;manager-&gt;rtnl", "src/network/networkd-netdev.c"<br>, 100, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
@@ -198,8 +189,7 @@
 <tr><td class="num" id="LN104">104</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN105">105</td><td class="line">                <span class='macro'>LIST_REMOVE(callbacks, netdev-&gt;callbacks, callback)<span class='expansion'>do { typeof(*(netdev-&gt;callbacks)) **_head = &amp;(netdev-&gt;<br>callbacks), *_item = (callback); do { if ((__builtin_expect(!<br>!(!(_item)),0))) log_assert_failed("_item", "src/network/networkd-netdev.c"<br>, 105, __PRETTY_FUNCTION__); } while (0); if (_item-&gt;callbacks_next<br>) _item-&gt;callbacks_next-&gt;callbacks_prev = _item-&gt;callbacks_prev<br>; if (_item-&gt;callbacks_prev) _item-&gt;callbacks_prev-&gt;<br>callbacks_next = _item-&gt;callbacks_next; else { do { if ((__builtin_expect<br>(!!(!(*_head == _item)),0))) log_assert_failed("*_head == _item"<br>, "src/network/networkd-netdev.c", 105, __PRETTY_FUNCTION__);<br> } while (0); *_head = _item-&gt;callbacks_next; } _item-&gt;<br>callbacks_next = _item-&gt;callbacks_prev = ((void*)0); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN106">106</td><td class="line">                link_unref(callback-&gt;link);</td></tr>
-<tr><td class="num" id="LN107">107</td><td class="line">                <span class="mrange">free(callback)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Memory is released</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">                free(callback);</td></tr>
 <tr><td class="num" id="LN108">108</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN109">109</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN110">110</td><td class="line"> </td></tr>
@@ -246,15 +236,13 @@
 <tr><td class="num" id="LN151">151</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN152">152</td><td class="line"><span class='keyword'>void</span> netdev_drop(NetDev *netdev) {</td></tr>
 <tr><td class="num" id="LN153">153</td><td class="line">        <span class='keyword'>if</span> (!netdev || netdev-&gt;state == NETDEV_STATE_LINGER)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN154">154</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN155">155</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN156">156</td><td class="line">        netdev-&gt;state = NETDEV_STATE_LINGER;</td></tr>
 <tr><td class="num" id="LN157">157</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN158">158</td><td class="line">        <span class='macro'>log_netdev_debug(netdev, <span class='string_literal'>"netdev removed"</span>)<span class='expansion'>({ NetDev *_n = (netdev); _n ? log_object_internal(7, 0, "src/network/networkd-netdev.c"<br>, 158, __func__, "INTERFACE=", _n-&gt;ifname, "netdev removed"<br>) : log_internal(7, 0, "src/network/networkd-netdev.c", 158, __func__<br>, "netdev removed"); })</span></span>;</td></tr>
 <tr><td class="num" id="LN159">159</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN160">160</td><td class="line">        <span class="mrange">netdev_cancel_callbacks(netdev)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Calling 'netdev_cancel_callbacks'</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">        netdev_cancel_callbacks(netdev);</td></tr>
 <tr><td class="num" id="LN161">161</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN162">162</td><td class="line">        netdev_unref(netdev);</td></tr>
 <tr><td class="num" id="LN163">163</td><td class="line"> </td></tr>
@@ -359,14 +347,10 @@
 <tr><td class="num" id="LN262">262</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN263">263</td><td class="line">        r = sd_netlink_message_get_errno(m);</td></tr>
 <tr><td class="num" id="LN264">264</td><td class="line">        <span class='keyword'>if</span> (r == -<span class='macro'>EEXIST<span class='expansion'>17</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN265">265</td><td class="line">                <span class='macro'>log_netdev_info(netdev, <span class='string_literal'>"netdev exists, using existing without changing its parameters"</span>)<span class='expansion'>({ NetDev *_n = (netdev); _n ? log_object_internal(6, 0, "src/network/networkd-netdev.c"<br>, 265, __func__, "INTERFACE=", _n-&gt;ifname, "netdev exists, using existing without changing its parameters"<br>) : log_internal(6, 0, "src/network/networkd-netdev.c", 265, __func__<br>, "netdev exists, using existing without changing its parameters"<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN266">266</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:18ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:14ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
 <tr><td class="num" id="LN267">267</td><td class="line">                <span class='macro'>log_netdev_warning_errno(netdev, r, <span class='string_literal'>"netdev could not be created: %m"</span>)<span class='expansion'>({ NetDev *_n = (netdev); _n ? log_object_internal(4, r, "src/network/networkd-netdev.c"<br>, 267, __func__, "INTERFACE=", _n-&gt;ifname, "netdev could not be created: %m"<br>) : log_internal(4, r, "src/network/networkd-netdev.c", 267, __func__<br>, "netdev could not be created: %m"); })</span></span>;</td></tr>
-<tr><td class="num" id="LN268">268</td><td class="line">                <span class="mrange">netdev_drop(netdev)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Calling 'netdev_drop'</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">                netdev_drop(netdev);</td></tr>
 <tr><td class="num" id="LN269">269</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN270">270</td><td class="line">                <span class='keyword'>return</span> 1;</td></tr>
 <tr><td class="num" id="LN271">271</td><td class="line">        }</td></tr>
@@ -519,7 +503,12 @@
 <tr><td class="num" id="LN418">418</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/network/networkd-netdev.c", 418, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN419">419</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN420">420</td><td class="line">        mac = <span class='macro'>new0(<span class='keyword'>struct</span> ether_addr, 1)<span class='expansion'>((struct ether_addr*) calloc((1), sizeof(struct ether_addr)))</span></span>;</td></tr>
-<tr><td class="num" id="LN421">421</td><td class="line">        <span class='keyword'>if</span> (!mac)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgControl" style="margin-left:15ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'new0':
+</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!mac</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Assuming 'mac' is non-null</td><td><div class="PathNav"><a href="#Path24" title="Next event (24)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN422">422</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN424">424</td><td class="line">        l = strlen(ifname);</td></tr>
@@ -528,8 +517,11 @@
 <tr><td class="num" id="LN427">427</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN428">428</td><td class="line">        <span class='comment'>/* fetch some persistent data unique to the machine */</span></td></tr>
 <tr><td class="num" id="LN429">429</td><td class="line">        r = sd_id128_get_machine((sd_id128_t*) v);</td></tr>
-<tr><td class="num" id="LN430">430</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN431">431</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'mac'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN432">432</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN433">433</td><td class="line">        <span class='comment'>/* combine with some data unique (on this machine) to this</span></td></tr>
 <tr><td class="num" id="LN434">434</td><td class="line">         <span class='comment'>* netdev */</span></td></tr>
@@ -683,7 +675,9 @@
 <tr><td class="num" id="LN579">579</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-netdev.c", 579, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN580">580</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN581">581</td><td class="line">        file = fopen(filename, <span class='string_literal'>"re"</span>);</td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">        <span class='keyword'>if</span> (!file) {</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!file</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'file' is non-null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN583">583</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
 <tr><td class="num" id="LN584">584</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN585">585</td><td class="line">                <span class='keyword'>else</span></td></tr>
@@ -691,12 +685,15 @@
 <tr><td class="num" id="LN587">587</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN588">588</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN589">589</td><td class="line">        <span class='keyword'>if</span> (null_or_empty_fd(fileno(file))) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN590">590</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Skipping empty file: %s"</span>, filename)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-netdev.c"<br>, 590, __func__, "Skipping empty file: %s", filename) : -abs(<br>_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN591">591</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN592">592</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN593">593</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN594">594</td><td class="line">        netdev_raw = <span class='macro'>new0(NetDev, 1)<span class='expansion'>((NetDev*) calloc((1), sizeof(NetDev)))</span></span>;</td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line">        <span class='keyword'>if</span> (!netdev_raw)</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!netdev_raw</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 'netdev_raw' is non-null</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN596">596</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/network/networkd-netdev.c", 596, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN598">598</td><td class="line">        netdev_raw-&gt;kind = _NETDEV_KIND_INVALID;</td></tr>
@@ -705,32 +702,41 @@
 <tr><td class="num" id="LN601">601</td><td class="line">                         <span class='string_literal'>"Match\0NetDev\0"</span>,</td></tr>
 <tr><td class="num" id="LN602">602</td><td class="line">                         config_item_perf_lookup, network_netdev_gperf_lookup,</td></tr>
 <tr><td class="num" id="LN603">603</td><td class="line">                         <span class='macro'>true<span class='expansion'>1</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>true<span class='expansion'>1</span></span>, netdev_raw);</td></tr>
-<tr><td class="num" id="LN604">604</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN605">605</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN607">607</td><td class="line">        r = fseek(file, 0, <span class='macro'>SEEK_SET<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN608">608</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN609">609</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN611">611</td><td class="line">        <span class='comment'>/* skip out early if configuration does not match the environment */</span></td></tr>
 <tr><td class="num" id="LN612">612</td><td class="line">        <span class='keyword'>if</span> (net_match_config(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN613">613</td><td class="line">                             netdev_raw-&gt;match_host, netdev_raw-&gt;match_virt,</td></tr>
 <tr><td class="num" id="LN614">614</td><td class="line">                             netdev_raw-&gt;match_kernel, netdev_raw-&gt;match_arch,</td></tr>
 <tr><td class="num" id="LN615">615</td><td class="line">                             <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>) &lt;= 0)</td></tr>
 <tr><td class="num" id="LN616">616</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN617">617</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN618">618</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>NETDEV_VTABLE(netdev_raw)<span class='expansion'>netdev_vtable[(netdev_raw)-&gt;kind]</span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN619">619</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"NetDev with invalid Kind configured in %s. Ignoring"</span>, filename)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-netdev.c"<br>, 619, __func__, "NetDev with invalid Kind configured in %s. Ignoring"<br>, filename) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN620">620</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN621">621</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN622">622</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN623">623</td><td class="line">        <span class='keyword'>if</span> (!netdev_raw-&gt;ifname) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN624">624</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"NetDev without Name configured in %s. Ignoring"</span>, filename)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-netdev.c"<br>, 624, __func__, "NetDev without Name configured in %s. Ignoring"<br>, filename) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN625">625</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN626">626</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN627">627</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN628">628</td><td class="line">        netdev = <span class='macro'>malloc0(NETDEV_VTABLE(netdev_raw)-&gt;object_size)<span class='expansion'>(calloc(1, (netdev_vtable[(netdev_raw)-&gt;kind]-&gt;object_size<br>)))</span></span>;</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line">        <span class='keyword'>if</span> (!netdev)</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!netdev</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'netdev' is non-null</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN630">630</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/network/networkd-netdev.c", 630, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN631">631</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN632">632</td><td class="line">        netdev-&gt;n_ref = 1;</td></tr>
@@ -740,17 +746,21 @@
 <tr><td class="num" id="LN636">636</td><td class="line">        netdev-&gt;ifname = netdev_raw-&gt;ifname;</td></tr>
 <tr><td class="num" id="LN637">637</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN638">638</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>NETDEV_VTABLE(netdev)<span class='expansion'>netdev_vtable[(netdev)-&gt;kind]</span></span>-&gt;init)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN639">639</td><td class="line">                <span class='macro'>NETDEV_VTABLE(netdev)<span class='expansion'>netdev_vtable[(netdev)-&gt;kind]</span></span>-&gt;init(netdev);</td></tr>
 <tr><td class="num" id="LN640">640</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN641">641</td><td class="line">        r = config_parse(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, filename, file,</td></tr>
 <tr><td class="num" id="LN642">642</td><td class="line">                         <span class='macro'>NETDEV_VTABLE(netdev)<span class='expansion'>netdev_vtable[(netdev)-&gt;kind]</span></span>-&gt;sections,</td></tr>
 <tr><td class="num" id="LN643">643</td><td class="line">                         config_item_perf_lookup, network_netdev_gperf_lookup,</td></tr>
 <tr><td class="num" id="LN644">644</td><td class="line">                         <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, netdev);</td></tr>
-<tr><td class="num" id="LN645">645</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN646">646</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN647">647</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN648">648</td><td class="line">        <span class='comment'>/* verify configuration */</span></td></tr>
 <tr><td class="num" id="LN649">649</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>NETDEV_VTABLE(netdev)<span class='expansion'>netdev_vtable[(netdev)-&gt;kind]</span></span>-&gt;config_verify) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN650">650</td><td class="line">                r = <span class='macro'>NETDEV_VTABLE(netdev)<span class='expansion'>netdev_vtable[(netdev)-&gt;kind]</span></span>-&gt;config_verify(netdev, filename);</td></tr>
 <tr><td class="num" id="LN651">651</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN652">652</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
@@ -758,10 +768,13 @@
 <tr><td class="num" id="LN654">654</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN655">655</td><td class="line">        netdev-&gt;filename = strdup(filename);</td></tr>
 <tr><td class="num" id="LN656">656</td><td class="line">        <span class='keyword'>if</span> (!netdev-&gt;filename)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN657">657</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/network/networkd-netdev.c", 657, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN658">658</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN659">659</td><td class="line">        <span class='keyword'>if</span> (!netdev-&gt;mac) {</td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line">                r = netdev_get_mac(netdev-&gt;ifname, &amp;netdev-&gt;mac);</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">        <span class='keyword'>if</span> (!netdev-&gt;mac &amp;&amp; netdev-&gt;kind != NETDEV_KIND_VLAN) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">                r = <span class="mrange">netdev_get_mac(netdev-&gt;ifname, &amp;netdev-&gt;mac)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Calling 'netdev_get_mac'</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN661">661</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN662">662</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to generate predictable MAC address for %s: %m"</span>, netdev-&gt;ifname)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/network/networkd-netdev.c"<br>, 662, __func__, "Failed to generate predictable MAC address for %s: %m"<br>, netdev-&gt;ifname) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN663">663</td><td class="line">        }</td></tr>
