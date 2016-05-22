@@ -17571,7 +17571,7 @@ static int property_get_version(
         do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 58, __PRETTY_FUNCTION__); } while (0);
         do { if ((__builtin_expect(!!(!(reply)),0))) log_assert_failed("reply", "src/core/dbus-manager.c", 59, __PRETTY_FUNCTION__); } while (0);
 
-        return sd_bus_message_append(reply, "s", "229");
+        return sd_bus_message_append(reply, "s", "230");
 }
 
 static int property_get_features(
