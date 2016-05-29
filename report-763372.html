@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC The left operand of '-' is a garbage value -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Result of operation is garbage or undefined -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Logic error -->
 
 <!-- BUGFILE /home/runner/systemd/src/core/manager.c -->
 
 <!-- FILENAME manager.c -->
 
-<!-- FUNCTIONNAME manager_setup_notify -->
+<!-- FUNCTIONNAME manager_print_jobs_in_progress -->
 
-<!-- BUGLINE 717 -->
+<!-- BUGLINE 211 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 57 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 9 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/manager.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 717, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 211, column 57</a></td></tr>
+<tr><td class="rowname">Description:</td><td>The left operand of '-' is a garbage value</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -261,7 +261,8 @@
 <tr><td class="num" id="LN176">176</td><td class="line">        <span class='keyword'>char</span> cylon[6 + <span class='macro'>CYLON_BUFFER_EXTRA<span class='expansion'>(2*(sizeof("\x1B[0;31m")-1) + sizeof("\x1B[0;1;31m")-1 + 2*(sizeof<br>("\x1B[0m")-1))</span></span> + 1];</td></tr>
 <tr><td class="num" id="LN177">177</td><td class="line">        <span class='keyword'>unsigned</span> cylon_pos;</td></tr>
 <tr><td class="num" id="LN178">178</td><td class="line">        <span class='keyword'>char</span> time[<span class='macro'>FORMAT_TIMESPAN_MAX<span class='expansion'>64</span></span>], limit[<span class='macro'>FORMAT_TIMESPAN_MAX<span class='expansion'>64</span></span>] = <span class='string_literal'>"no limit"</span>;</td></tr>
-<tr><td class="num" id="LN179">179</td><td class="line">        uint64_t x;</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">        <span class="mrange">uint64_t x</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>'x' declared without an initial value</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN180">180</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN181">181</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 181, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN182">182</td><td class="line">        <span class='macro'>assert(m-&gt;n_running_jobs &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;n_running_jobs &gt; 0))<br>,0))) log_assert_failed("m-&gt;n_running_jobs &gt; 0", "src/core/manager.c"<br>, 182, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
@@ -272,7 +273,9 @@
 <tr><td class="num" id="LN187">187</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN188">188</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(j, m-&gt;jobs, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((m-&gt;jobs), &amp;<br>(i), (void**)&amp;(j), ((void*)0)); )</span></span></td></tr>
 <tr><td class="num" id="LN189">189</td><td class="line">                <span class='keyword'>if</span> (j-&gt;state == JOB_RUNNING &amp;&amp; counter++ == print_nr)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN190">190</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td> Execution continues on line 194</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN191">191</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN192">192</td><td class="line">        <span class='comment'>/* m-&gt;n_running_jobs must be consistent with the contents of m-&gt;jobs,</span></td></tr>
 <tr><td class="num" id="LN193">193</td><td class="line">         <span class='comment'>* so the above loop must have succeeded in finding j. */</span></td></tr>
@@ -280,20 +283,25 @@
 <tr><td class="num" id="LN195">195</td><td class="line">        <span class='macro'>assert(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/core/manager.c", 195, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN196">196</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN197">197</td><td class="line">        cylon_pos = m-&gt;jobs_in_progress_iteration % 14;</td></tr>
-<tr><td class="num" id="LN198">198</td><td class="line">        <span class='keyword'>if</span> (cylon_pos &gt;= 8)</td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">cylon_pos &gt;= 8</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'cylon_pos' is &lt; 8</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN199">199</td><td class="line">                cylon_pos = 14 - cylon_pos;</td></tr>
 <tr><td class="num" id="LN200">200</td><td class="line">        draw_cylon(cylon, <span class='keyword'>sizeof</span>(cylon), 6, cylon_pos);</td></tr>
 <tr><td class="num" id="LN201">201</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN202">202</td><td class="line">        m-&gt;jobs_in_progress_iteration++;</td></tr>
 <tr><td class="num" id="LN203">203</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN204">204</td><td class="line">        <span class='keyword'>if</span> (m-&gt;n_running_jobs &gt; 1) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN205">205</td><td class="line">                <span class='keyword'>if</span> (asprintf(&amp;job_of_n, <span class='string_literal'>"(%u of %u) "</span>, counter, m-&gt;n_running_jobs) &lt; 0)</td></tr>
 <tr><td class="num" id="LN206">206</td><td class="line">                        job_of_n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN207">207</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN208">208</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN209">209</td><td class="line">        format_timespan(time, <span class='keyword'>sizeof</span>(time), now(<span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>) - j-&gt;begin_usec, 1*<span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
 <tr><td class="num" id="LN210">210</td><td class="line">        <span class='keyword'>if</span> (job_get_timeout(j, &amp;x) &gt; 0)</td></tr>
-<tr><td class="num" id="LN211">211</td><td class="line">                format_timespan(limit, <span class='keyword'>sizeof</span>(limit), x - j-&gt;begin_usec, 1*<span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">                format_timespan(limit, <span class='keyword'>sizeof</span>(limit), <span class="mrange">x</span> - j-&gt;begin_usec, 1*<span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:57ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>The left operand of '-' is a garbage value</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN212">212</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN213">213</td><td class="line">        manager_status_printf(m, STATUS_TYPE_EPHEMERAL, cylon,</td></tr>
 <tr><td class="num" id="LN214">214</td><td class="line">                              <span class='string_literal'>"%sA %s job is running for %s (%s / %s)"</span>,</td></tr>
@@ -802,8 +810,7 @@
 <tr><td class="num" id="LN714">714</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"SO_PASSCRED failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 714, __func__, "SO_PASSCRED failed: %m") : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN715">715</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN716">716</td><td class="line">                m-&gt;notify_fd = fd;</td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">                fd = -1;</td></tr>
 <tr><td class="num" id="LN718">718</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN719">719</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Using notification socket %s"</span>, m-&gt;notify_socket)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 719, __func__, "Using notification socket %s", m-&gt;notify_socket<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN720">720</td><td class="line">        }</td></tr>
@@ -1699,9 +1706,9 @@
 <tr><td class="num" id="LN1610">1610</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1611">1611</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1612">1612</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> manager_dispatch_notify_fd(sd_event_source *source, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN1613">1613</td><td class="line">        <span class='macro'>_cleanup_fdset_free_<span class='expansion'>__attribute__((cleanup(fdset_freep)))</span></span> FDSet *fds = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1614">1614</td><td class="line">        Manager *m = userdata;</td></tr>
-<tr><td class="num" id="LN1615">1615</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1613">1613</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1614">1614</td><td class="line">        <span class='macro'>_cleanup_fdset_free_<span class='expansion'>__attribute__((cleanup(fdset_freep)))</span></span> FDSet *fds = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1615">1615</td><td class="line">        Manager *m = userdata;</td></tr>
 <tr><td class="num" id="LN1616">1616</td><td class="line">        <span class='keyword'>char</span> buf[<span class='macro'>NOTIFY_BUFFER_MAX<span class='expansion'>4096</span></span>+1];</td></tr>
 <tr><td class="num" id="LN1617">1617</td><td class="line">        <span class='keyword'>struct</span> iovec iovec = {</td></tr>
 <tr><td class="num" id="LN1618">1618</td><td class="line">                .iov_base = buf,</td></tr>
@@ -2171,7 +2178,8 @@
 <tr><td class="num" id="LN2082">2082</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 2082, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
 <tr><td class="num" id="LN2083">2083</td><td class="line">        <span class='macro'>assert(source)<span class='expansion'>do { if ((__builtin_expect(!!(!(source)),0))) log_assert_failed<br>("source", "src/core/manager.c", 2083, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN2084">2084</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2085">2085</td><td class="line">        manager_print_jobs_in_progress(m);</td></tr>
+<tr><td class="num" id="LN2085">2085</td><td class="line">        <span class="mrange">manager_print_jobs_in_progress(m)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Calling 'manager_print_jobs_in_progress'</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2086">2086</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2087">2087</td><td class="line">        next = now(<span class='macro'>CLOCK_MONOTONIC<span class='expansion'>1</span></span>) + <span class='macro'>JOBS_IN_PROGRESS_PERIOD_USEC<span class='expansion'>(((usec_t) 1000000ULL) / 3)</span></span>;</td></tr>
 <tr><td class="num" id="LN2088">2088</td><td class="line">        r = sd_event_source_set_time(source, next);</td></tr>
@@ -2549,7 +2557,7 @@
 <tr><td class="num" id="LN2460">2460</td><td class="line">                        <span class='keyword'>if</span> (safe_atou32(l+15, &amp;id) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2461">2461</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse current job id value %s"</span>, l+15)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 2461, __func__, "Failed to parse current job id value %s", l<br>+15) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2462">2462</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2463">2463</td><td class="line">                                m-&gt;current_job_id = <span class='macro'>MAX(m-&gt;current_job_id, id)<span class='expansion'>__extension__ ({ const typeof((m-&gt;current_job_id)) __unique_prefix_A8<br> = ((m-&gt;current_job_id)); const typeof((id)) __unique_prefix_B9<br> = ((id)); __unique_prefix_A8 &gt; __unique_prefix_B9 ? __unique_prefix_A8<br> : __unique_prefix_B9; })</span></span>;</td></tr>
+<tr><td class="num" id="LN2463">2463</td><td class="line">                                m-&gt;current_job_id = <span class='macro'>MAX(m-&gt;current_job_id, id)<span class='expansion'>__extension__ ({ const typeof((m-&gt;current_job_id)) __unique_prefix_A6<br> = ((m-&gt;current_job_id)); const typeof((id)) __unique_prefix_B7<br> = ((id)); __unique_prefix_A6 &gt; __unique_prefix_B7 ? __unique_prefix_A6<br> : __unique_prefix_B7; })</span></span>;</td></tr>
 <tr><td class="num" id="LN2464">2464</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2465">2465</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (startswith(l, <span class='string_literal'>"n-installed-jobs="</span>)) {</td></tr>
 <tr><td class="num" id="LN2466">2466</td><td class="line">                        uint32_t n;</td></tr>
