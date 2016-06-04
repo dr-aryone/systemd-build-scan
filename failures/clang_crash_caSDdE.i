@@ -11175,6 +11175,7 @@ struct ExecContext {
         _Bool ioprio_set:1;
         _Bool cpu_sched_set:1;
         _Bool no_new_privileges_set:1;
+        _Bool memory_deny_write_execute;
 };
 
 
@@ -11538,7 +11539,7 @@ CGroupController cgroup_controller_from_string(const char *s) __attribute__ ((pu
 int cg_weight_parse(const char *s, uint64_t *ret);
 int cg_cpu_shares_parse(const char *s, uint64_t *ret);
 int cg_blkio_weight_parse(const char *s, uint64_t *ret);
-# 203 "./src/core/execute.h" 2
+# 204 "./src/core/execute.h" 2
 # 1 "./src/core/cgroup.h" 1
 # 28 "./src/core/cgroup.h"
 typedef struct CGroupContext CGroupContext;
@@ -16748,7 +16749,6 @@ int unit_start_limit_test(Unit *u);
 void cgroup_context_init(CGroupContext *c);
 void cgroup_context_done(CGroupContext *c);
 void cgroup_context_dump(CGroupContext *c, FILE* f, const char *prefix);
-void cgroup_context_apply(CGroupContext *c, CGroupMask mask, const char *path, ManagerState state);
 
 CGroupMask cgroup_context_get_mask(CGroupContext *c);
 
@@ -16806,7 +16806,7 @@ void manager_invalidate_startup_units(Manager *m);
 
 const char* cgroup_device_policy_to_string(CGroupDevicePolicy i) __attribute__ ((const));
 CGroupDevicePolicy cgroup_device_policy_from_string(const char *s) __attribute__ ((pure));
-# 204 "./src/core/execute.h" 2
+# 205 "./src/core/execute.h" 2
 
 struct ExecParameters {
         char **argv;
