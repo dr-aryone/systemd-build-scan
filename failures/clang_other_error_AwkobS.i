@@ -5296,7 +5296,7 @@ typedef int (*sd_netlink_message_handler_t)(sd_netlink *nl, sd_netlink_message *
 int sd_netlink_new_from_netlink(sd_netlink **nl, int fd);
 int sd_netlink_open(sd_netlink **nl);
 int sd_netlink_open_fd(sd_netlink **nl, int fd);
-int sd_netlink_inc_rcvbuf(const sd_netlink *const rtnl, const int size);
+int sd_netlink_inc_rcvbuf(sd_netlink *nl, const size_t size);
 
 sd_netlink *sd_netlink_ref(sd_netlink *nl);
 sd_netlink *sd_netlink_unref(sd_netlink *nl);
@@ -13902,7 +13902,7 @@ void address_free(Address *address);
 int address_add_foreign(Link *link, int family, const union in_addr_union *in_addr, unsigned char prefixlen, Address **ret);
 int address_add(Link *link, int family, const union in_addr_union *in_addr, unsigned char prefixlen, Address **ret);
 int address_get(Link *link, int family, const union in_addr_union *in_addr, unsigned char prefixlen, Address **ret);
-int address_update(Address *address, unsigned char flags, unsigned char scope, struct ifa_cacheinfo *cinfo);
+int address_update(Address *address, unsigned char flags, unsigned char scope, const struct ifa_cacheinfo *cinfo);
 int address_drop(Address *address);
 int address_configure(Address *address, Link *link, sd_netlink_message_handler_t callback, _Bool update);
 int address_remove(Address *address, Link *link, sd_netlink_message_handler_t callback);
@@ -13933,9 +13933,9 @@ struct FdbEntry {
         FdbEntry * static_fdb_entries_next, * static_fdb_entries_prev;
 };
 
-int fdb_entry_new_static(Network *const network, const unsigned section, FdbEntry **ret);
+int fdb_entry_new_static(Network *network, unsigned section, FdbEntry **ret);
 void fdb_entry_free(FdbEntry *fdb_entry);
-int fdb_entry_configure(Link *const link, FdbEntry *const fdb_entry);
+int fdb_entry_configure(Link *link, FdbEntry *fdb_entry);
 
 static inline void fdb_entry_freep(FdbEntry* *p) { if (*p) fdb_entry_free(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
 
@@ -13999,10 +13999,10 @@ void route_free(Route *route);
 int route_configure(Route *route, Link *link, sd_netlink_message_handler_t callback);
 int route_remove(Route *route, Link *link, sd_netlink_message_handler_t callback);
 
-int route_get(Link *link, int family, union in_addr_union *dst, unsigned char dst_prefixlen, unsigned char tos, uint32_t priority, unsigned char table, Route **ret);
-int route_add(Link *link, int family, union in_addr_union *dst, unsigned char dst_prefixlen, unsigned char tos, uint32_t priority, unsigned char table, Route **ret);
-int route_add_foreign(Link *link, int family, union in_addr_union *dst, unsigned char dst_prefixlen, unsigned char tos, uint32_t priority, unsigned char table, Route **ret);
-int route_update(Route *route, union in_addr_union *src, unsigned char src_prefixlen, union in_addr_union *gw, union in_addr_union *prefsrc, unsigned char scope, unsigned char protocol);
+int route_get(Link *link, int family, const union in_addr_union *dst, unsigned char dst_prefixlen, unsigned char tos, uint32_t priority, unsigned char table, Route **ret);
+int route_add(Link *link, int family, const union in_addr_union *dst, unsigned char dst_prefixlen, unsigned char tos, uint32_t priority, unsigned char table, Route **ret);
+int route_add_foreign(Link *link, int family, const union in_addr_union *dst, unsigned char dst_prefixlen, unsigned char tos, uint32_t priority, unsigned char table, Route **ret);
+int route_update(Route *route, const union in_addr_union *src, unsigned char src_prefixlen, const union in_addr_union *gw, const union in_addr_union *prefsrc, unsigned char scope, unsigned char protocol);
 
 int route_expire_handler(sd_event_source *s, uint64_t usec, void *userdata);
 
@@ -14172,6 +14172,10 @@ struct Network {
         Address *static_addresses;
         Route *static_routes;
         FdbEntry *static_fdb_entries;
+
+        unsigned n_static_addresses;
+        unsigned n_static_routes;
+        unsigned n_static_fdb_entries;
 
         Hashmap *addresses_by_section;
         Hashmap *routes_by_section;
