@@ -12354,8 +12354,10 @@ int in_addr_equal(int family, const union in_addr_union *a, const union in_addr_
 int in_addr_prefix_intersect(int family, const union in_addr_union *a, unsigned aprefixlen, const union in_addr_union *b, unsigned bprefixlen);
 int in_addr_prefix_next(int family, union in_addr_union *u, unsigned prefixlen);
 int in_addr_to_string(int family, const union in_addr_union *u, char **ret);
+int in_addr_ifindex_to_string(int family, const union in_addr_union *u, int ifindex, char **ret);
 int in_addr_from_string(int family, const char *s, union in_addr_union *ret);
 int in_addr_from_string_auto(const char *s, int *family, union in_addr_union *ret);
+int in_addr_ifindex_from_string_auto(const char *s, int *family, union in_addr_union *ret, int *ifindex);
 unsigned char in_addr_netmask_to_prefixlen(const struct in_addr *addr);
 struct in_addr* in_addr_prefixlen_to_netmask(struct in_addr *addr, unsigned char prefixlen);
 int in_addr_default_prefixlen(const struct in_addr *addr, unsigned char *prefixlen);
@@ -12363,7 +12365,7 @@ int in_addr_default_subnet_mask(const struct in_addr *addr, struct in_addr *mask
 int in_addr_mask(int family, union in_addr_union *addr, unsigned char prefixlen);
 
 static inline size_t FAMILY_ADDRESS_SIZE(int family) {
-        do { if ((__builtin_expect(!!(!(family == 2 || family == 10)),0))) log_assert_failed("family == AF_INET || family == AF_INET6", "./src/basic/in-addr-util.h", 58, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(family == 2 || family == 10)),0))) log_assert_failed("family == AF_INET || family == AF_INET6", "./src/basic/in-addr-util.h", 60, __PRETTY_FUNCTION__); } while (0);
         return family == 10 ? 16 : 4;
 }
 # 25 "./src/network/networkd-address-pool.h" 2
@@ -13662,12 +13664,10 @@ typedef struct VLan VLan;
 
 
 
-
-
 struct VLan {
         NetDev meta;
 
-        uint64_t id;
+        uint16_t id;
 };
 
 static inline VLan* VLAN(NetDev *n) { if ((__builtin_expect(!!(!n || n->kind != NETDEV_KIND_VLAN),0))) return ((void*)0); return (VLan*) n; };
