@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'ps' is never read -->
+<!-- BUGDESC Value stored to 'fd' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME install.c -->
 
-<!-- FUNCTIONNAME read_presets -->
+<!-- FUNCTIONNAME unit_file_load -->
 
-<!-- BUGLINE 2593 -->
+<!-- BUGLINE 1154 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>shared/install.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2593, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'ps' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1154, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -864,7 +864,7 @@
 <tr><td class="num" id="LN779">779</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN780">780</td><td class="line">        fd = open(config_path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>);</td></tr>
 <tr><td class="num" id="LN781">781</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
-<tr><td class="num" id="LN782">782</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>IN_SET(errno, ENOENT, ENOTDIR, EACCES)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){2, 20, 13})/sizeof(int)]; switch((*__errno_location<br> ())) { case 2: case 20: case 13: _found = 1; break; default:<br> break; } _found; })</span></span>)</td></tr>
 <tr><td class="num" id="LN783">783</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN784">784</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN785">785</td><td class="line">        }</td></tr>
@@ -1236,7 +1236,8 @@
 <tr><td class="num" id="LN1151">1151</td><td class="line">        f = fdopen(fd, <span class='string_literal'>"re"</span>);</td></tr>
 <tr><td class="num" id="LN1152">1152</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
 <tr><td class="num" id="LN1153">1153</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1154">1154</td><td class="line">        fd = -1;</td></tr>
+<tr><td class="num" id="LN1154">1154</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
 <tr><td class="num" id="LN1155">1155</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1156">1156</td><td class="line">        r = config_parse(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, path, f,</td></tr>
 <tr><td class="num" id="LN1157">1157</td><td class="line">                         <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
@@ -1356,7 +1357,7 @@
 <tr><td class="num" id="LN1271">1271</td><td class="line">                        info-&gt;path = path;</td></tr>
 <tr><td class="num" id="LN1272">1272</td><td class="line">                        path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1273">1273</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1274">1274</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (r != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN1274">1274</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (!<span class='macro'>IN_SET(r, -ENOENT, -ENOTDIR, -EACCES)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){-2, -20, -13})/sizeof(int)]; switch(r) {<br> case -2: case -20: case -13: _found = 1; break; default: break<br>; } _found; })</span></span>)</td></tr>
 <tr><td class="num" id="LN1275">1275</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1276">1276</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1277">1277</td><td class="line"> </td></tr>
@@ -1381,7 +1382,7 @@
 <tr><td class="num" id="LN1296">1296</td><td class="line">                                info-&gt;path = path;</td></tr>
 <tr><td class="num" id="LN1297">1297</td><td class="line">                                path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1298">1298</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1299">1299</td><td class="line">                        } <span class='keyword'>else</span> <span class='keyword'>if</span> (r != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN1299">1299</td><td class="line">                        } <span class='keyword'>else</span> <span class='keyword'>if</span> (!<span class='macro'>IN_SET(r, -ENOENT, -ENOTDIR, -EACCES)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){-2, -20, -13})/sizeof(int)]; switch(r) {<br> case -2: case -20: case -13: _found = 1; break; default: break<br>; } _found; })</span></span>)</td></tr>
 <tr><td class="num" id="LN1300">1300</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1301">1301</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1302">1302</td><td class="line">        }</td></tr>
@@ -2675,8 +2676,7 @@
 <tr><td class="num" id="LN2590">2590</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN2591">2591</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2592">2592</td><td class="line">        *presets = ps;</td></tr>
-<tr><td class="num" id="LN2593">2593</td><td class="line">        ps = <span class="mrange">(Presets){}</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'ps' is never read</div></td></tr>
+<tr><td class="num" id="LN2593">2593</td><td class="line">        ps = (Presets){};</td></tr>
 <tr><td class="num" id="LN2594">2594</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2595">2595</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN2596">2596</td><td class="line">}</td></tr>
@@ -2956,85 +2956,89 @@
 <tr><td class="num" id="LN2870">2870</td><td class="line">                <span class='keyword'>if</span> (!d) {</td></tr>
 <tr><td class="num" id="LN2871">2871</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
 <tr><td class="num" id="LN2872">2872</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN2873">2873</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2874">2874</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN2875">2875</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2876">2876</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2877">2877</td><td class="line">                <span class='macro'>FOREACH_DIRENT(de, d, <span class='keyword'>return</span> -errno)<span class='expansion'>for ((*__errno_location ()) = 0, de = readdir(d);; (*__errno_location<br> ()) = 0, de = readdir(d)) if (!de) { if ((*__errno_location (<br>)) &gt; 0) { return -(*__errno_location ()); } break; } else if<br> (hidden_or_backup_file((de)-&gt;d_name)) continue; else</span></span> {</td></tr>
-<tr><td class="num" id="LN2878">2878</td><td class="line">                        <span class='macro'>_cleanup_(unit_file_list_free_onep)<span class='expansion'>__attribute__((cleanup(unit_file_list_free_onep)))</span></span> UnitFileList *f = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2879">2879</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2880">2880</td><td class="line">                        <span class='keyword'>if</span> (!unit_name_is_valid(de-&gt;d_name, UNIT_NAME_ANY))</td></tr>
-<tr><td class="num" id="LN2881">2881</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN2882">2882</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2883">2883</td><td class="line">                        <span class='keyword'>if</span> (!strv_fnmatch_or_empty(patterns, de-&gt;d_name, <span class='macro'>FNM_NOESCAPE<span class='expansion'>(1 &lt;&lt; 1)</span></span>))</td></tr>
-<tr><td class="num" id="LN2884">2884</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN2885">2885</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2886">2886</td><td class="line">                        <span class='keyword'>if</span> (hashmap_get(h, de-&gt;d_name))</td></tr>
-<tr><td class="num" id="LN2887">2887</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN2888">2888</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2889">2889</td><td class="line">                        dirent_ensure_type(d, de);</td></tr>
-<tr><td class="num" id="LN2890">2890</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2891">2891</td><td class="line">                        <span class='keyword'>if</span> (!<span class='macro'>IN_SET(de-&gt;d_type, DT_LNK, DT_REG)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){DT_LNK, DT_REG})/sizeof(int)]; switch(de<br>-&gt;d_type) { case DT_LNK: case DT_REG: _found = 1; break; default<br>: break; } _found; })</span></span>)</td></tr>
-<tr><td class="num" id="LN2892">2892</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN2893">2893</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2894">2894</td><td class="line">                        f = <span class='macro'>new0(UnitFileList, 1)<span class='expansion'>((UnitFileList*) calloc((1), sizeof(UnitFileList)))</span></span>;</td></tr>
-<tr><td class="num" id="LN2895">2895</td><td class="line">                        <span class='keyword'>if</span> (!f)</td></tr>
-<tr><td class="num" id="LN2896">2896</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN2873">2873</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>IN_SET(errno, ENOTDIR, EACCES)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){20, 13})/sizeof(int)]; switch((*__errno_location<br> ())) { case 20: case 13: _found = 1; break; default: break; }<br> _found; })</span></span>) {</td></tr>
+<tr><td class="num" id="LN2874">2874</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to open \"%s\": %m"</span>, *i)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/shared/install.c"<br>, 2874, __func__, "Failed to open \"%s\": %m", *i) : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN2875">2875</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN2876">2876</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2877">2877</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2878">2878</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN2879">2879</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2880">2880</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2881">2881</td><td class="line">                <span class='macro'>FOREACH_DIRENT(de, d, <span class='keyword'>return</span> -errno)<span class='expansion'>for ((*__errno_location ()) = 0, de = readdir(d);; (*__errno_location<br> ()) = 0, de = readdir(d)) if (!de) { if ((*__errno_location (<br>)) &gt; 0) { return -(*__errno_location ()); } break; } else if<br> (hidden_or_backup_file((de)-&gt;d_name)) continue; else</span></span> {</td></tr>
+<tr><td class="num" id="LN2882">2882</td><td class="line">                        <span class='macro'>_cleanup_(unit_file_list_free_onep)<span class='expansion'>__attribute__((cleanup(unit_file_list_free_onep)))</span></span> UnitFileList *f = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2883">2883</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2884">2884</td><td class="line">                        <span class='keyword'>if</span> (!unit_name_is_valid(de-&gt;d_name, UNIT_NAME_ANY))</td></tr>
+<tr><td class="num" id="LN2885">2885</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN2886">2886</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2887">2887</td><td class="line">                        <span class='keyword'>if</span> (!strv_fnmatch_or_empty(patterns, de-&gt;d_name, <span class='macro'>FNM_NOESCAPE<span class='expansion'>(1 &lt;&lt; 1)</span></span>))</td></tr>
+<tr><td class="num" id="LN2888">2888</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN2889">2889</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2890">2890</td><td class="line">                        <span class='keyword'>if</span> (hashmap_get(h, de-&gt;d_name))</td></tr>
+<tr><td class="num" id="LN2891">2891</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN2892">2892</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2893">2893</td><td class="line">                        dirent_ensure_type(d, de);</td></tr>
+<tr><td class="num" id="LN2894">2894</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2895">2895</td><td class="line">                        <span class='keyword'>if</span> (!<span class='macro'>IN_SET(de-&gt;d_type, DT_LNK, DT_REG)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){DT_LNK, DT_REG})/sizeof(int)]; switch(de<br>-&gt;d_type) { case DT_LNK: case DT_REG: _found = 1; break; default<br>: break; } _found; })</span></span>)</td></tr>
+<tr><td class="num" id="LN2896">2896</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN2897">2897</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2898">2898</td><td class="line">                        f-&gt;path = path_make_absolute(de-&gt;d_name, *i);</td></tr>
-<tr><td class="num" id="LN2899">2899</td><td class="line">                        <span class='keyword'>if</span> (!f-&gt;path)</td></tr>
+<tr><td class="num" id="LN2898">2898</td><td class="line">                        f = <span class='macro'>new0(UnitFileList, 1)<span class='expansion'>((UnitFileList*) calloc((1), sizeof(UnitFileList)))</span></span>;</td></tr>
+<tr><td class="num" id="LN2899">2899</td><td class="line">                        <span class='keyword'>if</span> (!f)</td></tr>
 <tr><td class="num" id="LN2900">2900</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN2901">2901</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2902">2902</td><td class="line">                        r = unit_file_lookup_state(scope, &amp;paths, de-&gt;d_name, &amp;f-&gt;state);</td></tr>
-<tr><td class="num" id="LN2903">2903</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2904">2904</td><td class="line">                                f-&gt;state = UNIT_FILE_BAD;</td></tr>
+<tr><td class="num" id="LN2902">2902</td><td class="line">                        f-&gt;path = path_make_absolute(de-&gt;d_name, *i);</td></tr>
+<tr><td class="num" id="LN2903">2903</td><td class="line">                        <span class='keyword'>if</span> (!f-&gt;path)</td></tr>
+<tr><td class="num" id="LN2904">2904</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN2905">2905</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2906">2906</td><td class="line">                        <span class='keyword'>if</span> (!strv_isempty(states) &amp;&amp;</td></tr>
-<tr><td class="num" id="LN2907">2907</td><td class="line">                            !<span class='macro'>strv_contains(states, unit_file_state_to_string(f-&gt;state))<span class='expansion'>(!!strv_find((states), (unit_file_state_to_string(f-&gt;state<br>))))</span></span>)</td></tr>
-<tr><td class="num" id="LN2908">2908</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN2906">2906</td><td class="line">                        r = unit_file_lookup_state(scope, &amp;paths, de-&gt;d_name, &amp;f-&gt;state);</td></tr>
+<tr><td class="num" id="LN2907">2907</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2908">2908</td><td class="line">                                f-&gt;state = UNIT_FILE_BAD;</td></tr>
 <tr><td class="num" id="LN2909">2909</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2910">2910</td><td class="line">                        r = hashmap_put(h, basename(f-&gt;path), f);</td></tr>
-<tr><td class="num" id="LN2911">2911</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2912">2912</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN2910">2910</td><td class="line">                        <span class='keyword'>if</span> (!strv_isempty(states) &amp;&amp;</td></tr>
+<tr><td class="num" id="LN2911">2911</td><td class="line">                            !<span class='macro'>strv_contains(states, unit_file_state_to_string(f-&gt;state))<span class='expansion'>(!!strv_find((states), (unit_file_state_to_string(f-&gt;state<br>))))</span></span>)</td></tr>
+<tr><td class="num" id="LN2912">2912</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN2913">2913</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2914">2914</td><td class="line">                        f = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>; <span class='comment'>/* prevent cleanup */</span></td></tr>
-<tr><td class="num" id="LN2915">2915</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2916">2916</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2914">2914</td><td class="line">                        r = hashmap_put(h, basename(f-&gt;path), f);</td></tr>
+<tr><td class="num" id="LN2915">2915</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2916">2916</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN2917">2917</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2918">2918</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN2919">2919</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN2920">2920</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2921">2921</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> unit_file_state_table[_UNIT_FILE_STATE_MAX] = {</td></tr>
-<tr><td class="num" id="LN2922">2922</td><td class="line">        [UNIT_FILE_ENABLED] = <span class='string_literal'>"enabled"</span>,</td></tr>
-<tr><td class="num" id="LN2923">2923</td><td class="line">        [UNIT_FILE_ENABLED_RUNTIME] = <span class='string_literal'>"enabled-runtime"</span>,</td></tr>
-<tr><td class="num" id="LN2924">2924</td><td class="line">        [UNIT_FILE_LINKED] = <span class='string_literal'>"linked"</span>,</td></tr>
-<tr><td class="num" id="LN2925">2925</td><td class="line">        [UNIT_FILE_LINKED_RUNTIME] = <span class='string_literal'>"linked-runtime"</span>,</td></tr>
-<tr><td class="num" id="LN2926">2926</td><td class="line">        [UNIT_FILE_MASKED] = <span class='string_literal'>"masked"</span>,</td></tr>
-<tr><td class="num" id="LN2927">2927</td><td class="line">        [UNIT_FILE_MASKED_RUNTIME] = <span class='string_literal'>"masked-runtime"</span>,</td></tr>
-<tr><td class="num" id="LN2928">2928</td><td class="line">        [UNIT_FILE_STATIC] = <span class='string_literal'>"static"</span>,</td></tr>
-<tr><td class="num" id="LN2929">2929</td><td class="line">        [UNIT_FILE_DISABLED] = <span class='string_literal'>"disabled"</span>,</td></tr>
-<tr><td class="num" id="LN2930">2930</td><td class="line">        [UNIT_FILE_INDIRECT] = <span class='string_literal'>"indirect"</span>,</td></tr>
-<tr><td class="num" id="LN2931">2931</td><td class="line">        [UNIT_FILE_GENERATED] = <span class='string_literal'>"generated"</span>,</td></tr>
-<tr><td class="num" id="LN2932">2932</td><td class="line">        [UNIT_FILE_TRANSIENT] = <span class='string_literal'>"transient"</span>,</td></tr>
-<tr><td class="num" id="LN2933">2933</td><td class="line">        [UNIT_FILE_BAD] = <span class='string_literal'>"bad"</span>,</td></tr>
-<tr><td class="num" id="LN2934">2934</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN2935">2935</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2936">2936</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(unit_file_state, UnitFileState)<span class='expansion'>const char *unit_file_state_to_string(UnitFileState i) { if (<br>i &lt; 0 || i &gt;= (UnitFileState) __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(unit_file_state_table)<br>, typeof(&amp;*(unit_file_state_table))), sizeof(unit_file_state_table<br>)/sizeof((unit_file_state_table)[0]), (void)0))) return ((void<br>*)0); return unit_file_state_table[i]; } UnitFileState unit_file_state_from_string<br>(const char *s) { return (UnitFileState) string_table_lookup(<br>unit_file_state_table, __extension__ (__builtin_choose_expr( !<br>__builtin_types_compatible_p(typeof(unit_file_state_table), typeof<br>(&amp;*(unit_file_state_table))), sizeof(unit_file_state_table<br>)/sizeof((unit_file_state_table)[0]), (void)0)), s); } struct<br> __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN2937">2937</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2938">2938</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> unit_file_change_type_table[_UNIT_FILE_CHANGE_TYPE_MAX] = {</td></tr>
-<tr><td class="num" id="LN2939">2939</td><td class="line">        [UNIT_FILE_SYMLINK] = <span class='string_literal'>"symlink"</span>,</td></tr>
-<tr><td class="num" id="LN2940">2940</td><td class="line">        [UNIT_FILE_UNLINK] = <span class='string_literal'>"unlink"</span>,</td></tr>
-<tr><td class="num" id="LN2941">2941</td><td class="line">        [UNIT_FILE_IS_MASKED] = <span class='string_literal'>"masked"</span>,</td></tr>
-<tr><td class="num" id="LN2942">2942</td><td class="line">        [UNIT_FILE_IS_DANGLING] = <span class='string_literal'>"dangling"</span>,</td></tr>
-<tr><td class="num" id="LN2943">2943</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN2944">2944</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2945">2945</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(unit_file_change_type, UnitFileChangeType)<span class='expansion'>const char *unit_file_change_type_to_string(UnitFileChangeType<br> i) { if (i &lt; 0 || i &gt;= (UnitFileChangeType) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(unit_file_change_type_table), typeof(&amp;*(unit_file_change_type_table<br>))), sizeof(unit_file_change_type_table)/sizeof((unit_file_change_type_table<br>)[0]), (void)0))) return ((void*)0); return unit_file_change_type_table<br>[i]; } UnitFileChangeType unit_file_change_type_from_string(const<br> char *s) { return (UnitFileChangeType) string_table_lookup(unit_file_change_type_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(unit_file_change_type_table), typeof(&amp;*(unit_file_change_type_table<br>))), sizeof(unit_file_change_type_table)/sizeof((unit_file_change_type_table<br>)[0]), (void)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
-<tr><td class="num" id="LN2946">2946</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2947">2947</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> unit_file_preset_mode_table[_UNIT_FILE_PRESET_MAX] = {</td></tr>
-<tr><td class="num" id="LN2948">2948</td><td class="line">        [UNIT_FILE_PRESET_FULL] = <span class='string_literal'>"full"</span>,</td></tr>
-<tr><td class="num" id="LN2949">2949</td><td class="line">        [UNIT_FILE_PRESET_ENABLE_ONLY] = <span class='string_literal'>"enable-only"</span>,</td></tr>
-<tr><td class="num" id="LN2950">2950</td><td class="line">        [UNIT_FILE_PRESET_DISABLE_ONLY] = <span class='string_literal'>"disable-only"</span>,</td></tr>
-<tr><td class="num" id="LN2951">2951</td><td class="line">};</td></tr>
-<tr><td class="num" id="LN2952">2952</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2953">2953</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(unit_file_preset_mode, UnitFilePresetMode)<span class='expansion'>const char *unit_file_preset_mode_to_string(UnitFilePresetMode<br> i) { if (i &lt; 0 || i &gt;= (UnitFilePresetMode) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(unit_file_preset_mode_table), typeof(&amp;*(unit_file_preset_mode_table<br>))), sizeof(unit_file_preset_mode_table)/sizeof((unit_file_preset_mode_table<br>)[0]), (void)0))) return ((void*)0); return unit_file_preset_mode_table<br>[i]; } UnitFilePresetMode unit_file_preset_mode_from_string(const<br> char *s) { return (UnitFilePresetMode) string_table_lookup(unit_file_preset_mode_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(unit_file_preset_mode_table), typeof(&amp;*(unit_file_preset_mode_table<br>))), sizeof(unit_file_preset_mode_table)/sizeof((unit_file_preset_mode_table<br>)[0]), (void)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN2918">2918</td><td class="line">                        f = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>; <span class='comment'>/* prevent cleanup */</span></td></tr>
+<tr><td class="num" id="LN2919">2919</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2920">2920</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2921">2921</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2922">2922</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN2923">2923</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN2924">2924</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2925">2925</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> unit_file_state_table[_UNIT_FILE_STATE_MAX] = {</td></tr>
+<tr><td class="num" id="LN2926">2926</td><td class="line">        [UNIT_FILE_ENABLED] = <span class='string_literal'>"enabled"</span>,</td></tr>
+<tr><td class="num" id="LN2927">2927</td><td class="line">        [UNIT_FILE_ENABLED_RUNTIME] = <span class='string_literal'>"enabled-runtime"</span>,</td></tr>
+<tr><td class="num" id="LN2928">2928</td><td class="line">        [UNIT_FILE_LINKED] = <span class='string_literal'>"linked"</span>,</td></tr>
+<tr><td class="num" id="LN2929">2929</td><td class="line">        [UNIT_FILE_LINKED_RUNTIME] = <span class='string_literal'>"linked-runtime"</span>,</td></tr>
+<tr><td class="num" id="LN2930">2930</td><td class="line">        [UNIT_FILE_MASKED] = <span class='string_literal'>"masked"</span>,</td></tr>
+<tr><td class="num" id="LN2931">2931</td><td class="line">        [UNIT_FILE_MASKED_RUNTIME] = <span class='string_literal'>"masked-runtime"</span>,</td></tr>
+<tr><td class="num" id="LN2932">2932</td><td class="line">        [UNIT_FILE_STATIC] = <span class='string_literal'>"static"</span>,</td></tr>
+<tr><td class="num" id="LN2933">2933</td><td class="line">        [UNIT_FILE_DISABLED] = <span class='string_literal'>"disabled"</span>,</td></tr>
+<tr><td class="num" id="LN2934">2934</td><td class="line">        [UNIT_FILE_INDIRECT] = <span class='string_literal'>"indirect"</span>,</td></tr>
+<tr><td class="num" id="LN2935">2935</td><td class="line">        [UNIT_FILE_GENERATED] = <span class='string_literal'>"generated"</span>,</td></tr>
+<tr><td class="num" id="LN2936">2936</td><td class="line">        [UNIT_FILE_TRANSIENT] = <span class='string_literal'>"transient"</span>,</td></tr>
+<tr><td class="num" id="LN2937">2937</td><td class="line">        [UNIT_FILE_BAD] = <span class='string_literal'>"bad"</span>,</td></tr>
+<tr><td class="num" id="LN2938">2938</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN2939">2939</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2940">2940</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(unit_file_state, UnitFileState)<span class='expansion'>const char *unit_file_state_to_string(UnitFileState i) { if (<br>i &lt; 0 || i &gt;= (UnitFileState) __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(unit_file_state_table)<br>, typeof(&amp;*(unit_file_state_table))), sizeof(unit_file_state_table<br>)/sizeof((unit_file_state_table)[0]), (void)0))) return ((void<br>*)0); return unit_file_state_table[i]; } UnitFileState unit_file_state_from_string<br>(const char *s) { return (UnitFileState) string_table_lookup(<br>unit_file_state_table, __extension__ (__builtin_choose_expr( !<br>__builtin_types_compatible_p(typeof(unit_file_state_table), typeof<br>(&amp;*(unit_file_state_table))), sizeof(unit_file_state_table<br>)/sizeof((unit_file_state_table)[0]), (void)0)), s); } struct<br> __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN2941">2941</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2942">2942</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> unit_file_change_type_table[_UNIT_FILE_CHANGE_TYPE_MAX] = {</td></tr>
+<tr><td class="num" id="LN2943">2943</td><td class="line">        [UNIT_FILE_SYMLINK] = <span class='string_literal'>"symlink"</span>,</td></tr>
+<tr><td class="num" id="LN2944">2944</td><td class="line">        [UNIT_FILE_UNLINK] = <span class='string_literal'>"unlink"</span>,</td></tr>
+<tr><td class="num" id="LN2945">2945</td><td class="line">        [UNIT_FILE_IS_MASKED] = <span class='string_literal'>"masked"</span>,</td></tr>
+<tr><td class="num" id="LN2946">2946</td><td class="line">        [UNIT_FILE_IS_DANGLING] = <span class='string_literal'>"dangling"</span>,</td></tr>
+<tr><td class="num" id="LN2947">2947</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN2948">2948</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2949">2949</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(unit_file_change_type, UnitFileChangeType)<span class='expansion'>const char *unit_file_change_type_to_string(UnitFileChangeType<br> i) { if (i &lt; 0 || i &gt;= (UnitFileChangeType) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(unit_file_change_type_table), typeof(&amp;*(unit_file_change_type_table<br>))), sizeof(unit_file_change_type_table)/sizeof((unit_file_change_type_table<br>)[0]), (void)0))) return ((void*)0); return unit_file_change_type_table<br>[i]; } UnitFileChangeType unit_file_change_type_from_string(const<br> char *s) { return (UnitFileChangeType) string_table_lookup(unit_file_change_type_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(unit_file_change_type_table), typeof(&amp;*(unit_file_change_type_table<br>))), sizeof(unit_file_change_type_table)/sizeof((unit_file_change_type_table<br>)[0]), (void)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
+<tr><td class="num" id="LN2950">2950</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2951">2951</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> unit_file_preset_mode_table[_UNIT_FILE_PRESET_MAX] = {</td></tr>
+<tr><td class="num" id="LN2952">2952</td><td class="line">        [UNIT_FILE_PRESET_FULL] = <span class='string_literal'>"full"</span>,</td></tr>
+<tr><td class="num" id="LN2953">2953</td><td class="line">        [UNIT_FILE_PRESET_ENABLE_ONLY] = <span class='string_literal'>"enable-only"</span>,</td></tr>
+<tr><td class="num" id="LN2954">2954</td><td class="line">        [UNIT_FILE_PRESET_DISABLE_ONLY] = <span class='string_literal'>"disable-only"</span>,</td></tr>
+<tr><td class="num" id="LN2955">2955</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN2956">2956</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2957">2957</td><td class="line"><span class='macro'>DEFINE_STRING_TABLE_LOOKUP(unit_file_preset_mode, UnitFilePresetMode)<span class='expansion'>const char *unit_file_preset_mode_to_string(UnitFilePresetMode<br> i) { if (i &lt; 0 || i &gt;= (UnitFilePresetMode) __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(unit_file_preset_mode_table), typeof(&amp;*(unit_file_preset_mode_table<br>))), sizeof(unit_file_preset_mode_table)/sizeof((unit_file_preset_mode_table<br>)[0]), (void)0))) return ((void*)0); return unit_file_preset_mode_table<br>[i]; } UnitFilePresetMode unit_file_preset_mode_from_string(const<br> char *s) { return (UnitFilePresetMode) string_table_lookup(unit_file_preset_mode_table<br>, __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(unit_file_preset_mode_table), typeof(&amp;*(unit_file_preset_mode_table<br>))), sizeof(unit_file_preset_mode_table)/sizeof((unit_file_preset_mode_table<br>)[0]), (void)0)), s); } struct __useless_struct_to_allow_trailing_semicolon__</span></span>;</td></tr>
 </table></body></html>
