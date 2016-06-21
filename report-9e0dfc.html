@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'max' during its initialization is never read -->
+<!-- BUGDESC Function call argument is an uninitialized value -->
 
-<!-- BUGTYPE Dead initialization -->
+<!-- BUGTYPE Uninitialized argument value -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Logic error -->
 
 <!-- BUGFILE /home/runner/systemd/src/core/cgroup.c -->
 
 <!-- FILENAME cgroup.c -->
 
-<!-- FUNCTIONNAME cgroup_context_apply -->
+<!-- FUNCTIONNAME cgroup_apply_blkio_device_weight -->
 
-<!-- BUGLINE 743 -->
+<!-- BUGLINE 457 -->
 
-<!-- BUGCOLUMN 34 -->
+<!-- BUGCOLUMN 9 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 11 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/cgroup.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 743, column 34</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'max' during its initialization is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 457, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Function call argument is an uninitialized value</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -336,11 +336,20 @@
 <tr><td class="num" id="LN251">251</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN252">252</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN253">253</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/core/cgroup.c", 253, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
+</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming 'p' is non-null</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN254">254</td><td class="line">        <span class='macro'>assert(dev)<span class='expansion'>do { if ((__builtin_expect(!!(!(dev)),0))) log_assert_failed(<br>"dev", "src/core/cgroup.c", 254, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
+</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN256">256</td><td class="line">        r = stat(p, &amp;st);</td></tr>
-<tr><td class="num" id="LN257">257</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN258">258</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Couldn't stat device %s: %m"</span>, p)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/cgroup.c"<br>, 258, __func__, "Couldn't stat device %s: %m", p) : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:24ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_warning_errno':
+</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN259">259</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN260">260</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>S_ISBLK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0060000))</span></span>)</td></tr>
 <tr><td class="num" id="LN261">261</td><td class="line">                *dev = st.st_rdev;</td></tr>
@@ -505,13 +514,13 @@
 <tr><td class="num" id="LN420">420</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN421">421</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN422">422</td><td class="line"><span class='keyword'>static</span> uint64_t cgroup_weight_blkio_to_io(uint64_t blkio_weight) {</td></tr>
-<tr><td class="num" id="LN423">423</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>CLAMP(blkio_weight * CGROUP_WEIGHT_DEFAULT / CGROUP_BLKIO_WEIGHT_DEFAULT,<span class='expansion'>__extension__ ({ const typeof((blkio_weight * 100UL / 500UL))<br> __unique_prefix_X32 = ((blkio_weight * 100UL / 500UL)); const<br> typeof((1UL)) __unique_prefix_LOW33 = ((1UL)); const typeof(<br>(10000UL)) __unique_prefix_HIGH34 = ((10000UL)); __unique_prefix_X32<br> &gt; __unique_prefix_HIGH34 ? __unique_prefix_HIGH34 : __unique_prefix_X32<br> &lt; __unique_prefix_LOW33 ? __unique_prefix_LOW33 : __unique_prefix_X32<br>; })</span></span></td></tr>
-<tr><td class="num" id="LN424">424</td><td class="line">                     <span class='macro'>CGROUP_WEIGHT_MIN, CGROUP_WEIGHT_MAX)<span class='expansion'>__extension__ ({ const typeof((blkio_weight * 100UL / 500UL))<br> __unique_prefix_X32 = ((blkio_weight * 100UL / 500UL)); const<br> typeof((1UL)) __unique_prefix_LOW33 = ((1UL)); const typeof(<br>(10000UL)) __unique_prefix_HIGH34 = ((10000UL)); __unique_prefix_X32<br> &gt; __unique_prefix_HIGH34 ? __unique_prefix_HIGH34 : __unique_prefix_X32<br> &lt; __unique_prefix_LOW33 ? __unique_prefix_LOW33 : __unique_prefix_X32<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>CLAMP(blkio_weight * CGROUP_WEIGHT_DEFAULT / CGROUP_BLKIO_WEIGHT_DEFAULT,<span class='expansion'>__extension__ ({ const typeof((blkio_weight * 100UL / 500UL))<br> __unique_prefix_X16 = ((blkio_weight * 100UL / 500UL)); const<br> typeof((1UL)) __unique_prefix_LOW17 = ((1UL)); const typeof(<br>(10000UL)) __unique_prefix_HIGH18 = ((10000UL)); __unique_prefix_X16<br> &gt; __unique_prefix_HIGH18 ? __unique_prefix_HIGH18 : __unique_prefix_X16<br> &lt; __unique_prefix_LOW17 ? __unique_prefix_LOW17 : __unique_prefix_X16<br>; })</span></span></td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">                     <span class='macro'>CGROUP_WEIGHT_MIN, CGROUP_WEIGHT_MAX)<span class='expansion'>__extension__ ({ const typeof((blkio_weight * 100UL / 500UL))<br> __unique_prefix_X16 = ((blkio_weight * 100UL / 500UL)); const<br> typeof((1UL)) __unique_prefix_LOW17 = ((1UL)); const typeof(<br>(10000UL)) __unique_prefix_HIGH18 = ((10000UL)); __unique_prefix_X16<br> &gt; __unique_prefix_HIGH18 ? __unique_prefix_HIGH18 : __unique_prefix_X16<br> &lt; __unique_prefix_LOW17 ? __unique_prefix_LOW17 : __unique_prefix_X16<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN425">425</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN426">426</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN427">427</td><td class="line"><span class='keyword'>static</span> uint64_t cgroup_weight_io_to_blkio(uint64_t io_weight) {</td></tr>
-<tr><td class="num" id="LN428">428</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>CLAMP(io_weight * CGROUP_BLKIO_WEIGHT_DEFAULT / CGROUP_WEIGHT_DEFAULT,<span class='expansion'>__extension__ ({ const typeof((io_weight * 500UL / 100UL)) __unique_prefix_X35<br> = ((io_weight * 500UL / 100UL)); const typeof((10UL)) __unique_prefix_LOW36<br> = ((10UL)); const typeof((1000UL)) __unique_prefix_HIGH37 = (<br>(1000UL)); __unique_prefix_X35 &gt; __unique_prefix_HIGH37 ? __unique_prefix_HIGH37<br> : __unique_prefix_X35 &lt; __unique_prefix_LOW36 ? __unique_prefix_LOW36<br> : __unique_prefix_X35; })</span></span></td></tr>
-<tr><td class="num" id="LN429">429</td><td class="line">                     <span class='macro'>CGROUP_BLKIO_WEIGHT_MIN, CGROUP_BLKIO_WEIGHT_MAX)<span class='expansion'>__extension__ ({ const typeof((io_weight * 500UL / 100UL)) __unique_prefix_X35<br> = ((io_weight * 500UL / 100UL)); const typeof((10UL)) __unique_prefix_LOW36<br> = ((10UL)); const typeof((1000UL)) __unique_prefix_HIGH37 = (<br>(1000UL)); __unique_prefix_X35 &gt; __unique_prefix_HIGH37 ? __unique_prefix_HIGH37<br> : __unique_prefix_X35 &lt; __unique_prefix_LOW36 ? __unique_prefix_LOW36<br> : __unique_prefix_X35; })</span></span>;</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>CLAMP(io_weight * CGROUP_BLKIO_WEIGHT_DEFAULT / CGROUP_WEIGHT_DEFAULT,<span class='expansion'>__extension__ ({ const typeof((io_weight * 500UL / 100UL)) __unique_prefix_X19<br> = ((io_weight * 500UL / 100UL)); const typeof((10UL)) __unique_prefix_LOW20<br> = ((10UL)); const typeof((1000UL)) __unique_prefix_HIGH21 = (<br>(1000UL)); __unique_prefix_X19 &gt; __unique_prefix_HIGH21 ? __unique_prefix_HIGH21<br> : __unique_prefix_X19 &lt; __unique_prefix_LOW20 ? __unique_prefix_LOW20<br> : __unique_prefix_X19; })</span></span></td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">                     <span class='macro'>CGROUP_BLKIO_WEIGHT_MIN, CGROUP_BLKIO_WEIGHT_MAX)<span class='expansion'>__extension__ ({ const typeof((io_weight * 500UL / 100UL)) __unique_prefix_X19<br> = ((io_weight * 500UL / 100UL)); const typeof((10UL)) __unique_prefix_LOW20<br> = ((10UL)); const typeof((1000UL)) __unique_prefix_HIGH21 = (<br>(1000UL)); __unique_prefix_X19 &gt; __unique_prefix_HIGH21 ? __unique_prefix_HIGH21<br> : __unique_prefix_X19 &lt; __unique_prefix_LOW20 ? __unique_prefix_LOW20<br> : __unique_prefix_X19; })</span></span>;</td></tr>
 <tr><td class="num" id="LN430">430</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN431">431</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN432">432</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> cgroup_apply_io_device_weight(Unit *u, <span class='keyword'>const</span> <span class='keyword'>char</span> *dev_path, uint64_t io_weight) {</td></tr>
@@ -532,14 +541,22 @@
 <tr><td class="num" id="LN447">447</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN448">448</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> cgroup_apply_blkio_device_weight(Unit *u, <span class='keyword'>const</span> <span class='keyword'>char</span> *dev_path, uint64_t blkio_weight) {</td></tr>
 <tr><td class="num" id="LN449">449</td><td class="line">        <span class='keyword'>char</span> buf[<span class='macro'>DECIMAL_STR_MAX(dev_t)<span class='expansion'>(2+(sizeof(dev_t) &lt;= 1 ? 3 : sizeof(dev_t) &lt;= 2 ? 5 : sizeof<br>(dev_t) &lt;= 4 ? 10 : sizeof(dev_t) &lt;= 8 ? 20 : sizeof(int<br>[-2*(sizeof(dev_t) &gt; 8)])))</span></span>*2+2+<span class='macro'>DECIMAL_STR_MAX(uint64_t)<span class='expansion'>(2+(sizeof(uint64_t) &lt;= 1 ? 3 : sizeof(uint64_t) &lt;= 2 ?<br> 5 : sizeof(uint64_t) &lt;= 4 ? 10 : sizeof(uint64_t) &lt;= 8<br> ? 20 : sizeof(int[-2*(sizeof(uint64_t) &gt; 8)])))</span></span>+1];</td></tr>
-<tr><td class="num" id="LN450">450</td><td class="line">        dev_t dev;</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">        <span class="mrange">dev_t dev</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>'dev' declared without an initial value</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN451">451</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN452">452</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN453">453</td><td class="line">        r = lookup_block_device(dev_path, &amp;dev);</td></tr>
-<tr><td class="num" id="LN454">454</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">        r = <span class="mrange"><span class="mrange">lookup_block_device(dev_path, &amp;dev)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Calling 'lookup_block_device'</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Returning from 'lookup_block_device'</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN455">455</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN456">456</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN457">457</td><td class="line">        <span class='macro'>xsprintf(buf, <span class='string_literal'>"%u:%u %"</span> PRIu64 <span class='string_literal'>"\n"</span>, major(dev), minor(dev), blkio_weight)<span class='expansion'>do { if ((__builtin_expect(!!(!((size_t) snprintf(buf, __extension__<br> (__builtin_choose_expr( !__builtin_types_compatible_p(typeof<br>(buf), typeof(&amp;*(buf))), sizeof(buf)/sizeof((buf)[0]), (void<br>)0)), "%u:%u %" "l" "u" "\n", gnu_dev_major (dev), gnu_dev_minor<br> (dev), blkio_weight) &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(buf), typeof(&amp;*(buf<br>))), sizeof(buf)/sizeof((buf)[0]), (void)0)))),0))) log_assert_failed<br>("xsprintf: " "buf" "[] must be big enough", "src/core/cgroup.c"<br>, 457, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'xsprintf':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Function call argument is an uninitialized value</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN458">458</td><td class="line">        r = cg_set_attribute(<span class='string_literal'>"blkio"</span>, u-&gt;cgroup_path, <span class='string_literal'>"blkio.weight_device"</span>, buf);</td></tr>
 <tr><td class="num" id="LN459">459</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN460">460</td><td class="line">                <span class='macro'>log_unit_full(u, IN_SET(r, -ENOENT, -EROFS, -EACCES) ? LOG_DEBUG : LOG_WARNING, r,<span class='expansion'>({ Unit *_u = (u); _u ? log_object_internal(({ _Bool _found =<br> 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){-2, -30, -13})/sizeof(int)]; switch(r) {<br> case -2: case -30: case -13: _found = 1; break; default: break<br>; } _found; }) ? 7 : 4, r, "src/core/cgroup.c", 461, __func__<br>, _u-&gt;manager-&gt;unit_log_field, _u-&gt;id, "Failed to set blkio.weight_device: %m"<br>) : log_internal(({ _Bool _found = 0; static __attribute__ ((<br>unused)) char _static_assert__macros_need_to_be_extended[20 -<br> sizeof((int[]){-2, -30, -13})/sizeof(int)]; switch(r) { case<br> -2: case -30: case -13: _found = 1; break; default: break; }<br> _found; }) ? 7 : 4, r, "src/core/cgroup.c", 461, __func__, "Failed to set blkio.weight_device: %m"<br>); })</span></span></td></tr>
@@ -652,7 +669,7 @@
 <tr><td class="num" id="LN567">567</td><td class="line">         <span class='comment'>* and missing cgroups, i.e. EROFS and ENOENT. */</span></td></tr>
 <tr><td class="num" id="LN568">568</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN569">569</td><td class="line">        <span class='keyword'>if</span> ((mask &amp; CGROUP_MASK_CPU) &amp;&amp; !is_root) {</td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line">                <span class='keyword'>char</span> buf[<span class='macro'>MAX(DECIMAL_STR_MAX(uint64_t), DECIMAL_STR_MAX(usec_t))<span class='expansion'>__extension__ ({ const typeof(((2+(sizeof(uint64_t) &lt;= 1 ?<br> 3 : sizeof(uint64_t) &lt;= 2 ? 5 : sizeof(uint64_t) &lt;= 4 ?<br> 10 : sizeof(uint64_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(uint64_t<br>) &gt; 8)]))))) __unique_prefix_A38 = (((2+(sizeof(uint64_t) &lt;=<br> 1 ? 3 : sizeof(uint64_t) &lt;= 2 ? 5 : sizeof(uint64_t) &lt;=<br> 4 ? 10 : sizeof(uint64_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof<br>(uint64_t) &gt; 8)]))))); const typeof(((2+(sizeof(usec_t) &lt;=<br> 1 ? 3 : sizeof(usec_t) &lt;= 2 ? 5 : sizeof(usec_t) &lt;= 4 ?<br> 10 : sizeof(usec_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(usec_t<br>) &gt; 8)]))))) __unique_prefix_B39 = (((2+(sizeof(usec_t) &lt;=<br> 1 ? 3 : sizeof(usec_t) &lt;= 2 ? 5 : sizeof(usec_t) &lt;= 4 ?<br> 10 : sizeof(usec_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(usec_t<br>) &gt; 8)]))))); __unique_prefix_A38 &gt; __unique_prefix_B39<br> ? __unique_prefix_A38 : __unique_prefix_B39; })</span></span> + 1];</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">                <span class='keyword'>char</span> buf[<span class='macro'>MAX(DECIMAL_STR_MAX(uint64_t), DECIMAL_STR_MAX(usec_t))<span class='expansion'>__extension__ ({ const typeof(((2+(sizeof(uint64_t) &lt;= 1 ?<br> 3 : sizeof(uint64_t) &lt;= 2 ? 5 : sizeof(uint64_t) &lt;= 4 ?<br> 10 : sizeof(uint64_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(uint64_t<br>) &gt; 8)]))))) __unique_prefix_A22 = (((2+(sizeof(uint64_t) &lt;=<br> 1 ? 3 : sizeof(uint64_t) &lt;= 2 ? 5 : sizeof(uint64_t) &lt;=<br> 4 ? 10 : sizeof(uint64_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof<br>(uint64_t) &gt; 8)]))))); const typeof(((2+(sizeof(usec_t) &lt;=<br> 1 ? 3 : sizeof(usec_t) &lt;= 2 ? 5 : sizeof(usec_t) &lt;= 4 ?<br> 10 : sizeof(usec_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(usec_t<br>) &gt; 8)]))))) __unique_prefix_B23 = (((2+(sizeof(usec_t) &lt;=<br> 1 ? 3 : sizeof(usec_t) &lt;= 2 ? 5 : sizeof(usec_t) &lt;= 4 ?<br> 10 : sizeof(usec_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(usec_t<br>) &gt; 8)]))))); __unique_prefix_A22 &gt; __unique_prefix_B23<br> ? __unique_prefix_A22 : __unique_prefix_B23; })</span></span> + 1];</td></tr>
 <tr><td class="num" id="LN571">571</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN572">572</td><td class="line">                sprintf(buf, <span class='string_literal'>"%"</span> <span class='macro'>PRIu64<span class='expansion'>"l" "u"</span></span> <span class='string_literal'>"\n"</span>,</td></tr>
 <tr><td class="num" id="LN573">573</td><td class="line">                        <span class='macro'>IN_SET(state, MANAGER_STARTING, MANAGER_INITIALIZING)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){MANAGER_STARTING, MANAGER_INITIALIZING})<br>/sizeof(int)]; switch(state) { case MANAGER_STARTING: case MANAGER_INITIALIZING<br>: _found = 1; break; default: break; } _found; })</span></span> &amp;&amp; c-&gt;startup_cpu_shares != <span class='macro'>CGROUP_CPU_SHARES_INVALID<span class='expansion'>((uint64_t) -1)</span></span> ? c-&gt;startup_cpu_shares :</td></tr>
@@ -825,8 +842,7 @@
 <tr><td class="num" id="LN740">740</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN741">741</td><td class="line">        <span class='keyword'>if</span> ((mask &amp; CGROUP_MASK_MEMORY) &amp;&amp; !is_root) {</td></tr>
 <tr><td class="num" id="LN742">742</td><td class="line">                <span class='keyword'>if</span> (cg_unified() &gt; 0) {</td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line">                        uint64_t <span class="mrange">max</span> = <span class="mrange">c-&gt;memory_max</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:34ex">Value stored to 'max' during its initialization is never read</div></td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">                        uint64_t max = c-&gt;memory_max;</td></tr>
 <tr><td class="num" id="LN744">744</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN745">745</td><td class="line">                        <span class='keyword'>if</span> (cgroup_context_has_unified_memory_config(c))</td></tr>
 <tr><td class="num" id="LN746">746</td><td class="line">                                max = c-&gt;memory_max;</td></tr>
@@ -1809,7 +1825,7 @@
 <tr><td class="num" id="LN1723">1723</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine supported controllers: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/cgroup.c"<br>, 1723, __func__, "Failed to determine supported controllers: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1724">1724</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1725">1725</td><td class="line">        <span class='keyword'>for</span> (c = 0; c &lt; _CGROUP_CONTROLLER_MAX; c++)</td></tr>
-<tr><td class="num" id="LN1726">1726</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Controller '%s' supported: %s"</span>, cgroup_controller_to_string(c), yes_no(m-&gt;cgroup_supported &amp; c))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/cgroup.c"<br>, 1726, __func__, "Controller '%s' supported: %s", cgroup_controller_to_string<br>(c), yes_no(m-&gt;cgroup_supported &amp; c)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1726">1726</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Controller '%s' supported: %s"</span>, cgroup_controller_to_string(c), yes_no(m-&gt;cgroup_supported &amp; CGROUP_CONTROLLER_TO_MASK(c)))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/cgroup.c"<br>, 1726, __func__, "Controller '%s' supported: %s", cgroup_controller_to_string<br>(c), yes_no(m-&gt;cgroup_supported &amp; (1 &lt;&lt; (c)))) :<br> -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1727">1727</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1728">1728</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1729">1729</td><td class="line">}</td></tr>
