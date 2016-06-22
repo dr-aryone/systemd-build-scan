@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Use of memory after it is freed -->
+<!-- BUGDESC Assigned value is garbage or undefined -->
 
-<!-- BUGTYPE Use-after-free -->
+<!-- BUGTYPE Assigned value is garbage or undefined -->
 
-<!-- BUGCATEGORY Memory Error -->
+<!-- BUGCATEGORY Logic error -->
 
 <!-- BUGFILE /home/runner/systemd/src/shared/bus-unit-util.c -->
 
 <!-- FILENAME bus-unit-util.c -->
 
-<!-- FUNCTIONNAME remove_cgroup -->
+<!-- FUNCTIONNAME dump_processes -->
 
-<!-- BUGLINE 1024 -->
+<!-- BUGLINE 1084 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 25 -->
 
-<!-- BUGPATHLENGTH 9 -->
+<!-- BUGPATHLENGTH 5 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>shared/bus-unit-util.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1024, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Use of memory after it is freed</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1084, column 25</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Assigned value is garbage or undefined</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1106,28 +1106,19 @@
 <tr><td class="num" id="LN1021">1021</td><td class="line">        <span class='macro'>assert(cg)<span class='expansion'>do { if ((__builtin_expect(!!(!(cg)),0))) log_assert_failed("cg"<br>, "src/shared/bus-unit-util.c", 1021, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1022">1022</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1023">1023</td><td class="line">        <span class='keyword'>while</span> (cg-&gt;children)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Loop condition is false. Execution continues on line 1026</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#EndPath" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1024">1024</td><td class="line">                <span class="mrange"><span class="mrange">remove_cgroup(cgroups, <span class="mrange">cg-&gt;children</span>)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Calling 'remove_cgroup'</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Returning; memory was released via 2nd parameter</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Use of memory after it is freed</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1024">1024</td><td class="line">                remove_cgroup(cgroups, cg-&gt;children);</td></tr>
 <tr><td class="num" id="LN1025">1025</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1026">1026</td><td class="line">        hashmap_remove(cgroups, cg-&gt;cgroup_path);</td></tr>
 <tr><td class="num" id="LN1027">1027</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1028">1028</td><td class="line">        <span class='keyword'>if</span> (!cg-&gt;is_const)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1029">1029</td><td class="line">                free(cg-&gt;cgroup_path);</td></tr>
 <tr><td class="num" id="LN1030">1030</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1031">1031</td><td class="line">        hashmap_free(cg-&gt;pids);</td></tr>
 <tr><td class="num" id="LN1032">1032</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1033">1033</td><td class="line">        <span class='keyword'>if</span> (cg-&gt;parent)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1034">1034</td><td class="line">                <span class='macro'>LIST_REMOVE(siblings, cg-&gt;parent-&gt;children, cg)<span class='expansion'>do { typeof(*(cg-&gt;parent-&gt;children)) **_head = &amp;(cg<br>-&gt;parent-&gt;children), *_item = (cg); do { if ((__builtin_expect<br>(!!(!(_item)),0))) log_assert_failed("_item", "src/shared/bus-unit-util.c"<br>, 1034, __PRETTY_FUNCTION__); } while (0); if (_item-&gt;siblings_next<br>) _item-&gt;siblings_next-&gt;siblings_prev = _item-&gt;siblings_prev<br>; if (_item-&gt;siblings_prev) _item-&gt;siblings_prev-&gt;siblings_next<br> = _item-&gt;siblings_next; else { do { if ((__builtin_expect<br>(!!(!(*_head == _item)),0))) log_assert_failed("*_head == _item"<br>, "src/shared/bus-unit-util.c", 1034, __PRETTY_FUNCTION__); }<br> while (0); *_head = _item-&gt;siblings_next; } _item-&gt;siblings_next<br> = _item-&gt;siblings_prev = ((void*)0); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1035">1035</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1036">1036</td><td class="line">        <span class="mrange">free(cg)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Memory is released</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1036">1036</td><td class="line">        free(cg);</td></tr>
 <tr><td class="num" id="LN1037">1037</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1038">1038</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1039">1039</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> cgroup_info_compare_func(<span class='keyword'>const</span> <span class='keyword'>void</span> *a, <span class='keyword'>const</span> <span class='keyword'>void</span> *b) {</td></tr>
@@ -1152,13 +1143,17 @@
 <tr><td class="num" id="LN1058">1058</td><td class="line">        <span class='macro'>assert(prefix)<span class='expansion'>do { if ((__builtin_expect(!!(!(prefix)),0))) log_assert_failed<br>("prefix", "src/shared/bus-unit-util.c", 1058, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1059">1059</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1060">1060</td><td class="line">        <span class='keyword'>if</span> (IS_ROOT(cgroup_path))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1061">1061</td><td class="line">                cgroup_path = <span class='string_literal'>"/"</span>;</td></tr>
 <tr><td class="num" id="LN1062">1062</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1063">1063</td><td class="line">        cg = hashmap_get(cgroups, cgroup_path);</td></tr>
-<tr><td class="num" id="LN1064">1064</td><td class="line">        <span class='keyword'>if</span> (!cg)</td></tr>
+<tr><td class="num" id="LN1064">1064</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!cg</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'cg' is non-null</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1065">1065</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1066">1066</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1067">1067</td><td class="line">        <span class='keyword'>if</span> (!hashmap_isempty(cg-&gt;pids)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1068">1068</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *name;</td></tr>
 <tr><td class="num" id="LN1069">1069</td><td class="line">                size_t n = 0, i;</td></tr>
 <tr><td class="num" id="LN1070">1070</td><td class="line">                pid_t *pids;</td></tr>
@@ -1176,6 +1171,9 @@
 <tr><td class="num" id="LN1082">1082</td><td class="line">                qsort_safe(pids, n, <span class='keyword'>sizeof</span>(pid_t), pid_compare_func);</td></tr>
 <tr><td class="num" id="LN1083">1083</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1084">1084</td><td class="line">                width = <span class='macro'>DECIMAL_STR_WIDTH(pids[n-1])<span class='expansion'>({ typeof(pids[n-1]) _x_ = (pids[n-1]); unsigned ans = 1; while<br> (_x_ /= 10) ans++; ans; })</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:25ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'DECIMAL_STR_WIDTH':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assigned value is garbage or undefined</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN1085">1085</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1086">1086</td><td class="line">                <span class='keyword'>for</span> (i = 0; i &lt; n; i++) {</td></tr>
 <tr><td class="num" id="LN1087">1087</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *e = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
@@ -1188,7 +1186,7 @@
 <tr><td class="num" id="LN1094">1094</td><td class="line">                        <span class='keyword'>if</span> (n_columns != 0) {</td></tr>
 <tr><td class="num" id="LN1095">1095</td><td class="line">                                <span class='keyword'>unsigned</span> k;</td></tr>
 <tr><td class="num" id="LN1096">1096</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1097">1097</td><td class="line">                                k = <span class='macro'>MAX(LESS_BY(n_columns, 2U + width + 1U), 20U)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>(n_columns)) __unique_prefix_A13 = ((n_columns)); const typeof<br>((2U + width + 1U)) __unique_prefix_B14 = ((2U + width + 1U))<br>; __unique_prefix_A13 &gt; __unique_prefix_B14 ? __unique_prefix_A13<br> - __unique_prefix_B14 : 0; }))) __unique_prefix_A15 = ((__extension__<br> ({ const typeof((n_columns)) __unique_prefix_A13 = ((n_columns<br>)); const typeof((2U + width + 1U)) __unique_prefix_B14 = ((2U<br> + width + 1U)); __unique_prefix_A13 &gt; __unique_prefix_B14<br> ? __unique_prefix_A13 - __unique_prefix_B14 : 0; }))); const<br> typeof((20U)) __unique_prefix_B16 = ((20U)); __unique_prefix_A15<br> &gt; __unique_prefix_B16 ? __unique_prefix_A15 : __unique_prefix_B16<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN1097">1097</td><td class="line">                                k = <span class='macro'>MAX(LESS_BY(n_columns, 2U + width + 1U), 20U)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>(n_columns)) __unique_prefix_A25 = ((n_columns)); const typeof<br>((2U + width + 1U)) __unique_prefix_B26 = ((2U + width + 1U))<br>; __unique_prefix_A25 &gt; __unique_prefix_B26 ? __unique_prefix_A25<br> - __unique_prefix_B26 : 0; }))) __unique_prefix_A27 = ((__extension__<br> ({ const typeof((n_columns)) __unique_prefix_A25 = ((n_columns<br>)); const typeof((2U + width + 1U)) __unique_prefix_B26 = ((2U<br> + width + 1U)); __unique_prefix_A25 &gt; __unique_prefix_B26<br> ? __unique_prefix_A25 - __unique_prefix_B26 : 0; }))); const<br> typeof((20U)) __unique_prefix_B28 = ((20U)); __unique_prefix_A27<br> &gt; __unique_prefix_B28 ? __unique_prefix_A27 : __unique_prefix_B28<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN1098">1098</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1099">1099</td><td class="line">                                e = ellipsize(name, k, 100);</td></tr>
 <tr><td class="num" id="LN1100">1100</td><td class="line">                                <span class='keyword'>if</span> (e)</td></tr>
@@ -1217,196 +1215,197 @@
 <tr><td class="num" id="LN1123">1123</td><td class="line">                <span class='macro'>assert(n == cg-&gt;n_children)<span class='expansion'>do { if ((__builtin_expect(!!(!(n == cg-&gt;n_children)),0)))<br> log_assert_failed("n == cg-&gt;n_children", "src/shared/bus-unit-util.c"<br>, 1123, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1124">1124</td><td class="line">                qsort_safe(children, n, <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> CGroupInfo*), cgroup_info_compare_func);</td></tr>
 <tr><td class="num" id="LN1125">1125</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1126">1126</td><td class="line">                n_columns = <span class='macro'>MAX(LESS_BY(n_columns, 2U), 20U)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>(n_columns)) __unique_prefix_A17 = ((n_columns)); const typeof<br>((2U)) __unique_prefix_B18 = ((2U)); __unique_prefix_A17 &gt;<br> __unique_prefix_B18 ? __unique_prefix_A17 - __unique_prefix_B18<br> : 0; }))) __unique_prefix_A19 = ((__extension__ ({ const typeof<br>((n_columns)) __unique_prefix_A17 = ((n_columns)); const typeof<br>((2U)) __unique_prefix_B18 = ((2U)); __unique_prefix_A17 &gt;<br> __unique_prefix_B18 ? __unique_prefix_A17 - __unique_prefix_B18<br> : 0; }))); const typeof((20U)) __unique_prefix_B20 = ((20U))<br>; __unique_prefix_A19 &gt; __unique_prefix_B20 ? __unique_prefix_A19<br> : __unique_prefix_B20; })</span></span>;</td></tr>
-<tr><td class="num" id="LN1127">1127</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1128">1128</td><td class="line">                <span class='keyword'>for</span> (i = 0; i &lt; n; i++) {</td></tr>
-<tr><td class="num" id="LN1129">1129</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *pp = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1130">1130</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>char</span> *name, *special;</td></tr>
-<tr><td class="num" id="LN1131">1131</td><td class="line">                        <span class='macro'>bool<span class='expansion'>_Bool</span></span> more;</td></tr>
-<tr><td class="num" id="LN1132">1132</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1133">1133</td><td class="line">                        child = children[i];</td></tr>
-<tr><td class="num" id="LN1134">1134</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1135">1135</td><td class="line">                        name = strrchr(child-&gt;cgroup_path, '/');</td></tr>
-<tr><td class="num" id="LN1136">1136</td><td class="line">                        <span class='keyword'>if</span> (!name)</td></tr>
-<tr><td class="num" id="LN1137">1137</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN1138">1138</td><td class="line">                        name++;</td></tr>
-<tr><td class="num" id="LN1139">1139</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1140">1140</td><td class="line">                        more = i+1 &lt; n;</td></tr>
-<tr><td class="num" id="LN1141">1141</td><td class="line">                        special = special_glyph(more ? TREE_BRANCH : TREE_RIGHT);</td></tr>
-<tr><td class="num" id="LN1142">1142</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1143">1143</td><td class="line">                        fputs(prefix, <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
-<tr><td class="num" id="LN1144">1144</td><td class="line">                        fputs(special, <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
-<tr><td class="num" id="LN1145">1145</td><td class="line">                        fputs(name, <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
-<tr><td class="num" id="LN1146">1146</td><td class="line">                        fputc('\n', <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
-<tr><td class="num" id="LN1147">1147</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1148">1148</td><td class="line">                        special = special_glyph(more ? TREE_VERTICAL : TREE_SPACE);</td></tr>
-<tr><td class="num" id="LN1149">1149</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1150">1150</td><td class="line">                        pp = strappend(prefix, special);</td></tr>
-<tr><td class="num" id="LN1151">1151</td><td class="line">                        <span class='keyword'>if</span> (!pp)</td></tr>
-<tr><td class="num" id="LN1152">1152</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1153">1153</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1154">1154</td><td class="line">                        r = dump_processes(cgroups, child-&gt;cgroup_path, pp, n_columns, flags);</td></tr>
-<tr><td class="num" id="LN1155">1155</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1156">1156</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1157">1157</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1158">1158</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1159">1159</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1160">1160</td><td class="line">        cg-&gt;done = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN1161">1161</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1162">1162</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1163">1163</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1164">1164</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dump_extra_processes(</td></tr>
-<tr><td class="num" id="LN1165">1165</td><td class="line">                Hashmap *cgroups,</td></tr>
-<tr><td class="num" id="LN1166">1166</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *prefix,</td></tr>
-<tr><td class="num" id="LN1167">1167</td><td class="line">                <span class='keyword'>unsigned</span> n_columns,</td></tr>
-<tr><td class="num" id="LN1168">1168</td><td class="line">                OutputFlags flags) {</td></tr>
-<tr><td class="num" id="LN1169">1169</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1170">1170</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> pid_t *pids = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1171">1171</td><td class="line">        <span class='macro'>_cleanup_hashmap_free_<span class='expansion'>__attribute__((cleanup(hashmap_freep)))</span></span> Hashmap *names = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1172">1172</td><td class="line">        <span class='keyword'>struct</span> CGroupInfo *cg;</td></tr>
-<tr><td class="num" id="LN1173">1173</td><td class="line">        size_t n_allocated = 0, n = 0, k;</td></tr>
-<tr><td class="num" id="LN1174">1174</td><td class="line">        Iterator i;</td></tr>
-<tr><td class="num" id="LN1175">1175</td><td class="line">        <span class='keyword'>int</span> width, r;</td></tr>
-<tr><td class="num" id="LN1176">1176</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1177">1177</td><td class="line">        <span class='comment'>/* Prints the extra processes, i.e. those that are in cgroups we haven't displayed yet. We show them as</span></td></tr>
-<tr><td class="num" id="LN1178">1178</td><td class="line">         <span class='comment'>* combined, sorted, linear list. */</span></td></tr>
-<tr><td class="num" id="LN1179">1179</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1180">1180</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(cg, cgroups, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((cgroups), &amp;(i)<br>, (void**)&amp;(cg), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN1181">1181</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *name;</td></tr>
-<tr><td class="num" id="LN1182">1182</td><td class="line">                <span class='keyword'>void</span> *pidp;</td></tr>
-<tr><td class="num" id="LN1183">1183</td><td class="line">                Iterator j;</td></tr>
-<tr><td class="num" id="LN1184">1184</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1185">1185</td><td class="line">                <span class='keyword'>if</span> (cg-&gt;done)</td></tr>
-<tr><td class="num" id="LN1186">1186</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN1187">1187</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1188">1188</td><td class="line">                <span class='keyword'>if</span> (hashmap_isempty(cg-&gt;pids))</td></tr>
-<tr><td class="num" id="LN1189">1189</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN1190">1190</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1191">1191</td><td class="line">                r = <span class='macro'>hashmap_ensure_allocated(&amp;names, &amp;trivial_hash_ops)<span class='expansion'>internal_hashmap_ensure_allocated(&amp;names, &amp;trivial_hash_ops<br> )</span></span>;</td></tr>
-<tr><td class="num" id="LN1192">1192</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1193">1193</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1194">1194</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1195">1195</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(pids, n_allocated, n + hashmap_size(cg-&gt;pids))<span class='expansion'>greedy_realloc((void**) &amp;(pids), &amp;(n_allocated), (n +<br> hashmap_size(cg-&gt;pids)), sizeof((pids)[0]))</span></span>)</td></tr>
-<tr><td class="num" id="LN1196">1196</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1197">1197</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1198">1198</td><td class="line">                <span class='macro'>HASHMAP_FOREACH_KEY(name, pidp, cg-&gt;pids, j)<span class='expansion'>for ((j) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((cg-&gt;pids), &amp;<br>(j), (void**)&amp;(name), (const void**) &amp;(pidp)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN1199">1199</td><td class="line">                        pids[n++] = <span class='macro'>PTR_TO_PID(pidp)<span class='expansion'>((pid_t) ((uintptr_t) pidp))</span></span>;</td></tr>
-<tr><td class="num" id="LN1200">1200</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1201">1201</td><td class="line">                        r = hashmap_put(names, pidp, (<span class='keyword'>void</span>*) name);</td></tr>
-<tr><td class="num" id="LN1202">1202</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1203">1203</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1204">1204</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1205">1205</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1206">1206</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1207">1207</td><td class="line">        <span class='keyword'>if</span> (n == 0)</td></tr>
-<tr><td class="num" id="LN1208">1208</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1209">1209</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1210">1210</td><td class="line">        qsort_safe(pids, n, <span class='keyword'>sizeof</span>(pid_t), pid_compare_func);</td></tr>
-<tr><td class="num" id="LN1211">1211</td><td class="line">        width = <span class='macro'>DECIMAL_STR_WIDTH(pids[n-1])<span class='expansion'>({ typeof(pids[n-1]) _x_ = (pids[n-1]); unsigned ans = 1; while<br> (_x_ /= 10) ans++; ans; })</span></span>;</td></tr>
-<tr><td class="num" id="LN1212">1212</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1213">1213</td><td class="line">        <span class='keyword'>for</span> (k = 0; k &lt; n; k++) {</td></tr>
-<tr><td class="num" id="LN1214">1214</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *e = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1215">1215</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *name;</td></tr>
-<tr><td class="num" id="LN1216">1216</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1217">1217</td><td class="line">                name = hashmap_get(names, <span class='macro'>PID_TO_PTR(pids[k])<span class='expansion'>((void*) ((uintptr_t) pids[k]))</span></span>);</td></tr>
-<tr><td class="num" id="LN1218">1218</td><td class="line">                <span class='macro'>assert(name)<span class='expansion'>do { if ((__builtin_expect(!!(!(name)),0))) log_assert_failed<br>("name", "src/shared/bus-unit-util.c", 1218, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1219">1219</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1220">1220</td><td class="line">                <span class='keyword'>if</span> (n_columns != 0) {</td></tr>
-<tr><td class="num" id="LN1221">1221</td><td class="line">                        <span class='keyword'>unsigned</span> z;</td></tr>
-<tr><td class="num" id="LN1222">1222</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1223">1223</td><td class="line">                        z = <span class='macro'>MAX(LESS_BY(n_columns, 2U + width + 1U), 20U)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>(n_columns)) __unique_prefix_A21 = ((n_columns)); const typeof<br>((2U + width + 1U)) __unique_prefix_B22 = ((2U + width + 1U))<br>; __unique_prefix_A21 &gt; __unique_prefix_B22 ? __unique_prefix_A21<br> - __unique_prefix_B22 : 0; }))) __unique_prefix_A23 = ((__extension__<br> ({ const typeof((n_columns)) __unique_prefix_A21 = ((n_columns<br>)); const typeof((2U + width + 1U)) __unique_prefix_B22 = ((2U<br> + width + 1U)); __unique_prefix_A21 &gt; __unique_prefix_B22<br> ? __unique_prefix_A21 - __unique_prefix_B22 : 0; }))); const<br> typeof((20U)) __unique_prefix_B24 = ((20U)); __unique_prefix_A23<br> &gt; __unique_prefix_B24 ? __unique_prefix_A23 : __unique_prefix_B24<br>; })</span></span>;</td></tr>
-<tr><td class="num" id="LN1224">1224</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1225">1225</td><td class="line">                        e = ellipsize(name, z, 100);</td></tr>
-<tr><td class="num" id="LN1226">1226</td><td class="line">                        <span class='keyword'>if</span> (e)</td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">                                name = e;</td></tr>
-<tr><td class="num" id="LN1228">1228</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1229">1229</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1230">1230</td><td class="line">                fprintf(<span class='macro'>stdout<span class='expansion'>stdout</span></span>, <span class='string_literal'>"%s%s %*"</span> <span class='macro'>PID_PRI<span class='expansion'>"i"</span></span> <span class='string_literal'>" %s\n"</span>,</td></tr>
-<tr><td class="num" id="LN1231">1231</td><td class="line">                        prefix,</td></tr>
-<tr><td class="num" id="LN1232">1232</td><td class="line">                        special_glyph(TRIANGULAR_BULLET),</td></tr>
-<tr><td class="num" id="LN1233">1233</td><td class="line">                        width, pids[k],</td></tr>
-<tr><td class="num" id="LN1234">1234</td><td class="line">                        name);</td></tr>
-<tr><td class="num" id="LN1235">1235</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1236">1236</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1237">1237</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1238">1238</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1239">1239</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1240">1240</td><td class="line"><span class='keyword'>int</span> unit_show_processes(</td></tr>
-<tr><td class="num" id="LN1241">1241</td><td class="line">                sd_bus *bus,</td></tr>
-<tr><td class="num" id="LN1242">1242</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
-<tr><td class="num" id="LN1243">1243</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *cgroup_path,</td></tr>
-<tr><td class="num" id="LN1244">1244</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *prefix,</td></tr>
-<tr><td class="num" id="LN1245">1245</td><td class="line">                <span class='keyword'>unsigned</span> n_columns,</td></tr>
-<tr><td class="num" id="LN1246">1246</td><td class="line">                OutputFlags flags,</td></tr>
-<tr><td class="num" id="LN1247">1247</td><td class="line">                sd_bus_error *error) {</td></tr>
-<tr><td class="num" id="LN1248">1248</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1249">1249</td><td class="line">        <span class='macro'>_cleanup_(sd_bus_message_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_message_unrefp)))</span></span> sd_bus_message *reply = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1250">1250</td><td class="line">        Hashmap *cgroups = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1251">1251</td><td class="line">        <span class='keyword'>struct</span> CGroupInfo *cg;</td></tr>
-<tr><td class="num" id="LN1252">1252</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN1253">1253</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1254">1254</td><td class="line">        <span class='macro'>assert(bus)<span class='expansion'>do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed(<br>"bus", "src/shared/bus-unit-util.c", 1254, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1255">1255</td><td class="line">        <span class='macro'>assert(unit)<span class='expansion'>do { if ((__builtin_expect(!!(!(unit)),0))) log_assert_failed<br>("unit", "src/shared/bus-unit-util.c", 1255, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1256">1256</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1257">1257</td><td class="line">        <span class='keyword'>if</span> (flags &amp; OUTPUT_FULL_WIDTH)</td></tr>
-<tr><td class="num" id="LN1258">1258</td><td class="line">                n_columns = 0;</td></tr>
-<tr><td class="num" id="LN1259">1259</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (n_columns &lt;= 0)</td></tr>
-<tr><td class="num" id="LN1260">1260</td><td class="line">                n_columns = columns();</td></tr>
-<tr><td class="num" id="LN1261">1261</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1262">1262</td><td class="line">        prefix = strempty(prefix);</td></tr>
-<tr><td class="num" id="LN1263">1263</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1264">1264</td><td class="line">        r = sd_bus_call_method(</td></tr>
-<tr><td class="num" id="LN1265">1265</td><td class="line">                        bus,</td></tr>
-<tr><td class="num" id="LN1266">1266</td><td class="line">                        <span class='string_literal'>"org.freedesktop.systemd1"</span>,</td></tr>
-<tr><td class="num" id="LN1267">1267</td><td class="line">                        <span class='string_literal'>"/org/freedesktop/systemd1"</span>,</td></tr>
-<tr><td class="num" id="LN1268">1268</td><td class="line">                        <span class='string_literal'>"org.freedesktop.systemd1.Manager"</span>,</td></tr>
-<tr><td class="num" id="LN1269">1269</td><td class="line">                        <span class='string_literal'>"GetUnitProcesses"</span>,</td></tr>
-<tr><td class="num" id="LN1270">1270</td><td class="line">                        error,</td></tr>
-<tr><td class="num" id="LN1271">1271</td><td class="line">                        &amp;reply,</td></tr>
-<tr><td class="num" id="LN1272">1272</td><td class="line">                        <span class='string_literal'>"s"</span>,</td></tr>
-<tr><td class="num" id="LN1273">1273</td><td class="line">                        unit);</td></tr>
-<tr><td class="num" id="LN1274">1274</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1275">1275</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1276">1276</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1277">1277</td><td class="line">        cgroups = <span class='macro'>hashmap_new(&amp;string_hash_ops)<span class='expansion'>internal_hashmap_new(&amp;string_hash_ops )</span></span>;</td></tr>
-<tr><td class="num" id="LN1278">1278</td><td class="line">        <span class='keyword'>if</span> (!cgroups)</td></tr>
-<tr><td class="num" id="LN1279">1279</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN1280">1280</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1281">1281</td><td class="line">        r = sd_bus_message_enter_container(reply, 'a', <span class='string_literal'>"(sus)"</span>);</td></tr>
-<tr><td class="num" id="LN1282">1282</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1283">1283</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1284">1284</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1285">1285</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN1286">1286</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *name = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1287">1287</td><td class="line">                uint32_t pid;</td></tr>
-<tr><td class="num" id="LN1288">1288</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1289">1289</td><td class="line">                r = sd_bus_message_read(reply, <span class='string_literal'>"(sus)"</span>, &amp;path, &amp;pid, &amp;name);</td></tr>
-<tr><td class="num" id="LN1290">1290</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1291">1291</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1292">1292</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN1293">1293</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN1294">1294</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1295">1295</td><td class="line">                r = add_process(cgroups, path, pid, name);</td></tr>
-<tr><td class="num" id="LN1296">1296</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1297">1297</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1298">1298</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1299">1299</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1300">1300</td><td class="line">        r = sd_bus_message_exit_container(reply);</td></tr>
-<tr><td class="num" id="LN1301">1301</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1302">1302</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1303">1303</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1304">1304</td><td class="line">        r = dump_processes(cgroups, cgroup_path, prefix, n_columns, flags);</td></tr>
-<tr><td class="num" id="LN1305">1305</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1306">1306</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1307">1307</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1308">1308</td><td class="line">        r = dump_extra_processes(cgroups, prefix, n_columns, flags);</td></tr>
-<tr><td class="num" id="LN1309">1309</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1310">1310</td><td class="line">finish:</td></tr>
-<tr><td class="num" id="LN1311">1311</td><td class="line">        <span class='keyword'>while</span> ((cg = hashmap_first(cgroups)))</td></tr>
-<tr><td class="num" id="LN1312">1312</td><td class="line">               remove_cgroup(cgroups, cg);</td></tr>
-<tr><td class="num" id="LN1313">1313</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1314">1314</td><td class="line">        hashmap_free(cgroups);</td></tr>
-<tr><td class="num" id="LN1315">1315</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1316">1316</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1317">1317</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1126">1126</td><td class="line">                <span class='keyword'>if</span> (n_columns != 0)</td></tr>
+<tr><td class="num" id="LN1127">1127</td><td class="line">                        n_columns = <span class='macro'>MAX(LESS_BY(n_columns, 2U), 20U)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>(n_columns)) __unique_prefix_A29 = ((n_columns)); const typeof<br>((2U)) __unique_prefix_B30 = ((2U)); __unique_prefix_A29 &gt;<br> __unique_prefix_B30 ? __unique_prefix_A29 - __unique_prefix_B30<br> : 0; }))) __unique_prefix_A31 = ((__extension__ ({ const typeof<br>((n_columns)) __unique_prefix_A29 = ((n_columns)); const typeof<br>((2U)) __unique_prefix_B30 = ((2U)); __unique_prefix_A29 &gt;<br> __unique_prefix_B30 ? __unique_prefix_A29 - __unique_prefix_B30<br> : 0; }))); const typeof((20U)) __unique_prefix_B32 = ((20U))<br>; __unique_prefix_A31 &gt; __unique_prefix_B32 ? __unique_prefix_A31<br> : __unique_prefix_B32; })</span></span>;</td></tr>
+<tr><td class="num" id="LN1128">1128</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1129">1129</td><td class="line">                <span class='keyword'>for</span> (i = 0; i &lt; n; i++) {</td></tr>
+<tr><td class="num" id="LN1130">1130</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *pp = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1131">1131</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>char</span> *name, *special;</td></tr>
+<tr><td class="num" id="LN1132">1132</td><td class="line">                        <span class='macro'>bool<span class='expansion'>_Bool</span></span> more;</td></tr>
+<tr><td class="num" id="LN1133">1133</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1134">1134</td><td class="line">                        child = children[i];</td></tr>
+<tr><td class="num" id="LN1135">1135</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1136">1136</td><td class="line">                        name = strrchr(child-&gt;cgroup_path, '/');</td></tr>
+<tr><td class="num" id="LN1137">1137</td><td class="line">                        <span class='keyword'>if</span> (!name)</td></tr>
+<tr><td class="num" id="LN1138">1138</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN1139">1139</td><td class="line">                        name++;</td></tr>
+<tr><td class="num" id="LN1140">1140</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1141">1141</td><td class="line">                        more = i+1 &lt; n;</td></tr>
+<tr><td class="num" id="LN1142">1142</td><td class="line">                        special = special_glyph(more ? TREE_BRANCH : TREE_RIGHT);</td></tr>
+<tr><td class="num" id="LN1143">1143</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1144">1144</td><td class="line">                        fputs(prefix, <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
+<tr><td class="num" id="LN1145">1145</td><td class="line">                        fputs(special, <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
+<tr><td class="num" id="LN1146">1146</td><td class="line">                        fputs(name, <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
+<tr><td class="num" id="LN1147">1147</td><td class="line">                        fputc('\n', <span class='macro'>stdout<span class='expansion'>stdout</span></span>);</td></tr>
+<tr><td class="num" id="LN1148">1148</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1149">1149</td><td class="line">                        special = special_glyph(more ? TREE_VERTICAL : TREE_SPACE);</td></tr>
+<tr><td class="num" id="LN1150">1150</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1151">1151</td><td class="line">                        pp = strappend(prefix, special);</td></tr>
+<tr><td class="num" id="LN1152">1152</td><td class="line">                        <span class='keyword'>if</span> (!pp)</td></tr>
+<tr><td class="num" id="LN1153">1153</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1154">1154</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1155">1155</td><td class="line">                        r = dump_processes(cgroups, child-&gt;cgroup_path, pp, n_columns, flags);</td></tr>
+<tr><td class="num" id="LN1156">1156</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1157">1157</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1158">1158</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1159">1159</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1160">1160</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1161">1161</td><td class="line">        cg-&gt;done = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN1162">1162</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1163">1163</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1164">1164</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1165">1165</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> dump_extra_processes(</td></tr>
+<tr><td class="num" id="LN1166">1166</td><td class="line">                Hashmap *cgroups,</td></tr>
+<tr><td class="num" id="LN1167">1167</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *prefix,</td></tr>
+<tr><td class="num" id="LN1168">1168</td><td class="line">                <span class='keyword'>unsigned</span> n_columns,</td></tr>
+<tr><td class="num" id="LN1169">1169</td><td class="line">                OutputFlags flags) {</td></tr>
+<tr><td class="num" id="LN1170">1170</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1171">1171</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> pid_t *pids = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1172">1172</td><td class="line">        <span class='macro'>_cleanup_hashmap_free_<span class='expansion'>__attribute__((cleanup(hashmap_freep)))</span></span> Hashmap *names = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1173">1173</td><td class="line">        <span class='keyword'>struct</span> CGroupInfo *cg;</td></tr>
+<tr><td class="num" id="LN1174">1174</td><td class="line">        size_t n_allocated = 0, n = 0, k;</td></tr>
+<tr><td class="num" id="LN1175">1175</td><td class="line">        Iterator i;</td></tr>
+<tr><td class="num" id="LN1176">1176</td><td class="line">        <span class='keyword'>int</span> width, r;</td></tr>
+<tr><td class="num" id="LN1177">1177</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1178">1178</td><td class="line">        <span class='comment'>/* Prints the extra processes, i.e. those that are in cgroups we haven't displayed yet. We show them as</span></td></tr>
+<tr><td class="num" id="LN1179">1179</td><td class="line">         <span class='comment'>* combined, sorted, linear list. */</span></td></tr>
+<tr><td class="num" id="LN1180">1180</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1181">1181</td><td class="line">        <span class='macro'>HASHMAP_FOREACH(cg, cgroups, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((cgroups), &amp;(i)<br>, (void**)&amp;(cg), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN1182">1182</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *name;</td></tr>
+<tr><td class="num" id="LN1183">1183</td><td class="line">                <span class='keyword'>void</span> *pidp;</td></tr>
+<tr><td class="num" id="LN1184">1184</td><td class="line">                Iterator j;</td></tr>
+<tr><td class="num" id="LN1185">1185</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1186">1186</td><td class="line">                <span class='keyword'>if</span> (cg-&gt;done)</td></tr>
+<tr><td class="num" id="LN1187">1187</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1188">1188</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1189">1189</td><td class="line">                <span class='keyword'>if</span> (hashmap_isempty(cg-&gt;pids))</td></tr>
+<tr><td class="num" id="LN1190">1190</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN1191">1191</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1192">1192</td><td class="line">                r = <span class='macro'>hashmap_ensure_allocated(&amp;names, &amp;trivial_hash_ops)<span class='expansion'>internal_hashmap_ensure_allocated(&amp;names, &amp;trivial_hash_ops<br> )</span></span>;</td></tr>
+<tr><td class="num" id="LN1193">1193</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1194">1194</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1195">1195</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1196">1196</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(pids, n_allocated, n + hashmap_size(cg-&gt;pids))<span class='expansion'>greedy_realloc((void**) &amp;(pids), &amp;(n_allocated), (n +<br> hashmap_size(cg-&gt;pids)), sizeof((pids)[0]))</span></span>)</td></tr>
+<tr><td class="num" id="LN1197">1197</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1198">1198</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1199">1199</td><td class="line">                <span class='macro'>HASHMAP_FOREACH_KEY(name, pidp, cg-&gt;pids, j)<span class='expansion'>for ((j) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((cg-&gt;pids), &amp;<br>(j), (void**)&amp;(name), (const void**) &amp;(pidp)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN1200">1200</td><td class="line">                        pids[n++] = <span class='macro'>PTR_TO_PID(pidp)<span class='expansion'>((pid_t) ((uintptr_t) pidp))</span></span>;</td></tr>
+<tr><td class="num" id="LN1201">1201</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1202">1202</td><td class="line">                        r = hashmap_put(names, pidp, (<span class='keyword'>void</span>*) name);</td></tr>
+<tr><td class="num" id="LN1203">1203</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1204">1204</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1205">1205</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1206">1206</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1207">1207</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1208">1208</td><td class="line">        <span class='keyword'>if</span> (n == 0)</td></tr>
+<tr><td class="num" id="LN1209">1209</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1210">1210</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1211">1211</td><td class="line">        qsort_safe(pids, n, <span class='keyword'>sizeof</span>(pid_t), pid_compare_func);</td></tr>
+<tr><td class="num" id="LN1212">1212</td><td class="line">        width = <span class='macro'>DECIMAL_STR_WIDTH(pids[n-1])<span class='expansion'>({ typeof(pids[n-1]) _x_ = (pids[n-1]); unsigned ans = 1; while<br> (_x_ /= 10) ans++; ans; })</span></span>;</td></tr>
+<tr><td class="num" id="LN1213">1213</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1214">1214</td><td class="line">        <span class='keyword'>for</span> (k = 0; k &lt; n; k++) {</td></tr>
+<tr><td class="num" id="LN1215">1215</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *e = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1216">1216</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *name;</td></tr>
+<tr><td class="num" id="LN1217">1217</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1218">1218</td><td class="line">                name = hashmap_get(names, <span class='macro'>PID_TO_PTR(pids[k])<span class='expansion'>((void*) ((uintptr_t) pids[k]))</span></span>);</td></tr>
+<tr><td class="num" id="LN1219">1219</td><td class="line">                <span class='macro'>assert(name)<span class='expansion'>do { if ((__builtin_expect(!!(!(name)),0))) log_assert_failed<br>("name", "src/shared/bus-unit-util.c", 1219, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1220">1220</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1221">1221</td><td class="line">                <span class='keyword'>if</span> (n_columns != 0) {</td></tr>
+<tr><td class="num" id="LN1222">1222</td><td class="line">                        <span class='keyword'>unsigned</span> z;</td></tr>
+<tr><td class="num" id="LN1223">1223</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1224">1224</td><td class="line">                        z = <span class='macro'>MAX(LESS_BY(n_columns, 2U + width + 1U), 20U)<span class='expansion'>__extension__ ({ const typeof((__extension__ ({ const typeof(<br>(n_columns)) __unique_prefix_A33 = ((n_columns)); const typeof<br>((2U + width + 1U)) __unique_prefix_B34 = ((2U + width + 1U))<br>; __unique_prefix_A33 &gt; __unique_prefix_B34 ? __unique_prefix_A33<br> - __unique_prefix_B34 : 0; }))) __unique_prefix_A35 = ((__extension__<br> ({ const typeof((n_columns)) __unique_prefix_A33 = ((n_columns<br>)); const typeof((2U + width + 1U)) __unique_prefix_B34 = ((2U<br> + width + 1U)); __unique_prefix_A33 &gt; __unique_prefix_B34<br> ? __unique_prefix_A33 - __unique_prefix_B34 : 0; }))); const<br> typeof((20U)) __unique_prefix_B36 = ((20U)); __unique_prefix_A35<br> &gt; __unique_prefix_B36 ? __unique_prefix_A35 : __unique_prefix_B36<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN1225">1225</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1226">1226</td><td class="line">                        e = ellipsize(name, z, 100);</td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line">                        <span class='keyword'>if</span> (e)</td></tr>
+<tr><td class="num" id="LN1228">1228</td><td class="line">                                name = e;</td></tr>
+<tr><td class="num" id="LN1229">1229</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1230">1230</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1231">1231</td><td class="line">                fprintf(<span class='macro'>stdout<span class='expansion'>stdout</span></span>, <span class='string_literal'>"%s%s %*"</span> <span class='macro'>PID_PRI<span class='expansion'>"i"</span></span> <span class='string_literal'>" %s\n"</span>,</td></tr>
+<tr><td class="num" id="LN1232">1232</td><td class="line">                        prefix,</td></tr>
+<tr><td class="num" id="LN1233">1233</td><td class="line">                        special_glyph(TRIANGULAR_BULLET),</td></tr>
+<tr><td class="num" id="LN1234">1234</td><td class="line">                        width, pids[k],</td></tr>
+<tr><td class="num" id="LN1235">1235</td><td class="line">                        name);</td></tr>
+<tr><td class="num" id="LN1236">1236</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1237">1237</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1238">1238</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1239">1239</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1240">1240</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1241">1241</td><td class="line"><span class='keyword'>int</span> unit_show_processes(</td></tr>
+<tr><td class="num" id="LN1242">1242</td><td class="line">                sd_bus *bus,</td></tr>
+<tr><td class="num" id="LN1243">1243</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN1244">1244</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *cgroup_path,</td></tr>
+<tr><td class="num" id="LN1245">1245</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *prefix,</td></tr>
+<tr><td class="num" id="LN1246">1246</td><td class="line">                <span class='keyword'>unsigned</span> n_columns,</td></tr>
+<tr><td class="num" id="LN1247">1247</td><td class="line">                OutputFlags flags,</td></tr>
+<tr><td class="num" id="LN1248">1248</td><td class="line">                sd_bus_error *error) {</td></tr>
+<tr><td class="num" id="LN1249">1249</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1250">1250</td><td class="line">        <span class='macro'>_cleanup_(sd_bus_message_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_message_unrefp)))</span></span> sd_bus_message *reply = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1251">1251</td><td class="line">        Hashmap *cgroups = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1252">1252</td><td class="line">        <span class='keyword'>struct</span> CGroupInfo *cg;</td></tr>
+<tr><td class="num" id="LN1253">1253</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN1254">1254</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1255">1255</td><td class="line">        <span class='macro'>assert(bus)<span class='expansion'>do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed(<br>"bus", "src/shared/bus-unit-util.c", 1255, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1256">1256</td><td class="line">        <span class='macro'>assert(unit)<span class='expansion'>do { if ((__builtin_expect(!!(!(unit)),0))) log_assert_failed<br>("unit", "src/shared/bus-unit-util.c", 1256, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1257">1257</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1258">1258</td><td class="line">        <span class='keyword'>if</span> (flags &amp; OUTPUT_FULL_WIDTH)</td></tr>
+<tr><td class="num" id="LN1259">1259</td><td class="line">                n_columns = 0;</td></tr>
+<tr><td class="num" id="LN1260">1260</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (n_columns &lt;= 0)</td></tr>
+<tr><td class="num" id="LN1261">1261</td><td class="line">                n_columns = columns();</td></tr>
+<tr><td class="num" id="LN1262">1262</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1263">1263</td><td class="line">        prefix = strempty(prefix);</td></tr>
+<tr><td class="num" id="LN1264">1264</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1265">1265</td><td class="line">        r = sd_bus_call_method(</td></tr>
+<tr><td class="num" id="LN1266">1266</td><td class="line">                        bus,</td></tr>
+<tr><td class="num" id="LN1267">1267</td><td class="line">                        <span class='string_literal'>"org.freedesktop.systemd1"</span>,</td></tr>
+<tr><td class="num" id="LN1268">1268</td><td class="line">                        <span class='string_literal'>"/org/freedesktop/systemd1"</span>,</td></tr>
+<tr><td class="num" id="LN1269">1269</td><td class="line">                        <span class='string_literal'>"org.freedesktop.systemd1.Manager"</span>,</td></tr>
+<tr><td class="num" id="LN1270">1270</td><td class="line">                        <span class='string_literal'>"GetUnitProcesses"</span>,</td></tr>
+<tr><td class="num" id="LN1271">1271</td><td class="line">                        error,</td></tr>
+<tr><td class="num" id="LN1272">1272</td><td class="line">                        &amp;reply,</td></tr>
+<tr><td class="num" id="LN1273">1273</td><td class="line">                        <span class='string_literal'>"s"</span>,</td></tr>
+<tr><td class="num" id="LN1274">1274</td><td class="line">                        unit);</td></tr>
+<tr><td class="num" id="LN1275">1275</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1276">1276</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1277">1277</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1278">1278</td><td class="line">        cgroups = <span class='macro'>hashmap_new(&amp;string_hash_ops)<span class='expansion'>internal_hashmap_new(&amp;string_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN1279">1279</td><td class="line">        <span class='keyword'>if</span> (!cgroups)</td></tr>
+<tr><td class="num" id="LN1280">1280</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN1281">1281</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1282">1282</td><td class="line">        r = sd_bus_message_enter_container(reply, 'a', <span class='string_literal'>"(sus)"</span>);</td></tr>
+<tr><td class="num" id="LN1283">1283</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1284">1284</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1285">1285</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1286">1286</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN1287">1287</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *path = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *name = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1288">1288</td><td class="line">                uint32_t pid;</td></tr>
+<tr><td class="num" id="LN1289">1289</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1290">1290</td><td class="line">                r = sd_bus_message_read(reply, <span class='string_literal'>"(sus)"</span>, &amp;path, &amp;pid, &amp;name);</td></tr>
+<tr><td class="num" id="LN1291">1291</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1292">1292</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1293">1293</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN1294">1294</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN1295">1295</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1296">1296</td><td class="line">                r = add_process(cgroups, path, pid, name);</td></tr>
+<tr><td class="num" id="LN1297">1297</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1298">1298</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1299">1299</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1300">1300</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1301">1301</td><td class="line">        r = sd_bus_message_exit_container(reply);</td></tr>
+<tr><td class="num" id="LN1302">1302</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1303">1303</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1304">1304</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1305">1305</td><td class="line">        r = dump_processes(cgroups, cgroup_path, prefix, n_columns, flags);</td></tr>
+<tr><td class="num" id="LN1306">1306</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1307">1307</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1308">1308</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1309">1309</td><td class="line">        r = dump_extra_processes(cgroups, prefix, n_columns, flags);</td></tr>
+<tr><td class="num" id="LN1310">1310</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1311">1311</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN1312">1312</td><td class="line">        <span class='keyword'>while</span> ((cg = hashmap_first(cgroups)))</td></tr>
+<tr><td class="num" id="LN1313">1313</td><td class="line">               remove_cgroup(cgroups, cg);</td></tr>
+<tr><td class="num" id="LN1314">1314</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1315">1315</td><td class="line">        hashmap_free(cgroups);</td></tr>
+<tr><td class="num" id="LN1316">1316</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1317">1317</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1318">1318</td><td class="line">}</td></tr>
 </table></body></html>
