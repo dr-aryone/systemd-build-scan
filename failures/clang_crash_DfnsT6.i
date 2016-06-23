@@ -10529,8 +10529,8 @@ extern int capgetp(pid_t pid, cap_t cap_d);
 extern int capsetp(pid_t pid, cap_t cap_d);
 # 32 "./src/core/execute.h" 2
 
-# 1 "./src/basic/fdset.h" 1
-# 24 "./src/basic/fdset.h"
+# 1 "./src/shared/fdset.h" 1
+# 24 "./src/shared/fdset.h"
 # 1 "./src/basic/hashmap.h" 1
 # 25 "./src/basic/hashmap.h"
 # 1 "/usr/lib/llvm-3.6/bin/../lib/clang/3.6.0/include/stddef.h" 1 3
@@ -10848,7 +10848,7 @@ static inline void hashmap_free_free_freep(Hashmap* *p) { if (*p) hashmap_free_f
 static inline void ordered_hashmap_freep(OrderedHashmap* *p) { if (*p) ordered_hashmap_free(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
 static inline void ordered_hashmap_free_freep(OrderedHashmap* *p) { if (*p) ordered_hashmap_free_free(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
 static inline void ordered_hashmap_free_free_freep(OrderedHashmap* *p) { if (*p) ordered_hashmap_free_free_free(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
-# 25 "./src/basic/fdset.h" 2
+# 25 "./src/shared/fdset.h" 2
 
 # 1 "./src/basic/set.h" 1
 # 25 "./src/basic/set.h"
@@ -10961,7 +10961,7 @@ int set_put_strdupv(Set *s, char **l);
 
 static inline void set_freep(Set* *p) { if (*p) set_free(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
 static inline void set_free_freep(Set* *p) { if (*p) set_free_free(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
-# 27 "./src/basic/fdset.h" 2
+# 27 "./src/shared/fdset.h" 2
 
 typedef struct FDSet FDSet;
 
@@ -15030,6 +15030,8 @@ struct Service {
 
         dual_timestamp watchdog_timestamp;
         usec_t watchdog_usec;
+        usec_t watchdog_override_usec;
+        _Bool watchdog_override_enable;
         sd_event_source *watchdog_event_source;
 
         ExecCommand* exec_command[_SERVICE_EXEC_COMMAND_MAX];
