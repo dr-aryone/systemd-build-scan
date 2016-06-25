@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'i' -->
+<!-- BUGDESC Value stored to 'k' is never read -->
 
-<!-- BUGTYPE Memory leak -->
+<!-- BUGTYPE Dead assignment -->
 
-<!-- BUGCATEGORY Memory Error -->
+<!-- BUGCATEGORY Dead store -->
 
 <!-- BUGFILE /home/runner/systemd/src/resolve/resolved-dns-cache.c -->
 
 <!-- FILENAME resolved-dns-cache.c -->
 
-<!-- FUNCTIONNAME dns_cache_put_negative -->
+<!-- FUNCTIONNAME dns_cache_link_item -->
 
-<!-- BUGLINE 529 -->
+<!-- BUGLINE 260 -->
 
-<!-- BUGCOLUMN 33 -->
+<!-- BUGCOLUMN 17 -->
 
-<!-- BUGPATHLENGTH 13 -->
+<!-- BUGPATHLENGTH 1 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>resolve/resolved-dns-cache.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 529, column 33</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'i'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 260, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'k' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -342,7 +342,8 @@
 <tr><td class="num" id="LN257">257</td><td class="line">                <span class='macro'>_cleanup_(dns_resource_key_unrefp)<span class='expansion'>__attribute__((cleanup(dns_resource_key_unrefp)))</span></span> DnsResourceKey *k = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN258">258</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN259">259</td><td class="line">                <span class='comment'>/* Keep a reference to the original key, while we manipulate the list. */</span></td></tr>
-<tr><td class="num" id="LN260">260</td><td class="line">                k = dns_resource_key_ref(first-&gt;key);</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">                k = <span class="mrange">dns_resource_key_ref(first-&gt;key)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'k' is never read</div></td></tr>
 <tr><td class="num" id="LN261">261</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN262">262</td><td class="line">                <span class='comment'>/* Now, try to reduce the number of keys we keep */</span></td></tr>
 <tr><td class="num" id="LN263">263</td><td class="line">                dns_resource_key_reduce(&amp;first-&gt;key, &amp;i-&gt;key);</td></tr>
@@ -384,7 +385,7 @@
 <tr><td class="num" id="LN299">299</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN300">300</td><td class="line">        <span class='macro'>assert(rr)<span class='expansion'>do { if ((__builtin_expect(!!(!(rr)),0))) log_assert_failed("rr"<br>, "src/resolve/resolved-dns-cache.c", 300, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN301">301</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN302">302</td><td class="line">        ttl = <span class='macro'>MIN(rr-&gt;ttl, nsec_ttl)<span class='expansion'>__extension__ ({ const typeof((rr-&gt;ttl)) __unique_prefix_A20<br> = ((rr-&gt;ttl)); const typeof((nsec_ttl)) __unique_prefix_B21<br> = ((nsec_ttl)); __unique_prefix_A20 &lt; __unique_prefix_B21<br> ? __unique_prefix_A20 : __unique_prefix_B21; })</span></span>;</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">        ttl = <span class='macro'>MIN(rr-&gt;ttl, nsec_ttl)<span class='expansion'>__extension__ ({ const typeof((rr-&gt;ttl)) __unique_prefix_A11<br> = ((rr-&gt;ttl)); const typeof((nsec_ttl)) __unique_prefix_B12<br> = ((nsec_ttl)); __unique_prefix_A11 &lt; __unique_prefix_B12<br> ? __unique_prefix_A11 : __unique_prefix_B12; })</span></span>;</td></tr>
 <tr><td class="num" id="LN303">303</td><td class="line">        <span class='keyword'>if</span> (rr-&gt;key-&gt;type == DNS_TYPE_SOA &amp;&amp; use_soa_minimum) {</td></tr>
 <tr><td class="num" id="LN304">304</td><td class="line">                <span class='comment'>/* If this is a SOA RR, and it is requested, clamp to</span></td></tr>
 <tr><td class="num" id="LN305">305</td><td class="line">                 <span class='comment'>* the SOA's minimum field. This is used when we do</span></td></tr>
@@ -406,7 +407,7 @@
 <tr><td class="num" id="LN321">321</td><td class="line">                <span class='comment'>/* Make use of the DNSSEC RRSIG expiry info, if we</span></td></tr>
 <tr><td class="num" id="LN322">322</td><td class="line">                 <span class='comment'>* have it */</span></td></tr>
 <tr><td class="num" id="LN323">323</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN324">324</td><td class="line">                left = <span class='macro'>LESS_BY(rr-&gt;expiry, now(CLOCK_REALTIME))<span class='expansion'>__extension__ ({ const typeof((rr-&gt;expiry)) __unique_prefix_A22<br> = ((rr-&gt;expiry)); const typeof((now(0))) __unique_prefix_B23<br> = ((now(0))); __unique_prefix_A22 &gt; __unique_prefix_B23 ?<br> __unique_prefix_A22 - __unique_prefix_B23 : 0; })</span></span>;</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line">                left = <span class='macro'>LESS_BY(rr-&gt;expiry, now(CLOCK_REALTIME))<span class='expansion'>__extension__ ({ const typeof((rr-&gt;expiry)) __unique_prefix_A13<br> = ((rr-&gt;expiry)); const typeof((now(0))) __unique_prefix_B14<br> = ((now(0))); __unique_prefix_A13 &gt; __unique_prefix_B14 ?<br> __unique_prefix_A13 - __unique_prefix_B14 : 0; })</span></span>;</td></tr>
 <tr><td class="num" id="LN325">325</td><td class="line">                <span class='keyword'>if</span> (u &gt; left)</td></tr>
 <tr><td class="num" id="LN326">326</td><td class="line">                        u = left;</td></tr>
 <tr><td class="num" id="LN327">327</td><td class="line">        }</td></tr>
@@ -576,42 +577,30 @@
 <tr><td class="num" id="LN491">491</td><td class="line">         <span class='comment'>* important to filter out as we use this as a pseudo-type for</span></td></tr>
 <tr><td class="num" id="LN492">492</td><td class="line">         <span class='comment'>* NXDOMAIN entries */</span></td></tr>
 <tr><td class="num" id="LN493">493</td><td class="line">        <span class='keyword'>if</span> (dns_class_is_pseudo(key-&gt;class))</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN494">494</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN495">495</td><td class="line">        <span class='keyword'>if</span> (dns_type_is_pseudo(key-&gt;type))</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN496">496</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN497">497</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN498">498</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">nsec_ttl &lt;= 0</span> || soa-&gt;soa.minimum &lt;= 0 || soa-&gt;ttl &lt;= 0) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'nsec_ttl' is &gt; 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">        <span class='keyword'>if</span> (nsec_ttl &lt;= 0 || soa-&gt;soa.minimum &lt;= 0 || soa-&gt;ttl &lt;= 0) {</td></tr>
 <tr><td class="num" id="LN499">499</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Not caching negative entry with zero SOA/NSEC/NSEC3 TTL: %s"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-cache.c"<br>, 500, __func__, "Not caching negative entry with zero SOA/NSEC/NSEC3 TTL: %s"<br>, dns_resource_key_to_string(key, key_str, sizeof key_str)) :<br> -abs(_e); })</span></span></td></tr>
 <tr><td class="num" id="LN500">500</td><td class="line">                          <span class='macro'>dns_resource_key_to_string(key, key_str, <span class='keyword'>sizeof</span> key_str))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-cache.c"<br>, 500, __func__, "Not caching negative entry with zero SOA/NSEC/NSEC3 TTL: %s"<br>, dns_resource_key_to_string(key, key_str, sizeof key_str)) :<br> -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN501">501</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN502">502</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN503">503</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN504">504</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>IN_SET(rcode, DNS_RCODE_SUCCESS, DNS_RCODE_NXDOMAIN)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){DNS_RCODE_SUCCESS, DNS_RCODE_NXDOMAIN})/<br>sizeof(int)]; switch(rcode) { case DNS_RCODE_SUCCESS: case DNS_RCODE_NXDOMAIN<br>: _found = 1; break; default: break; } _found; })</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN505">505</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN506">506</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN507">507</td><td class="line">        r = dns_cache_init(c);</td></tr>
 <tr><td class="num" id="LN508">508</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN509">509</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN510">510</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN511">511</td><td class="line">        dns_cache_make_space(c, 1);</td></tr>
 <tr><td class="num" id="LN512">512</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN513">513</td><td class="line">        i = <span class='macro'>new0(DnsCacheItem, 1)<span class='expansion'>((DnsCacheItem*) calloc((1), sizeof(DnsCacheItem)))</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:13ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'new0':
-</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
-</div></td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!i</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'i' is non-null</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">        <span class='keyword'>if</span> (!i)</td></tr>
 <tr><td class="num" id="LN515">515</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN516">516</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN517">517</td><td class="line">        i-&gt;type = rcode == DNS_RCODE_SUCCESS ? DNS_CACHE_NODATA : DNS_CACHE_NXDOMAIN;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>'?' condition is false</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN518">518</td><td class="line">        i-&gt;until = calculate_until(soa, nsec_ttl, timestamp, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
 <tr><td class="num" id="LN519">519</td><td class="line">        i-&gt;authenticated = authenticated;</td></tr>
 <tr><td class="num" id="LN520">520</td><td class="line">        i-&gt;owner_family = owner_family;</td></tr>
@@ -619,16 +608,11 @@
 <tr><td class="num" id="LN522">522</td><td class="line">        i-&gt;prioq_idx = <span class='macro'>PRIOQ_IDX_NULL<span class='expansion'>((unsigned) -1)</span></span>;</td></tr>
 <tr><td class="num" id="LN523">523</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN524">524</td><td class="line">        <span class='keyword'>if</span> (i-&gt;type == DNS_CACHE_NXDOMAIN) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN525">525</td><td class="line">                <span class='comment'>/* NXDOMAIN entries should apply equally to all types, so we use ANY as</span></td></tr>
 <tr><td class="num" id="LN526">526</td><td class="line">                 <span class='comment'>* a pseudo type for this purpose here. */</span></td></tr>
 <tr><td class="num" id="LN527">527</td><td class="line">                i-&gt;key = dns_resource_key_new(key-&gt;class, DNS_TYPE_ANY, dns_resource_key_name(key));</td></tr>
 <tr><td class="num" id="LN528">528</td><td class="line">                <span class='keyword'>if</span> (!i-&gt;key)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN529">529</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:33ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'i'</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN530">530</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN531">531</td><td class="line">                <span class='comment'>/* Make sure to remove any previous entry for this</span></td></tr>
 <tr><td class="num" id="LN532">532</td><td class="line">                 <span class='comment'>* specific ANY key. (For non-ANY keys the cache data</span></td></tr>
@@ -672,7 +656,7 @@
 <tr><td class="num" id="LN570">570</td><td class="line">        <span class='comment'>/* Second, flush all entries matching the answer, unless this</span></td></tr>
 <tr><td class="num" id="LN571">571</td><td class="line">         <span class='comment'>* is an RR that is explicitly marked to be "shared" between</span></td></tr>
 <tr><td class="num" id="LN572">572</td><td class="line">         <span class='comment'>* peers (i.e. mDNS RRs without the flush-cache bit set). */</span></td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH_FLAGS(rr, flags, answer)<span class='expansion'>for (unsigned __unique_prefix_i24 = ({ (rr) = ((answer) &amp;&amp;<br> (answer)-&gt;n_rrs &gt; 0) ? (answer)-&gt;items[0].rr : ((void<br>*)0); (flags) = ((answer) &amp;&amp; (answer)-&gt;n_rrs &gt; 0<br>) ? (answer)-&gt;items[0].flags : 0; 0; }); (answer) &amp;&amp;<br> (__unique_prefix_i24 &lt; (answer)-&gt;n_rrs); __unique_prefix_i24<br>++, (rr) = ((__unique_prefix_i24 &lt; (answer)-&gt;n_rrs) ? (<br>answer)-&gt;items[__unique_prefix_i24].rr : ((void*)0)), (flags<br>) = ((__unique_prefix_i24 &lt; (answer)-&gt;n_rrs) ? (answer)<br>-&gt;items[__unique_prefix_i24].flags : 0))</span></span> {</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH_FLAGS(rr, flags, answer)<span class='expansion'>for (unsigned __unique_prefix_i15 = ({ (rr) = ((answer) &amp;&amp;<br> (answer)-&gt;n_rrs &gt; 0) ? (answer)-&gt;items[0].rr : ((void<br>*)0); (flags) = ((answer) &amp;&amp; (answer)-&gt;n_rrs &gt; 0<br>) ? (answer)-&gt;items[0].flags : 0; 0; }); (answer) &amp;&amp;<br> (__unique_prefix_i15 &lt; (answer)-&gt;n_rrs); __unique_prefix_i15<br>++, (rr) = ((__unique_prefix_i15 &lt; (answer)-&gt;n_rrs) ? (<br>answer)-&gt;items[__unique_prefix_i15].rr : ((void*)0)), (flags<br>) = ((__unique_prefix_i15 &lt; (answer)-&gt;n_rrs) ? (answer)<br>-&gt;items[__unique_prefix_i15].flags : 0))</span></span> {</td></tr>
 <tr><td class="num" id="LN574">574</td><td class="line">                <span class='keyword'>if</span> ((flags &amp; DNS_ANSWER_CACHEABLE) == 0)</td></tr>
 <tr><td class="num" id="LN575">575</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN576">576</td><td class="line"> </td></tr>
@@ -726,19 +710,19 @@
 <tr><td class="num" id="LN624">624</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN625">625</td><td class="line">        dns_cache_remove_previous(c, key, answer);</td></tr>
 <tr><td class="num" id="LN626">626</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN627">627</td><td class="line">        <span class='keyword'>if</span> (dns_answer_size(answer) &lt;= 0) {</td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line">                <span class='keyword'>char</span> key_str[<span class='macro'>DNS_RESOURCE_KEY_STRING_MAX<span class='expansion'>((sizeof "CLASS" + (2+(sizeof(uint16_t) &lt;= 1 ? 3 : sizeof(<br>uint16_t) &lt;= 2 ? 5 : sizeof(uint16_t) &lt;= 4 ? 10 : sizeof<br>(uint16_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(uint16_t) &gt;<br> 8)])))) + (sizeof "CLASS" + (2+(sizeof(uint16_t) &lt;= 1 ? 3<br> : sizeof(uint16_t) &lt;= 2 ? 5 : sizeof(uint16_t) &lt;= 4 ? 10<br> : sizeof(uint16_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(uint16_t<br>) &gt; 8)])))) + 253 + 1)</span></span>];</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN630">630</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Not caching negative entry without a SOA record: %s"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-cache.c"<br>, 631, __func__, "Not caching negative entry without a SOA record: %s"<br>, dns_resource_key_to_string(key, key_str, sizeof key_str)) :<br> -abs(_e); })</span></span></td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line">                          <span class='macro'>dns_resource_key_to_string(key, key_str, <span class='keyword'>sizeof</span> key_str))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-cache.c"<br>, 631, __func__, "Not caching negative entry without a SOA record: %s"<br>, dns_resource_key_to_string(key, key_str, sizeof key_str)) :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN633">633</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line">        <span class='comment'>/* We only care for positive replies and NXDOMAINs, on all</span></td></tr>
-<tr><td class="num" id="LN636">636</td><td class="line">         <span class='comment'>* other replies we will simply flush the respective entries,</span></td></tr>
-<tr><td class="num" id="LN637">637</td><td class="line">         <span class='comment'>* and that's it */</span></td></tr>
-<tr><td class="num" id="LN638">638</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>IN_SET(rcode, DNS_RCODE_SUCCESS, DNS_RCODE_NXDOMAIN)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){DNS_RCODE_SUCCESS, DNS_RCODE_NXDOMAIN})/<br>sizeof(int)]; switch(rcode) { case DNS_RCODE_SUCCESS: case DNS_RCODE_NXDOMAIN<br>: _found = 1; break; default: break; } _found; })</span></span>)</td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">        <span class='comment'>/* We only care for positive replies and NXDOMAINs, on all</span></td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">         <span class='comment'>* other replies we will simply flush the respective entries,</span></td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">         <span class='comment'>* and that's it */</span></td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>IN_SET(rcode, DNS_RCODE_SUCCESS, DNS_RCODE_NXDOMAIN)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){DNS_RCODE_SUCCESS, DNS_RCODE_NXDOMAIN})/<br>sizeof(int)]; switch(rcode) { case DNS_RCODE_SUCCESS: case DNS_RCODE_NXDOMAIN<br>: _found = 1; break; default: break; } _found; })</span></span>)</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">        <span class='keyword'>if</span> (dns_answer_size(answer) &lt;= 0) {</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">                <span class='keyword'>char</span> key_str[<span class='macro'>DNS_RESOURCE_KEY_STRING_MAX<span class='expansion'>((sizeof "CLASS" + (2+(sizeof(uint16_t) &lt;= 1 ? 3 : sizeof(<br>uint16_t) &lt;= 2 ? 5 : sizeof(uint16_t) &lt;= 4 ? 10 : sizeof<br>(uint16_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(uint16_t) &gt;<br> 8)])))) + (sizeof "CLASS" + (2+(sizeof(uint16_t) &lt;= 1 ? 3<br> : sizeof(uint16_t) &lt;= 2 ? 5 : sizeof(uint16_t) &lt;= 4 ? 10<br> : sizeof(uint16_t) &lt;= 8 ? 20 : sizeof(int[-2*(sizeof(uint16_t<br>) &gt; 8)])))) + 253 + 1)</span></span>];</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Not caching negative entry without a SOA record: %s"</span>,<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-cache.c"<br>, 637, __func__, "Not caching negative entry without a SOA record: %s"<br>, dns_resource_key_to_string(key, key_str, sizeof key_str)) :<br> -abs(_e); })</span></span></td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line">                          <span class='macro'>dns_resource_key_to_string(key, key_str, <span class='keyword'>sizeof</span> key_str))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/resolve/resolved-dns-cache.c"<br>, 637, __func__, "Not caching negative entry without a SOA record: %s"<br>, dns_resource_key_to_string(key, key_str, sizeof key_str)) :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN640">640</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN641">641</td><td class="line">        cache_keys = dns_answer_size(answer);</td></tr>
 <tr><td class="num" id="LN642">642</td><td class="line">        <span class='keyword'>if</span> (key)</td></tr>
@@ -751,7 +735,7 @@
 <tr><td class="num" id="LN649">649</td><td class="line">                timestamp = now(clock_boottime_or_monotonic());</td></tr>
 <tr><td class="num" id="LN650">650</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN651">651</td><td class="line">        <span class='comment'>/* Second, add in positive entries for all contained RRs */</span></td></tr>
-<tr><td class="num" id="LN652">652</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH_FULL(rr, ifindex, flags, answer)<span class='expansion'>for (unsigned __unique_prefix_i25 = ({ (rr) = ((answer) &amp;&amp;<br> (answer)-&gt;n_rrs &gt; 0) ? (answer)-&gt;items[0].rr : ((void<br>*)0); (ifindex) = ((answer) &amp;&amp; (answer)-&gt;n_rrs &gt;<br> 0) ? (answer)-&gt;items[0].ifindex : 0; (flags) = ((answer) &amp;&amp;<br> (answer)-&gt;n_rrs &gt; 0) ? (answer)-&gt;items[0].flags : 0<br>; 0; }); (answer) &amp;&amp; (__unique_prefix_i25 &lt; (answer<br>)-&gt;n_rrs); __unique_prefix_i25++, (rr) = ((__unique_prefix_i25<br> &lt; (answer)-&gt;n_rrs) ? (answer)-&gt;items[__unique_prefix_i25<br>].rr : ((void*)0)), (ifindex) = ((__unique_prefix_i25 &lt; (answer<br>)-&gt;n_rrs) ? (answer)-&gt;items[__unique_prefix_i25].ifindex<br> : 0), (flags) = ((__unique_prefix_i25 &lt; (answer)-&gt;n_rrs<br>) ? (answer)-&gt;items[__unique_prefix_i25].flags : 0))</span></span> {</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH_FULL(rr, ifindex, flags, answer)<span class='expansion'>for (unsigned __unique_prefix_i16 = ({ (rr) = ((answer) &amp;&amp;<br> (answer)-&gt;n_rrs &gt; 0) ? (answer)-&gt;items[0].rr : ((void<br>*)0); (ifindex) = ((answer) &amp;&amp; (answer)-&gt;n_rrs &gt;<br> 0) ? (answer)-&gt;items[0].ifindex : 0; (flags) = ((answer) &amp;&amp;<br> (answer)-&gt;n_rrs &gt; 0) ? (answer)-&gt;items[0].flags : 0<br>; 0; }); (answer) &amp;&amp; (__unique_prefix_i16 &lt; (answer<br>)-&gt;n_rrs); __unique_prefix_i16++, (rr) = ((__unique_prefix_i16<br> &lt; (answer)-&gt;n_rrs) ? (answer)-&gt;items[__unique_prefix_i16<br>].rr : ((void*)0)), (ifindex) = ((__unique_prefix_i16 &lt; (answer<br>)-&gt;n_rrs) ? (answer)-&gt;items[__unique_prefix_i16].ifindex<br> : 0), (flags) = ((__unique_prefix_i16 &lt; (answer)-&gt;n_rrs<br>) ? (answer)-&gt;items[__unique_prefix_i16].flags : 0))</span></span> {</td></tr>
 <tr><td class="num" id="LN653">653</td><td class="line">                <span class='keyword'>if</span> ((flags &amp; DNS_ANSWER_CACHEABLE) == 0)</td></tr>
 <tr><td class="num" id="LN654">654</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN655">655</td><td class="line"> </td></tr>
@@ -827,7 +811,7 @@
 <tr><td class="num" id="LN725">725</td><td class="line">        <span class='keyword'>if</span> (key)</td></tr>
 <tr><td class="num" id="LN726">726</td><td class="line">                dns_cache_remove_by_key(c, key);</td></tr>
 <tr><td class="num" id="LN727">727</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN728">728</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH_FLAGS(rr, flags, answer)<span class='expansion'>for (unsigned __unique_prefix_i26 = ({ (rr) = ((answer) &amp;&amp;<br> (answer)-&gt;n_rrs &gt; 0) ? (answer)-&gt;items[0].rr : ((void<br>*)0); (flags) = ((answer) &amp;&amp; (answer)-&gt;n_rrs &gt; 0<br>) ? (answer)-&gt;items[0].flags : 0; 0; }); (answer) &amp;&amp;<br> (__unique_prefix_i26 &lt; (answer)-&gt;n_rrs); __unique_prefix_i26<br>++, (rr) = ((__unique_prefix_i26 &lt; (answer)-&gt;n_rrs) ? (<br>answer)-&gt;items[__unique_prefix_i26].rr : ((void*)0)), (flags<br>) = ((__unique_prefix_i26 &lt; (answer)-&gt;n_rrs) ? (answer)<br>-&gt;items[__unique_prefix_i26].flags : 0))</span></span> {</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">        <span class='macro'>DNS_ANSWER_FOREACH_FLAGS(rr, flags, answer)<span class='expansion'>for (unsigned __unique_prefix_i17 = ({ (rr) = ((answer) &amp;&amp;<br> (answer)-&gt;n_rrs &gt; 0) ? (answer)-&gt;items[0].rr : ((void<br>*)0); (flags) = ((answer) &amp;&amp; (answer)-&gt;n_rrs &gt; 0<br>) ? (answer)-&gt;items[0].flags : 0; 0; }); (answer) &amp;&amp;<br> (__unique_prefix_i17 &lt; (answer)-&gt;n_rrs); __unique_prefix_i17<br>++, (rr) = ((__unique_prefix_i17 &lt; (answer)-&gt;n_rrs) ? (<br>answer)-&gt;items[__unique_prefix_i17].rr : ((void*)0)), (flags<br>) = ((__unique_prefix_i17 &lt; (answer)-&gt;n_rrs) ? (answer)<br>-&gt;items[__unique_prefix_i17].flags : 0))</span></span> {</td></tr>
 <tr><td class="num" id="LN729">729</td><td class="line">                <span class='keyword'>if</span> ((flags &amp; DNS_ANSWER_CACHEABLE) == 0)</td></tr>
 <tr><td class="num" id="LN730">730</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN731">731</td><td class="line"> </td></tr>
@@ -1007,7 +991,7 @@
 <tr><td class="num" id="LN905">905</td><td class="line">                <span class='keyword'>if</span> (clamp_ttl) {</td></tr>
 <tr><td class="num" id="LN906">906</td><td class="line">                        rr = dns_resource_record_ref(j-&gt;rr);</td></tr>
 <tr><td class="num" id="LN907">907</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN908">908</td><td class="line">                        r = dns_resource_record_clamp_ttl(&amp;rr, <span class='macro'>LESS_BY(j-&gt;until, current)<span class='expansion'>__extension__ ({ const typeof((j-&gt;until)) __unique_prefix_A27<br> = ((j-&gt;until)); const typeof((current)) __unique_prefix_B28<br> = ((current)); __unique_prefix_A27 &gt; __unique_prefix_B28 ?<br> __unique_prefix_A27 - __unique_prefix_B28 : 0; })</span></span> / <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
+<tr><td class="num" id="LN908">908</td><td class="line">                        r = dns_resource_record_clamp_ttl(&amp;rr, <span class='macro'>LESS_BY(j-&gt;until, current)<span class='expansion'>__extension__ ({ const typeof((j-&gt;until)) __unique_prefix_A18<br> = ((j-&gt;until)); const typeof((current)) __unique_prefix_B19<br> = ((current)); __unique_prefix_A18 &gt; __unique_prefix_B19 ?<br> __unique_prefix_A18 - __unique_prefix_B19 : 0; })</span></span> / <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span>);</td></tr>
 <tr><td class="num" id="LN909">909</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN910">910</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN911">911</td><td class="line">                }</td></tr>
