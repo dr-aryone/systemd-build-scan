@@ -13132,8 +13132,10 @@ _Bool strv_equal(char **a, char **b);
 char **strv_new(const char *x, ...) __attribute__ ((sentinel));
 char **strv_new_ap(const char *x, va_list ap);
 
+
+
 static inline const char* STRV_IFNOTNULL(const char *x) {
-        return x ? x : (const char *) -1;
+        return x ? x : ((const char *) -1);
 }
 
 static inline _Bool strv_isempty(char * const *l) {
@@ -13153,17 +13155,17 @@ char **strv_split_nulstr(const char *s);
 int strv_make_nulstr(char **l, char **p, size_t *n);
 
 _Bool strv_overlap(char **a, char **b) __attribute__ ((pure));
-# 105 "./src/basic/strv.h"
+# 107 "./src/basic/strv.h"
 char **strv_sort(char **l);
 void strv_print(char **l);
-# 155 "./src/basic/strv.h"
+# 157 "./src/basic/strv.h"
 char **strv_reverse(char **l);
 char **strv_shell_escape(char **l, const char *bad);
 
 _Bool strv_fnmatch(char* const* patterns, const char *s, int flags);
 
 static inline _Bool strv_fnmatch_or_empty(char* const* patterns, const char *s, int flags) {
-        do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s", "./src/basic/strv.h", 161, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s", "./src/basic/strv.h", 163, __PRETTY_FUNCTION__); } while (0);
         return strv_isempty(patterns) ||
                strv_fnmatch(patterns, s, flags);
 }

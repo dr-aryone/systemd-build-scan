@@ -778,72 +778,83 @@
 <tr><td class="num" id="LN685">685</td><td class="line">                <span class='macro'>assert_se(streq(x, <span class='string_literal'>"zzz"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((x),("zzz")) == 0))),<br>0))) log_assert_failed("streq(x, \"zzz\")", "src/test/test-strv.c"<br>, 685, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN686">686</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN687">687</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN688">688</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
-<tr><td class="num" id="LN689">689</td><td class="line">        test_specifier_printf();</td></tr>
-<tr><td class="num" id="LN690">690</td><td class="line">        test_strv_foreach();</td></tr>
-<tr><td class="num" id="LN691">691</td><td class="line">        test_strv_foreach_backwards();</td></tr>
-<tr><td class="num" id="LN692">692</td><td class="line">        test_strv_foreach_pair();</td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">        test_strv_find();</td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line">        test_strv_find_prefix();</td></tr>
-<tr><td class="num" id="LN695">695</td><td class="line">        test_strv_find_startswith();</td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line">        test_strv_join();</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_fnmatch(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> **v = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">        <span class='macro'>assert_se(!strv_fnmatch(STRV_MAKE_EMPTY, <span class='string_literal'>"a"</span>, 0))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_fnmatch(((char*[1]) { (<br>(void*)0) }), "a", 0))),0))) log_assert_failed("!strv_fnmatch(STRV_MAKE_EMPTY, \"a\", 0)"<br>, "src/test/test-strv.c", 691, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line">        v = strv_new(<span class='string_literal'>"*\\*"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">        <span class='macro'>assert_se(!strv_fnmatch(v, <span class='string_literal'>"\\"</span>, 0))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_fnmatch(v, "\\", 0))),0<br>))) log_assert_failed("!strv_fnmatch(v, \"\\\\\", 0)", "src/test/test-strv.c"<br>, 694, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">        <span class='macro'>assert_se(strv_fnmatch(v, <span class='string_literal'>"\\"</span>, FNM_NOESCAPE))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_fnmatch(v, "\\", (1 &lt;&lt;<br> 1)))),0))) log_assert_failed("strv_fnmatch(v, \"\\\\\", FNM_NOESCAPE)"<br>, "src/test/test-strv.c", 695, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN697">697</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line">        test_strv_quote_unquote(input_table_multiple, <span class='string_literal'>"\"one\" \"two\" \"three\""</span>);</td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line">        test_strv_quote_unquote(input_table_one, <span class='string_literal'>"\"one\""</span>);</td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line">        test_strv_quote_unquote(input_table_none, <span class='string_literal'>""</span>);</td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line">        test_strv_quote_unquote(input_table_one_empty, <span class='string_literal'>"\"\""</span>);</td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line">        test_strv_quote_unquote(input_table_two_empties, <span class='string_literal'>"\"\" \"\""</span>);</td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">        test_strv_quote_unquote(input_table_quotes, <span class='macro'>QUOTES_STRING<span class='expansion'>"\"\\\"\" " "\"\\\'\" " "\"\\\"\\\"\" " "\"\\\\\" " "\"\\\\\\\\\""</span></span>);</td></tr>
-<tr><td class="num" id="LN704">704</td><td class="line">        test_strv_quote_unquote(input_table_spaces, <span class='macro'>SPACES_STRING<span class='expansion'>"\" \" " "\"\\' \\'\" " "\"\\\" \" " "\" \\\"\" " "\" \\\\\\\\ \""</span></span>);</td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN706">706</td><td class="line">        test_strv_unquote(<span class='string_literal'>"    foo=bar     \"waldo\"    zzz    "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"foo=bar"</span>, <span class='string_literal'>"waldo"</span>, <span class='string_literal'>"zzz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo=bar", "waldo", "zzz", ((void<br>*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN707">707</td><td class="line">        test_strv_unquote(<span class='string_literal'>""</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
-<tr><td class="num" id="LN708">708</td><td class="line">        test_strv_unquote(<span class='string_literal'>" "</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line">        test_strv_unquote(<span class='string_literal'>"   "</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
-<tr><td class="num" id="LN710">710</td><td class="line">        test_strv_unquote(<span class='string_literal'>"   x"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN711">711</td><td class="line">        test_strv_unquote(<span class='string_literal'>"x   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN712">712</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  x   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  \"x\"   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN714">714</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  'x'   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN715">715</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  'x\"'   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x\""</span>)<span class='expansion'>((char**) ((const char*[]) { "x\"", ((void*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  \"x'\"   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x'"</span>)<span class='expansion'>((char**) ((const char*[]) { "x'", ((void*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line">        test_strv_unquote(<span class='string_literal'>"a  '--b=c \"d e\"'"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"a"</span>, <span class='string_literal'>"--b=c \"d e\""</span>)<span class='expansion'>((char**) ((const char*[]) { "a", "--b=c \"d e\"", ((void*)0)<br> }))</span></span>);</td></tr>
-<tr><td class="num" id="LN718">718</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line">        <span class='comment'>/* trailing backslashes */</span></td></tr>
-<tr><td class="num" id="LN720">720</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  x\\\\"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x\\"</span>)<span class='expansion'>((char**) ((const char*[]) { "x\\", ((void*)0) }))</span></span>);</td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"  x\\"</span>);</td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN723">723</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\"''"</span>);</td></tr>
-<tr><td class="num" id="LN724">724</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\" '\""</span>);</td></tr>
-<tr><td class="num" id="LN725">725</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\"garbage"</span>);</td></tr>
-<tr><td class="num" id="LN726">726</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"'"</span>);</td></tr>
-<tr><td class="num" id="LN727">727</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"\""</span>);</td></tr>
-<tr><td class="num" id="LN728">728</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"'x'y'g"</span>);</td></tr>
-<tr><td class="num" id="LN729">729</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">        test_strv_split();</td></tr>
-<tr><td class="num" id="LN731">731</td><td class="line">        test_strv_split_extract();</td></tr>
-<tr><td class="num" id="LN732">732</td><td class="line">        test_strv_split_newlines();</td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">        test_strv_split_nulstr();</td></tr>
-<tr><td class="num" id="LN734">734</td><td class="line">        test_strv_parse_nulstr();</td></tr>
-<tr><td class="num" id="LN735">735</td><td class="line">        test_strv_overlap();</td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line">        test_strv_sort();</td></tr>
-<tr><td class="num" id="LN737">737</td><td class="line">        test_strv_extend_strv();</td></tr>
-<tr><td class="num" id="LN738">738</td><td class="line">        test_strv_extend_strv_concat();</td></tr>
-<tr><td class="num" id="LN739">739</td><td class="line">        test_strv_extend();</td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line">        test_strv_extendf();</td></tr>
-<tr><td class="num" id="LN741">741</td><td class="line">        test_strv_from_stdarg_alloca();</td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">        test_strv_push_prepend();</td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line">        test_strv_push();</td></tr>
-<tr><td class="num" id="LN744">744</td><td class="line">        test_strv_equal();</td></tr>
-<tr><td class="num" id="LN745">745</td><td class="line">        test_strv_is_uniq();</td></tr>
-<tr><td class="num" id="LN746">746</td><td class="line">        test_strv_reverse();</td></tr>
-<tr><td class="num" id="LN747">747</td><td class="line">        test_strv_shell_escape();</td></tr>
-<tr><td class="num" id="LN748">748</td><td class="line">        test_strv_skip();</td></tr>
-<tr><td class="num" id="LN749">749</td><td class="line">        test_strv_extend_n();</td></tr>
-<tr><td class="num" id="LN750">750</td><td class="line">        test_strv_make_nulstr();</td></tr>
-<tr><td class="num" id="LN751">751</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN752">752</td><td class="line">        test_foreach_string();</td></tr>
-<tr><td class="num" id="LN753">753</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN754">754</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN755">755</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">        test_specifier_printf();</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">        test_strv_foreach();</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">        test_strv_foreach_backwards();</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">        test_strv_foreach_pair();</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">        test_strv_find();</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line">        test_strv_find_prefix();</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">        test_strv_find_startswith();</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">        test_strv_join();</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">        test_strv_quote_unquote(input_table_multiple, <span class='string_literal'>"\"one\" \"two\" \"three\""</span>);</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">        test_strv_quote_unquote(input_table_one, <span class='string_literal'>"\"one\""</span>);</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">        test_strv_quote_unquote(input_table_none, <span class='string_literal'>""</span>);</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">        test_strv_quote_unquote(input_table_one_empty, <span class='string_literal'>"\"\""</span>);</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">        test_strv_quote_unquote(input_table_two_empties, <span class='string_literal'>"\"\" \"\""</span>);</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line">        test_strv_quote_unquote(input_table_quotes, <span class='macro'>QUOTES_STRING<span class='expansion'>"\"\\\"\" " "\"\\\'\" " "\"\\\"\\\"\" " "\"\\\\\" " "\"\\\\\\\\\""</span></span>);</td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">        test_strv_quote_unquote(input_table_spaces, <span class='macro'>SPACES_STRING<span class='expansion'>"\" \" " "\"\\' \\'\" " "\"\\\" \" " "\" \\\"\" " "\" \\\\\\\\ \""</span></span>);</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">        test_strv_unquote(<span class='string_literal'>"    foo=bar     \"waldo\"    zzz    "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"foo=bar"</span>, <span class='string_literal'>"waldo"</span>, <span class='string_literal'>"zzz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo=bar", "waldo", "zzz", ((void<br>*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">        test_strv_unquote(<span class='string_literal'>""</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">        test_strv_unquote(<span class='string_literal'>" "</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">        test_strv_unquote(<span class='string_literal'>"   "</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">        test_strv_unquote(<span class='string_literal'>"   x"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">        test_strv_unquote(<span class='string_literal'>"x   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  x   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  \"x\"   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  'x'   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  'x\"'   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x\""</span>)<span class='expansion'>((char**) ((const char*[]) { "x\"", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  \"x'\"   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x'"</span>)<span class='expansion'>((char**) ((const char*[]) { "x'", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">        test_strv_unquote(<span class='string_literal'>"a  '--b=c \"d e\"'"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"a"</span>, <span class='string_literal'>"--b=c \"d e\""</span>)<span class='expansion'>((char**) ((const char*[]) { "a", "--b=c \"d e\"", ((void*)0)<br> }))</span></span>);</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">        <span class='comment'>/* trailing backslashes */</span></td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  x\\\\"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x\\"</span>)<span class='expansion'>((char**) ((const char*[]) { "x\\", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"  x\\"</span>);</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\"''"</span>);</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\" '\""</span>);</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\"garbage"</span>);</td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"'"</span>);</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"\""</span>);</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"'x'y'g"</span>);</td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">        test_strv_split();</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">        test_strv_split_extract();</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">        test_strv_split_newlines();</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">        test_strv_split_nulstr();</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">        test_strv_parse_nulstr();</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">        test_strv_overlap();</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">        test_strv_sort();</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">        test_strv_extend_strv();</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">        test_strv_extend_strv_concat();</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">        test_strv_extend();</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">        test_strv_extendf();</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">        test_strv_from_stdarg_alloca();</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">        test_strv_push_prepend();</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">        test_strv_push();</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">        test_strv_equal();</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">        test_strv_is_uniq();</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">        test_strv_reverse();</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">        test_strv_shell_escape();</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">        test_strv_skip();</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">        test_strv_extend_n();</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">        test_strv_make_nulstr();</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">        test_foreach_string();</td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">        test_strv_fnmatch();</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">}</td></tr>
 </table></body></html>
