@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Function call argument is an uninitialized value -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Uninitialized argument value -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Logic error -->
 
 <!-- BUGFILE /home/runner/systemd/src/core/manager.c -->
 
 <!-- FILENAME manager.c -->
 
-<!-- FUNCTIONNAME manager_setup_cgroups_agent -->
+<!-- FUNCTIONNAME manager_add_job_by_name -->
 
-<!-- BUGLINE 795 -->
+<!-- BUGLINE 1312 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 16 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 37 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/manager.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 795, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1312, column 16</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Function call argument is an uninitialized value</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -880,8 +880,7 @@
 <tr><td class="num" id="LN792">792</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"bind(%s) failed: %m"</span>, sa.un.sun_path)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 792, __func__, "bind(%s) failed: %m", sa.un.sun_path) : -abs<br>(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN793">793</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN794">794</td><td class="line">                m-&gt;cgroups_agent_fd = fd;</td></tr>
-<tr><td class="num" id="LN795">795</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN795">795</td><td class="line">                fd = -1;</td></tr>
 <tr><td class="num" id="LN796">796</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN797">797</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN798">798</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;cgroups_agent_event_source) {</td></tr>
@@ -1386,7 +1385,8 @@
 <tr><td class="num" id="LN1297">1297</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1298">1298</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1299">1299</td><td class="line"><span class='keyword'>int</span> manager_add_job_by_name(Manager *m, JobType type, <span class='keyword'>const</span> <span class='keyword'>char</span> *name, JobMode mode, sd_bus_error *e, Job **ret) {</td></tr>
-<tr><td class="num" id="LN1300">1300</td><td class="line">        Unit *unit;</td></tr>
+<tr><td class="num" id="LN1300">1300</td><td class="line">        <span class="mrange">Unit *unit</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>'unit' declared without an initial value</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1301">1301</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN1302">1302</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1303">1303</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 1303, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
@@ -1394,11 +1394,16 @@
 <tr><td class="num" id="LN1305">1305</td><td class="line">        <span class='macro'>assert(name)<span class='expansion'>do { if ((__builtin_expect(!!(!(name)),0))) log_assert_failed<br>("name", "src/core/manager.c", 1305, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1306">1306</td><td class="line">        <span class='macro'>assert(mode &lt; _JOB_MODE_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(mode &lt; _JOB_MODE_MAX)),0))<br>) log_assert_failed("mode &lt; _JOB_MODE_MAX", "src/core/manager.c"<br>, 1306, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1307">1307</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1308">1308</td><td class="line">        r = manager_load_unit(m, name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;unit);</td></tr>
-<tr><td class="num" id="LN1309">1309</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1308">1308</td><td class="line">        r = <span class="mrange"><span class="mrange">manager_load_unit(m, name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;unit)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Calling 'manager_load_unit'</td><td><div class="PathNav"><a href="#Path24" title="Next event (24)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path34" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">34</div></td><td><div class="PathNav"><a href="#Path33" title="Previous event (33)">&#x2190;</a></div></td></td><td>Returning from 'manager_load_unit'</td><td><div class="PathNav"><a href="#Path35" title="Next event (35)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1309">1309</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path35" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">35</div></td><td><div class="PathNav"><a href="#Path34" title="Previous event (34)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path36" title="Next event (36)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path36" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">36</div></td><td><div class="PathNav"><a href="#Path35" title="Previous event (35)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (37)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1310">1310</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1311">1311</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1312">1312</td><td class="line">        <span class='keyword'>return</span> manager_add_job(m, type, unit, mode, e, ret);</td></tr>
+<tr><td class="num" id="LN1312">1312</td><td class="line">        <span class='keyword'>return</span> manager_add_job(m, type, <span class="mrange">unit</span>, mode, e, ret);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:16ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">37</div></td><td><div class="PathNav"><a href="#Path36" title="Previous event (36)">&#x2190;</a></div></td></td><td>Function call argument is an uninitialized value</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1313">1313</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1314">1314</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1315">1315</td><td class="line"><span class='keyword'>int</span> manager_add_job_by_name_and_warn(Manager *m, JobType type, <span class='keyword'>const</span> <span class='keyword'>char</span> *name, JobMode mode, Job **ret) {</td></tr>
@@ -1468,7 +1473,11 @@
 <tr><td class="num" id="LN1379">1379</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN1380">1380</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1381">1381</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 1381, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
+</td><td><div class="PathNav"><a href="#Path27" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1382">1382</td><td class="line">        <span class='macro'>assert(name || path)<span class='expansion'>do { if ((__builtin_expect(!!(!(name || path)),0))) log_assert_failed<br>("name || path", "src/core/manager.c", 1382, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path27" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
+</td><td><div class="PathNav"><a href="#Path28" title="Next event (28)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1383">1383</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1384">1384</td><td class="line">        <span class='comment'>/* This will prepare the unit for loading, but not actually</span></td></tr>
 <tr><td class="num" id="LN1385">1385</td><td class="line">         <span class='comment'>* load anything from disk. */</span></td></tr>
@@ -1477,12 +1486,15 @@
 <tr><td class="num" id="LN1388">1388</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_setf(e, <span class='macro'>SD_BUS_ERROR_INVALID_ARGS<span class='expansion'>"org.freedesktop.DBus.Error.InvalidArgs"</span></span>, <span class='string_literal'>"Path %s is not absolute."</span>, path);</td></tr>
 <tr><td class="num" id="LN1389">1389</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1390">1390</td><td class="line">        <span class='keyword'>if</span> (!name)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path28" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">28</div></td><td><div class="PathNav"><a href="#Path27" title="Previous event (27)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path29" title="Next event (29)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1391">1391</td><td class="line">                name = basename(path);</td></tr>
 <tr><td class="num" id="LN1392">1392</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1393">1393</td><td class="line">        t = unit_name_to_type(name);</td></tr>
 <tr><td class="num" id="LN1394">1394</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1395">1395</td><td class="line">        <span class='keyword'>if</span> (t == _UNIT_TYPE_INVALID || !unit_name_is_valid(name, UNIT_NAME_PLAIN|UNIT_NAME_INSTANCE)) {</td></tr>
+<tr><td class="num" id="LN1395">1395</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">t == _UNIT_TYPE_INVALID</span> || !unit_name_is_valid(name, UNIT_NAME_PLAIN|UNIT_NAME_INSTANCE)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path29" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">29</div></td><td><div class="PathNav"><a href="#Path28" title="Previous event (28)">&#x2190;</a></div></td></td><td>Assuming 't' is equal to _UNIT_TYPE_INVALID</td><td><div class="PathNav"><a href="#Path30" title="Next event (30)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1396">1396</td><td class="line">                <span class='keyword'>if</span> (unit_name_is_valid(name, UNIT_NAME_TEMPLATE))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path30" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">30</div></td><td><div class="PathNav"><a href="#Path29" title="Previous event (29)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path31" title="Next event (31)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1397">1397</td><td class="line">                        <span class='keyword'>return</span> sd_bus_error_setf(e, <span class='macro'>SD_BUS_ERROR_INVALID_ARGS<span class='expansion'>"org.freedesktop.DBus.Error.InvalidArgs"</span></span>, <span class='string_literal'>"Unit name %s is missing the instance name."</span>, name);</td></tr>
 <tr><td class="num" id="LN1398">1398</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1399">1399</td><td class="line">                <span class='keyword'>return</span> sd_bus_error_setf(e, <span class='macro'>SD_BUS_ERROR_INVALID_ARGS<span class='expansion'>"org.freedesktop.DBus.Error.InvalidArgs"</span></span>, <span class='string_literal'>"Unit name %s is not valid."</span>, name);</td></tr>
@@ -1532,12 +1544,18 @@
 <tr><td class="num" id="LN1443">1443</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN1444">1444</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1445">1445</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 1445, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
+</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1446">1446</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1447">1447</td><td class="line">        <span class='comment'>/* This will load the service information files, but not actually</span></td></tr>
 <tr><td class="num" id="LN1448">1448</td><td class="line">         <span class='comment'>* start any services or anything. */</span></td></tr>
 <tr><td class="num" id="LN1449">1449</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1450">1450</td><td class="line">        r = manager_load_unit_prepare(m, name, path, e, _ret);</td></tr>
-<tr><td class="num" id="LN1451">1451</td><td class="line">        <span class='keyword'>if</span> (r != 0)</td></tr>
+<tr><td class="num" id="LN1450">1450</td><td class="line">        r = <span class="mrange"><span class="mrange">manager_load_unit_prepare(m, name, path, e, _ret)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Calling 'manager_load_unit_prepare'</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path31" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">31</div></td><td><div class="PathNav"><a href="#Path30" title="Previous event (30)">&#x2190;</a></div></td></td><td>Returning from 'manager_load_unit_prepare'</td><td><div class="PathNav"><a href="#Path32" title="Next event (32)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1451">1451</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r != 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path32" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">32</div></td><td><div class="PathNav"><a href="#Path31" title="Previous event (31)">&#x2190;</a></div></td></td><td>Assuming 'r' is not equal to 0</td><td><div class="PathNav"><a href="#Path33" title="Next event (33)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path33" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">33</div></td><td><div class="PathNav"><a href="#Path32" title="Previous event (32)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path34" title="Next event (34)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1452">1452</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1453">1453</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1454">1454</td><td class="line">        manager_dispatch_load_queue(m);</td></tr>
@@ -1822,7 +1840,7 @@
 <tr><td class="num" id="LN1733">1733</td><td class="line">                        <span class='macro'>UNIT_VTABLE(u)<span class='expansion'>unit_vtable[(u)-&gt;type]</span></span>-&gt;sigchld_event(u, si-&gt;<span class='macro'>si_pid<span class='expansion'>_sifields._kill.si_pid</span></span>, si-&gt;si_code, si-&gt;<span class='macro'>si_status<span class='expansion'>_sifields._sigchld.si_status</span></span>);</td></tr>
 <tr><td class="num" id="LN1734">1734</td><td class="line">                        u-&gt;sigchldgen = iteration;</td></tr>
 <tr><td class="num" id="LN1735">1735</td><td class="line">                } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1736">1736</td><td class="line">                        <span class='macro'>log_debug(<span class='string_literal'>"%s already issued a sigchld this iteration %llu, skipping. Pids still being watched %d"</span>, u-&gt;id, iteration, set_size(u-&gt;pids))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 1736, __func__, "%s already issued a sigchld this iteration %llu, skipping. Pids still being watched %d"<br>, u-&gt;id, iteration, set_size(u-&gt;pids)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1736">1736</td><td class="line">                        <span class='macro'>log_debug(<span class='string_literal'>"%s already issued a sigchld this iteration %"</span> PRIu64 <span class='string_literal'>", skipping. Pids still being watched %d"</span>, u-&gt;id, iteration, set_size(u-&gt;pids))<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 1736, __func__, "%s already issued a sigchld this iteration %"<br> "l" "u" ", skipping. Pids still being watched %d", u-&gt;id,<br> iteration, set_size(u-&gt;pids)) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1737">1737</td><td class="line">         }</td></tr>
 <tr><td class="num" id="LN1738">1738</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1739">1739</td><td class="line"> </td></tr>
@@ -1894,7 +1912,8 @@
 <tr><td class="num" id="LN1805">1805</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1806">1806</td><td class="line">        <span class='macro'>log_debug(<span class='string_literal'>"Activating special unit %s"</span>, name)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 1806, __func__, "Activating special unit %s", name) : -abs(<br>_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1807">1807</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1808">1808</td><td class="line">        r = manager_add_job_by_name(m, JOB_START, name, mode, &amp;error, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN1808">1808</td><td class="line">        r = <span class="mrange">manager_add_job_by_name(m, JOB_START, name, mode, &amp;error, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Calling 'manager_add_job_by_name'</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1809">1809</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1810">1810</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Failed to enqueue %s job: %s"</span>, name, bus_error_message(&amp;error, r))<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 1810, __func__, "Failed to enqueue %s job: %s", name, bus_error_message<br>(&amp;error, r)) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1811">1811</td><td class="line"> </td></tr>
@@ -1911,14 +1930,24 @@
 <tr><td class="num" id="LN1822">1822</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/manager.c", 1822, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1823">1823</td><td class="line">        <span class='macro'>assert(m-&gt;signal_fd == fd)<span class='expansion'>do { if ((__builtin_expect(!!(!(m-&gt;signal_fd == fd)),0))) log_assert_failed<br>("m-&gt;signal_fd == fd", "src/core/manager.c", 1823, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1824">1824</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1825">1825</td><td class="line">        <span class='keyword'>if</span> (revents != <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>) {</td></tr>
+<tr><td class="num" id="LN1825">1825</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">revents != <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'revents' is equal to EPOLLIN</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1826">1826</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Got unexpected events from signal file descriptor."</span>)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 1826, __func__, "Got unexpected events from signal file descriptor."<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1827">1827</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1828">1828</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1829">1829</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1830">1830</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1831">1831</td><td class="line">                n = read(m-&gt;signal_fd, &amp;sfsi, <span class='keyword'>sizeof</span>(sfsi));</td></tr>
 <tr><td class="num" id="LN1832">1832</td><td class="line">                <span class='keyword'>if</span> (n != <span class='keyword'>sizeof</span>(sfsi)) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1833">1833</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1834">1834</td><td class="line">                        <span class='keyword'>if</span> (n &gt;= 0)</td></tr>
 <tr><td class="num" id="LN1835">1835</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
@@ -1935,6 +1964,10 @@
 <tr><td class="num" id="LN1846">1846</td><td class="line">                                    &amp;sfsi);</td></tr>
 <tr><td class="num" id="LN1847">1847</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1848">1848</td><td class="line">                <span class='keyword'>switch</span> (sfsi.ssi_signo) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Control jumps to the 'default' case at line 1950</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Control jumps to the 'default' case at line 1950</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Control jumps to 'case 1:'  at line 1946</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Control jumps to 'case 2:'  at line 1864</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1849">1849</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1850">1850</td><td class="line">                <span class='keyword'>case</span> <span class='macro'>SIGCHLD<span class='expansion'>17</span></span>:</td></tr>
 <tr><td class="num" id="LN1851">1851</td><td class="line">                        sigchld = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
@@ -1952,13 +1985,16 @@
 <tr><td class="num" id="LN1863">1863</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1864">1864</td><td class="line">                <span class='keyword'>case</span> <span class='macro'>SIGINT<span class='expansion'>2</span></span>:</td></tr>
 <tr><td class="num" id="LN1865">1865</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>MANAGER_IS_SYSTEM(m)<span class='expansion'>((m)-&gt;unit_file_scope == UNIT_FILE_SYSTEM)</span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1866">1866</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1867">1867</td><td class="line">                                <span class='comment'>/* If the user presses C-A-D more than</span></td></tr>
 <tr><td class="num" id="LN1868">1868</td><td class="line">                                 <span class='comment'>* 7 times within 2s, we reboot</span></td></tr>
 <tr><td class="num" id="LN1869">1869</td><td class="line">                                 <span class='comment'>* immediately. */</span></td></tr>
 <tr><td class="num" id="LN1870">1870</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1871">1871</td><td class="line">                                <span class='keyword'>if</span> (ratelimit_test(&amp;m-&gt;ctrl_alt_del_ratelimit))</td></tr>
-<tr><td class="num" id="LN1872">1872</td><td class="line">                                        manager_start_target(m, <span class='macro'>SPECIAL_CTRL_ALT_DEL_TARGET<span class='expansion'>"ctrl-alt-del.target"</span></span>, JOB_REPLACE_IRREVERSIBLY);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1872">1872</td><td class="line">                                        <span class="mrange">manager_start_target(m, <span class='macro'>SPECIAL_CTRL_ALT_DEL_TARGET<span class='expansion'>"ctrl-alt-del.target"</span></span>, JOB_REPLACE_IRREVERSIBLY)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgEvent" style="margin-left:41ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Calling 'manager_start_target'</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1873">1873</td><td class="line">                                <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN1874">1874</td><td class="line">                                        <span class='macro'>log_notice(<span class='string_literal'>"Ctrl-Alt-Del was pressed more than 7 times within 2s, rebooting immediately."</span>)<span class='expansion'>({ int _level = (5), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 1874, __func__, "Ctrl-Alt-Del was pressed more than 7 times within 2s, rebooting immediately."<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1875">1875</td><td class="line">                                        status_printf(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>true<span class='expansion'>1</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='string_literal'>"Ctrl-Alt-Del was pressed more than 7 times within 2s, rebooting immediately."</span>);</td></tr>
@@ -2035,6 +2071,7 @@
 <tr><td class="num" id="LN1946">1946</td><td class="line">                <span class='keyword'>case</span> <span class='macro'>SIGHUP<span class='expansion'>1</span></span>:</td></tr>
 <tr><td class="num" id="LN1947">1947</td><td class="line">                        m-&gt;exit_code = MANAGER_RELOAD;</td></tr>
 <tr><td class="num" id="LN1948">1948</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td> Execution continues on line 1830</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1949">1949</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1950">1950</td><td class="line">                <span class='keyword'>default</span>: {</td></tr>
 <tr><td class="num" id="LN1951">1951</td><td class="line"> </td></tr>
@@ -2072,6 +2109,8 @@
 <tr><td class="num" id="LN1983">1983</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN1984">1984</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1985">1985</td><td class="line">                        <span class='keyword'>switch</span> (sfsi.ssi_signo - <span class='macro'>SIGRTMIN<span class='expansion'>(__libc_current_sigrtmin ())</span></span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Control jumps to the 'default' case at line 2030</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Control jumps to the 'default' case at line 2030</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1986">1986</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1987">1987</td><td class="line">                        <span class='keyword'>case</span> 20:</td></tr>
 <tr><td class="num" id="LN1988">1988</td><td class="line">                                manager_set_show_status(m, SHOW_STATUS_YES);</td></tr>
@@ -2554,7 +2593,7 @@
 <tr><td class="num" id="LN2465">2465</td><td class="line">                        <span class='keyword'>if</span> (safe_atou32(l+15, &amp;id) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2466">2466</td><td class="line">                                <span class='macro'>log_debug(<span class='string_literal'>"Failed to parse current job id value %s"</span>, l+15)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/manager.c"<br>, 2466, __func__, "Failed to parse current job id value %s", l<br>+15) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2467">2467</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2468">2468</td><td class="line">                                m-&gt;current_job_id = <span class='macro'>MAX(m-&gt;current_job_id, id)<span class='expansion'>__extension__ ({ const typeof((m-&gt;current_job_id)) __unique_prefix_A10<br> = ((m-&gt;current_job_id)); const typeof((id)) __unique_prefix_B11<br> = ((id)); __unique_prefix_A10 &gt; __unique_prefix_B11 ? __unique_prefix_A10<br> : __unique_prefix_B11; })</span></span>;</td></tr>
+<tr><td class="num" id="LN2468">2468</td><td class="line">                                m-&gt;current_job_id = <span class='macro'>MAX(m-&gt;current_job_id, id)<span class='expansion'>__extension__ ({ const typeof((m-&gt;current_job_id)) __unique_prefix_A12<br> = ((m-&gt;current_job_id)); const typeof((id)) __unique_prefix_B13<br> = ((id)); __unique_prefix_A12 &gt; __unique_prefix_B13 ? __unique_prefix_A12<br> : __unique_prefix_B13; })</span></span>;</td></tr>
 <tr><td class="num" id="LN2469">2469</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2470">2470</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (startswith(l, <span class='string_literal'>"n-installed-jobs="</span>)) {</td></tr>
 <tr><td class="num" id="LN2471">2471</td><td class="line">                        uint32_t n;</td></tr>
