@@ -17068,6 +17068,7 @@ static inline void closedirp(DIR* *p) { if (*p) closedir(*p); } struct __useless
 
 int fd_nonblock(int fd, _Bool nonblock);
 int fd_cloexec(int fd, _Bool cloexec);
+void stdio_unset_cloexec(void);
 
 int close_all_fds(const int except[], unsigned n_except);
 
