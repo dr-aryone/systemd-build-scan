@@ -18349,6 +18349,7 @@ static int transient_unit_from_message(
                 return r;
 
 
+        unit_add_to_load_queue(u);
         manager_dispatch_load_queue(m);
 
         *unit = u;
@@ -18363,8 +18364,8 @@ static int transient_aux_units_from_message(
 
         int r;
 
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 798, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 799, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 799, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 800, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_enter_container(message, 'a', "(sa(sv))");
         if (r < 0)
@@ -18403,8 +18404,8 @@ static int method_start_transient_unit(sd_bus_message *message, void *userdata, 
         Unit *u;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 838, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 839, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 839, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 840, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("start"), (error));
         if (r < 0)
@@ -18443,8 +18444,8 @@ static int method_get_job(sd_bus_message *message, void *userdata, sd_bus_error 
         Job *j;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 878, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 879, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 879, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 880, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -18473,8 +18474,8 @@ static int method_cancel_job(sd_bus_message *message, void *userdata, sd_bus_err
         Job *j;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 908, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 909, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 909, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 910, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_read(message, "u", &id);
         if (r < 0)
@@ -18491,8 +18492,8 @@ static int method_clear_jobs(sd_bus_message *message, void *userdata, sd_bus_err
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 926, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 927, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 927, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 928, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reload"), (error));
         if (r < 0)
@@ -18513,8 +18514,8 @@ static int method_reset_failed(sd_bus_message *message, void *userdata, sd_bus_e
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 948, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 949, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 949, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 950, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reload"), (error));
         if (r < 0)
@@ -18539,8 +18540,8 @@ static int list_units_filtered(sd_bus_message *message, void *userdata, sd_bus_e
         Unit *u;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 974, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 975, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 975, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 976, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -18620,8 +18621,8 @@ static int method_list_jobs(sd_bus_message *message, void *userdata, sd_bus_erro
         Job *j;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1055, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1056, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1056, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1057, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -18671,8 +18672,8 @@ static int method_subscribe(sd_bus_message *message, void *userdata, sd_bus_erro
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1106, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1107, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1107, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1108, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -18705,8 +18706,8 @@ static int method_unsubscribe(sd_bus_message *message, void *userdata, sd_bus_er
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1140, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1141, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1141, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1142, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -18732,8 +18733,8 @@ static int method_dump(sd_bus_message *message, void *userdata, sd_bus_error *er
         size_t size;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1167, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1168, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1168, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1169, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -18763,8 +18764,8 @@ static int method_reload(sd_bus_message *message, void *userdata, sd_bus_error *
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1198, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1199, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1199, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1200, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reload"), (error));
         if (r < 0)
@@ -18781,7 +18782,7 @@ static int method_reload(sd_bus_message *message, void *userdata, sd_bus_error *
 
 
 
-        do { if ((__builtin_expect(!!(!(!m->queued_message)),0))) log_assert_failed("!m->queued_message", "src/core/dbus-manager.c", 1216, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(!m->queued_message)),0))) log_assert_failed("!m->queued_message", "src/core/dbus-manager.c", 1217, __PRETTY_FUNCTION__); } while (0);
         r = sd_bus_message_new_method_return(message, &m->queued_message);
         if (r < 0)
                 return r;
@@ -18795,8 +18796,8 @@ static int method_reexecute(sd_bus_message *message, void *userdata, sd_bus_erro
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1230, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1231, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1231, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1232, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reload"), (error));
         if (r < 0)
@@ -18819,8 +18820,8 @@ static int method_exit(sd_bus_message *message, void *userdata, sd_bus_error *er
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1254, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1255, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1255, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1256, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("halt"), (error));
         if (r < 0)
@@ -18840,8 +18841,8 @@ static int method_reboot(sd_bus_message *message, void *userdata, sd_bus_error *
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1275, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1276, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1276, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1277, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reboot"), (error));
         if (r < 0)
@@ -18859,8 +18860,8 @@ static int method_poweroff(sd_bus_message *message, void *userdata, sd_bus_error
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1294, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1295, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1295, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1296, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("halt"), (error));
         if (r < 0)
@@ -18878,8 +18879,8 @@ static int method_halt(sd_bus_message *message, void *userdata, sd_bus_error *er
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1313, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1314, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1314, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1315, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("halt"), (error));
         if (r < 0)
@@ -18897,8 +18898,8 @@ static int method_kexec(sd_bus_message *message, void *userdata, sd_bus_error *e
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1332, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1333, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1333, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1334, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reboot"), (error));
         if (r < 0)
@@ -18918,8 +18919,8 @@ static int method_switch_root(sd_bus_message *message, void *userdata, sd_bus_er
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1353, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1354, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1354, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1355, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reboot"), (error));
         if (r < 0)
@@ -18981,8 +18982,8 @@ static int method_set_environment(sd_bus_message *message, void *userdata, sd_bu
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1416, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1417, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1417, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1418, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reload"), (error));
         if (r < 0)
@@ -19012,8 +19013,8 @@ static int method_unset_environment(sd_bus_message *message, void *userdata, sd_
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1447, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1448, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1448, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1449, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reload"), (error));
         if (r < 0)
@@ -19044,8 +19045,8 @@ static int method_unset_and_set_environment(sd_bus_message *message, void *userd
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1479, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1480, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1480, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1481, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("reload"), (error));
         if (r < 0)
@@ -19082,8 +19083,8 @@ static int method_set_exit_code(sd_bus_message *message, void *userdata, sd_bus_
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1517, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1518, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1518, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1519, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("exit"), (error));
         if (r < 0)
@@ -19109,8 +19110,8 @@ static int list_unit_files_by_patterns(sd_bus_message *message, void *userdata, 
         Iterator i;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1544, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1545, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1545, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1546, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -19180,8 +19181,8 @@ static int method_get_unit_file_state(sd_bus_message *message, void *userdata, s
         UnitFileState state;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1615, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1616, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1616, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1617, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -19205,8 +19206,8 @@ static int method_get_default_target(sd_bus_message *message, void *userdata, sd
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1640, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1641, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1641, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1642, __PRETTY_FUNCTION__); } while (0);
 
 
 
@@ -19225,7 +19226,7 @@ static int send_unit_files_changed(sd_bus *bus, void *userdata) {
         __attribute__((cleanup(sd_bus_message_unrefp))) sd_bus_message *message = ((void*)0);
         int r;
 
-        do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 1660, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 1661, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_new_signal(bus, &message, "/org/freedesktop/systemd1", "org.freedesktop.systemd1.Manager", "UnitFilesChanged");
         if (r < 0)
@@ -19248,7 +19249,7 @@ static int reply_unit_file_changes_and_free(
         if (unit_file_changes_have_modification(changes, n_changes)) {
                 r = bus_foreach_bus(m, ((void*)0), send_unit_files_changed, ((void*)0));
                 if (r < 0)
-                        ({ int _level = (7), _e = (r); (log_get_max_level() >= ((_level) & 0x07)) ? log_internal(_level, _e, "src/core/dbus-manager.c", 1683, __func__, "Failed to send UnitFilesChanged signal: %m") : -abs(_e); });
+                        ({ int _level = (7), _e = (r); (log_get_max_level() >= ((_level) & 0x07)) ? log_internal(_level, _e, "src/core/dbus-manager.c", 1684, __func__, "Failed to send UnitFilesChanged signal: %m") : -abs(_e); });
         }
 
         r = sd_bus_message_new_method_return(message, &reply);
@@ -19268,7 +19269,7 @@ static int reply_unit_file_changes_and_free(
         for (i = 0; i < n_changes; i++)
                 if (changes[i].type >= 0) {
                         const char *change = unit_file_change_type_to_string(changes[i].type);
-                        do { if ((__builtin_expect(!!(!(change != ((void*)0))),0))) log_assert_failed("change != NULL", "src/core/dbus-manager.c", 1703, __PRETTY_FUNCTION__); } while (0);
+                        do { if ((__builtin_expect(!!(!(change != ((void*)0))),0))) log_assert_failed("change != NULL", "src/core/dbus-manager.c", 1704, __PRETTY_FUNCTION__); } while (0);
 
                         r = sd_bus_message_append(
                                         reply, "(sss)",
@@ -19304,7 +19305,7 @@ static int install_error(
                 unsigned n_changes) {
         int r;
         unsigned i;
-        do { if ((__builtin_expect(!!(!(c < 0)),0))) log_assert_failed("c < 0", "src/core/dbus-manager.c", 1739, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(c < 0)),0))) log_assert_failed("c < 0", "src/core/dbus-manager.c", 1740, __PRETTY_FUNCTION__); } while (0);
 
         for (i = 0; i < n_changes; i++)
                 switch(changes[i].type) {
@@ -19355,8 +19356,8 @@ static int method_enable_unit_files_generic(
         unsigned n_changes = 0;
         int runtime, force, r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1790, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1791, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1791, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1792, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_read_strv(message, &l);
         if (r < 0)
@@ -19413,8 +19414,8 @@ static int method_preset_unit_files_with_mode(sd_bus_message *message, void *use
         int runtime, force, r;
         const char *mode;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1848, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1849, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1849, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1850, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_read_strv(message, &l);
         if (r < 0)
@@ -19456,8 +19457,8 @@ static int method_disable_unit_files_generic(
         unsigned n_changes = 0;
         int r, runtime;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1891, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1892, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1892, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1893, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_read_strv(message, &l);
         if (r < 0)
@@ -19495,8 +19496,8 @@ static int method_revert_unit_files(sd_bus_message *message, void *userdata, sd_
         Manager *m = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1930, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1931, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1931, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1932, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_read_strv(message, &l);
         if (r < 0)
@@ -19522,8 +19523,8 @@ static int method_set_default_target(sd_bus_message *message, void *userdata, sd
         const char *name;
         int force, r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1957, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1958, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1958, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1959, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("enable"), (error));
         if (r < 0)
@@ -19554,8 +19555,8 @@ static int method_preset_all_unit_files(sd_bus_message *message, void *userdata,
         const char *mode;
         int force, runtime, r;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1989, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1990, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 1990, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 1991, __PRETTY_FUNCTION__); } while (0);
 
         r = mac_selinux_generic_access_check((message), ((void*)0), ("enable"), (error));
         if (r < 0)
@@ -19595,8 +19596,8 @@ static int method_add_dependency_unit_files(sd_bus_message *message, void *userd
         char *target, *type;
         UnitDependency dep;
 
-        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 2030, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 2031, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(message)),0))) log_assert_failed("message", "src/core/dbus-manager.c", 2031, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 2032, __PRETTY_FUNCTION__); } while (0);
 
         r = bus_verify_manage_unit_files_async(m, message, error);
         if (r < 0)
@@ -19783,8 +19784,8 @@ static int send_finished(sd_bus *bus, void *userdata) {
         usec_t *times = userdata;
         int r;
 
-        do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 2218, __PRETTY_FUNCTION__); } while (0);
-        do { if ((__builtin_expect(!!(!(times)),0))) log_assert_failed("times", "src/core/dbus-manager.c", 2219, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 2219, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(times)),0))) log_assert_failed("times", "src/core/dbus-manager.c", 2220, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_new_signal(bus, &message, "/org/freedesktop/systemd1", "org.freedesktop.systemd1.Manager", "StartupFinished");
         if (r < 0)
@@ -19808,7 +19809,7 @@ void bus_manager_send_finished(
 
         int r;
 
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 2243, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 2244, __PRETTY_FUNCTION__); } while (0);
 
         r = bus_foreach_bus(
                         m,
@@ -19823,14 +19824,14 @@ void bus_manager_send_finished(
                                 total_usec
                         });
         if (r < 0)
-                ({ int _level = (7), _e = (r); (log_get_max_level() >= ((_level) & 0x07)) ? log_internal(_level, _e, "src/core/dbus-manager.c", 2258, __func__, "Failed to send finished signal: %m") : -abs(_e); });
+                ({ int _level = (7), _e = (r); (log_get_max_level() >= ((_level) & 0x07)) ? log_internal(_level, _e, "src/core/dbus-manager.c", 2259, __func__, "Failed to send finished signal: %m") : -abs(_e); });
 }
 
 static int send_reloading(sd_bus *bus, void *userdata) {
         __attribute__((cleanup(sd_bus_message_unrefp))) sd_bus_message *message = ((void*)0);
         int r;
 
-        do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 2265, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 2266, __PRETTY_FUNCTION__); } while (0);
 
         r = sd_bus_message_new_signal(bus, &message, "/org/freedesktop/systemd1", "org.freedesktop.systemd1.Manager", "Reloading");
         if (r < 0)
@@ -19846,15 +19847,15 @@ static int send_reloading(sd_bus *bus, void *userdata) {
 void bus_manager_send_reloading(Manager *m, _Bool active) {
         int r;
 
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 2281, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 2282, __PRETTY_FUNCTION__); } while (0);
 
         r = bus_foreach_bus(m, ((void*)0), send_reloading, ((void *) ((intptr_t) (active))));
         if (r < 0)
-                ({ int _level = (7), _e = (r); (log_get_max_level() >= ((_level) & 0x07)) ? log_internal(_level, _e, "src/core/dbus-manager.c", 2285, __func__, "Failed to send reloading signal: %m") : -abs(_e); });
+                ({ int _level = (7), _e = (r); (log_get_max_level() >= ((_level) & 0x07)) ? log_internal(_level, _e, "src/core/dbus-manager.c", 2286, __func__, "Failed to send reloading signal: %m") : -abs(_e); });
 }
 
 static int send_changed_signal(sd_bus *bus, void *userdata) {
-        do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 2289, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(bus)),0))) log_assert_failed("bus", "src/core/dbus-manager.c", 2290, __PRETTY_FUNCTION__); } while (0);
 
         return sd_bus_emit_properties_changed_strv(bus,
                                                    "/org/freedesktop/systemd1",
@@ -19865,9 +19866,9 @@ static int send_changed_signal(sd_bus *bus, void *userdata) {
 void bus_manager_send_change_signal(Manager *m) {
         int r;
 
-        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 2300, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m", "src/core/dbus-manager.c", 2301, __PRETTY_FUNCTION__); } while (0);
 
         r = bus_foreach_bus(m, ((void*)0), send_changed_signal, ((void*)0));
         if (r < 0)
-                ({ int _level = (7), _e = (r); (log_get_max_level() >= ((_level) & 0x07)) ? log_internal(_level, _e, "src/core/dbus-manager.c", 2304, __func__, "Failed to send manager change signal: %m") : -abs(_e); });
+                ({ int _level = (7), _e = (r); (log_get_max_level() >= ((_level) & 0x07)) ? log_internal(_level, _e, "src/core/dbus-manager.c", 2305, __func__, "Failed to send manager change signal: %m") : -abs(_e); });
 }
