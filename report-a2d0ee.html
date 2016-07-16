@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'notify_socket' is never read -->
+<!-- BUGDESC Value stored to 'loop' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,11 +64,11 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME outer_child -->
+<!-- FUNCTIONNAME setup_image -->
 
-<!-- BUGLINE 3008 -->
+<!-- BUGLINE 1789 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 9 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3008, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'notify_socket' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1789, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'loop' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1871,7 +1871,8 @@
 <tr><td class="num" id="LN1786">1786</td><td class="line">        *loop_nr = nr;</td></tr>
 <tr><td class="num" id="LN1787">1787</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1788">1788</td><td class="line">        r = loop;</td></tr>
-<tr><td class="num" id="LN1789">1789</td><td class="line">        loop = -1;</td></tr>
+<tr><td class="num" id="LN1789">1789</td><td class="line">        loop = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'loop' is never read</div></td></tr>
 <tr><td class="num" id="LN1790">1790</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1791">1791</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1792">1792</td><td class="line">}</td></tr>
@@ -2727,7 +2728,7 @@
 <tr><td class="num" id="LN2642">2642</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2643">2643</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_SELINUX<span class='expansion'>1</span></span></span></td></tr>
 <tr><td class="num" id="LN2644">2644</td><td class="line">        <span class='keyword'>if</span> (arg_selinux_context)</td></tr>
-<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon((security_context_t) arg_selinux_context) &lt; 0)</td></tr>
+<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon(arg_selinux_context) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2646">2646</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"setexeccon(\"%s\") failed: %m"</span>, arg_selinux_context)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 2646, __func__, "setexeccon(\"%s\") failed: %m", arg_selinux_context<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2647">2647</td><td class="line"><span class='directive'>#endif</span></td></tr>
 <tr><td class="num" id="LN2648">2648</td><td class="line"> </td></tr>
@@ -3090,8 +3091,7 @@
 <tr><td class="num" id="LN3005">3005</td><td class="line">        <span class='keyword'>if</span> (pid == 0) {</td></tr>
 <tr><td class="num" id="LN3006">3006</td><td class="line">                pid_socket = safe_close(pid_socket);</td></tr>
 <tr><td class="num" id="LN3007">3007</td><td class="line">                uuid_socket = safe_close(uuid_socket);</td></tr>
-<tr><td class="num" id="LN3008">3008</td><td class="line">                notify_socket = <span class="mrange">safe_close(notify_socket)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'notify_socket' is never read</div></td></tr>
+<tr><td class="num" id="LN3008">3008</td><td class="line">                notify_socket = safe_close(notify_socket);</td></tr>
 <tr><td class="num" id="LN3009">3009</td><td class="line">                uid_shift_socket = safe_close(uid_shift_socket);</td></tr>
 <tr><td class="num" id="LN3010">3010</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3011">3011</td><td class="line">                <span class='comment'>/* The inner child has all namespaces that are</span></td></tr>

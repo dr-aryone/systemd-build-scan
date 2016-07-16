@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'kmsg_socket' is never read -->
+<!-- BUGDESC Value stored to 'uid_shift_socket' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -66,9 +66,9 @@
 
 <!-- FUNCTIONNAME outer_child -->
 
-<!-- BUGLINE 3045 -->
+<!-- BUGLINE 3009 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 17 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3045, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'kmsg_socket' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3009, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'uid_shift_socket' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -2727,7 +2727,7 @@
 <tr><td class="num" id="LN2642">2642</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2643">2643</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_SELINUX<span class='expansion'>1</span></span></span></td></tr>
 <tr><td class="num" id="LN2644">2644</td><td class="line">        <span class='keyword'>if</span> (arg_selinux_context)</td></tr>
-<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon((security_context_t) arg_selinux_context) &lt; 0)</td></tr>
+<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon(arg_selinux_context) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2646">2646</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"setexeccon(\"%s\") failed: %m"</span>, arg_selinux_context)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 2646, __func__, "setexeccon(\"%s\") failed: %m", arg_selinux_context<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2647">2647</td><td class="line"><span class='directive'>#endif</span></td></tr>
 <tr><td class="num" id="LN2648">2648</td><td class="line"> </td></tr>
@@ -3091,7 +3091,8 @@
 <tr><td class="num" id="LN3006">3006</td><td class="line">                pid_socket = safe_close(pid_socket);</td></tr>
 <tr><td class="num" id="LN3007">3007</td><td class="line">                uuid_socket = safe_close(uuid_socket);</td></tr>
 <tr><td class="num" id="LN3008">3008</td><td class="line">                notify_socket = safe_close(notify_socket);</td></tr>
-<tr><td class="num" id="LN3009">3009</td><td class="line">                uid_shift_socket = safe_close(uid_shift_socket);</td></tr>
+<tr><td class="num" id="LN3009">3009</td><td class="line">                uid_shift_socket = <span class="mrange">safe_close(uid_shift_socket)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'uid_shift_socket' is never read</div></td></tr>
 <tr><td class="num" id="LN3010">3010</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3011">3011</td><td class="line">                <span class='comment'>/* The inner child has all namespaces that are</span></td></tr>
 <tr><td class="num" id="LN3012">3012</td><td class="line">                 <span class='comment'>* requested, so that we all are owned by the user if</span></td></tr>
@@ -3127,8 +3128,7 @@
 <tr><td class="num" id="LN3042">3042</td><td class="line">        pid_socket = safe_close(pid_socket);</td></tr>
 <tr><td class="num" id="LN3043">3043</td><td class="line">        uuid_socket = safe_close(uuid_socket);</td></tr>
 <tr><td class="num" id="LN3044">3044</td><td class="line">        notify_socket = safe_close(notify_socket);</td></tr>
-<tr><td class="num" id="LN3045">3045</td><td class="line">        kmsg_socket = <span class="mrange">safe_close(kmsg_socket)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'kmsg_socket' is never read</div></td></tr>
+<tr><td class="num" id="LN3045">3045</td><td class="line">        kmsg_socket = safe_close(kmsg_socket);</td></tr>
 <tr><td class="num" id="LN3046">3046</td><td class="line">        rtnl_socket = safe_close(rtnl_socket);</td></tr>
 <tr><td class="num" id="LN3047">3047</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3048">3048</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>

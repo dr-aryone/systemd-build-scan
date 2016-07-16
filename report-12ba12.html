@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'rtnl_socket' is never read -->
+<!-- BUGDESC Value stored to 'etc_passwd_lock' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME inner_child -->
+<!-- FUNCTIONNAME main -->
 
-<!-- BUGLINE 2626 -->
+<!-- BUGLINE 4046 -->
 
 <!-- BUGCOLUMN 17 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2626, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'rtnl_socket' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 4046, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'etc_passwd_lock' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -2708,8 +2708,7 @@
 <tr><td class="num" id="LN2623">2623</td><td class="line">                r = expose_port_send_rtnl(rtnl_socket);</td></tr>
 <tr><td class="num" id="LN2624">2624</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN2625">2625</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN2626">2626</td><td class="line">                rtnl_socket = <span class="mrange">safe_close(rtnl_socket)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'rtnl_socket' is never read</div></td></tr>
+<tr><td class="num" id="LN2626">2626</td><td class="line">                rtnl_socket = safe_close(rtnl_socket);</td></tr>
 <tr><td class="num" id="LN2627">2627</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN2628">2628</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2629">2629</td><td class="line">        r = drop_capabilities();</td></tr>
@@ -2728,7 +2727,7 @@
 <tr><td class="num" id="LN2642">2642</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2643">2643</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_SELINUX<span class='expansion'>1</span></span></span></td></tr>
 <tr><td class="num" id="LN2644">2644</td><td class="line">        <span class='keyword'>if</span> (arg_selinux_context)</td></tr>
-<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon((security_context_t) arg_selinux_context) &lt; 0)</td></tr>
+<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon(arg_selinux_context) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2646">2646</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"setexeccon(\"%s\") failed: %m"</span>, arg_selinux_context)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 2646, __func__, "setexeccon(\"%s\") failed: %m", arg_selinux_context<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2647">2647</td><td class="line"><span class='directive'>#endif</span></td></tr>
 <tr><td class="num" id="LN2648">2648</td><td class="line"> </td></tr>
@@ -4129,7 +4128,8 @@
 <tr><td class="num" id="LN4043">4043</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN4044">4044</td><td class="line">                <span class='comment'>/* At this point we have made use of the UID we picked, and thus nss-mymachines will make them appear</span></td></tr>
 <tr><td class="num" id="LN4045">4045</td><td class="line">                 <span class='comment'>* in getpwuid(), thus we can release the /etc/passwd lock. */</span></td></tr>
-<tr><td class="num" id="LN4046">4046</td><td class="line">                etc_passwd_lock = safe_close(etc_passwd_lock);</td></tr>
+<tr><td class="num" id="LN4046">4046</td><td class="line">                etc_passwd_lock = <span class="mrange">safe_close(etc_passwd_lock)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'etc_passwd_lock' is never read</div></td></tr>
 <tr><td class="num" id="LN4047">4047</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN4048">4048</td><td class="line">                sd_notifyf(<span class='macro'>false<span class='expansion'>0</span></span>,</td></tr>
 <tr><td class="num" id="LN4049">4049</td><td class="line">                           <span class='string_literal'>"STATUS=Container running.\n"</span></td></tr>

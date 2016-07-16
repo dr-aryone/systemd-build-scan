@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'u' is never read -->
+<!-- BUGDESC Value stored to 'pid_socket' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME setup_kmsg -->
+<!-- FUNCTIONNAME outer_child -->
 
-<!-- BUGLINE 1458 -->
+<!-- BUGLINE 3042 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1458, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'u' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3042, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'pid_socket' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1540,8 +1540,7 @@
 <tr><td class="num" id="LN1455">1455</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1456">1456</td><td class="line">        <span class='macro'>assert(kmsg_socket &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(kmsg_socket &gt;= 0)),0))) log_assert_failed<br>("kmsg_socket &gt;= 0", "src/nspawn/nspawn.c", 1456, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1457">1457</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1458">1458</td><td class="line">        u = <span class="mrange">umask(0000)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'u' is never read</div></td></tr>
+<tr><td class="num" id="LN1458">1458</td><td class="line">        u = umask(0000);</td></tr>
 <tr><td class="num" id="LN1459">1459</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1460">1460</td><td class="line">        <span class='comment'>/* We create the kmsg FIFO as /run/kmsg, but immediately</span></td></tr>
 <tr><td class="num" id="LN1461">1461</td><td class="line">         <span class='comment'>* delete it after bind mounting it to /proc/kmsg. While FIFOs</span></td></tr>
@@ -2728,7 +2727,7 @@
 <tr><td class="num" id="LN2642">2642</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2643">2643</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_SELINUX<span class='expansion'>1</span></span></span></td></tr>
 <tr><td class="num" id="LN2644">2644</td><td class="line">        <span class='keyword'>if</span> (arg_selinux_context)</td></tr>
-<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon((security_context_t) arg_selinux_context) &lt; 0)</td></tr>
+<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon(arg_selinux_context) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2646">2646</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"setexeccon(\"%s\") failed: %m"</span>, arg_selinux_context)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 2646, __func__, "setexeccon(\"%s\") failed: %m", arg_selinux_context<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2647">2647</td><td class="line"><span class='directive'>#endif</span></td></tr>
 <tr><td class="num" id="LN2648">2648</td><td class="line"> </td></tr>
@@ -3125,7 +3124,8 @@
 <tr><td class="num" id="LN3039">3039</td><td class="line">        <span class='keyword'>if</span> (l &lt; 0)</td></tr>
 <tr><td class="num" id="LN3040">3040</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to send notify fd: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 3040, __func__, "Failed to send notify fd: %m") : -abs(_e);<br> })</span></span>;</td></tr>
 <tr><td class="num" id="LN3041">3041</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3042">3042</td><td class="line">        pid_socket = safe_close(pid_socket);</td></tr>
+<tr><td class="num" id="LN3042">3042</td><td class="line">        pid_socket = <span class="mrange">safe_close(pid_socket)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'pid_socket' is never read</div></td></tr>
 <tr><td class="num" id="LN3043">3043</td><td class="line">        uuid_socket = safe_close(uuid_socket);</td></tr>
 <tr><td class="num" id="LN3044">3044</td><td class="line">        notify_socket = safe_close(notify_socket);</td></tr>
 <tr><td class="num" id="LN3045">3045</td><td class="line">        kmsg_socket = safe_close(kmsg_socket);</td></tr>

@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'e' is never read -->
+<!-- BUGDESC Value stored to 'u' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,11 +64,11 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME dissect_image -->
+<!-- FUNCTIONNAME copy_devnodes -->
 
-<!-- BUGLINE 1968 -->
+<!-- BUGLINE 1329 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 9 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1968, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'e' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1329, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'u' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1411,7 +1411,8 @@
 <tr><td class="num" id="LN1326">1326</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1327">1327</td><td class="line">        <span class='macro'>assert(dest)<span class='expansion'>do { if ((__builtin_expect(!!(!(dest)),0))) log_assert_failed<br>("dest", "src/nspawn/nspawn.c", 1327, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1328">1328</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1329">1329</td><td class="line">        u = umask(0000);</td></tr>
+<tr><td class="num" id="LN1329">1329</td><td class="line">        u = <span class="mrange">umask(0000)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'u' is never read</div></td></tr>
 <tr><td class="num" id="LN1330">1330</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1331">1331</td><td class="line">        <span class='comment'>/* Create /dev/net, so that we can create /dev/net/tun in it */</span></td></tr>
 <tr><td class="num" id="LN1332">1332</td><td class="line">        <span class='keyword'>if</span> (userns_mkdir(dest, <span class='string_literal'>"/dev/net"</span>, 0755, 0, 0) &lt; 0)</td></tr>
@@ -2050,8 +2051,7 @@
 <tr><td class="num" id="LN1965">1965</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to reread partition table: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 1965, __func__, "Failed to reread partition table: %m") : -<br>abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1966">1966</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1967">1967</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1968">1968</td><td class="line">                e = <span class="mrange">udev_enumerate_unref(e)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'e' is never read</div></td></tr>
+<tr><td class="num" id="LN1968">1968</td><td class="line">                e = udev_enumerate_unref(e);</td></tr>
 <tr><td class="num" id="LN1969">1969</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1970">1970</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1971">1971</td><td class="line">        first = udev_enumerate_get_list_entry(e);</td></tr>
@@ -2728,7 +2728,7 @@
 <tr><td class="num" id="LN2642">2642</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2643">2643</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_SELINUX<span class='expansion'>1</span></span></span></td></tr>
 <tr><td class="num" id="LN2644">2644</td><td class="line">        <span class='keyword'>if</span> (arg_selinux_context)</td></tr>
-<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon((security_context_t) arg_selinux_context) &lt; 0)</td></tr>
+<tr><td class="num" id="LN2645">2645</td><td class="line">                <span class='keyword'>if</span> (setexeccon(arg_selinux_context) &lt; 0)</td></tr>
 <tr><td class="num" id="LN2646">2646</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"setexeccon(\"%s\") failed: %m"</span>, arg_selinux_context)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 2646, __func__, "setexeccon(\"%s\") failed: %m", arg_selinux_context<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2647">2647</td><td class="line"><span class='directive'>#endif</span></td></tr>
 <tr><td class="num" id="LN2648">2648</td><td class="line"> </td></tr>
