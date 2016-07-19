@@ -1,0 +1,866 @@
+<!doctype html>
+<html>
+<head>
+<title>src/test/test-strv.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Function call argument is an uninitialized value -->
+
+<!-- BUGTYPE Uninitialized argument value -->
+
+<!-- BUGCATEGORY Logic error -->
+
+<!-- BUGFILE /home/runner/systemd/src/test/test-strv.c -->
+
+<!-- FILENAME test-strv.c -->
+
+<!-- FUNCTIONNAME test_strv_from_stdarg_alloca_one -->
+
+<!-- BUGLINE 463 -->
+
+<!-- BUGCOLUMN 17 -->
+
+<!-- BUGPATHLENGTH 6 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>test/test-strv.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 463, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Function call argument is an uninitialized value</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright 2010 Lennart Poettering</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line">  <span class='comment'>Copyright 2013 Thomas H.P. Andersen</span></td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line"><span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"><span class='directive'>#include &lt;string.h&gt;</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"><span class='directive'>#include "alloc-util.h"</span></td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "specifier.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "strv.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include "util.h"</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_specifier_printf(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> Specifier table[] = {</td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line">                { 'a', specifier_string, (<span class='keyword'>char</span>*) <span class='string_literal'>"AAAA"</span> },</td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line">                { 'b', specifier_string, (<span class='keyword'>char</span>*) <span class='string_literal'>"BBBB"</span> },</td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line">                { 'm', specifier_machine_id, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> },</td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line">                { 'B', specifier_boot_id, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> },</td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line">                { 'H', specifier_host_name, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> },</td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line">                { 'v', specifier_kernel_release, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span> },</td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line">                {}</td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *w = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line">        r = specifier_printf(<span class='string_literal'>"xxx a=%a b=%b yyy"</span>, table, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;w);</td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-strv.c", 44, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line">        <span class='macro'>assert_se(w)<span class='expansion'>do { if ((__builtin_expect(!!(!(w)),0))) log_assert_failed("w"<br>, "src/test/test-strv.c", 45, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line">        puts(w);</td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line">        <span class='macro'>assert_se(streq(w, <span class='string_literal'>"xxx a=AAAA b=BBBB yyy"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((w),("xxx a=AAAA b=BBBB yyy"<br>)) == 0))),0))) log_assert_failed("streq(w, \"xxx a=AAAA b=BBBB yyy\")"<br>, "src/test/test-strv.c", 48, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line">        free(w);</td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line">        r = specifier_printf(<span class='string_literal'>"machine=%m, boot=%B, host=%H, version=%v"</span>, table, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;w);</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">        <span class='macro'>assert_se(r &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(r &gt;= 0)),0))) log_assert_failed<br>("r &gt;= 0", "src/test/test-strv.c", 52, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">        <span class='macro'>assert_se(w)<span class='expansion'>do { if ((__builtin_expect(!!(!(w)),0))) log_assert_failed("w"<br>, "src/test/test-strv.c", 53, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">        puts(w);</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> input_table_multiple[] = {</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">        <span class='string_literal'>"one"</span>,</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line">        <span class='string_literal'>"two"</span>,</td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">        <span class='string_literal'>"three"</span>,</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> input_table_one[] = {</td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">        <span class='string_literal'>"one"</span>,</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> input_table_none[] = {</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> input_table_two_empties[] = {</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">        <span class='string_literal'>""</span>,</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">        <span class='string_literal'>""</span>,</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> input_table_one_empty[] = {</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">        <span class='string_literal'>""</span>,</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> input_table_quotes[] = {</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">        <span class='string_literal'>"\""</span>,</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">        <span class='string_literal'>"'"</span>,</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">        <span class='string_literal'>"\"\""</span>,</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">        <span class='string_literal'>"\\"</span>,</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">        <span class='string_literal'>"\\\\"</span>,</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line"><span class='directive'>#define <span class='macro'>QUOTES_STRING<span class='expansion'>"\"\\\"\" " "\"\\\'\" " "\"\\\"\\\"\" " "\"\\\\\" " "\"\\\\\\\\\""</span></span>                            \</span></td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">        <span class='directive'>"\"\\\"\" "                              \</span></td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">        <span class='directive'>"\"\\\'\" "                              \</span></td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">        <span class='directive'>"\"\\\"\\\"\" "                          \</span></td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">        <span class='directive'>"\"\\\\\" "                              \</span></td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">        <span class='directive'>"\"\\\\\\\\\""</span></td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> * <span class='keyword'>const</span> input_table_spaces[] = {</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">        <span class='string_literal'>" "</span>,</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">        <span class='string_literal'>"' '"</span>,</td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">        <span class='string_literal'>"\" "</span>,</td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">        <span class='string_literal'>" \""</span>,</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">        <span class='string_literal'>" \\\\ "</span>,</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">        <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line"><span class='directive'>#define <span class='macro'>SPACES_STRING<span class='expansion'>"\" \" " "\"\\' \\'\" " "\"\\\" \" " "\" \\\"\" " "\" \\\\\\\\ \""</span></span>                           \</span></td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">        <span class='directive'>"\" \" "                                \</span></td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">        <span class='directive'>"\"\\' \\'\" "                          \</span></td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">        <span class='directive'>"\"\\\" \" "                            \</span></td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">        <span class='directive'>"\" \\\"\" "                            \</span></td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">        <span class='directive'>"\" \\\\\\\\ \""</span></td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_find(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">        <span class='macro'>assert_se(strv_find((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"three"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_find((char **)input_table_multiple<br>, "three"))),0))) log_assert_failed("strv_find((char **)input_table_multiple, \"three\")"<br>, "src/test/test-strv.c", 116, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">        <span class='macro'>assert_se(!strv_find((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"four"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_find((char **)input_table_multiple<br>, "four"))),0))) log_assert_failed("!strv_find((char **)input_table_multiple, \"four\")"<br>, "src/test/test-strv.c", 117, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_find_prefix(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">        <span class='macro'>assert_se(strv_find_prefix((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"o"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_find_prefix((char **)input_table_multiple<br>, "o"))),0))) log_assert_failed("strv_find_prefix((char **)input_table_multiple, \"o\")"<br>, "src/test/test-strv.c", 121, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">        <span class='macro'>assert_se(strv_find_prefix((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"one"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_find_prefix((char **)input_table_multiple<br>, "one"))),0))) log_assert_failed("strv_find_prefix((char **)input_table_multiple, \"one\")"<br>, "src/test/test-strv.c", 122, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">        <span class='macro'>assert_se(strv_find_prefix((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_find_prefix((char **)input_table_multiple<br>, ""))),0))) log_assert_failed("strv_find_prefix((char **)input_table_multiple, \"\")"<br>, "src/test/test-strv.c", 123, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">        <span class='macro'>assert_se(!strv_find_prefix((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"xxx"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_find_prefix((char **)input_table_multiple<br>, "xxx"))),0))) log_assert_failed("!strv_find_prefix((char **)input_table_multiple, \"xxx\")"<br>, "src/test/test-strv.c", 124, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">        <span class='macro'>assert_se(!strv_find_prefix((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"onee"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_find_prefix((char **)input_table_multiple<br>, "onee"))),0))) log_assert_failed("!strv_find_prefix((char **)input_table_multiple, \"onee\")"<br>, "src/test/test-strv.c", 125, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_find_startswith(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">        <span class='keyword'>char</span> *r;</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">        r = strv_find_startswith((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"o"</span>);</td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">        <span class='macro'>assert_se(r &amp;&amp; streq(r, <span class='string_literal'>"ne"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(r &amp;&amp; (strcmp((r),("ne"<br>)) == 0))),0))) log_assert_failed("r &amp;&amp; streq(r, \"ne\")"<br>, "src/test/test-strv.c", 132, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">        r = strv_find_startswith((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"one"</span>);</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line">        <span class='macro'>assert_se(r &amp;&amp; streq(r, <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(r &amp;&amp; (strcmp((r),("")<br>) == 0))),0))) log_assert_failed("r &amp;&amp; streq(r, \"\")"<br>, "src/test/test-strv.c", 135, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">        r = strv_find_startswith((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>""</span>);</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">        <span class='macro'>assert_se(r &amp;&amp; streq(r, <span class='string_literal'>"one"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(r &amp;&amp; (strcmp((r),("one"<br>)) == 0))),0))) log_assert_failed("r &amp;&amp; streq(r, \"one\")"<br>, "src/test/test-strv.c", 138, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">        <span class='macro'>assert_se(!strv_find_startswith((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"xxx"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_find_startswith((char *<br>*)input_table_multiple, "xxx"))),0))) log_assert_failed("!strv_find_startswith((char **)input_table_multiple, \"xxx\")"<br>, "src/test/test-strv.c", 140, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">        <span class='macro'>assert_se(!strv_find_startswith((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>"onee"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_find_startswith((char *<br>*)input_table_multiple, "onee"))),0))) log_assert_failed("!strv_find_startswith((char **)input_table_multiple, \"onee\")"<br>, "src/test/test-strv.c", 141, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_join(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *q = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *r = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *s = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *v = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *w = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">        p = strv_join((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>", "</span>);</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">        <span class='macro'>assert_se(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/test/test-strv.c", 148, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">        <span class='macro'>assert_se(streq(p, <span class='string_literal'>"one, two, three"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((p),("one, two, three"<br>)) == 0))),0))) log_assert_failed("streq(p, \"one, two, three\")"<br>, "src/test/test-strv.c", 149, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">        q = strv_join((<span class='keyword'>char</span> **)input_table_multiple, <span class='string_literal'>";"</span>);</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line">        <span class='macro'>assert_se(q)<span class='expansion'>do { if ((__builtin_expect(!!(!(q)),0))) log_assert_failed("q"<br>, "src/test/test-strv.c", 152, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">        <span class='macro'>assert_se(streq(q, <span class='string_literal'>"one;two;three"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((q),("one;two;three")<br>) == 0))),0))) log_assert_failed("streq(q, \"one;two;three\")"<br>, "src/test/test-strv.c", 153, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">        r = strv_join((<span class='keyword'>char</span> **)input_table_multiple, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">        <span class='macro'>assert_se(r)<span class='expansion'>do { if ((__builtin_expect(!!(!(r)),0))) log_assert_failed("r"<br>, "src/test/test-strv.c", 156, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">        <span class='macro'>assert_se(streq(r, <span class='string_literal'>"one two three"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((r),("one two three")<br>) == 0))),0))) log_assert_failed("streq(r, \"one two three\")"<br>, "src/test/test-strv.c", 157, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">        s = strv_join((<span class='keyword'>char</span> **)input_table_one, <span class='string_literal'>", "</span>);</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">        <span class='macro'>assert_se(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/test/test-strv.c", 160, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">        <span class='macro'>assert_se(streq(s, <span class='string_literal'>"one"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((s),("one")) == 0))),<br>0))) log_assert_failed("streq(s, \"one\")", "src/test/test-strv.c"<br>, 161, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">        t = strv_join((<span class='keyword'>char</span> **)input_table_none, <span class='string_literal'>", "</span>);</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line">        <span class='macro'>assert_se(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/test/test-strv.c", 164, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">        <span class='macro'>assert_se(streq(t, <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((t),("")) == 0))),0))<br>) log_assert_failed("streq(t, \"\")", "src/test/test-strv.c",<br> 165, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">        v = strv_join((<span class='keyword'>char</span> **)input_table_two_empties, <span class='string_literal'>", "</span>);</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">        <span class='macro'>assert_se(v)<span class='expansion'>do { if ((__builtin_expect(!!(!(v)),0))) log_assert_failed("v"<br>, "src/test/test-strv.c", 168, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">        <span class='macro'>assert_se(streq(v, <span class='string_literal'>", "</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v),(", ")) == 0))),0<br>))) log_assert_failed("streq(v, \", \")", "src/test/test-strv.c"<br>, 169, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line">        w = strv_join((<span class='keyword'>char</span> **)input_table_one_empty, <span class='string_literal'>", "</span>);</td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">        <span class='macro'>assert_se(w)<span class='expansion'>do { if ((__builtin_expect(!!(!(w)),0))) log_assert_failed("w"<br>, "src/test/test-strv.c", 172, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">        <span class='macro'>assert_se(streq(w, <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((w),("")) == 0))),0))<br>) log_assert_failed("streq(w, \"\")", "src/test/test-strv.c",<br> 173, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_quote_unquote(<span class='keyword'>const</span> <span class='keyword'>char</span>* <span class='keyword'>const</span> *split, <span class='keyword'>const</span> <span class='keyword'>char</span> *quoted) {</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **s = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">        <span class='keyword'>char</span> **t;</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">        p = strv_join_quoted((<span class='keyword'>char</span> **)split);</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">        <span class='macro'>assert_se(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/test/test-strv.c", 183, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">        printf(<span class='string_literal'>"-%s- --- -%s-\n"</span>, p, quoted); <span class='comment'>/* fprintf deals with NULL, puts does not */</span></td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line">        <span class='macro'>assert_se(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/test/test-strv.c", 185, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">        <span class='macro'>assert_se(streq(p, quoted))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((p),(quoted)) == 0)))<br>,0))) log_assert_failed("streq(p, quoted)", "src/test/test-strv.c"<br>, 186, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">        r = strv_split_extract(&amp;s, quoted, <span class='macro'>WHITESPACE<span class='expansion'>" \t\n\r"</span></span>, EXTRACT_QUOTES);</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">        <span class='macro'>assert_se(r == (<span class='keyword'>int</span>) strv_length(s))<span class='expansion'>do { if ((__builtin_expect(!!(!(r == (int) strv_length(s))),0<br>))) log_assert_failed("r == (int) strv_length(s)", "src/test/test-strv.c"<br>, 189, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">        <span class='macro'>assert_se(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/test/test-strv.c", 190, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">        <span class='macro'>STRV_FOREACH(t, s)<span class='expansion'>for ((t) = (s); (t) &amp;&amp; *(t); (t)++)</span></span> {</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">                <span class='macro'>assert_se(*t)<span class='expansion'>do { if ((__builtin_expect(!!(!(*t)),0))) log_assert_failed("*t"<br>, "src/test/test-strv.c", 192, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line">                <span class='macro'>assert_se(streq(*t, *split))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*t),(*split)) == 0))<br>),0))) log_assert_failed("streq(*t, *split)", "src/test/test-strv.c"<br>, 193, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">                split++;</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_unquote(<span class='keyword'>const</span> <span class='keyword'>char</span> *quoted, <span class='keyword'>char</span> **list) {</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **s;</td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *j;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">        <span class='keyword'>unsigned</span> i = 0;</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line">        <span class='keyword'>char</span> **t;</td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">        r = strv_split_extract(&amp;s, quoted, <span class='macro'>WHITESPACE<span class='expansion'>" \t\n\r"</span></span>, EXTRACT_QUOTES);</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line">        <span class='macro'>assert_se(r == (<span class='keyword'>int</span>) strv_length(list))<span class='expansion'>do { if ((__builtin_expect(!!(!(r == (int) strv_length(list))<br>),0))) log_assert_failed("r == (int) strv_length(list)", "src/test/test-strv.c"<br>, 206, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line">        <span class='macro'>assert_se(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/test/test-strv.c", 207, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">        j = strv_join(s, <span class='string_literal'>" | "</span>);</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">        <span class='macro'>assert_se(j)<span class='expansion'>do { if ((__builtin_expect(!!(!(j)),0))) log_assert_failed("j"<br>, "src/test/test-strv.c", 209, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">        puts(j);</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line">        <span class='macro'>STRV_FOREACH(t, s)<span class='expansion'>for ((t) = (s); (t) &amp;&amp; *(t); (t)++)</span></span></td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">                <span class='macro'>assert_se(streq(list[i++], *t))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((list[i++]),(*t)) == 0<br>))),0))) log_assert_failed("streq(list[i++], *t)", "src/test/test-strv.c"<br>, 213, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">        <span class='macro'>assert_se(list[i] == NULL)<span class='expansion'>do { if ((__builtin_expect(!!(!(list[i] == ((void*)0))),0))) log_assert_failed<br>("list[i] == NULL", "src/test/test-strv.c", 215, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_invalid_unquote(<span class='keyword'>const</span> <span class='keyword'>char</span> *quoted) {</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">        <span class='keyword'>char</span> **s = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line">        r = strv_split_extract(&amp;s, quoted, <span class='macro'>WHITESPACE<span class='expansion'>" \t\n\r"</span></span>, EXTRACT_QUOTES);</td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">        <span class='macro'>assert_se(s == NULL)<span class='expansion'>do { if ((__builtin_expect(!!(!(s == ((void*)0))),0))) log_assert_failed<br>("s == NULL", "src/test/test-strv.c", 223, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">        <span class='macro'>assert_se(r == -EINVAL)<span class='expansion'>do { if ((__builtin_expect(!!(!(r == -22)),0))) log_assert_failed<br>("r == -EINVAL", "src/test/test-strv.c", 224, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_split(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">        <span class='keyword'>char</span> **s;</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">        <span class='keyword'>unsigned</span> i = 0;</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> str[] = <span class='string_literal'>"one,two,three"</span>;</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">        l = strv_split(str, <span class='string_literal'>","</span>);</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">        <span class='macro'>assert_se(l)<span class='expansion'>do { if ((__builtin_expect(!!(!(l)),0))) log_assert_failed("l"<br>, "src/test/test-strv.c", 235, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">        <span class='macro'>STRV_FOREACH(s, l)<span class='expansion'>for ((s) = (l); (s) &amp;&amp; *(s); (s)++)</span></span> {</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">                <span class='macro'>assert_se(streq(*s, input_table_multiple[i++]))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*s),(input_table_multiple<br>[i++])) == 0))),0))) log_assert_failed("streq(*s, input_table_multiple[i++])"<br>, "src/test/test-strv.c", 238, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_split_extract(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *str = <span class='string_literal'>":foo\\:bar::waldo:"</span>;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">        r = strv_split_extract(&amp;l, str, <span class='string_literal'>":"</span>, EXTRACT_DONT_COALESCE_SEPARATORS);</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">        <span class='macro'>assert_se(r == (<span class='keyword'>int</span>) strv_length(l))<span class='expansion'>do { if ((__builtin_expect(!!(!(r == (int) strv_length(l))),0<br>))) log_assert_failed("r == (int) strv_length(l)", "src/test/test-strv.c"<br>, 248, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">        <span class='macro'>assert_se(streq_ptr(l[0], <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(l[0], ""))),0))) log_assert_failed<br>("streq_ptr(l[0], \"\")", "src/test/test-strv.c", 249, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">        <span class='macro'>assert_se(streq_ptr(l[1], <span class='string_literal'>"foo:bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(l[1], "foo:bar"))),<br>0))) log_assert_failed("streq_ptr(l[1], \"foo:bar\")", "src/test/test-strv.c"<br>, 250, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">        <span class='macro'>assert_se(streq_ptr(l[2], <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(l[2], ""))),0))) log_assert_failed<br>("streq_ptr(l[2], \"\")", "src/test/test-strv.c", 251, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line">        <span class='macro'>assert_se(streq_ptr(l[3], <span class='string_literal'>"waldo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(l[3], "waldo"))),0)<br>)) log_assert_failed("streq_ptr(l[3], \"waldo\")", "src/test/test-strv.c"<br>, 252, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">        <span class='macro'>assert_se(streq_ptr(l[4], <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(l[4], ""))),0))) log_assert_failed<br>("streq_ptr(l[4], \"\")", "src/test/test-strv.c", 253, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">        <span class='macro'>assert_se(streq_ptr(l[5], NULL))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(l[5], ((void*)0))))<br>,0))) log_assert_failed("streq_ptr(l[5], NULL)", "src/test/test-strv.c"<br>, 254, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_split_newlines(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">        <span class='keyword'>unsigned</span> i = 0;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line">        <span class='keyword'>char</span> **s;</td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> str[] = <span class='string_literal'>"one\ntwo\nthree"</span>;</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line">        l = strv_split_newlines(str);</td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">        <span class='macro'>assert_se(l)<span class='expansion'>do { if ((__builtin_expect(!!(!(l)),0))) log_assert_failed("l"<br>, "src/test/test-strv.c", 265, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">        <span class='macro'>STRV_FOREACH(s, l)<span class='expansion'>for ((s) = (l); (s) &amp;&amp; *(s); (s)++)</span></span> {</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">                <span class='macro'>assert_se(streq(*s, input_table_multiple[i++]))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*s),(input_table_multiple<br>[i++])) == 0))),0))) log_assert_failed("streq(*s, input_table_multiple[i++])"<br>, "src/test/test-strv.c", 268, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_split_nulstr(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> nulstr[] = <span class='string_literal'>"str0\0str1\0str2\0str3\0"</span>;</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">        l = strv_split_nulstr (nulstr);</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">        <span class='macro'>assert_se(l)<span class='expansion'>do { if ((__builtin_expect(!!(!(l)),0))) log_assert_failed("l"<br>, "src/test/test-strv.c", 277, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">        <span class='macro'>assert_se(streq(l[0], <span class='string_literal'>"str0"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[0]),("str0")) == 0<br>))),0))) log_assert_failed("streq(l[0], \"str0\")", "src/test/test-strv.c"<br>, 279, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">        <span class='macro'>assert_se(streq(l[1], <span class='string_literal'>"str1"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[1]),("str1")) == 0<br>))),0))) log_assert_failed("streq(l[1], \"str1\")", "src/test/test-strv.c"<br>, 280, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">        <span class='macro'>assert_se(streq(l[2], <span class='string_literal'>"str2"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[2]),("str2")) == 0<br>))),0))) log_assert_failed("streq(l[2], \"str2\")", "src/test/test-strv.c"<br>, 281, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">        <span class='macro'>assert_se(streq(l[3], <span class='string_literal'>"str3"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[3]),("str3")) == 0<br>))),0))) log_assert_failed("streq(l[3], \"str3\")", "src/test/test-strv.c"<br>, 282, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_parse_nulstr(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **l = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> nulstr[] = <span class='string_literal'>"fuck\0fuck2\0fuck3\0\0fuck5\0\0xxx"</span>;</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">        l = strv_parse_nulstr(nulstr, <span class='keyword'>sizeof</span>(nulstr)-1);</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line">        <span class='macro'>assert_se(l)<span class='expansion'>do { if ((__builtin_expect(!!(!(l)),0))) log_assert_failed("l"<br>, "src/test/test-strv.c", 290, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">        puts(<span class='string_literal'>"Parse nulstr:"</span>);</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">        strv_print(l);</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">        <span class='macro'>assert_se(streq(l[0], <span class='string_literal'>"fuck"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[0]),("fuck")) == 0<br>))),0))) log_assert_failed("streq(l[0], \"fuck\")", "src/test/test-strv.c"<br>, 294, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">        <span class='macro'>assert_se(streq(l[1], <span class='string_literal'>"fuck2"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[1]),("fuck2")) == 0<br>))),0))) log_assert_failed("streq(l[1], \"fuck2\")", "src/test/test-strv.c"<br>, 295, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">        <span class='macro'>assert_se(streq(l[2], <span class='string_literal'>"fuck3"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[2]),("fuck3")) == 0<br>))),0))) log_assert_failed("streq(l[2], \"fuck3\")", "src/test/test-strv.c"<br>, 296, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        <span class='macro'>assert_se(streq(l[3], <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[3]),("")) == 0))),<br>0))) log_assert_failed("streq(l[3], \"\")", "src/test/test-strv.c"<br>, 297, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line">        <span class='macro'>assert_se(streq(l[4], <span class='string_literal'>"fuck5"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[4]),("fuck5")) == 0<br>))),0))) log_assert_failed("streq(l[4], \"fuck5\")", "src/test/test-strv.c"<br>, 298, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">        <span class='macro'>assert_se(streq(l[5], <span class='string_literal'>""</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[5]),("")) == 0))),<br>0))) log_assert_failed("streq(l[5], \"\")", "src/test/test-strv.c"<br>, 299, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line">        <span class='macro'>assert_se(streq(l[6], <span class='string_literal'>"xxx"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((l[6]),("xxx")) == 0)<br>)),0))) log_assert_failed("streq(l[6], \"xxx\")", "src/test/test-strv.c"<br>, 300, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_overlap(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> * <span class='keyword'>const</span> input_table[] = {</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">                <span class='string_literal'>"one"</span>,</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">                <span class='string_literal'>"two"</span>,</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">                <span class='string_literal'>"three"</span>,</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> * <span class='keyword'>const</span> input_table_overlap[] = {</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">                <span class='string_literal'>"two"</span>,</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line">                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> * <span class='keyword'>const</span> input_table_unique[] = {</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">                <span class='string_literal'>"four"</span>,</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">                <span class='string_literal'>"five"</span>,</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">                <span class='string_literal'>"six"</span>,</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">        <span class='macro'>assert_se(strv_overlap((<span class='keyword'>char</span> **)input_table, (<span class='keyword'>char</span>**)input_table_overlap))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_overlap((char **)input_table<br>, (char**)input_table_overlap))),0))) log_assert_failed("strv_overlap((char **)input_table, (char**)input_table_overlap)"<br>, "src/test/test-strv.c", 321, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">        <span class='macro'>assert_se(!strv_overlap((<span class='keyword'>char</span> **)input_table, (<span class='keyword'>char</span>**)input_table_unique))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_overlap((char **)input_table<br>, (char**)input_table_unique))),0))) log_assert_failed("!strv_overlap((char **)input_table, (char**)input_table_unique)"<br>, "src/test/test-strv.c", 322, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_sort(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span>* input_table[] = {</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">                <span class='string_literal'>"durian"</span>,</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">                <span class='string_literal'>"apple"</span>,</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line">                <span class='string_literal'>"citrus"</span>,</td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">                 <span class='string_literal'>"CAPITAL LETTERS FIRST"</span>,</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">                <span class='string_literal'>"banana"</span>,</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">        strv_sort((<span class='keyword'>char</span> **)input_table);</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">        <span class='macro'>assert_se(streq(input_table[0], <span class='string_literal'>"CAPITAL LETTERS FIRST"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((input_table[0]),("CAPITAL LETTERS FIRST"<br>)) == 0))),0))) log_assert_failed("streq(input_table[0], \"CAPITAL LETTERS FIRST\")"<br>, "src/test/test-strv.c", 337, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line">        <span class='macro'>assert_se(streq(input_table[1], <span class='string_literal'>"apple"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((input_table[1]),("apple"<br>)) == 0))),0))) log_assert_failed("streq(input_table[1], \"apple\")"<br>, "src/test/test-strv.c", 338, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">        <span class='macro'>assert_se(streq(input_table[2], <span class='string_literal'>"banana"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((input_table[2]),("banana"<br>)) == 0))),0))) log_assert_failed("streq(input_table[2], \"banana\")"<br>, "src/test/test-strv.c", 339, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">        <span class='macro'>assert_se(streq(input_table[3], <span class='string_literal'>"citrus"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((input_table[3]),("citrus"<br>)) == 0))),0))) log_assert_failed("streq(input_table[3], \"citrus\")"<br>, "src/test/test-strv.c", 340, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">        <span class='macro'>assert_se(streq(input_table[4], <span class='string_literal'>"durian"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((input_table[4]),("durian"<br>)) == 0))),0))) log_assert_failed("streq(input_table[4], \"durian\")"<br>, "src/test/test-strv.c", 341, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_extend_strv_concat(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">        a = strv_new(<span class='string_literal'>"without"</span>, <span class='string_literal'>"suffix"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">        b = strv_new(<span class='string_literal'>"with"</span>, <span class='string_literal'>"suffix"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 349, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">        <span class='macro'>assert_se(b)<span class='expansion'>do { if ((__builtin_expect(!!(!(b)),0))) log_assert_failed("b"<br>, "src/test/test-strv.c", 350, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">        <span class='macro'>assert_se(strv_extend_strv_concat(&amp;a, b, <span class='string_literal'>"_suffix"</span>) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend_strv_concat(&amp;<br>a, b, "_suffix") &gt;= 0)),0))) log_assert_failed("strv_extend_strv_concat(&amp;a, b, \"_suffix\") &gt;= 0"<br>, "src/test/test-strv.c", 352, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">        <span class='macro'>assert_se(streq(a[0], <span class='string_literal'>"without"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[0]),("without")) ==<br> 0))),0))) log_assert_failed("streq(a[0], \"without\")", "src/test/test-strv.c"<br>, 354, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">        <span class='macro'>assert_se(streq(a[1], <span class='string_literal'>"suffix"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[1]),("suffix")) ==<br> 0))),0))) log_assert_failed("streq(a[1], \"suffix\")", "src/test/test-strv.c"<br>, 355, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">        <span class='macro'>assert_se(streq(a[2], <span class='string_literal'>"with_suffix"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[2]),("with_suffix"<br>)) == 0))),0))) log_assert_failed("streq(a[2], \"with_suffix\")"<br>, "src/test/test-strv.c", 356, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">        <span class='macro'>assert_se(streq(a[3], <span class='string_literal'>"suffix_suffix"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[3]),("suffix_suffix"<br>)) == 0))),0))) log_assert_failed("streq(a[3], \"suffix_suffix\")"<br>, "src/test/test-strv.c", 357, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_extend_strv(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **n = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">        a = strv_new(<span class='string_literal'>"abc"</span>, <span class='string_literal'>"def"</span>, <span class='string_literal'>"ghi"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">        b = strv_new(<span class='string_literal'>"jkl"</span>, <span class='string_literal'>"mno"</span>, <span class='string_literal'>"abc"</span>, <span class='string_literal'>"pqr"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 365, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">        <span class='macro'>assert_se(b)<span class='expansion'>do { if ((__builtin_expect(!!(!(b)),0))) log_assert_failed("b"<br>, "src/test/test-strv.c", 366, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        <span class='macro'>assert_se(strv_extend_strv(&amp;a, b, true) == 3)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend_strv(&amp;a, b, 1<br>) == 3)),0))) log_assert_failed("strv_extend_strv(&amp;a, b, true) == 3"<br>, "src/test/test-strv.c", 368, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        <span class='macro'>assert_se(streq(a[0], <span class='string_literal'>"abc"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[0]),("abc")) == 0)<br>)),0))) log_assert_failed("streq(a[0], \"abc\")", "src/test/test-strv.c"<br>, 370, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">        <span class='macro'>assert_se(streq(a[1], <span class='string_literal'>"def"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[1]),("def")) == 0)<br>)),0))) log_assert_failed("streq(a[1], \"def\")", "src/test/test-strv.c"<br>, 371, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line">        <span class='macro'>assert_se(streq(a[2], <span class='string_literal'>"ghi"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[2]),("ghi")) == 0)<br>)),0))) log_assert_failed("streq(a[2], \"ghi\")", "src/test/test-strv.c"<br>, 372, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">        <span class='macro'>assert_se(streq(a[3], <span class='string_literal'>"jkl"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[3]),("jkl")) == 0)<br>)),0))) log_assert_failed("streq(a[3], \"jkl\")", "src/test/test-strv.c"<br>, 373, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">        <span class='macro'>assert_se(streq(a[4], <span class='string_literal'>"mno"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[4]),("mno")) == 0)<br>)),0))) log_assert_failed("streq(a[4], \"mno\")", "src/test/test-strv.c"<br>, 374, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">        <span class='macro'>assert_se(streq(a[5], <span class='string_literal'>"pqr"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[5]),("pqr")) == 0)<br>)),0))) log_assert_failed("streq(a[5], \"pqr\")", "src/test/test-strv.c"<br>, 375, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">        <span class='macro'>assert_se(strv_length(a) == 6)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_length(a) == 6)),0))) log_assert_failed<br>("strv_length(a) == 6", "src/test/test-strv.c", 376, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">        <span class='macro'>assert_se(strv_extend_strv(&amp;n, b, false) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend_strv(&amp;n, b, 0<br>) &gt;= 0)),0))) log_assert_failed("strv_extend_strv(&amp;n, b, false) &gt;= 0"<br>, "src/test/test-strv.c", 378, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        <span class='macro'>assert_se(streq(n[0], <span class='string_literal'>"jkl"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((n[0]),("jkl")) == 0)<br>)),0))) log_assert_failed("streq(n[0], \"jkl\")", "src/test/test-strv.c"<br>, 379, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">        <span class='macro'>assert_se(streq(n[1], <span class='string_literal'>"mno"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((n[1]),("mno")) == 0)<br>)),0))) log_assert_failed("streq(n[1], \"mno\")", "src/test/test-strv.c"<br>, 380, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">        <span class='macro'>assert_se(streq(n[2], <span class='string_literal'>"abc"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((n[2]),("abc")) == 0)<br>)),0))) log_assert_failed("streq(n[2], \"abc\")", "src/test/test-strv.c"<br>, 381, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">        <span class='macro'>assert_se(streq(n[3], <span class='string_literal'>"pqr"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((n[3]),("pqr")) == 0)<br>)),0))) log_assert_failed("streq(n[3], \"pqr\")", "src/test/test-strv.c"<br>, 382, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">        <span class='macro'>assert_se(strv_length(n) == 4)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_length(n) == 4)),0))) log_assert_failed<br>("strv_length(n) == 4", "src/test/test-strv.c", 383, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_extend(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        a = strv_new(<span class='string_literal'>"test"</span>, <span class='string_literal'>"test1"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 390, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">        <span class='macro'>assert_se(strv_extend(&amp;a, <span class='string_literal'>"test2"</span>) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend(&amp;a, "test2") &gt;=<br> 0)),0))) log_assert_failed("strv_extend(&amp;a, \"test2\") &gt;= 0"<br>, "src/test/test-strv.c", 391, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">        <span class='macro'>assert_se(strv_extend(&amp;b, <span class='string_literal'>"test3"</span>) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend(&amp;b, "test3") &gt;=<br> 0)),0))) log_assert_failed("strv_extend(&amp;b, \"test3\") &gt;= 0"<br>, "src/test/test-strv.c", 392, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">        <span class='macro'>assert_se(streq(a[0], <span class='string_literal'>"test"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[0]),("test")) == 0<br>))),0))) log_assert_failed("streq(a[0], \"test\")", "src/test/test-strv.c"<br>, 394, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">        <span class='macro'>assert_se(streq(a[1], <span class='string_literal'>"test1"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[1]),("test1")) == 0<br>))),0))) log_assert_failed("streq(a[1], \"test1\")", "src/test/test-strv.c"<br>, 395, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">        <span class='macro'>assert_se(streq(a[2], <span class='string_literal'>"test2"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[2]),("test2")) == 0<br>))),0))) log_assert_failed("streq(a[2], \"test2\")", "src/test/test-strv.c"<br>, 396, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">        <span class='macro'>assert_se(streq(b[0], <span class='string_literal'>"test3"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((b[0]),("test3")) == 0<br>))),0))) log_assert_failed("streq(b[0], \"test3\")", "src/test/test-strv.c"<br>, 397, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_extendf(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">        a = strv_new(<span class='string_literal'>"test"</span>, <span class='string_literal'>"test1"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 404, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">        <span class='macro'>assert_se(strv_extendf(&amp;a, <span class='string_literal'>"test2 %s %d %s"</span>, <span class='string_literal'>"foo"</span>, 128, <span class='string_literal'>"bar"</span>) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extendf(&amp;a, "test2 %s %d %s"<br>, "foo", 128, "bar") &gt;= 0)),0))) log_assert_failed("strv_extendf(&amp;a, \"test2 %s %d %s\", \"foo\", 128, \"bar\") &gt;= 0"<br>, "src/test/test-strv.c", 405, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">        <span class='macro'>assert_se(strv_extendf(&amp;b, <span class='string_literal'>"test3 %s %s %d"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"foo"</span>, 128) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extendf(&amp;b, "test3 %s %s %d"<br>, "bar", "foo", 128) &gt;= 0)),0))) log_assert_failed("strv_extendf(&amp;b, \"test3 %s %s %d\", \"bar\", \"foo\", 128) &gt;= 0"<br>, "src/test/test-strv.c", 406, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">        <span class='macro'>assert_se(streq(a[0], <span class='string_literal'>"test"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[0]),("test")) == 0<br>))),0))) log_assert_failed("streq(a[0], \"test\")", "src/test/test-strv.c"<br>, 408, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">        <span class='macro'>assert_se(streq(a[1], <span class='string_literal'>"test1"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[1]),("test1")) == 0<br>))),0))) log_assert_failed("streq(a[1], \"test1\")", "src/test/test-strv.c"<br>, 409, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">        <span class='macro'>assert_se(streq(a[2], <span class='string_literal'>"test2 foo 128 bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[2]),("test2 foo 128 bar"<br>)) == 0))),0))) log_assert_failed("streq(a[2], \"test2 foo 128 bar\")"<br>, "src/test/test-strv.c", 410, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">        <span class='macro'>assert_se(streq(b[0], <span class='string_literal'>"test3 bar foo 128"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((b[0]),("test3 bar foo 128"<br>)) == 0))),0))) log_assert_failed("streq(b[0], \"test3 bar foo 128\")"<br>, "src/test/test-strv.c", 411, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_foreach(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a;</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">        <span class='keyword'>unsigned</span> i = 0;</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">        <span class='keyword'>char</span> **check;</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">        a = strv_new(<span class='string_literal'>"one"</span>, <span class='string_literal'>"two"</span>, <span class='string_literal'>"three"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 421, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">        <span class='macro'>STRV_FOREACH(check, a)<span class='expansion'>for ((check) = (a); (check) &amp;&amp; *(check); (check)++)</span></span> {</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">                <span class='macro'>assert_se(streq(*check, input_table_multiple[i++]))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*check),(input_table_multiple<br>[i++])) == 0))),0))) log_assert_failed("streq(*check, input_table_multiple[i++])"<br>, "src/test/test-strv.c", 424, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_foreach_backwards(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a;</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">        <span class='keyword'>unsigned</span> i = 2;</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">        <span class='keyword'>char</span> **check;</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">        a = strv_new(<span class='string_literal'>"one"</span>, <span class='string_literal'>"two"</span>, <span class='string_literal'>"three"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 435, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">        <span class='macro'>STRV_FOREACH_BACKWARDS(check, a)<span class='expansion'>for ((check) = (a); (check) &amp;&amp; *(check); (check)++) ;<br> for ((check)--; (a) &amp;&amp; ((check) &gt;= (a)); (check)--<br>)</span></span> {</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">                <span class='macro'>assert_se(streq_ptr(*check, input_table_multiple[i--]))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(*check, input_table_multiple<br>[i--]))),0))) log_assert_failed("streq_ptr(*check, input_table_multiple[i--])"<br>, "src/test/test-strv.c", 438, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_foreach_pair(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">        <span class='keyword'>char</span> **x, **y;</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">        a = strv_new(<span class='string_literal'>"pair_one"</span>,   <span class='string_literal'>"pair_one"</span>,</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">                     <span class='string_literal'>"pair_two"</span>,   <span class='string_literal'>"pair_two"</span>,</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">                     <span class='string_literal'>"pair_three"</span>, <span class='string_literal'>"pair_three"</span>,</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">                     <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">        <span class='macro'>STRV_FOREACH_PAIR(x, y, a)<span class='expansion'>for ((x) = (a), (y) = (x+1); (x) &amp;&amp; *(x) &amp;&amp; *<br>(y); (x) += 2, (y) = (x + 1))</span></span> {</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">                <span class='macro'>assert_se(streq(*x, *y))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((*x),(*y)) == 0))),0)<br>)) log_assert_failed("streq(*x, *y)", "src/test/test-strv.c",<br> 452, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_from_stdarg_alloca_one(<span class='keyword'>char</span> **l, <span class='keyword'>const</span> <span class='keyword'>char</span> *first, ...) {</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">        <span class='keyword'>char</span> **j;</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">        <span class='keyword'>unsigned</span> i;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">        j = <span class='macro'>strv_from_stdarg_alloca(first)<span class='expansion'>({ char **_l; if (!first) _l = (char**) &amp;first; else { unsigned<br> _n; va_list _ap; _n = 1; __builtin_va_start(_ap, first); while<br> (__builtin_va_arg(_ap, char*)) _n++; __builtin_va_end(_ap); _l<br> = ((char**) __builtin_alloca (sizeof(char*)*(_n+1))); _l[_n =<br> 0] = (char*) first; __builtin_va_start(_ap, first); for (;;)<br> { _l[++_n] = __builtin_va_arg(_ap, char*); if (!_l[_n]) break<br>; } __builtin_va_end(_ap); } _l; })</span></span>;</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">        <span class='keyword'>for</span> (i = 0;; i++) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#EndPath" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">                <span class='macro'>assert_se(streq_ptr(l[i], j[i]))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(l[i], j[i]))),0))) log_assert_failed<br>("streq_ptr(l[i], j[i])", "src/test/test-strv.c", 463, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Function call argument is an uninitialized value</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">                <span class='keyword'>if</span> (!l[i])</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_from_stdarg_alloca(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line">        test_strv_from_stdarg_alloca_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", ((void*)0) }))</span></span>, <span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">        test_strv_from_stdarg_alloca_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", ((void*)0) }))</span></span>, <span class='string_literal'>"foo"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">        test_strv_from_stdarg_alloca_one(<span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_push_prepend(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line">        a = strv_new(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"three"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        <span class='macro'>assert_se(strv_push_prepend(&amp;a, strdup(<span class='string_literal'>"first"</span>)) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_push_prepend(&amp;a, strdup<br>("first")) &gt;= 0)),0))) log_assert_failed("strv_push_prepend(&amp;a, strdup(\"first\")) &gt;= 0"<br>, "src/test/test-strv.c", 481, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line">        <span class='macro'>assert_se(streq(a[0], <span class='string_literal'>"first"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[0]),("first")) == 0<br>))),0))) log_assert_failed("streq(a[0], \"first\")", "src/test/test-strv.c"<br>, 482, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">        <span class='macro'>assert_se(streq(a[1], <span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[1]),("foo")) == 0)<br>)),0))) log_assert_failed("streq(a[1], \"foo\")", "src/test/test-strv.c"<br>, 483, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='macro'>assert_se(streq(a[2], <span class='string_literal'>"bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[2]),("bar")) == 0)<br>)),0))) log_assert_failed("streq(a[2], \"bar\")", "src/test/test-strv.c"<br>, 484, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">        <span class='macro'>assert_se(streq(a[3], <span class='string_literal'>"three"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[3]),("three")) == 0<br>))),0))) log_assert_failed("streq(a[3], \"three\")", "src/test/test-strv.c"<br>, 485, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        <span class='macro'>assert_se(!a[4])<span class='expansion'>do { if ((__builtin_expect(!!(!(!a[4])),0))) log_assert_failed<br>("!a[4]", "src/test/test-strv.c", 486, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">        <span class='macro'>assert_se(strv_consume_prepend(&amp;a, strdup(<span class='string_literal'>"first2"</span>)) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_consume_prepend(&amp;a, strdup<br>("first2")) &gt;= 0)),0))) log_assert_failed("strv_consume_prepend(&amp;a, strdup(\"first2\")) &gt;= 0"<br>, "src/test/test-strv.c", 488, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">        <span class='macro'>assert_se(streq(a[0], <span class='string_literal'>"first2"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[0]),("first2")) ==<br> 0))),0))) log_assert_failed("streq(a[0], \"first2\")", "src/test/test-strv.c"<br>, 489, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">        <span class='macro'>assert_se(streq(a[1], <span class='string_literal'>"first"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[1]),("first")) == 0<br>))),0))) log_assert_failed("streq(a[1], \"first\")", "src/test/test-strv.c"<br>, 490, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">        <span class='macro'>assert_se(streq(a[2], <span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[2]),("foo")) == 0)<br>)),0))) log_assert_failed("streq(a[2], \"foo\")", "src/test/test-strv.c"<br>, 491, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">        <span class='macro'>assert_se(streq(a[3], <span class='string_literal'>"bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[3]),("bar")) == 0)<br>)),0))) log_assert_failed("streq(a[3], \"bar\")", "src/test/test-strv.c"<br>, 492, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">        <span class='macro'>assert_se(streq(a[4], <span class='string_literal'>"three"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((a[4]),("three")) == 0<br>))),0))) log_assert_failed("streq(a[4], \"three\")", "src/test/test-strv.c"<br>, 493, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        <span class='macro'>assert_se(!a[5])<span class='expansion'>do { if ((__builtin_expect(!!(!(!a[5])),0))) log_assert_failed<br>("!a[5]", "src/test/test-strv.c", 494, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_push(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">        <span class='keyword'>char</span> *i, *j;</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">        <span class='macro'>assert_se(i = strdup(<span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(i = strdup("foo"))),0))) log_assert_failed<br>("i = strdup(\"foo\")", "src/test/test-strv.c", 501, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">        <span class='macro'>assert_se(strv_push(&amp;a, i) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_push(&amp;a, i) &gt;= 0)<br>),0))) log_assert_failed("strv_push(&amp;a, i) &gt;= 0", "src/test/test-strv.c"<br>, 502, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">        <span class='macro'>assert_se(i = strdup(<span class='string_literal'>"a"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(i = strdup("a"))),0))) log_assert_failed<br>("i = strdup(\"a\")", "src/test/test-strv.c", 504, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">        <span class='macro'>assert_se(j = strdup(<span class='string_literal'>"b"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(j = strdup("b"))),0))) log_assert_failed<br>("j = strdup(\"b\")", "src/test/test-strv.c", 505, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">        <span class='macro'>assert_se(strv_push_pair(&amp;a, i, j) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_push_pair(&amp;a, i, j) &gt;=<br> 0)),0))) log_assert_failed("strv_push_pair(&amp;a, i, j) &gt;= 0"<br>, "src/test/test-strv.c", 506, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[0], <span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[0], "foo"))),0)))<br> log_assert_failed("streq_ptr(a[0], \"foo\")", "src/test/test-strv.c"<br>, 508, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[1], <span class='string_literal'>"a"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[1], "a"))),0))) log_assert_failed<br>("streq_ptr(a[1], \"a\")", "src/test/test-strv.c", 509, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[2], <span class='string_literal'>"b"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[2], "b"))),0))) log_assert_failed<br>("streq_ptr(a[2], \"b\")", "src/test/test-strv.c", 510, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">        <span class='macro'>assert_se(streq_ptr(a[3], NULL))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(a[3], ((void*)0))))<br>,0))) log_assert_failed("streq_ptr(a[3], NULL)", "src/test/test-strv.c"<br>, 511, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_equal(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **c = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">        a = strv_new(<span class='string_literal'>"one"</span>, <span class='string_literal'>"two"</span>, <span class='string_literal'>"three"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 520, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">        b = strv_new(<span class='string_literal'>"one"</span>, <span class='string_literal'>"two"</span>, <span class='string_literal'>"three"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 522, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">        c = strv_new(<span class='string_literal'>"one"</span>, <span class='string_literal'>"two"</span>, <span class='string_literal'>"three"</span>, <span class='string_literal'>"four"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 524, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">        <span class='macro'>assert_se(strv_equal(a, a))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_equal(a, a))),0))) log_assert_failed<br>("strv_equal(a, a)", "src/test/test-strv.c", 526, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">        <span class='macro'>assert_se(strv_equal(a, b))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_equal(a, b))),0))) log_assert_failed<br>("strv_equal(a, b)", "src/test/test-strv.c", 527, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">        <span class='macro'>assert_se(strv_equal(NULL, NULL))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_equal(((void*)0), ((void<br>*)0)))),0))) log_assert_failed("strv_equal(NULL, NULL)", "src/test/test-strv.c"<br>, 528, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        <span class='macro'>assert_se(!strv_equal(a, c))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_equal(a, c))),0))) log_assert_failed<br>("!strv_equal(a, c)", "src/test/test-strv.c", 530, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">        <span class='macro'>assert_se(!strv_equal(b, c))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_equal(b, c))),0))) log_assert_failed<br>("!strv_equal(b, c)", "src/test/test-strv.c", 531, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">        <span class='macro'>assert_se(!strv_equal(b, NULL))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_equal(b, ((void*)0)))),<br>0))) log_assert_failed("!strv_equal(b, NULL)", "src/test/test-strv.c"<br>, 532, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_is_uniq(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **c = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **d = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">        a = strv_new(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 539, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">        <span class='macro'>assert_se(strv_is_uniq(a))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_is_uniq(a))),0))) log_assert_failed<br>("strv_is_uniq(a)", "src/test/test-strv.c", 540, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">        b = strv_new(<span class='string_literal'>"foo"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line">        <span class='macro'>assert_se(b)<span class='expansion'>do { if ((__builtin_expect(!!(!(b)),0))) log_assert_failed("b"<br>, "src/test/test-strv.c", 543, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">        <span class='macro'>assert_se(strv_is_uniq(b))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_is_uniq(b))),0))) log_assert_failed<br>("strv_is_uniq(b)", "src/test/test-strv.c", 544, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">        c = strv_new(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">        <span class='macro'>assert_se(c)<span class='expansion'>do { if ((__builtin_expect(!!(!(c)),0))) log_assert_failed("c"<br>, "src/test/test-strv.c", 547, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">        <span class='macro'>assert_se(strv_is_uniq(c))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_is_uniq(c))),0))) log_assert_failed<br>("strv_is_uniq(c)", "src/test/test-strv.c", 548, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">        d = strv_new(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"waldo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"piep"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">        <span class='macro'>assert_se(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/test/test-strv.c", 551, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">        <span class='macro'>assert_se(!strv_is_uniq(d))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_is_uniq(d))),0))) log_assert_failed<br>("!strv_is_uniq(d)", "src/test/test-strv.c", 552, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_reverse(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **a = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **c = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, **d = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">        a = strv_new(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">        <span class='macro'>assert_se(a)<span class='expansion'>do { if ((__builtin_expect(!!(!(a)),0))) log_assert_failed("a"<br>, "src/test/test-strv.c", 559, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">        strv_reverse(a);</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">        <span class='macro'>assert_se(strv_isempty(a))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_isempty(a))),0))) log_assert_failed<br>("strv_isempty(a)", "src/test/test-strv.c", 562, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">        b = strv_new(<span class='string_literal'>"foo"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">        <span class='macro'>assert_se(b)<span class='expansion'>do { if ((__builtin_expect(!!(!(b)),0))) log_assert_failed("b"<br>, "src/test/test-strv.c", 565, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">        strv_reverse(b);</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">        <span class='macro'>assert_se(streq_ptr(b[0], <span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(b[0], "foo"))),0)))<br> log_assert_failed("streq_ptr(b[0], \"foo\")", "src/test/test-strv.c"<br>, 567, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">        <span class='macro'>assert_se(streq_ptr(b[1], NULL))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(b[1], ((void*)0))))<br>,0))) log_assert_failed("streq_ptr(b[1], NULL)", "src/test/test-strv.c"<br>, 568, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">        c = strv_new(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">        <span class='macro'>assert_se(c)<span class='expansion'>do { if ((__builtin_expect(!!(!(c)),0))) log_assert_failed("c"<br>, "src/test/test-strv.c", 571, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">        strv_reverse(c);</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">        <span class='macro'>assert_se(streq_ptr(c[0], <span class='string_literal'>"bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(c[0], "bar"))),0)))<br> log_assert_failed("streq_ptr(c[0], \"bar\")", "src/test/test-strv.c"<br>, 573, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">        <span class='macro'>assert_se(streq_ptr(c[1], <span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(c[1], "foo"))),0)))<br> log_assert_failed("streq_ptr(c[1], \"foo\")", "src/test/test-strv.c"<br>, 574, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">        <span class='macro'>assert_se(streq_ptr(c[2], NULL))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(c[2], ((void*)0))))<br>,0))) log_assert_failed("streq_ptr(c[2], NULL)", "src/test/test-strv.c"<br>, 575, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">        d = strv_new(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"waldo"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">        <span class='macro'>assert_se(d)<span class='expansion'>do { if ((__builtin_expect(!!(!(d)),0))) log_assert_failed("d"<br>, "src/test/test-strv.c", 578, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">        strv_reverse(d);</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">        <span class='macro'>assert_se(streq_ptr(d[0], <span class='string_literal'>"waldo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(d[0], "waldo"))),0)<br>)) log_assert_failed("streq_ptr(d[0], \"waldo\")", "src/test/test-strv.c"<br>, 580, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">        <span class='macro'>assert_se(streq_ptr(d[1], <span class='string_literal'>"bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(d[1], "bar"))),0)))<br> log_assert_failed("streq_ptr(d[1], \"bar\")", "src/test/test-strv.c"<br>, 581, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">        <span class='macro'>assert_se(streq_ptr(d[2], <span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(d[2], "foo"))),0)))<br> log_assert_failed("streq_ptr(d[2], \"foo\")", "src/test/test-strv.c"<br>, 582, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">        <span class='macro'>assert_se(streq_ptr(d[3], NULL))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(d[3], ((void*)0))))<br>,0))) log_assert_failed("streq_ptr(d[3], NULL)", "src/test/test-strv.c"<br>, 583, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_shell_escape(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **v = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">        v = strv_new(<span class='string_literal'>"foo:bar"</span>, <span class='string_literal'>"bar,baz"</span>, <span class='string_literal'>"wal\\do"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">        <span class='macro'>assert_se(v)<span class='expansion'>do { if ((__builtin_expect(!!(!(v)),0))) log_assert_failed("v"<br>, "src/test/test-strv.c", 590, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">        <span class='macro'>assert_se(strv_shell_escape(v, <span class='string_literal'>",:"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_shell_escape(v, ",:"))),<br>0))) log_assert_failed("strv_shell_escape(v, \",:\")", "src/test/test-strv.c"<br>, 591, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">        <span class='macro'>assert_se(streq_ptr(v[0], <span class='string_literal'>"foo\\:bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(v[0], "foo\\:bar"))<br>),0))) log_assert_failed("streq_ptr(v[0], \"foo\\\\:bar\")", "src/test/test-strv.c"<br>, 592, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">        <span class='macro'>assert_se(streq_ptr(v[1], <span class='string_literal'>"bar\\,baz"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(v[1], "bar\\,baz"))<br>),0))) log_assert_failed("streq_ptr(v[1], \"bar\\\\,baz\")", "src/test/test-strv.c"<br>, 593, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">        <span class='macro'>assert_se(streq_ptr(v[2], <span class='string_literal'>"wal\\\\do"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(v[2], "wal\\\\do"))<br>),0))) log_assert_failed("streq_ptr(v[2], \"wal\\\\\\\\do\")"<br>, "src/test/test-strv.c", 594, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">        <span class='macro'>assert_se(streq_ptr(v[3], NULL))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(v[3], ((void*)0))))<br>,0))) log_assert_failed("streq_ptr(v[3], NULL)", "src/test/test-strv.c"<br>, 595, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_skip_one(<span class='keyword'>char</span> **a, size_t n, <span class='keyword'>char</span> **b) {</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">        a = strv_skip(a, n);</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">        <span class='macro'>assert_se(strv_equal(a, b))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_equal(a, b))),0))) log_assert_failed<br>("strv_equal(a, b)", "src/test/test-strv.c", 600, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_skip(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", "baz", ((void*)0) }<br>))</span></span>, 0, <span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", "baz", ((void*)0) }<br>))</span></span>);</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", "baz", ((void*)0) }<br>))</span></span>, 1, <span class='macro'>STRV_MAKE(<span class='string_literal'>"bar"</span>, <span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "bar", "baz", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", "baz", ((void*)0) }<br>))</span></span>, 2, <span class='macro'>STRV_MAKE(<span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "baz", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", "baz", ((void*)0) }<br>))</span></span>, 3, <span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", "baz", ((void*)0) }<br>))</span></span>, 4, <span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"baz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", "baz", ((void*)0) }<br>))</span></span>, 55, <span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"quux"</span>)<span class='expansion'>((char**) ((const char*[]) { "quux", ((void*)0) }))</span></span>, 0, <span class='macro'>STRV_MAKE(<span class='string_literal'>"quux"</span>)<span class='expansion'>((char**) ((const char*[]) { "quux", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"quux"</span>)<span class='expansion'>((char**) ((const char*[]) { "quux", ((void*)0) }))</span></span>, 1, <span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"quux"</span>)<span class='expansion'>((char**) ((const char*[]) { "quux", ((void*)0) }))</span></span>, 55, <span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>, 0, <span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>, 1, <span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">        test_strv_skip_one(<span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>, 55, <span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_extend_n(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **v = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">        v = strv_new(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        <span class='macro'>assert_se(v)<span class='expansion'>do { if ((__builtin_expect(!!(!(v)),0))) log_assert_failed("v"<br>, "src/test/test-strv.c", 624, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">        <span class='macro'>assert_se(strv_extend_n(&amp;v, <span class='string_literal'>"waldo"</span>, 3) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend_n(&amp;v, "waldo"<br>, 3) &gt;= 0)),0))) log_assert_failed("strv_extend_n(&amp;v, \"waldo\", 3) &gt;= 0"<br>, "src/test/test-strv.c", 626, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">        <span class='macro'>assert_se(strv_extend_n(&amp;v, <span class='string_literal'>"piep"</span>, 2) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend_n(&amp;v, "piep",<br> 2) &gt;= 0)),0))) log_assert_failed("strv_extend_n(&amp;v, \"piep\", 2) &gt;= 0"<br>, "src/test/test-strv.c", 627, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">        <span class='macro'>assert_se(streq(v[0], <span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v[0]),("foo")) == 0)<br>)),0))) log_assert_failed("streq(v[0], \"foo\")", "src/test/test-strv.c"<br>, 629, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">        <span class='macro'>assert_se(streq(v[1], <span class='string_literal'>"bar"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v[1]),("bar")) == 0)<br>)),0))) log_assert_failed("streq(v[1], \"bar\")", "src/test/test-strv.c"<br>, 630, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">        <span class='macro'>assert_se(streq(v[2], <span class='string_literal'>"waldo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v[2]),("waldo")) == 0<br>))),0))) log_assert_failed("streq(v[2], \"waldo\")", "src/test/test-strv.c"<br>, 631, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">        <span class='macro'>assert_se(streq(v[3], <span class='string_literal'>"waldo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v[3]),("waldo")) == 0<br>))),0))) log_assert_failed("streq(v[3], \"waldo\")", "src/test/test-strv.c"<br>, 632, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">        <span class='macro'>assert_se(streq(v[4], <span class='string_literal'>"waldo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v[4]),("waldo")) == 0<br>))),0))) log_assert_failed("streq(v[4], \"waldo\")", "src/test/test-strv.c"<br>, 633, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">        <span class='macro'>assert_se(streq(v[5], <span class='string_literal'>"piep"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v[5]),("piep")) == 0<br>))),0))) log_assert_failed("streq(v[5], \"piep\")", "src/test/test-strv.c"<br>, 634, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">        <span class='macro'>assert_se(streq(v[6], <span class='string_literal'>"piep"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v[6]),("piep")) == 0<br>))),0))) log_assert_failed("streq(v[6], \"piep\")", "src/test/test-strv.c"<br>, 635, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">        <span class='macro'>assert_se(v[7] == NULL)<span class='expansion'>do { if ((__builtin_expect(!!(!(v[7] == ((void*)0))),0))) log_assert_failed<br>("v[7] == NULL", "src/test/test-strv.c", 636, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">        v = strv_free(v);</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">        <span class='macro'>assert_se(strv_extend_n(&amp;v, <span class='string_literal'>"foo"</span>, 1) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend_n(&amp;v, "foo", 1<br>) &gt;= 0)),0))) log_assert_failed("strv_extend_n(&amp;v, \"foo\", 1) &gt;= 0"<br>, "src/test/test-strv.c", 640, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">        <span class='macro'>assert_se(strv_extend_n(&amp;v, <span class='string_literal'>"bar"</span>, 0) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_extend_n(&amp;v, "bar", 0<br>) &gt;= 0)),0))) log_assert_failed("strv_extend_n(&amp;v, \"bar\", 0) &gt;= 0"<br>, "src/test/test-strv.c", 641, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">        <span class='macro'>assert_se(streq(v[0], <span class='string_literal'>"foo"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((v[0]),("foo")) == 0)<br>)),0))) log_assert_failed("streq(v[0], \"foo\")", "src/test/test-strv.c"<br>, 643, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">        <span class='macro'>assert_se(v[1] == NULL)<span class='expansion'>do { if ((__builtin_expect(!!(!(v[1] == ((void*)0))),0))) log_assert_failed<br>("v[1] == NULL", "src/test/test-strv.c", 644, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_make_nulstr_one(<span class='keyword'>char</span> **l) {</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *b = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *c = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **q = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *s = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">        size_t n, m;</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">        <span class='keyword'>unsigned</span> i = 0;</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">        <span class='macro'>assert_se(strv_make_nulstr(l, &amp;b, &amp;n) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_make_nulstr(l, &amp;b, &amp;<br>n) &gt;= 0)),0))) log_assert_failed("strv_make_nulstr(l, &amp;b, &amp;n) &gt;= 0"<br>, "src/test/test-strv.c", 654, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">        <span class='macro'>assert_se(q = strv_parse_nulstr(b, n))<span class='expansion'>do { if ((__builtin_expect(!!(!(q = strv_parse_nulstr(b, n)))<br>,0))) log_assert_failed("q = strv_parse_nulstr(b, n)", "src/test/test-strv.c"<br>, 655, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">        <span class='macro'>assert_se(strv_equal(l, q))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_equal(l, q))),0))) log_assert_failed<br>("strv_equal(l, q)", "src/test/test-strv.c", 656, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">        <span class='macro'>assert_se(strv_make_nulstr(q, &amp;c, &amp;m) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_make_nulstr(q, &amp;c, &amp;<br>m) &gt;= 0)),0))) log_assert_failed("strv_make_nulstr(q, &amp;c, &amp;m) &gt;= 0"<br>, "src/test/test-strv.c", 658, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">        <span class='macro'>assert_se(m == n)<span class='expansion'>do { if ((__builtin_expect(!!(!(m == n)),0))) log_assert_failed<br>("m == n", "src/test/test-strv.c", 659, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">        <span class='macro'>assert_se(memcmp(b, c, m) == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(memcmp(b, c, m) == 0)),0))) log_assert_failed<br>("memcmp(b, c, m) == 0", "src/test/test-strv.c", 660, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">        <span class='macro'>NULSTR_FOREACH(s, b)<span class='expansion'>for ((s) = (b); (s) &amp;&amp; *(s); (s) = strchr((s), 0)+1)</span></span></td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">                <span class='macro'>assert_se(streq(s, l[i++]))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((s),(l[i++])) == 0)))<br>,0))) log_assert_failed("streq(s, l[i++])", "src/test/test-strv.c"<br>, 663, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">        <span class='macro'>assert_se(i == strv_length(l))<span class='expansion'>do { if ((__builtin_expect(!!(!(i == strv_length(l))),0))) log_assert_failed<br>("i == strv_length(l)", "src/test/test-strv.c", 664, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_make_nulstr(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">        test_strv_make_nulstr_one(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN669">669</td><td class="line">        test_strv_make_nulstr_one(<span class='macro'>STRV_MAKE(NULL)<span class='expansion'>((char**) ((const char*[]) { ((void*)0), ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">        test_strv_make_nulstr_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">        test_strv_make_nulstr_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN672">672</td><td class="line">        test_strv_make_nulstr_one(<span class='macro'>STRV_MAKE(<span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"quuux"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo", "bar", "quuux", ((void*)0<br>) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN675">675</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_foreach_string(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> * <span class='keyword'>const</span> t[] = {</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">                <span class='string_literal'>"foo"</span>,</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line">                <span class='string_literal'>"bar"</span>,</td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">                <span class='string_literal'>"waldo"</span>,</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">                <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span></td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *x;</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">        <span class='keyword'>unsigned</span> i = 0;</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">        <span class='macro'>FOREACH_STRING(x, <span class='string_literal'>"foo"</span>, <span class='string_literal'>"bar"</span>, <span class='string_literal'>"waldo"</span>)<span class='expansion'>for (char **_l = ({ char **_ll = ((char**) ((const char*[]) {<br> "foo", "bar", "waldo", ((void*)0) })); x = _ll ? _ll[0] : ((<br>void*)0); _ll; }); _l &amp;&amp; *_l; x = ({ _l ++; _l[0]; })<br>)</span></span></td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">                <span class='macro'>assert_se(streq_ptr(t[i++], x))<span class='expansion'>do { if ((__builtin_expect(!!(!(streq_ptr(t[i++], x))),0))) log_assert_failed<br>("streq_ptr(t[i++], x)", "src/test/test-strv.c", 686, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">        <span class='macro'>assert_se(i == 3)<span class='expansion'>do { if ((__builtin_expect(!!(!(i == 3)),0))) log_assert_failed<br>("i == 3", "src/test/test-strv.c", 688, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">        <span class='macro'>FOREACH_STRING(x, <span class='string_literal'>"zzz"</span>)<span class='expansion'>for (char **_l = ({ char **_ll = ((char**) ((const char*[]) {<br> "zzz", ((void*)0) })); x = _ll ? _ll[0] : ((void*)0); _ll; }<br>); _l &amp;&amp; *_l; x = ({ _l ++; _l[0]; }))</span></span></td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line">                <span class='macro'>assert_se(streq(x, <span class='string_literal'>"zzz"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((x),("zzz")) == 0))),<br>0))) log_assert_failed("streq(x, \"zzz\")", "src/test/test-strv.c"<br>, 691, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_strv_fnmatch(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">        <span class='macro'>_cleanup_strv_free_<span class='expansion'>__attribute__((cleanup(strv_freep)))</span></span> <span class='keyword'>char</span> **v = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">        <span class='macro'>assert_se(!strv_fnmatch(STRV_MAKE_EMPTY, <span class='string_literal'>"a"</span>, 0))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_fnmatch(((char*[1]) { (<br>(void*)0) }), "a", 0))),0))) log_assert_failed("!strv_fnmatch(STRV_MAKE_EMPTY, \"a\", 0)"<br>, "src/test/test-strv.c", 697, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">        v = strv_new(<span class='string_literal'>"*\\*"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line">        <span class='macro'>assert_se(!strv_fnmatch(v, <span class='string_literal'>"\\"</span>, 0))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strv_fnmatch(v, "\\", 0))),0<br>))) log_assert_failed("!strv_fnmatch(v, \"\\\\\", 0)", "src/test/test-strv.c"<br>, 700, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">        <span class='macro'>assert_se(strv_fnmatch(v, <span class='string_literal'>"\\"</span>, FNM_NOESCAPE))<span class='expansion'>do { if ((__builtin_expect(!!(!(strv_fnmatch(v, "\\", (1 &lt;&lt;<br> 1)))),0))) log_assert_failed("strv_fnmatch(v, \"\\\\\", FNM_NOESCAPE)"<br>, "src/test/test-strv.c", 701, __PRETTY_FUNCTION__); } while (<br>0)</span></span>;</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line">        test_specifier_printf();</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">        test_strv_foreach();</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">        test_strv_foreach_backwards();</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">        test_strv_foreach_pair();</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">        test_strv_find();</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">        test_strv_find_prefix();</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">        test_strv_find_startswith();</td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">        test_strv_join();</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">        test_strv_quote_unquote(input_table_multiple, <span class='string_literal'>"\"one\" \"two\" \"three\""</span>);</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">        test_strv_quote_unquote(input_table_one, <span class='string_literal'>"\"one\""</span>);</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">        test_strv_quote_unquote(input_table_none, <span class='string_literal'>""</span>);</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">        test_strv_quote_unquote(input_table_one_empty, <span class='string_literal'>"\"\""</span>);</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line">        test_strv_quote_unquote(input_table_two_empties, <span class='string_literal'>"\"\" \"\""</span>);</td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">        test_strv_quote_unquote(input_table_quotes, <span class='macro'>QUOTES_STRING<span class='expansion'>"\"\\\"\" " "\"\\\'\" " "\"\\\"\\\"\" " "\"\\\\\" " "\"\\\\\\\\\""</span></span>);</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line">        test_strv_quote_unquote(input_table_spaces, <span class='macro'>SPACES_STRING<span class='expansion'>"\" \" " "\"\\' \\'\" " "\"\\\" \" " "\" \\\"\" " "\" \\\\\\\\ \""</span></span>);</td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">        test_strv_unquote(<span class='string_literal'>"    foo=bar     \"waldo\"    zzz    "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"foo=bar"</span>, <span class='string_literal'>"waldo"</span>, <span class='string_literal'>"zzz"</span>)<span class='expansion'>((char**) ((const char*[]) { "foo=bar", "waldo", "zzz", ((void<br>*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">        test_strv_unquote(<span class='string_literal'>""</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line">        test_strv_unquote(<span class='string_literal'>" "</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">        test_strv_unquote(<span class='string_literal'>"   "</span>, <span class='macro'>STRV_MAKE_EMPTY<span class='expansion'>((char*[1]) { ((void*)0) })</span></span>);</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line">        test_strv_unquote(<span class='string_literal'>"   x"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">        test_strv_unquote(<span class='string_literal'>"x   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  x   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  \"x\"   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  'x'   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x"</span>)<span class='expansion'>((char**) ((const char*[]) { "x", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  'x\"'   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x\""</span>)<span class='expansion'>((char**) ((const char*[]) { "x\"", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  \"x'\"   "</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x'"</span>)<span class='expansion'>((char**) ((const char*[]) { "x'", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">        test_strv_unquote(<span class='string_literal'>"a  '--b=c \"d e\"'"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"a"</span>, <span class='string_literal'>"--b=c \"d e\""</span>)<span class='expansion'>((char**) ((const char*[]) { "a", "--b=c \"d e\"", ((void*)0)<br> }))</span></span>);</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line">        <span class='comment'>/* trailing backslashes */</span></td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">        test_strv_unquote(<span class='string_literal'>"  x\\\\"</span>, <span class='macro'>STRV_MAKE(<span class='string_literal'>"x\\"</span>)<span class='expansion'>((char**) ((const char*[]) { "x\\", ((void*)0) }))</span></span>);</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"  x\\"</span>);</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN739">739</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\"''"</span>);</td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\" '\""</span>);</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"a  --b='c \"d e\"garbage"</span>);</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"'"</span>);</td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"\""</span>);</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">        test_invalid_unquote(<span class='string_literal'>"'x'y'g"</span>);</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">        test_strv_split();</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">        test_strv_split_extract();</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">        test_strv_split_newlines();</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">        test_strv_split_nulstr();</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">        test_strv_parse_nulstr();</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">        test_strv_overlap();</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">        test_strv_sort();</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">        test_strv_extend_strv();</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line">        test_strv_extend_strv_concat();</td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">        test_strv_extend();</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">        test_strv_extendf();</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">        test_strv_from_stdarg_alloca();</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">        test_strv_push_prepend();</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">        test_strv_push();</td></tr>
+<tr><td class="num" id="LN760">760</td><td class="line">        test_strv_equal();</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">        test_strv_is_uniq();</td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">        test_strv_reverse();</td></tr>
+<tr><td class="num" id="LN763">763</td><td class="line">        test_strv_shell_escape();</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">        test_strv_skip();</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">        test_strv_extend_n();</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line">        test_strv_make_nulstr();</td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">        test_foreach_string();</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">        test_strv_fnmatch();</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">}</td></tr>
+</table></body></html>
