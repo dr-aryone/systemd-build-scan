@@ -14880,6 +14880,7 @@ extern const UnitVTable slice_vtable;
 # 1 "./src/core/socket.h" 1
 # 22 "./src/core/socket.h"
 typedef struct Socket Socket;
+typedef struct SocketPeer SocketPeer;
 
 
 # 1 "./src/core/mount.h" 1
@@ -15020,7 +15021,7 @@ MountExecCommand mount_exec_command_from_string(const char *s) __attribute__ ((p
 
 const char* mount_result_to_string(MountResult i) __attribute__ ((const));
 MountResult mount_result_from_string(const char *s) __attribute__ ((pure));
-# 25 "./src/core/socket.h" 2
+# 26 "./src/core/socket.h" 2
 # 1 "./src/core/service.h" 1
 # 22 "./src/core/service.h"
 typedef struct Service Service;
@@ -15232,6 +15233,7 @@ struct Service {
 
         pid_t main_pid, control_pid;
         int socket_fd;
+        SocketPeer *peer;
         _Bool socket_fd_selinux_context_net;
 
         _Bool permissions_start_only;
@@ -15301,7 +15303,7 @@ NotifyState notify_state_from_string(const char *s) __attribute__ ((pure));
 
 const char* service_result_to_string(ServiceResult i) __attribute__ ((const));
 ServiceResult service_result_from_string(const char *s) __attribute__ ((pure));
-# 26 "./src/core/socket.h" 2
+# 27 "./src/core/socket.h" 2
 # 1 "./src/basic/socket-util.h" 1
 # 22 "./src/basic/socket-util.h"
 # 1 "/usr/include/netinet/ether.h" 1 3 4
@@ -16101,7 +16103,7 @@ int flush_accept(int fd);
 
 
 struct cmsghdr* cmsg_find(struct msghdr *mh, int level, int type, socklen_t length);
-# 27 "./src/core/socket.h" 2
+# 28 "./src/core/socket.h" 2
 
 typedef enum SocketExecCommand {
         SOCKET_EXEC_START_PRE,
@@ -16157,9 +16159,12 @@ struct Socket {
 
         SocketPort *ports;
 
+        Hashmap *peers_by_address;
+
         unsigned n_accepted;
         unsigned n_connections;
         unsigned max_connections;
+        unsigned max_connections_per_source;
 
         unsigned backlog;
         unsigned keep_alive_cnt;
@@ -16241,6 +16246,18 @@ struct Socket {
 
         RateLimit trigger_limit;
 };
+
+struct SocketPeer {
+        unsigned n_ref;
+
+        Socket *socket;
+        union sockaddr_union peer;
+};
+
+SocketPeer *socket_peer_ref(SocketPeer *p);
+SocketPeer *socket_peer_unref(SocketPeer *p);
+
+static inline void socket_peer_unrefp(SocketPeer* *p) { if (*p) socket_peer_unref(*p); } struct __useless_struct_to_allow_trailing_semicolon__;
 
 
 int socket_collect_fds(Socket *s, int **fds);
