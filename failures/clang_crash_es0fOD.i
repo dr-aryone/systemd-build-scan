@@ -11566,6 +11566,7 @@ struct ExecContext {
         _Bool private_tmp;
         _Bool private_network;
         _Bool private_devices;
+        _Bool private_users;
         ProtectSystem protect_system;
         ProtectHome protect_home;
 
@@ -16979,7 +16980,7 @@ void unit_warn_if_dir_nonempty(Unit *u, const char* where);
 int unit_fail_if_symlink(Unit *u, const char* where);
 
 int unit_start_limit_test(Unit *u);
-# 251 "./src/core/execute.h" 2
+# 252 "./src/core/execute.h" 2
 
 
 int exec_spawn(Unit *unit,
