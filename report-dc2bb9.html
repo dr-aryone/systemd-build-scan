@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Potential leak of memory pointed to by 'pattern' -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/shared/install.c -->
 
 <!-- FILENAME install.c -->
 
-<!-- FUNCTIONNAME unit_file_load -->
+<!-- FUNCTIONNAME read_presets -->
 
-<!-- BUGLINE 1154 -->
+<!-- BUGLINE 2582 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 49 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 18 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>shared/install.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1154, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2582, column 49</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'pattern'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -862,7 +862,7 @@
 <tr><td class="num" id="LN777">777</td><td class="line">        <span class='macro'>assert(config_path)<span class='expansion'>do { if ((__builtin_expect(!!(!(config_path)),0))) log_assert_failed<br>("config_path", "src/shared/install.c", 777, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN778">778</td><td class="line">        <span class='macro'>assert(same_name_link)<span class='expansion'>do { if ((__builtin_expect(!!(!(same_name_link)),0))) log_assert_failed<br>("same_name_link", "src/shared/install.c", 778, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN779">779</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN780">780</td><td class="line">        fd = open(config_path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>);</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">        fd = open(config_path, <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>|<span class='macro'>O_DIRECTORY<span class='expansion'>0200000</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>);</td></tr>
 <tr><td class="num" id="LN781">781</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
 <tr><td class="num" id="LN782">782</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>IN_SET(errno, ENOENT, ENOTDIR, EACCES)<span class='expansion'>({ _Bool _found = 0; static __attribute__ ((unused)) char _static_assert__macros_need_to_be_extended<br>[20 - sizeof((int[]){2, 20, 13})/sizeof(int)]; switch((*__errno_location<br> ())) { case 2: case 20: case 13: _found = 1; break; default:<br> break; } _found; })</span></span>)</td></tr>
 <tr><td class="num" id="LN783">783</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
@@ -1236,8 +1236,7 @@
 <tr><td class="num" id="LN1151">1151</td><td class="line">        f = fdopen(fd, <span class='string_literal'>"re"</span>);</td></tr>
 <tr><td class="num" id="LN1152">1152</td><td class="line">        <span class='keyword'>if</span> (!f)</td></tr>
 <tr><td class="num" id="LN1153">1153</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN1154">1154</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN1154">1154</td><td class="line">        fd = -1;</td></tr>
 <tr><td class="num" id="LN1155">1155</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1156">1156</td><td class="line">        r = config_parse(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, path, f,</td></tr>
 <tr><td class="num" id="LN1157">1157</td><td class="line">                         <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
@@ -2585,7 +2584,9 @@
 <tr><td class="num" id="LN2499">2499</td><td class="line">        <span class='macro'>assert(scope &lt; _UNIT_FILE_SCOPE_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(scope &lt; _UNIT_FILE_SCOPE_MAX<br>)),0))) log_assert_failed("scope &lt; _UNIT_FILE_SCOPE_MAX", "src/shared/install.c"<br>, 2499, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN2500">2500</td><td class="line">        <span class='macro'>assert(presets)<span class='expansion'>do { if ((__builtin_expect(!!(!(presets)),0))) log_assert_failed<br>("presets", "src/shared/install.c", 2500, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN2501">2501</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2502">2502</td><td class="line">        <span class='keyword'>if</span> (scope == UNIT_FILE_SYSTEM)</td></tr>
+<tr><td class="num" id="LN2502">2502</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">scope == UNIT_FILE_SYSTEM</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'scope' is equal to UNIT_FILE_SYSTEM</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2503">2503</td><td class="line">                r = conf_files_list(&amp;files, <span class='string_literal'>".preset"</span>, root_dir,</td></tr>
 <tr><td class="num" id="LN2504">2504</td><td class="line">                                    <span class='string_literal'>"/etc/systemd/system-preset"</span>,</td></tr>
 <tr><td class="num" id="LN2505">2505</td><td class="line">                                    <span class='string_literal'>"/usr/local/lib/systemd/system-preset"</span>,</td></tr>
@@ -2606,7 +2607,9 @@
 <tr><td class="num" id="LN2520">2520</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN2521">2521</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN2522">2522</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2523">2523</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2523">2523</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2524">2524</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN2525">2525</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2526">2526</td><td class="line">        <span class='macro'>STRV_FOREACH(p, files)<span class='expansion'>for ((p) = (files); (p) &amp;&amp; *(p); (p)++)</span></span> {</td></tr>
@@ -2615,7 +2618,9 @@
 <tr><td class="num" id="LN2529">2529</td><td class="line">                <span class='keyword'>int</span> n = 0;</td></tr>
 <tr><td class="num" id="LN2530">2530</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2531">2531</td><td class="line">                f = fopen(*p, <span class='string_literal'>"re"</span>);</td></tr>
-<tr><td class="num" id="LN2532">2532</td><td class="line">                <span class='keyword'>if</span> (!f) {</td></tr>
+<tr><td class="num" id="LN2532">2532</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!f</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'f' is non-null</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2533">2533</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
 <tr><td class="num" id="LN2534">2534</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN2535">2535</td><td class="line"> </td></tr>
@@ -2631,12 +2636,16 @@
 <tr><td class="num" id="LN2545">2545</td><td class="line">                        n++;</td></tr>
 <tr><td class="num" id="LN2546">2546</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2547">2547</td><td class="line">                        <span class='keyword'>if</span> (isempty(l))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2548">2548</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN2549">2549</td><td class="line">                        <span class='keyword'>if</span> (strchr(<span class='macro'>COMMENTS<span class='expansion'>"#;"</span></span>, *l))</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2550">2550</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN2551">2551</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2552">2552</td><td class="line">                        parameter = first_word(l, <span class='string_literal'>"enable"</span>);</td></tr>
-<tr><td class="num" id="LN2553">2553</td><td class="line">                        <span class='keyword'>if</span> (parameter) {</td></tr>
+<tr><td class="num" id="LN2553">2553</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">parameter</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'parameter' is null</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2554">2554</td><td class="line">                                <span class='keyword'>char</span> *pattern;</td></tr>
 <tr><td class="num" id="LN2555">2555</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2556">2556</td><td class="line">                                pattern = strdup(parameter);</td></tr>
@@ -2650,11 +2659,16 @@
 <tr><td class="num" id="LN2564">2564</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN2565">2565</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2566">2566</td><td class="line">                        parameter = first_word(l, <span class='string_literal'>"disable"</span>);</td></tr>
-<tr><td class="num" id="LN2567">2567</td><td class="line">                        <span class='keyword'>if</span> (parameter) {</td></tr>
+<tr><td class="num" id="LN2567">2567</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">parameter</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'parameter' is non-null</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2568">2568</td><td class="line">                                <span class='keyword'>char</span> *pattern;</td></tr>
 <tr><td class="num" id="LN2569">2569</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2570">2570</td><td class="line">                                pattern = strdup(parameter);</td></tr>
-<tr><td class="num" id="LN2571">2571</td><td class="line">                                <span class='keyword'>if</span> (!pattern)</td></tr>
+<tr><td class="num" id="LN2570">2570</td><td class="line">                                pattern = <span class="mrange">strdup(parameter)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:43ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN2571">2571</td><td class="line">                                <span class='keyword'>if</span> (<span class="mrange">!pattern</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Assuming 'pattern' is non-null</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2572">2572</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN2573">2573</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2574">2574</td><td class="line">                                rule = (PresetRule) {</td></tr>
@@ -2664,8 +2678,13 @@
 <tr><td class="num" id="LN2578">2578</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN2579">2579</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2580">2580</td><td class="line">                        <span class='keyword'>if</span> (rule.action) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2581">2581</td><td class="line">                                <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(ps.rules, n_allocated, ps.n_rules + 1)<span class='expansion'>greedy_realloc((void**) &amp;(ps.rules), &amp;(n_allocated), (<br>ps.n_rules + 1), sizeof((ps.rules)[0]))</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN2582">2582</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:49ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'pattern'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN2583">2583</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2584">2584</td><td class="line">                                ps.rules[ps.n_rules++] = rule;</td></tr>
 <tr><td class="num" id="LN2585">2585</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>

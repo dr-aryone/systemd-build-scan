@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 't' -->
+<!-- BUGDESC Value stored to 'fd' is never read -->
 
-<!-- BUGTYPE Memory leak -->
+<!-- BUGTYPE Dead assignment -->
 
-<!-- BUGCATEGORY Memory Error -->
+<!-- BUGCATEGORY Dead store -->
 
 <!-- BUGFILE /home/runner/systemd/src/journal-remote/journal-gatewayd.c -->
 
 <!-- FILENAME journal-gatewayd.c -->
 
-<!-- FUNCTIONNAME request_parse_range -->
+<!-- FUNCTIONNAME request_handler_file -->
 
-<!-- BUGLINE 326 -->
+<!-- BUGLINE 711 -->
 
-<!-- BUGCOLUMN 27 -->
+<!-- BUGCOLUMN 9 -->
 
-<!-- BUGPATHLENGTH 21 -->
+<!-- BUGPATHLENGTH 1 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>journal-remote/journal-gatewayd.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 326, column 27</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 't'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 711, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -385,41 +385,30 @@
 <tr><td class="num" id="LN300">300</td><td class="line">        <span class='macro'>assert(connection)<span class='expansion'>do { if ((__builtin_expect(!!(!(connection)),0))) log_assert_failed<br>("connection", "src/journal-remote/journal-gatewayd.c", 300, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN301">301</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN302">302</td><td class="line">        range = MHD_lookup_connection_value(connection, MHD_HEADER_KIND, <span class='string_literal'>"Range"</span>);</td></tr>
-<tr><td class="num" id="LN303">303</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!range</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'range' is non-null</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">        <span class='keyword'>if</span> (!range)</td></tr>
 <tr><td class="num" id="LN304">304</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN305">305</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN306">306</td><td class="line">        <span class='keyword'>if</span> (!startswith(range, <span class='string_literal'>"entries="</span>))</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN307">307</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN308">308</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN309">309</td><td class="line">        range += 8;</td></tr>
 <tr><td class="num" id="LN310">310</td><td class="line">        range += strspn(range, <span class='macro'>WHITESPACE<span class='expansion'>" \t\n\r"</span></span>);</td></tr>
 <tr><td class="num" id="LN311">311</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN312">312</td><td class="line">        colon = strchr(range, ':');</td></tr>
-<tr><td class="num" id="LN313">313</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!colon</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Assuming 'colon' is non-null</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        <span class='keyword'>if</span> (!colon)</td></tr>
 <tr><td class="num" id="LN314">314</td><td class="line">                m-&gt;cursor = strdup(range);</td></tr>
 <tr><td class="num" id="LN315">315</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN316">316</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
 <tr><td class="num" id="LN317">317</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN318">318</td><td class="line">                colon2 = strchr(colon + 1, ':');</td></tr>
-<tr><td class="num" id="LN319">319</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">colon2</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Assuming 'colon2' is non-null</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">                <span class='keyword'>if</span> (colon2) {</td></tr>
 <tr><td class="num" id="LN320">320</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t;</td></tr>
 <tr><td class="num" id="LN321">321</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN322">322</td><td class="line">                        t = <span class="mrange">strndup(colon + 1, colon2 - colon - 1)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN323">323</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!t</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Assuming 't' is non-null</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">                        t = strndup(colon + 1, colon2 - colon - 1);</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">                        <span class='keyword'>if</span> (!t)</td></tr>
 <tr><td class="num" id="LN324">324</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN325">325</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN326">326</td><td class="line">                        r = safe_atoi64(t, &amp;m-&gt;n_skip);</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:27ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 't'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN327">327</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN328">328</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN329">329</td><td class="line">                }</td></tr>
@@ -571,15 +560,12 @@
 <tr><td class="num" id="LN475">475</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN476">476</td><td class="line">        r = open_journal(m);</td></tr>
 <tr><td class="num" id="LN477">477</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN478">478</td><td class="line">                <span class='keyword'>return</span> mhd_respondf(connection, <span class='macro'>MHD_HTTP_INTERNAL_SERVER_ERROR<span class='expansion'>500</span></span>, <span class='string_literal'>"Failed to open journal: %s\n"</span>, strerror(-r));</td></tr>
 <tr><td class="num" id="LN479">479</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN480">480</td><td class="line">        <span class='keyword'>if</span> (request_parse_accept(m, connection) &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN481">481</td><td class="line">                <span class='keyword'>return</span> mhd_respond(connection, <span class='macro'>MHD_HTTP_BAD_REQUEST<span class='expansion'>400</span></span>, <span class='string_literal'>"Failed to parse Accept header.\n"</span>);</td></tr>
 <tr><td class="num" id="LN482">482</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN483">483</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">request_parse_range(m, connection)</span> &lt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Calling 'request_parse_range'</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">        <span class='keyword'>if</span> (request_parse_range(m, connection) &lt; 0)</td></tr>
 <tr><td class="num" id="LN484">484</td><td class="line">                <span class='keyword'>return</span> mhd_respond(connection, <span class='macro'>MHD_HTTP_BAD_REQUEST<span class='expansion'>400</span></span>, <span class='string_literal'>"Failed to parse Range header.\n"</span>);</td></tr>
 <tr><td class="num" id="LN485">485</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN486">486</td><td class="line">        <span class='keyword'>if</span> (request_parse_arguments(m, connection) &lt; 0)</td></tr>
@@ -807,7 +793,8 @@
 <tr><td class="num" id="LN708">708</td><td class="line">        <span class='keyword'>if</span> (!response)</td></tr>
 <tr><td class="num" id="LN709">709</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>respond_oom(connection)<span class='expansion'>log_oom_internal("src/journal-remote/journal-gatewayd.c", 709<br>, __func__), mhd_respond_oom(connection)</span></span>;</td></tr>
 <tr><td class="num" id="LN710">710</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN711">711</td><td class="line">        fd = -1;</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
 <tr><td class="num" id="LN712">712</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN713">713</td><td class="line">        MHD_add_response_header(response, <span class='string_literal'>"Content-Type"</span>, mime_type);</td></tr>
 <tr><td class="num" id="LN714">714</td><td class="line"> </td></tr>
@@ -943,34 +930,27 @@
 <tr><td class="num" id="LN844">844</td><td class="line">        <span class='macro'>assert(method)<span class='expansion'>do { if ((__builtin_expect(!!(!(method)),0))) log_assert_failed<br>("method", "src/journal-remote/journal-gatewayd.c", 844, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN845">845</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN846">846</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>streq(method, <span class='string_literal'>"GET"</span>)<span class='expansion'>(strcmp((method),("GET")) == 0)</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN847">847</td><td class="line">                <span class='keyword'>return</span> mhd_respond(connection, <span class='macro'>MHD_HTTP_NOT_ACCEPTABLE<span class='expansion'>406</span></span>,</td></tr>
 <tr><td class="num" id="LN848">848</td><td class="line">                                   <span class='string_literal'>"Unsupported method.\n"</span>);</td></tr>
 <tr><td class="num" id="LN849">849</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN850">850</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN851">851</td><td class="line">        <span class='keyword'>if</span> (!*connection_cls) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN852">852</td><td class="line">                <span class='keyword'>if</span> (!request_meta(connection_cls))</td></tr>
 <tr><td class="num" id="LN853">853</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>respond_oom(connection)<span class='expansion'>log_oom_internal("src/journal-remote/journal-gatewayd.c", 853<br>, __func__), mhd_respond_oom(connection)</span></span>;</td></tr>
 <tr><td class="num" id="LN854">854</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>MHD_YES<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN855">855</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN856">856</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN857">857</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">arg_trust_pem</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'arg_trust_pem' is null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN857">857</td><td class="line">        <span class='keyword'>if</span> (arg_trust_pem) {</td></tr>
 <tr><td class="num" id="LN858">858</td><td class="line">                r = check_permissions(connection, &amp;code, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
 <tr><td class="num" id="LN859">859</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN860">860</td><td class="line">                        <span class='keyword'>return</span> code;</td></tr>
 <tr><td class="num" id="LN861">861</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN862">862</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN863">863</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(url, <span class='string_literal'>"/"</span>)<span class='expansion'>(strcmp((url),("/")) == 0)</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN864">864</td><td class="line">                <span class='keyword'>return</span> request_handler_redirect(connection, <span class='string_literal'>"/browse"</span>);</td></tr>
 <tr><td class="num" id="LN865">865</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN866">866</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(url, <span class='string_literal'>"/entries"</span>)<span class='expansion'>(strcmp((url),("/entries")) == 0)</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN867">867</td><td class="line">                <span class='keyword'>return</span> <span class="mrange">request_handler_entries(connection, *connection_cls)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Calling 'request_handler_entries'</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN867">867</td><td class="line">                <span class='keyword'>return</span> request_handler_entries(connection, *connection_cls);</td></tr>
 <tr><td class="num" id="LN868">868</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN869">869</td><td class="line">        <span class='keyword'>if</span> (startswith(url, <span class='string_literal'>"/fields/"</span>))</td></tr>
 <tr><td class="num" id="LN870">870</td><td class="line">                <span class='keyword'>return</span> request_handler_fields(connection, url + 8, *connection_cls);</td></tr>
@@ -991,7 +971,7 @@
 <tr><td class="num" id="LN885">885</td><td class="line">               <span class='string_literal'>"     --version        Show package version\n"</span></td></tr>
 <tr><td class="num" id="LN886">886</td><td class="line">               <span class='string_literal'>"     --cert=CERT.PEM  Server certificate in PEM format\n"</span></td></tr>
 <tr><td class="num" id="LN887">887</td><td class="line">               <span class='string_literal'>"     --key=KEY.PEM    Server key in PEM format\n"</span></td></tr>
-<tr><td class="num" id="LN888">888</td><td class="line">               <span class='string_literal'>"     --trust=CERT.PEM Certificat authority certificate in PEM format\n"</span></td></tr>
+<tr><td class="num" id="LN888">888</td><td class="line">               <span class='string_literal'>"     --trust=CERT.PEM Certificate authority certificate in PEM format\n"</span></td></tr>
 <tr><td class="num" id="LN889">889</td><td class="line">               <span class='string_literal'>"  -D --directory=PATH Serve journal files in directory\n"</span>,</td></tr>
 <tr><td class="num" id="LN890">890</td><td class="line">               program_invocation_short_name);</td></tr>
 <tr><td class="num" id="LN891">891</td><td class="line">}</td></tr>
