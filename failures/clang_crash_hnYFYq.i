@@ -11285,6 +11285,7 @@ int cg_create_and_attach(const char *controller, const char *path, pid_t pid);
 
 int cg_set_attribute(const char *controller, const char *path, const char *attribute, const char *value);
 int cg_get_attribute(const char *controller, const char *path, const char *attribute, char **ret);
+int cg_get_keyed_attribute(const char *controller, const char *path, const char *attribute, const char **keys, char **values);
 
 int cg_set_group_access(const char *controller, const char *path, mode_t mode, uid_t uid, gid_t gid);
 int cg_set_task_access(const char *controller, const char *path, mode_t mode, uid_t uid, gid_t gid);
@@ -13893,7 +13894,7 @@ struct Unit {
         int unit_file_preset;
 
 
-        nsec_t cpuacct_usage_base;
+        nsec_t cpu_usage_base;
 
 
         char *cgroup_path;
@@ -14703,6 +14704,10 @@ struct CGroupContext {
         _Bool tasks_accounting;
 
 
+        uint64_t cpu_weight;
+        uint64_t startup_cpu_weight;
+        usec_t cpu_quota_per_sec_usec;
+
         uint64_t io_weight;
         uint64_t startup_io_weight;
         CGroupIODeviceWeight *io_device_weights;
@@ -14715,7 +14720,6 @@ struct CGroupContext {
 
         uint64_t cpu_shares;
         uint64_t startup_cpu_shares;
-        usec_t cpu_quota_per_sec_usec;
 
         uint64_t blockio_weight;
         uint64_t startup_blockio_weight;
