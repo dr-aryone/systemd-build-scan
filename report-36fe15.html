@@ -395,7 +395,7 @@
 <tr><td class="num" id="LN310">310</td><td class="line">               <span class='string_literal'>"  -m --merge               Show entries from all available journals\n"</span></td></tr>
 <tr><td class="num" id="LN311">311</td><td class="line">               <span class='string_literal'>"  -D --directory=PATH      Show journal files from directory\n"</span></td></tr>
 <tr><td class="num" id="LN312">312</td><td class="line">               <span class='string_literal'>"     --file=PATH           Show journal file\n"</span></td></tr>
-<tr><td class="num" id="LN313">313</td><td class="line">               <span class='string_literal'>"     --root=ROOT           Operate on catalog files below a root directory\n"</span></td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">               <span class='string_literal'>"     --root=ROOT           Operate on files below a root directory\n"</span></td></tr>
 <tr><td class="num" id="LN314">314</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_GCRYPT<span class='expansion'>1</span></span></span></td></tr>
 <tr><td class="num" id="LN315">315</td><td class="line">               <span class='string_literal'>"     --interval=TIME       Time interval for changing the FSS sealing key\n"</span></td></tr>
 <tr><td class="num" id="LN316">316</td><td class="line">               <span class='string_literal'>"     --verify-key=KEY      Specify FSS verification key\n"</span></td></tr>
@@ -933,8 +933,8 @@
 <tr><td class="num" id="LN848">848</td><td class="line">        <span class='keyword'>if</span> (arg_follow &amp;&amp; !arg_no_tail &amp;&amp; !arg_since &amp;&amp; arg_lines == ARG_LINES_DEFAULT)</td></tr>
 <tr><td class="num" id="LN849">849</td><td class="line">                arg_lines = 10;</td></tr>
 <tr><td class="num" id="LN850">850</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN851">851</td><td class="line">        <span class='keyword'>if</span> (!!arg_directory + !!arg_file + !!arg_machine &gt; 1) {</td></tr>
-<tr><td class="num" id="LN852">852</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Please specify either -D/--directory= or --file= or -M/--machine=, not more than one."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 852, __func__, "Please specify either -D/--directory= or --file= or -M/--machine=, not more than one."<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN851">851</td><td class="line">        <span class='keyword'>if</span> (!!arg_directory + !!arg_file + !!arg_machine + !!arg_root &gt; 1) {</td></tr>
+<tr><td class="num" id="LN852">852</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Please specify at most one of -D/--directory=, --file=, -M/--machine=, --root."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 852, __func__, "Please specify at most one of -D/--directory=, --file=, -M/--machine=, --root."<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN853">853</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN854">854</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN855">855</td><td class="line"> </td></tr>
@@ -1352,7 +1352,7 @@
 <tr><td class="num" id="LN1267">1267</td><td class="line">         <span class='comment'>* We can do this only when we logs are coming from the current machine,</span></td></tr>
 <tr><td class="num" id="LN1268">1268</td><td class="line">         <span class='comment'>* so take the slow path if log location is specified. */</span></td></tr>
 <tr><td class="num" id="LN1269">1269</td><td class="line">        <span class='keyword'>if</span> (arg_boot_offset == 0 &amp;&amp; sd_id128_is_null(arg_boot_id) &amp;&amp;</td></tr>
-<tr><td class="num" id="LN1270">1270</td><td class="line">            !arg_directory &amp;&amp; !arg_file)</td></tr>
+<tr><td class="num" id="LN1270">1270</td><td class="line">            !arg_directory &amp;&amp; !arg_file &amp;&amp; !arg_root)</td></tr>
 <tr><td class="num" id="LN1271">1271</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1272">1272</td><td class="line">                <span class='keyword'>return</span> add_match_this_boot(j, arg_machine);</td></tr>
 <tr><td class="num" id="LN1273">1273</td><td class="line"> </td></tr>
@@ -2262,456 +2262,458 @@
 <tr><td class="num" id="LN2161">2161</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2162">2162</td><td class="line">        <span class='keyword'>if</span> (arg_directory)</td></tr>
 <tr><td class="num" id="LN2163">2163</td><td class="line">                r = sd_journal_open_directory(&amp;j, arg_directory, arg_journal_type);</td></tr>
-<tr><td class="num" id="LN2164">2164</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_file_stdin) {</td></tr>
-<tr><td class="num" id="LN2165">2165</td><td class="line">                <span class='keyword'>int</span> ifd = <span class='macro'>STDIN_FILENO<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2166">2166</td><td class="line">                r = sd_journal_open_files_fd(&amp;j, &amp;ifd, 1, 0);</td></tr>
-<tr><td class="num" id="LN2167">2167</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_file)</td></tr>
-<tr><td class="num" id="LN2168">2168</td><td class="line">                r = sd_journal_open_files(&amp;j, (<span class='keyword'>const</span> <span class='keyword'>char</span>**) arg_file, 0);</td></tr>
-<tr><td class="num" id="LN2169">2169</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_machine) {</td></tr>
-<tr><td class="num" id="LN2170">2170</td><td class="line">                <span class='macro'>_cleanup_(sd_bus_error_free)<span class='expansion'>__attribute__((cleanup(sd_bus_error_free)))</span></span> sd_bus_error error = <span class='macro'>SD_BUS_ERROR_NULL<span class='expansion'>((const sd_bus_error) {(((void*)0)), (((void*)0)), 0})</span></span>;</td></tr>
-<tr><td class="num" id="LN2171">2171</td><td class="line">                <span class='macro'>_cleanup_(sd_bus_message_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_message_unrefp)))</span></span> sd_bus_message *reply = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2172">2172</td><td class="line">                <span class='macro'>_cleanup_(sd_bus_flush_close_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_flush_close_unrefp)))</span></span> sd_bus *bus = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2173">2173</td><td class="line">                <span class='keyword'>int</span> fd;</td></tr>
-<tr><td class="num" id="LN2174">2174</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2175">2175</td><td class="line">                <span class='keyword'>if</span> (geteuid() != 0) {</td></tr>
-<tr><td class="num" id="LN2176">2176</td><td class="line">                        <span class='comment'>/* The file descriptor returned by OpenMachineRootDirectory() will be owned by users/groups of</span></td></tr>
-<tr><td class="num" id="LN2177">2177</td><td class="line">                         <span class='comment'>* the container, thus we need root privileges to override them. */</span></td></tr>
-<tr><td class="num" id="LN2178">2178</td><td class="line">                        <span class='macro'>log_error(<span class='string_literal'>"Using the --machine= switch requires root privileges."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2178, __func__, "Using the --machine= switch requires root privileges."<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2179">2179</td><td class="line">                        r = -<span class='macro'>EPERM<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2180">2180</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2181">2181</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2182">2182</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2183">2183</td><td class="line">                r = sd_bus_open_system(&amp;bus);</td></tr>
-<tr><td class="num" id="LN2184">2184</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2185">2185</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to open system bus: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2185, __func__, "Failed to open system bus: %m") : -abs(_e)<br>; })</span></span>;</td></tr>
-<tr><td class="num" id="LN2186">2186</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2187">2187</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2188">2188</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2189">2189</td><td class="line">                r = sd_bus_call_method(</td></tr>
-<tr><td class="num" id="LN2190">2190</td><td class="line">                                bus,</td></tr>
-<tr><td class="num" id="LN2191">2191</td><td class="line">                                <span class='string_literal'>"org.freedesktop.machine1"</span>,</td></tr>
-<tr><td class="num" id="LN2192">2192</td><td class="line">                                <span class='string_literal'>"/org/freedesktop/machine1"</span>,</td></tr>
-<tr><td class="num" id="LN2193">2193</td><td class="line">                                <span class='string_literal'>"org.freedesktop.machine1.Manager"</span>,</td></tr>
-<tr><td class="num" id="LN2194">2194</td><td class="line">                                <span class='string_literal'>"OpenMachineRootDirectory"</span>,</td></tr>
-<tr><td class="num" id="LN2195">2195</td><td class="line">                                &amp;error,</td></tr>
-<tr><td class="num" id="LN2196">2196</td><td class="line">                                &amp;reply,</td></tr>
-<tr><td class="num" id="LN2197">2197</td><td class="line">                                <span class='string_literal'>"s"</span>, arg_machine);</td></tr>
-<tr><td class="num" id="LN2198">2198</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2199">2199</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to open root directory: %s"</span>, bus_error_message(&amp;error, r))<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2199, __func__, "Failed to open root directory: %s", bus_error_message<br>(&amp;error, r)) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2200">2200</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2201">2201</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2202">2202</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2203">2203</td><td class="line">                r = sd_bus_message_read(reply, <span class='string_literal'>"h"</span>, &amp;fd);</td></tr>
-<tr><td class="num" id="LN2204">2204</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2205">2205</td><td class="line">                        bus_log_parse_error(r);</td></tr>
-<tr><td class="num" id="LN2206">2206</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2207">2207</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2208">2208</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2209">2209</td><td class="line">                fd = fcntl(fd, <span class='macro'>F_DUPFD_CLOEXEC<span class='expansion'>1030</span></span>, 3);</td></tr>
-<tr><td class="num" id="LN2210">2210</td><td class="line">                <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2211">2211</td><td class="line">                        r = <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to duplicate file descriptor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2211, __func__, "Failed to duplicate file descriptor: %m") :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2212">2212</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2213">2213</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2214">2214</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2215">2215</td><td class="line">                r = sd_journal_open_directory_fd(&amp;j, fd, SD_JOURNAL_OS_ROOT);</td></tr>
-<tr><td class="num" id="LN2216">2216</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2217">2217</td><td class="line">                        safe_close(fd);</td></tr>
-<tr><td class="num" id="LN2218">2218</td><td class="line">        } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2219">2219</td><td class="line">                r = sd_journal_open(&amp;j, !arg_merge*SD_JOURNAL_LOCAL_ONLY + arg_journal_type);</td></tr>
-<tr><td class="num" id="LN2220">2220</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2221">2221</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to open %s: %m"</span>, arg_directory ?: arg_file ? <span class='string_literal'>"files"</span> : <span class='string_literal'>"journal"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2221, __func__, "Failed to open %s: %m", arg_directory ?: arg_file<br> ? "files" : "journal") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2222">2222</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2223">2223</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2224">2224</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2225">2225</td><td class="line">        r = access_check(j);</td></tr>
-<tr><td class="num" id="LN2226">2226</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2227">2227</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2228">2228</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2229">2229</td><td class="line">        <span class='keyword'>switch</span> (arg_action) {</td></tr>
+<tr><td class="num" id="LN2164">2164</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_root)</td></tr>
+<tr><td class="num" id="LN2165">2165</td><td class="line">                r = sd_journal_open_directory(&amp;j, arg_root, arg_journal_type | SD_JOURNAL_OS_ROOT);</td></tr>
+<tr><td class="num" id="LN2166">2166</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_file_stdin) {</td></tr>
+<tr><td class="num" id="LN2167">2167</td><td class="line">                <span class='keyword'>int</span> ifd = <span class='macro'>STDIN_FILENO<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2168">2168</td><td class="line">                r = sd_journal_open_files_fd(&amp;j, &amp;ifd, 1, 0);</td></tr>
+<tr><td class="num" id="LN2169">2169</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_file)</td></tr>
+<tr><td class="num" id="LN2170">2170</td><td class="line">                r = sd_journal_open_files(&amp;j, (<span class='keyword'>const</span> <span class='keyword'>char</span>**) arg_file, 0);</td></tr>
+<tr><td class="num" id="LN2171">2171</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_machine) {</td></tr>
+<tr><td class="num" id="LN2172">2172</td><td class="line">                <span class='macro'>_cleanup_(sd_bus_error_free)<span class='expansion'>__attribute__((cleanup(sd_bus_error_free)))</span></span> sd_bus_error error = <span class='macro'>SD_BUS_ERROR_NULL<span class='expansion'>((const sd_bus_error) {(((void*)0)), (((void*)0)), 0})</span></span>;</td></tr>
+<tr><td class="num" id="LN2173">2173</td><td class="line">                <span class='macro'>_cleanup_(sd_bus_message_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_message_unrefp)))</span></span> sd_bus_message *reply = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2174">2174</td><td class="line">                <span class='macro'>_cleanup_(sd_bus_flush_close_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_flush_close_unrefp)))</span></span> sd_bus *bus = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2175">2175</td><td class="line">                <span class='keyword'>int</span> fd;</td></tr>
+<tr><td class="num" id="LN2176">2176</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2177">2177</td><td class="line">                <span class='keyword'>if</span> (geteuid() != 0) {</td></tr>
+<tr><td class="num" id="LN2178">2178</td><td class="line">                        <span class='comment'>/* The file descriptor returned by OpenMachineRootDirectory() will be owned by users/groups of</span></td></tr>
+<tr><td class="num" id="LN2179">2179</td><td class="line">                         <span class='comment'>* the container, thus we need root privileges to override them. */</span></td></tr>
+<tr><td class="num" id="LN2180">2180</td><td class="line">                        <span class='macro'>log_error(<span class='string_literal'>"Using the --machine= switch requires root privileges."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2180, __func__, "Using the --machine= switch requires root privileges."<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2181">2181</td><td class="line">                        r = -<span class='macro'>EPERM<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2182">2182</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2183">2183</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2184">2184</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2185">2185</td><td class="line">                r = sd_bus_open_system(&amp;bus);</td></tr>
+<tr><td class="num" id="LN2186">2186</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2187">2187</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to open system bus: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2187, __func__, "Failed to open system bus: %m") : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN2188">2188</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2189">2189</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2190">2190</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2191">2191</td><td class="line">                r = sd_bus_call_method(</td></tr>
+<tr><td class="num" id="LN2192">2192</td><td class="line">                                bus,</td></tr>
+<tr><td class="num" id="LN2193">2193</td><td class="line">                                <span class='string_literal'>"org.freedesktop.machine1"</span>,</td></tr>
+<tr><td class="num" id="LN2194">2194</td><td class="line">                                <span class='string_literal'>"/org/freedesktop/machine1"</span>,</td></tr>
+<tr><td class="num" id="LN2195">2195</td><td class="line">                                <span class='string_literal'>"org.freedesktop.machine1.Manager"</span>,</td></tr>
+<tr><td class="num" id="LN2196">2196</td><td class="line">                                <span class='string_literal'>"OpenMachineRootDirectory"</span>,</td></tr>
+<tr><td class="num" id="LN2197">2197</td><td class="line">                                &amp;error,</td></tr>
+<tr><td class="num" id="LN2198">2198</td><td class="line">                                &amp;reply,</td></tr>
+<tr><td class="num" id="LN2199">2199</td><td class="line">                                <span class='string_literal'>"s"</span>, arg_machine);</td></tr>
+<tr><td class="num" id="LN2200">2200</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2201">2201</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to open root directory: %s"</span>, bus_error_message(&amp;error, r))<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2201, __func__, "Failed to open root directory: %s", bus_error_message<br>(&amp;error, r)) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2202">2202</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2203">2203</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2204">2204</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2205">2205</td><td class="line">                r = sd_bus_message_read(reply, <span class='string_literal'>"h"</span>, &amp;fd);</td></tr>
+<tr><td class="num" id="LN2206">2206</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2207">2207</td><td class="line">                        bus_log_parse_error(r);</td></tr>
+<tr><td class="num" id="LN2208">2208</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2209">2209</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2210">2210</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2211">2211</td><td class="line">                fd = fcntl(fd, <span class='macro'>F_DUPFD_CLOEXEC<span class='expansion'>1030</span></span>, 3);</td></tr>
+<tr><td class="num" id="LN2212">2212</td><td class="line">                <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2213">2213</td><td class="line">                        r = <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to duplicate file descriptor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2213, __func__, "Failed to duplicate file descriptor: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2214">2214</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2215">2215</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2216">2216</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2217">2217</td><td class="line">                r = sd_journal_open_directory_fd(&amp;j, fd, SD_JOURNAL_OS_ROOT);</td></tr>
+<tr><td class="num" id="LN2218">2218</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2219">2219</td><td class="line">                        safe_close(fd);</td></tr>
+<tr><td class="num" id="LN2220">2220</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN2221">2221</td><td class="line">                r = sd_journal_open(&amp;j, !arg_merge*SD_JOURNAL_LOCAL_ONLY + arg_journal_type);</td></tr>
+<tr><td class="num" id="LN2222">2222</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2223">2223</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to open %s: %m"</span>, arg_directory ?: arg_file ? <span class='string_literal'>"files"</span> : <span class='string_literal'>"journal"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2223, __func__, "Failed to open %s: %m", arg_directory ?: arg_file<br> ? "files" : "journal") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2224">2224</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2225">2225</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2226">2226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2227">2227</td><td class="line">        r = access_check(j);</td></tr>
+<tr><td class="num" id="LN2228">2228</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2229">2229</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
 <tr><td class="num" id="LN2230">2230</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2231">2231</td><td class="line">        <span class='keyword'>case</span> ACTION_NEW_ID128:</td></tr>
-<tr><td class="num" id="LN2232">2232</td><td class="line">        <span class='keyword'>case</span> ACTION_SETUP_KEYS:</td></tr>
-<tr><td class="num" id="LN2233">2233</td><td class="line">        <span class='keyword'>case</span> ACTION_LIST_CATALOG:</td></tr>
-<tr><td class="num" id="LN2234">2234</td><td class="line">        <span class='keyword'>case</span> ACTION_DUMP_CATALOG:</td></tr>
-<tr><td class="num" id="LN2235">2235</td><td class="line">        <span class='keyword'>case</span> ACTION_UPDATE_CATALOG:</td></tr>
-<tr><td class="num" id="LN2236">2236</td><td class="line">        <span class='keyword'>case</span> ACTION_FLUSH:</td></tr>
-<tr><td class="num" id="LN2237">2237</td><td class="line">        <span class='keyword'>case</span> ACTION_SYNC:</td></tr>
-<tr><td class="num" id="LN2238">2238</td><td class="line">        <span class='keyword'>case</span> ACTION_ROTATE:</td></tr>
-<tr><td class="num" id="LN2239">2239</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Unexpected action."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unexpected action.", "src/journal/journalctl.c"<br>, 2239, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2240">2240</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2241">2241</td><td class="line">        <span class='keyword'>case</span> ACTION_PRINT_HEADER:</td></tr>
-<tr><td class="num" id="LN2242">2242</td><td class="line">                journal_print_header(j);</td></tr>
-<tr><td class="num" id="LN2243">2243</td><td class="line">                r = 0;</td></tr>
-<tr><td class="num" id="LN2244">2244</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2245">2245</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2246">2246</td><td class="line">        <span class='keyword'>case</span> ACTION_VERIFY:</td></tr>
-<tr><td class="num" id="LN2247">2247</td><td class="line">                r = verify(j);</td></tr>
-<tr><td class="num" id="LN2248">2248</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2249">2249</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2250">2250</td><td class="line">        <span class='keyword'>case</span> ACTION_DISK_USAGE: {</td></tr>
-<tr><td class="num" id="LN2251">2251</td><td class="line">                uint64_t bytes = 0;</td></tr>
-<tr><td class="num" id="LN2252">2252</td><td class="line">                <span class='keyword'>char</span> sbytes[<span class='macro'>FORMAT_BYTES_MAX<span class='expansion'>8</span></span>];</td></tr>
-<tr><td class="num" id="LN2253">2253</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2254">2254</td><td class="line">                r = sd_journal_get_usage(j, &amp;bytes);</td></tr>
-<tr><td class="num" id="LN2255">2255</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2256">2256</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2257">2257</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2258">2258</td><td class="line">                printf(<span class='string_literal'>"Archived and active journals take up %s on disk.\n"</span>,</td></tr>
-<tr><td class="num" id="LN2259">2259</td><td class="line">                       format_bytes(sbytes, <span class='keyword'>sizeof</span>(sbytes), bytes));</td></tr>
-<tr><td class="num" id="LN2260">2260</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2261">2261</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2262">2262</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2263">2263</td><td class="line">        <span class='keyword'>case</span> ACTION_LIST_BOOTS:</td></tr>
-<tr><td class="num" id="LN2264">2264</td><td class="line">                r = list_boots(j);</td></tr>
-<tr><td class="num" id="LN2265">2265</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2266">2266</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2267">2267</td><td class="line">        <span class='keyword'>case</span> ACTION_VACUUM: {</td></tr>
-<tr><td class="num" id="LN2268">2268</td><td class="line">                Directory *d;</td></tr>
-<tr><td class="num" id="LN2269">2269</td><td class="line">                Iterator i;</td></tr>
-<tr><td class="num" id="LN2270">2270</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2271">2271</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(d, j-&gt;directories_by_path, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((j-&gt;directories_by_path<br>), &amp;(i), (void**)&amp;(d), ((void*)0)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN2272">2272</td><td class="line">                        <span class='keyword'>int</span> q;</td></tr>
-<tr><td class="num" id="LN2273">2273</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2274">2274</td><td class="line">                        <span class='keyword'>if</span> (d-&gt;is_root)</td></tr>
-<tr><td class="num" id="LN2275">2275</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN2276">2276</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2277">2277</td><td class="line">                        q = journal_directory_vacuum(d-&gt;path, arg_vacuum_size, arg_vacuum_n_files, arg_vacuum_time, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN2278">2278</td><td class="line">                        <span class='keyword'>if</span> (q &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2279">2279</td><td class="line">                                <span class='macro'>log_error_errno(q, <span class='string_literal'>"Failed to vacuum %s: %m"</span>, d-&gt;path)<span class='expansion'>({ int _level = (3), _e = (q); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2279, __func__, "Failed to vacuum %s: %m", d-&gt;path) : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2280">2280</td><td class="line">                                r = q;</td></tr>
-<tr><td class="num" id="LN2281">2281</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2282">2282</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2283">2283</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2284">2284</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2285">2285</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2286">2286</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2287">2287</td><td class="line">        <span class='keyword'>case</span> ACTION_LIST_FIELD_NAMES: {</td></tr>
-<tr><td class="num" id="LN2288">2288</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *field;</td></tr>
-<tr><td class="num" id="LN2289">2289</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2290">2290</td><td class="line">                <span class='macro'>SD_JOURNAL_FOREACH_FIELD(j, field)<span class='expansion'>for (sd_journal_restart_fields(j); sd_journal_enumerate_fields<br>((j), &amp;(field)) &gt; 0; )</span></span> {</td></tr>
-<tr><td class="num" id="LN2291">2291</td><td class="line">                        printf(<span class='string_literal'>"%s\n"</span>, field);</td></tr>
-<tr><td class="num" id="LN2292">2292</td><td class="line">                        n_shown++;</td></tr>
-<tr><td class="num" id="LN2293">2293</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2294">2294</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2295">2295</td><td class="line">                r = 0;</td></tr>
-<tr><td class="num" id="LN2296">2296</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2297">2297</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2298">2298</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2299">2299</td><td class="line">        <span class='keyword'>case</span> ACTION_SHOW:</td></tr>
-<tr><td class="num" id="LN2300">2300</td><td class="line">        <span class='keyword'>case</span> ACTION_LIST_FIELDS:</td></tr>
-<tr><td class="num" id="LN2301">2301</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2302">2302</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2303">2303</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN2304">2304</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Unknown action"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unknown action", "src/journal/journalctl.c"<br>, 2304, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2305">2305</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2306">2306</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2307">2307</td><td class="line">        <span class='keyword'>if</span> (arg_boot_offset != 0 &amp;&amp;</td></tr>
-<tr><td class="num" id="LN2308">2308</td><td class="line">            sd_journal_has_runtime_files(j) &gt; 0 &amp;&amp;</td></tr>
-<tr><td class="num" id="LN2309">2309</td><td class="line">            sd_journal_has_persistent_files(j) == 0) {</td></tr>
-<tr><td class="num" id="LN2310">2310</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Specifying boot ID has no effect, no persistent journal was found"</span>)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2310, __func__, "Specifying boot ID has no effect, no persistent journal was found"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2311">2311</td><td class="line">                r = 0;</td></tr>
-<tr><td class="num" id="LN2312">2312</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2313">2313</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2314">2314</td><td class="line">        <span class='comment'>/* add_boot() must be called first!</span></td></tr>
-<tr><td class="num" id="LN2315">2315</td><td class="line">         <span class='comment'>* It may need to seek the journal to find parent boot IDs. */</span></td></tr>
-<tr><td class="num" id="LN2316">2316</td><td class="line">        r = add_boot(j);</td></tr>
-<tr><td class="num" id="LN2317">2317</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2318">2318</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2319">2319</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2320">2320</td><td class="line">        r = add_dmesg(j);</td></tr>
-<tr><td class="num" id="LN2321">2321</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2322">2322</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2323">2323</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2324">2324</td><td class="line">        r = add_units(j);</td></tr>
-<tr><td class="num" id="LN2325">2325</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2326">2326</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add filter for units: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2326, __func__, "Failed to add filter for units: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2327">2327</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2328">2328</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2329">2329</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2330">2330</td><td class="line">        r = add_syslog_identifier(j);</td></tr>
-<tr><td class="num" id="LN2331">2331</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2332">2332</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add filter for syslog identifiers: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2332, __func__, "Failed to add filter for syslog identifiers: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2333">2333</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2334">2334</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2335">2335</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2336">2336</td><td class="line">        r = add_priorities(j);</td></tr>
-<tr><td class="num" id="LN2337">2337</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2338">2338</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2339">2339</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2340">2340</td><td class="line">        r = add_matches(j, argv + optind);</td></tr>
-<tr><td class="num" id="LN2341">2341</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2342">2342</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2343">2343</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2344">2344</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>_unlikely_(log_get_max_level() &gt;= LOG_DEBUG)<span class='expansion'>(__builtin_expect(!!(log_get_max_level() &gt;= 7),0))</span></span>) {</td></tr>
-<tr><td class="num" id="LN2345">2345</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *filter;</td></tr>
-<tr><td class="num" id="LN2346">2346</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2347">2347</td><td class="line">                filter = journal_make_match_string(j);</td></tr>
-<tr><td class="num" id="LN2348">2348</td><td class="line">                <span class='keyword'>if</span> (!filter)</td></tr>
-<tr><td class="num" id="LN2349">2349</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journalctl.c", 2349, __func__)</span></span>;</td></tr>
-<tr><td class="num" id="LN2350">2350</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2351">2351</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Journal filter: %s"</span>, filter)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2351, __func__, "Journal filter: %s", filter) : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN2352">2352</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2353">2353</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2354">2354</td><td class="line">        <span class='keyword'>if</span> (arg_action == ACTION_LIST_FIELDS) {</td></tr>
-<tr><td class="num" id="LN2355">2355</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>void</span> *data;</td></tr>
-<tr><td class="num" id="LN2356">2356</td><td class="line">                size_t size;</td></tr>
-<tr><td class="num" id="LN2357">2357</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2358">2358</td><td class="line">                <span class='macro'>assert(arg_field)<span class='expansion'>do { if ((__builtin_expect(!!(!(arg_field)),0))) log_assert_failed<br>("arg_field", "src/journal/journalctl.c", 2358, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2231">2231</td><td class="line">        <span class='keyword'>switch</span> (arg_action) {</td></tr>
+<tr><td class="num" id="LN2232">2232</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2233">2233</td><td class="line">        <span class='keyword'>case</span> ACTION_NEW_ID128:</td></tr>
+<tr><td class="num" id="LN2234">2234</td><td class="line">        <span class='keyword'>case</span> ACTION_SETUP_KEYS:</td></tr>
+<tr><td class="num" id="LN2235">2235</td><td class="line">        <span class='keyword'>case</span> ACTION_LIST_CATALOG:</td></tr>
+<tr><td class="num" id="LN2236">2236</td><td class="line">        <span class='keyword'>case</span> ACTION_DUMP_CATALOG:</td></tr>
+<tr><td class="num" id="LN2237">2237</td><td class="line">        <span class='keyword'>case</span> ACTION_UPDATE_CATALOG:</td></tr>
+<tr><td class="num" id="LN2238">2238</td><td class="line">        <span class='keyword'>case</span> ACTION_FLUSH:</td></tr>
+<tr><td class="num" id="LN2239">2239</td><td class="line">        <span class='keyword'>case</span> ACTION_SYNC:</td></tr>
+<tr><td class="num" id="LN2240">2240</td><td class="line">        <span class='keyword'>case</span> ACTION_ROTATE:</td></tr>
+<tr><td class="num" id="LN2241">2241</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Unexpected action."</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unexpected action.", "src/journal/journalctl.c"<br>, 2241, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2242">2242</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2243">2243</td><td class="line">        <span class='keyword'>case</span> ACTION_PRINT_HEADER:</td></tr>
+<tr><td class="num" id="LN2244">2244</td><td class="line">                journal_print_header(j);</td></tr>
+<tr><td class="num" id="LN2245">2245</td><td class="line">                r = 0;</td></tr>
+<tr><td class="num" id="LN2246">2246</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2247">2247</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2248">2248</td><td class="line">        <span class='keyword'>case</span> ACTION_VERIFY:</td></tr>
+<tr><td class="num" id="LN2249">2249</td><td class="line">                r = verify(j);</td></tr>
+<tr><td class="num" id="LN2250">2250</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2251">2251</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2252">2252</td><td class="line">        <span class='keyword'>case</span> ACTION_DISK_USAGE: {</td></tr>
+<tr><td class="num" id="LN2253">2253</td><td class="line">                uint64_t bytes = 0;</td></tr>
+<tr><td class="num" id="LN2254">2254</td><td class="line">                <span class='keyword'>char</span> sbytes[<span class='macro'>FORMAT_BYTES_MAX<span class='expansion'>8</span></span>];</td></tr>
+<tr><td class="num" id="LN2255">2255</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2256">2256</td><td class="line">                r = sd_journal_get_usage(j, &amp;bytes);</td></tr>
+<tr><td class="num" id="LN2257">2257</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2258">2258</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2259">2259</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2260">2260</td><td class="line">                printf(<span class='string_literal'>"Archived and active journals take up %s on disk.\n"</span>,</td></tr>
+<tr><td class="num" id="LN2261">2261</td><td class="line">                       format_bytes(sbytes, <span class='keyword'>sizeof</span>(sbytes), bytes));</td></tr>
+<tr><td class="num" id="LN2262">2262</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2263">2263</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2264">2264</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2265">2265</td><td class="line">        <span class='keyword'>case</span> ACTION_LIST_BOOTS:</td></tr>
+<tr><td class="num" id="LN2266">2266</td><td class="line">                r = list_boots(j);</td></tr>
+<tr><td class="num" id="LN2267">2267</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2268">2268</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2269">2269</td><td class="line">        <span class='keyword'>case</span> ACTION_VACUUM: {</td></tr>
+<tr><td class="num" id="LN2270">2270</td><td class="line">                Directory *d;</td></tr>
+<tr><td class="num" id="LN2271">2271</td><td class="line">                Iterator i;</td></tr>
+<tr><td class="num" id="LN2272">2272</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2273">2273</td><td class="line">                <span class='macro'>HASHMAP_FOREACH(d, j-&gt;directories_by_path, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((j-&gt;directories_by_path<br>), &amp;(i), (void**)&amp;(d), ((void*)0)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN2274">2274</td><td class="line">                        <span class='keyword'>int</span> q;</td></tr>
+<tr><td class="num" id="LN2275">2275</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2276">2276</td><td class="line">                        <span class='keyword'>if</span> (d-&gt;is_root)</td></tr>
+<tr><td class="num" id="LN2277">2277</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN2278">2278</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2279">2279</td><td class="line">                        q = journal_directory_vacuum(d-&gt;path, arg_vacuum_size, arg_vacuum_n_files, arg_vacuum_time, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN2280">2280</td><td class="line">                        <span class='keyword'>if</span> (q &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2281">2281</td><td class="line">                                <span class='macro'>log_error_errno(q, <span class='string_literal'>"Failed to vacuum %s: %m"</span>, d-&gt;path)<span class='expansion'>({ int _level = (3), _e = (q); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2281, __func__, "Failed to vacuum %s: %m", d-&gt;path) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2282">2282</td><td class="line">                                r = q;</td></tr>
+<tr><td class="num" id="LN2283">2283</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2284">2284</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2285">2285</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2286">2286</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2287">2287</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2288">2288</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2289">2289</td><td class="line">        <span class='keyword'>case</span> ACTION_LIST_FIELD_NAMES: {</td></tr>
+<tr><td class="num" id="LN2290">2290</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *field;</td></tr>
+<tr><td class="num" id="LN2291">2291</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2292">2292</td><td class="line">                <span class='macro'>SD_JOURNAL_FOREACH_FIELD(j, field)<span class='expansion'>for (sd_journal_restart_fields(j); sd_journal_enumerate_fields<br>((j), &amp;(field)) &gt; 0; )</span></span> {</td></tr>
+<tr><td class="num" id="LN2293">2293</td><td class="line">                        printf(<span class='string_literal'>"%s\n"</span>, field);</td></tr>
+<tr><td class="num" id="LN2294">2294</td><td class="line">                        n_shown++;</td></tr>
+<tr><td class="num" id="LN2295">2295</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2296">2296</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2297">2297</td><td class="line">                r = 0;</td></tr>
+<tr><td class="num" id="LN2298">2298</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2299">2299</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2300">2300</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2301">2301</td><td class="line">        <span class='keyword'>case</span> ACTION_SHOW:</td></tr>
+<tr><td class="num" id="LN2302">2302</td><td class="line">        <span class='keyword'>case</span> ACTION_LIST_FIELDS:</td></tr>
+<tr><td class="num" id="LN2303">2303</td><td class="line">                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2304">2304</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2305">2305</td><td class="line">        <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN2306">2306</td><td class="line">                <span class='macro'>assert_not_reached(<span class='string_literal'>"Unknown action"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unknown action", "src/journal/journalctl.c"<br>, 2306, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2307">2307</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2308">2308</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2309">2309</td><td class="line">        <span class='keyword'>if</span> (arg_boot_offset != 0 &amp;&amp;</td></tr>
+<tr><td class="num" id="LN2310">2310</td><td class="line">            sd_journal_has_runtime_files(j) &gt; 0 &amp;&amp;</td></tr>
+<tr><td class="num" id="LN2311">2311</td><td class="line">            sd_journal_has_persistent_files(j) == 0) {</td></tr>
+<tr><td class="num" id="LN2312">2312</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Specifying boot ID has no effect, no persistent journal was found"</span>)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2312, __func__, "Specifying boot ID has no effect, no persistent journal was found"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2313">2313</td><td class="line">                r = 0;</td></tr>
+<tr><td class="num" id="LN2314">2314</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2315">2315</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2316">2316</td><td class="line">        <span class='comment'>/* add_boot() must be called first!</span></td></tr>
+<tr><td class="num" id="LN2317">2317</td><td class="line">         <span class='comment'>* It may need to seek the journal to find parent boot IDs. */</span></td></tr>
+<tr><td class="num" id="LN2318">2318</td><td class="line">        r = add_boot(j);</td></tr>
+<tr><td class="num" id="LN2319">2319</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2320">2320</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2321">2321</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2322">2322</td><td class="line">        r = add_dmesg(j);</td></tr>
+<tr><td class="num" id="LN2323">2323</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2324">2324</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2325">2325</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2326">2326</td><td class="line">        r = add_units(j);</td></tr>
+<tr><td class="num" id="LN2327">2327</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2328">2328</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add filter for units: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2328, __func__, "Failed to add filter for units: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2329">2329</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2330">2330</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2331">2331</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2332">2332</td><td class="line">        r = add_syslog_identifier(j);</td></tr>
+<tr><td class="num" id="LN2333">2333</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2334">2334</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add filter for syslog identifiers: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2334, __func__, "Failed to add filter for syslog identifiers: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2335">2335</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2336">2336</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2337">2337</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2338">2338</td><td class="line">        r = add_priorities(j);</td></tr>
+<tr><td class="num" id="LN2339">2339</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2340">2340</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2341">2341</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2342">2342</td><td class="line">        r = add_matches(j, argv + optind);</td></tr>
+<tr><td class="num" id="LN2343">2343</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2344">2344</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2345">2345</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2346">2346</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>_unlikely_(log_get_max_level() &gt;= LOG_DEBUG)<span class='expansion'>(__builtin_expect(!!(log_get_max_level() &gt;= 7),0))</span></span>) {</td></tr>
+<tr><td class="num" id="LN2347">2347</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *filter;</td></tr>
+<tr><td class="num" id="LN2348">2348</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2349">2349</td><td class="line">                filter = journal_make_match_string(j);</td></tr>
+<tr><td class="num" id="LN2350">2350</td><td class="line">                <span class='keyword'>if</span> (!filter)</td></tr>
+<tr><td class="num" id="LN2351">2351</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journalctl.c", 2351, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN2352">2352</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2353">2353</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Journal filter: %s"</span>, filter)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2353, __func__, "Journal filter: %s", filter) : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN2354">2354</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2355">2355</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2356">2356</td><td class="line">        <span class='keyword'>if</span> (arg_action == ACTION_LIST_FIELDS) {</td></tr>
+<tr><td class="num" id="LN2357">2357</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>void</span> *data;</td></tr>
+<tr><td class="num" id="LN2358">2358</td><td class="line">                size_t size;</td></tr>
 <tr><td class="num" id="LN2359">2359</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2360">2360</td><td class="line">                r = sd_journal_set_data_threshold(j, 0);</td></tr>
-<tr><td class="num" id="LN2361">2361</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2362">2362</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to unset data size threshold: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2362, __func__, "Failed to unset data size threshold: %m") :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2363">2363</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2364">2364</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2365">2365</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2366">2366</td><td class="line">                r = sd_journal_query_unique(j, arg_field);</td></tr>
-<tr><td class="num" id="LN2367">2367</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2368">2368</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to query unique data objects: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2368, __func__, "Failed to query unique data objects: %m") :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2369">2369</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2370">2370</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2371">2371</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2372">2372</td><td class="line">                <span class='macro'>SD_JOURNAL_FOREACH_UNIQUE(j, data, size)<span class='expansion'>for (sd_journal_restart_unique(j); sd_journal_enumerate_unique<br>((j), &amp;(data), &amp;(size)) &gt; 0; )</span></span> {</td></tr>
-<tr><td class="num" id="LN2373">2373</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>void</span> *eq;</td></tr>
-<tr><td class="num" id="LN2374">2374</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2375">2375</td><td class="line">                        <span class='keyword'>if</span> (arg_lines &gt;= 0 &amp;&amp; n_shown &gt;= arg_lines)</td></tr>
-<tr><td class="num" id="LN2376">2376</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2377">2377</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2378">2378</td><td class="line">                        eq = memchr(data, '=', size);</td></tr>
-<tr><td class="num" id="LN2379">2379</td><td class="line">                        <span class='keyword'>if</span> (eq)</td></tr>
-<tr><td class="num" id="LN2380">2380</td><td class="line">                                printf(<span class='string_literal'>"%.*s\n"</span>, (<span class='keyword'>int</span>) (size - ((<span class='keyword'>const</span> uint8_t*) eq - (<span class='keyword'>const</span> uint8_t*) data + 1)), (<span class='keyword'>const</span> <span class='keyword'>char</span>*) eq + 1);</td></tr>
-<tr><td class="num" id="LN2381">2381</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2382">2382</td><td class="line">                                printf(<span class='string_literal'>"%.*s\n"</span>, (<span class='keyword'>int</span>) size, (<span class='keyword'>const</span> <span class='keyword'>char</span>*) data);</td></tr>
-<tr><td class="num" id="LN2383">2383</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2384">2384</td><td class="line">                        n_shown++;</td></tr>
-<tr><td class="num" id="LN2385">2385</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2386">2386</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2387">2387</td><td class="line">                r = 0;</td></tr>
-<tr><td class="num" id="LN2388">2388</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2389">2389</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2390">2390</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2391">2391</td><td class="line">        <span class='comment'>/* Opening the fd now means the first sd_journal_wait() will actually wait */</span></td></tr>
-<tr><td class="num" id="LN2392">2392</td><td class="line">        <span class='keyword'>if</span> (arg_follow) {</td></tr>
-<tr><td class="num" id="LN2393">2393</td><td class="line">                r = sd_journal_get_fd(j);</td></tr>
-<tr><td class="num" id="LN2394">2394</td><td class="line">                <span class='keyword'>if</span> (r == -<span class='macro'>EMEDIUMTYPE<span class='expansion'>124</span></span>) {</td></tr>
-<tr><td class="num" id="LN2395">2395</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"The --follow switch is not supported in conjunction with reading from STDIN."</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2395, __func__, "The --follow switch is not supported in conjunction with reading from STDIN."<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2396">2396</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2397">2397</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2398">2398</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2399">2399</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to get journal fd: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2399, __func__, "Failed to get journal fd: %m") : -abs(_e);<br> })</span></span>;</td></tr>
-<tr><td class="num" id="LN2400">2400</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2401">2401</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2402">2402</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2403">2403</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2404">2404</td><td class="line">        <span class='keyword'>if</span> (arg_cursor || arg_after_cursor) {</td></tr>
-<tr><td class="num" id="LN2405">2405</td><td class="line">                r = sd_journal_seek_cursor(j, arg_cursor ?: arg_after_cursor);</td></tr>
-<tr><td class="num" id="LN2406">2406</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2407">2407</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to cursor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2407, __func__, "Failed to seek to cursor: %m") : -abs(_e);<br> })</span></span>;</td></tr>
-<tr><td class="num" id="LN2408">2408</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2409">2409</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2410">2410</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2411">2411</td><td class="line">                <span class='keyword'>if</span> (!arg_reverse)</td></tr>
-<tr><td class="num" id="LN2412">2412</td><td class="line">                        r = sd_journal_next_skip(j, 1 + !!arg_after_cursor);</td></tr>
-<tr><td class="num" id="LN2413">2413</td><td class="line">                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2414">2414</td><td class="line">                        r = sd_journal_previous_skip(j, 1 + !!arg_after_cursor);</td></tr>
-<tr><td class="num" id="LN2415">2415</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2416">2416</td><td class="line">                <span class='keyword'>if</span> (arg_after_cursor &amp;&amp; r &lt; 2) {</td></tr>
-<tr><td class="num" id="LN2417">2417</td><td class="line">                        <span class='comment'>/* We couldn't find the next entry after the cursor. */</span></td></tr>
-<tr><td class="num" id="LN2418">2418</td><td class="line">                        <span class='keyword'>if</span> (arg_follow)</td></tr>
-<tr><td class="num" id="LN2419">2419</td><td class="line">                                need_seek = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2420">2420</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2421">2421</td><td class="line">                                arg_lines = 0;</td></tr>
-<tr><td class="num" id="LN2422">2422</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2423">2423</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2424">2424</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_since_set &amp;&amp; !arg_reverse) {</td></tr>
-<tr><td class="num" id="LN2425">2425</td><td class="line">                r = sd_journal_seek_realtime_usec(j, arg_since);</td></tr>
-<tr><td class="num" id="LN2426">2426</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2427">2427</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to date: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2427, __func__, "Failed to seek to date: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN2428">2428</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2429">2429</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2430">2430</td><td class="line">                r = sd_journal_next(j);</td></tr>
-<tr><td class="num" id="LN2431">2431</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2432">2432</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_until_set &amp;&amp; arg_reverse) {</td></tr>
-<tr><td class="num" id="LN2433">2433</td><td class="line">                r = sd_journal_seek_realtime_usec(j, arg_until);</td></tr>
-<tr><td class="num" id="LN2434">2434</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2435">2435</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to date: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2435, __func__, "Failed to seek to date: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN2436">2436</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2437">2437</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2438">2438</td><td class="line">                r = sd_journal_previous(j);</td></tr>
-<tr><td class="num" id="LN2439">2439</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2440">2440</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_lines &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN2441">2441</td><td class="line">                r = sd_journal_seek_tail(j);</td></tr>
-<tr><td class="num" id="LN2442">2442</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2443">2443</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to tail: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2443, __func__, "Failed to seek to tail: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN2444">2444</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2445">2445</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2446">2446</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2447">2447</td><td class="line">                r = sd_journal_previous_skip(j, arg_lines);</td></tr>
+<tr><td class="num" id="LN2360">2360</td><td class="line">                <span class='macro'>assert(arg_field)<span class='expansion'>do { if ((__builtin_expect(!!(!(arg_field)),0))) log_assert_failed<br>("arg_field", "src/journal/journalctl.c", 2360, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2361">2361</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2362">2362</td><td class="line">                r = sd_journal_set_data_threshold(j, 0);</td></tr>
+<tr><td class="num" id="LN2363">2363</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2364">2364</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to unset data size threshold: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2364, __func__, "Failed to unset data size threshold: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2365">2365</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2366">2366</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2367">2367</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2368">2368</td><td class="line">                r = sd_journal_query_unique(j, arg_field);</td></tr>
+<tr><td class="num" id="LN2369">2369</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2370">2370</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to query unique data objects: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2370, __func__, "Failed to query unique data objects: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2371">2371</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2372">2372</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2373">2373</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2374">2374</td><td class="line">                <span class='macro'>SD_JOURNAL_FOREACH_UNIQUE(j, data, size)<span class='expansion'>for (sd_journal_restart_unique(j); sd_journal_enumerate_unique<br>((j), &amp;(data), &amp;(size)) &gt; 0; )</span></span> {</td></tr>
+<tr><td class="num" id="LN2375">2375</td><td class="line">                        <span class='keyword'>const</span> <span class='keyword'>void</span> *eq;</td></tr>
+<tr><td class="num" id="LN2376">2376</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2377">2377</td><td class="line">                        <span class='keyword'>if</span> (arg_lines &gt;= 0 &amp;&amp; n_shown &gt;= arg_lines)</td></tr>
+<tr><td class="num" id="LN2378">2378</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2379">2379</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2380">2380</td><td class="line">                        eq = memchr(data, '=', size);</td></tr>
+<tr><td class="num" id="LN2381">2381</td><td class="line">                        <span class='keyword'>if</span> (eq)</td></tr>
+<tr><td class="num" id="LN2382">2382</td><td class="line">                                printf(<span class='string_literal'>"%.*s\n"</span>, (<span class='keyword'>int</span>) (size - ((<span class='keyword'>const</span> uint8_t*) eq - (<span class='keyword'>const</span> uint8_t*) data + 1)), (<span class='keyword'>const</span> <span class='keyword'>char</span>*) eq + 1);</td></tr>
+<tr><td class="num" id="LN2383">2383</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN2384">2384</td><td class="line">                                printf(<span class='string_literal'>"%.*s\n"</span>, (<span class='keyword'>int</span>) size, (<span class='keyword'>const</span> <span class='keyword'>char</span>*) data);</td></tr>
+<tr><td class="num" id="LN2385">2385</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2386">2386</td><td class="line">                        n_shown++;</td></tr>
+<tr><td class="num" id="LN2387">2387</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2388">2388</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2389">2389</td><td class="line">                r = 0;</td></tr>
+<tr><td class="num" id="LN2390">2390</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2391">2391</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2392">2392</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2393">2393</td><td class="line">        <span class='comment'>/* Opening the fd now means the first sd_journal_wait() will actually wait */</span></td></tr>
+<tr><td class="num" id="LN2394">2394</td><td class="line">        <span class='keyword'>if</span> (arg_follow) {</td></tr>
+<tr><td class="num" id="LN2395">2395</td><td class="line">                r = sd_journal_get_fd(j);</td></tr>
+<tr><td class="num" id="LN2396">2396</td><td class="line">                <span class='keyword'>if</span> (r == -<span class='macro'>EMEDIUMTYPE<span class='expansion'>124</span></span>) {</td></tr>
+<tr><td class="num" id="LN2397">2397</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"The --follow switch is not supported in conjunction with reading from STDIN."</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2397, __func__, "The --follow switch is not supported in conjunction with reading from STDIN."<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2398">2398</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2399">2399</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2400">2400</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2401">2401</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to get journal fd: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2401, __func__, "Failed to get journal fd: %m") : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN2402">2402</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2403">2403</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2404">2404</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2405">2405</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2406">2406</td><td class="line">        <span class='keyword'>if</span> (arg_cursor || arg_after_cursor) {</td></tr>
+<tr><td class="num" id="LN2407">2407</td><td class="line">                r = sd_journal_seek_cursor(j, arg_cursor ?: arg_after_cursor);</td></tr>
+<tr><td class="num" id="LN2408">2408</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2409">2409</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to cursor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2409, __func__, "Failed to seek to cursor: %m") : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN2410">2410</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2411">2411</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2412">2412</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2413">2413</td><td class="line">                <span class='keyword'>if</span> (!arg_reverse)</td></tr>
+<tr><td class="num" id="LN2414">2414</td><td class="line">                        r = sd_journal_next_skip(j, 1 + !!arg_after_cursor);</td></tr>
+<tr><td class="num" id="LN2415">2415</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN2416">2416</td><td class="line">                        r = sd_journal_previous_skip(j, 1 + !!arg_after_cursor);</td></tr>
+<tr><td class="num" id="LN2417">2417</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2418">2418</td><td class="line">                <span class='keyword'>if</span> (arg_after_cursor &amp;&amp; r &lt; 2) {</td></tr>
+<tr><td class="num" id="LN2419">2419</td><td class="line">                        <span class='comment'>/* We couldn't find the next entry after the cursor. */</span></td></tr>
+<tr><td class="num" id="LN2420">2420</td><td class="line">                        <span class='keyword'>if</span> (arg_follow)</td></tr>
+<tr><td class="num" id="LN2421">2421</td><td class="line">                                need_seek = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2422">2422</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN2423">2423</td><td class="line">                                arg_lines = 0;</td></tr>
+<tr><td class="num" id="LN2424">2424</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2425">2425</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2426">2426</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_since_set &amp;&amp; !arg_reverse) {</td></tr>
+<tr><td class="num" id="LN2427">2427</td><td class="line">                r = sd_journal_seek_realtime_usec(j, arg_since);</td></tr>
+<tr><td class="num" id="LN2428">2428</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2429">2429</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to date: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2429, __func__, "Failed to seek to date: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN2430">2430</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2431">2431</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2432">2432</td><td class="line">                r = sd_journal_next(j);</td></tr>
+<tr><td class="num" id="LN2433">2433</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2434">2434</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_until_set &amp;&amp; arg_reverse) {</td></tr>
+<tr><td class="num" id="LN2435">2435</td><td class="line">                r = sd_journal_seek_realtime_usec(j, arg_until);</td></tr>
+<tr><td class="num" id="LN2436">2436</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2437">2437</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to date: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2437, __func__, "Failed to seek to date: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN2438">2438</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2439">2439</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2440">2440</td><td class="line">                r = sd_journal_previous(j);</td></tr>
+<tr><td class="num" id="LN2441">2441</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2442">2442</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_lines &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN2443">2443</td><td class="line">                r = sd_journal_seek_tail(j);</td></tr>
+<tr><td class="num" id="LN2444">2444</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2445">2445</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to tail: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2445, __func__, "Failed to seek to tail: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN2446">2446</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2447">2447</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN2448">2448</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2449">2449</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_reverse) {</td></tr>
-<tr><td class="num" id="LN2450">2450</td><td class="line">                r = sd_journal_seek_tail(j);</td></tr>
-<tr><td class="num" id="LN2451">2451</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2452">2452</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to tail: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2452, __func__, "Failed to seek to tail: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN2453">2453</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2454">2454</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2455">2455</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2456">2456</td><td class="line">                r = sd_journal_previous(j);</td></tr>
+<tr><td class="num" id="LN2449">2449</td><td class="line">                r = sd_journal_previous_skip(j, arg_lines);</td></tr>
+<tr><td class="num" id="LN2450">2450</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2451">2451</td><td class="line">        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_reverse) {</td></tr>
+<tr><td class="num" id="LN2452">2452</td><td class="line">                r = sd_journal_seek_tail(j);</td></tr>
+<tr><td class="num" id="LN2453">2453</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2454">2454</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to tail: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2454, __func__, "Failed to seek to tail: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN2455">2455</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2456">2456</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN2457">2457</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2458">2458</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN2459">2459</td><td class="line">                r = sd_journal_seek_head(j);</td></tr>
-<tr><td class="num" id="LN2460">2460</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2461">2461</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to head: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2461, __func__, "Failed to seek to head: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN2462">2462</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2463">2463</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2464">2464</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2465">2465</td><td class="line">                r = sd_journal_next(j);</td></tr>
-<tr><td class="num" id="LN2466">2466</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2467">2467</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2468">2468</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2469">2469</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to iterate through journal: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2469, __func__, "Failed to iterate through journal: %m") : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2470">2470</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2471">2471</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2472">2472</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
-<tr><td class="num" id="LN2473">2473</td><td class="line">                <span class='keyword'>if</span> (arg_follow)</td></tr>
-<tr><td class="num" id="LN2474">2474</td><td class="line">                        need_seek = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2475">2475</td><td class="line">                <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN2476">2476</td><td class="line">                        <span class='keyword'>if</span> (!arg_quiet)</td></tr>
-<tr><td class="num" id="LN2477">2477</td><td class="line">                                printf(<span class='string_literal'>"-- No entries --\n"</span>);</td></tr>
-<tr><td class="num" id="LN2478">2478</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2479">2479</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2480">2480</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2481">2481</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2482">2482</td><td class="line">        <span class='keyword'>if</span> (!arg_follow)</td></tr>
-<tr><td class="num" id="LN2483">2483</td><td class="line">                pager_open(arg_no_pager, arg_pager_end);</td></tr>
-<tr><td class="num" id="LN2484">2484</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2485">2485</td><td class="line">        <span class='keyword'>if</span> (!arg_quiet) {</td></tr>
-<tr><td class="num" id="LN2486">2486</td><td class="line">                usec_t start, end;</td></tr>
-<tr><td class="num" id="LN2487">2487</td><td class="line">                <span class='keyword'>char</span> start_buf[<span class='macro'>FORMAT_TIMESTAMP_MAX<span class='expansion'>(3+1+10+1+8+1+6+1+6+1)</span></span>], end_buf[<span class='macro'>FORMAT_TIMESTAMP_MAX<span class='expansion'>(3+1+10+1+8+1+6+1+6+1)</span></span>];</td></tr>
-<tr><td class="num" id="LN2488">2488</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2489">2489</td><td class="line">                r = sd_journal_get_cutoff_realtime_usec(j, &amp;start, &amp;end);</td></tr>
-<tr><td class="num" id="LN2490">2490</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2491">2491</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to get cutoff: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2491, __func__, "Failed to get cutoff: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2492">2492</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2493">2493</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2494">2494</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2495">2495</td><td class="line">                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
-<tr><td class="num" id="LN2496">2496</td><td class="line">                        <span class='keyword'>if</span> (arg_follow)</td></tr>
-<tr><td class="num" id="LN2497">2497</td><td class="line">                                printf(<span class='string_literal'>"-- Logs begin at %s. --\n"</span>,</td></tr>
-<tr><td class="num" id="LN2498">2498</td><td class="line">                                       format_timestamp_maybe_utc(start_buf, <span class='keyword'>sizeof</span>(start_buf), start));</td></tr>
-<tr><td class="num" id="LN2499">2499</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2500">2500</td><td class="line">                                printf(<span class='string_literal'>"-- Logs begin at %s, end at %s. --\n"</span>,</td></tr>
-<tr><td class="num" id="LN2501">2501</td><td class="line">                                       format_timestamp_maybe_utc(start_buf, <span class='keyword'>sizeof</span>(start_buf), start),</td></tr>
-<tr><td class="num" id="LN2502">2502</td><td class="line">                                       format_timestamp_maybe_utc(end_buf, <span class='keyword'>sizeof</span>(end_buf), end));</td></tr>
-<tr><td class="num" id="LN2503">2503</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2504">2504</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2505">2505</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2506">2506</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN2507">2507</td><td class="line">                <span class='keyword'>while</span> (arg_lines &lt; 0 || n_shown &lt; arg_lines || (arg_follow &amp;&amp; !first_line)) {</td></tr>
-<tr><td class="num" id="LN2508">2508</td><td class="line">                        <span class='keyword'>int</span> flags;</td></tr>
-<tr><td class="num" id="LN2509">2509</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2510">2510</td><td class="line">                        <span class='keyword'>if</span> (need_seek) {</td></tr>
-<tr><td class="num" id="LN2511">2511</td><td class="line">                                <span class='keyword'>if</span> (!arg_reverse)</td></tr>
-<tr><td class="num" id="LN2512">2512</td><td class="line">                                        r = sd_journal_next(j);</td></tr>
-<tr><td class="num" id="LN2513">2513</td><td class="line">                                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN2514">2514</td><td class="line">                                        r = sd_journal_previous(j);</td></tr>
-<tr><td class="num" id="LN2515">2515</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2516">2516</td><td class="line">                                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to iterate through journal: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2516, __func__, "Failed to iterate through journal: %m") : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2517">2517</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2518">2518</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN2519">2519</td><td class="line">                                <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN2520">2520</td><td class="line">                                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2521">2521</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2522">2522</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2523">2523</td><td class="line">                        <span class='keyword'>if</span> (arg_until_set &amp;&amp; !arg_reverse) {</td></tr>
-<tr><td class="num" id="LN2524">2524</td><td class="line">                                usec_t usec;</td></tr>
-<tr><td class="num" id="LN2525">2525</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2526">2526</td><td class="line">                                r = sd_journal_get_realtime_usec(j, &amp;usec);</td></tr>
-<tr><td class="num" id="LN2527">2527</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2528">2528</td><td class="line">                                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine timestamp: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2528, __func__, "Failed to determine timestamp: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2529">2529</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2530">2530</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN2531">2531</td><td class="line">                                <span class='keyword'>if</span> (usec &gt; arg_until)</td></tr>
-<tr><td class="num" id="LN2532">2532</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2533">2533</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2534">2534</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2535">2535</td><td class="line">                        <span class='keyword'>if</span> (arg_since_set &amp;&amp; arg_reverse) {</td></tr>
-<tr><td class="num" id="LN2536">2536</td><td class="line">                                usec_t usec;</td></tr>
-<tr><td class="num" id="LN2537">2537</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2538">2538</td><td class="line">                                r = sd_journal_get_realtime_usec(j, &amp;usec);</td></tr>
-<tr><td class="num" id="LN2539">2539</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2540">2540</td><td class="line">                                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine timestamp: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2540, __func__, "Failed to determine timestamp: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2541">2541</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2542">2542</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN2543">2543</td><td class="line">                                <span class='keyword'>if</span> (usec &lt; arg_since)</td></tr>
-<tr><td class="num" id="LN2544">2544</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2545">2545</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2546">2546</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2547">2547</td><td class="line">                        <span class='keyword'>if</span> (!arg_merge &amp;&amp; !arg_quiet) {</td></tr>
-<tr><td class="num" id="LN2548">2548</td><td class="line">                                sd_id128_t boot_id;</td></tr>
-<tr><td class="num" id="LN2549">2549</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2550">2550</td><td class="line">                                r = sd_journal_get_monotonic_usec(j, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;boot_id);</td></tr>
-<tr><td class="num" id="LN2551">2551</td><td class="line">                                <span class='keyword'>if</span> (r &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN2552">2552</td><td class="line">                                        <span class='keyword'>if</span> (previous_boot_id_valid &amp;&amp;</td></tr>
-<tr><td class="num" id="LN2553">2553</td><td class="line">                                            !sd_id128_equal(boot_id, previous_boot_id))</td></tr>
-<tr><td class="num" id="LN2554">2554</td><td class="line">                                                printf(<span class='string_literal'>"%s-- Reboot --%s\n"</span>,</td></tr>
-<tr><td class="num" id="LN2555">2555</td><td class="line">                                                       ansi_highlight(), ansi_normal());</td></tr>
-<tr><td class="num" id="LN2556">2556</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2557">2557</td><td class="line">                                        previous_boot_id = boot_id;</td></tr>
-<tr><td class="num" id="LN2558">2558</td><td class="line">                                        previous_boot_id_valid = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2559">2559</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN2560">2560</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2561">2561</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2562">2562</td><td class="line">                        flags =</td></tr>
-<tr><td class="num" id="LN2563">2563</td><td class="line">                                arg_all * OUTPUT_SHOW_ALL |</td></tr>
-<tr><td class="num" id="LN2564">2564</td><td class="line">                                arg_full * OUTPUT_FULL_WIDTH |</td></tr>
-<tr><td class="num" id="LN2565">2565</td><td class="line">                                colors_enabled() * OUTPUT_COLOR |</td></tr>
-<tr><td class="num" id="LN2566">2566</td><td class="line">                                arg_catalog * OUTPUT_CATALOG |</td></tr>
-<tr><td class="num" id="LN2567">2567</td><td class="line">                                arg_utc * OUTPUT_UTC |</td></tr>
-<tr><td class="num" id="LN2568">2568</td><td class="line">                                arg_no_hostname * OUTPUT_NO_HOSTNAME;</td></tr>
-<tr><td class="num" id="LN2569">2569</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2570">2570</td><td class="line">                        r = output_journal(<span class='macro'>stdout<span class='expansion'>stdout</span></span>, j, arg_output, 0, flags, &amp;ellipsized);</td></tr>
-<tr><td class="num" id="LN2571">2571</td><td class="line">                        need_seek = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2572">2572</td><td class="line">                        <span class='keyword'>if</span> (r == -<span class='macro'>EADDRNOTAVAIL<span class='expansion'>99</span></span>)</td></tr>
-<tr><td class="num" id="LN2573">2573</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2574">2574</td><td class="line">                        <span class='keyword'>else</span> <span class='keyword'>if</span> (r &lt; 0 || ferror(<span class='macro'>stdout<span class='expansion'>stdout</span></span>))</td></tr>
-<tr><td class="num" id="LN2575">2575</td><td class="line">                                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2576">2576</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2577">2577</td><td class="line">                        n_shown++;</td></tr>
-<tr><td class="num" id="LN2578">2578</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2579">2579</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2580">2580</td><td class="line">                <span class='keyword'>if</span> (!arg_follow) {</td></tr>
-<tr><td class="num" id="LN2581">2581</td><td class="line">                        <span class='keyword'>if</span> (arg_show_cursor) {</td></tr>
-<tr><td class="num" id="LN2582">2582</td><td class="line">                                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *cursor = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2583">2583</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2584">2584</td><td class="line">                                r = sd_journal_get_cursor(j, &amp;cursor);</td></tr>
-<tr><td class="num" id="LN2585">2585</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0 &amp;&amp; r != -<span class='macro'>EADDRNOTAVAIL<span class='expansion'>99</span></span>)</td></tr>
-<tr><td class="num" id="LN2586">2586</td><td class="line">                                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to get cursor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2586, __func__, "Failed to get cursor: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2587">2587</td><td class="line">                                <span class='keyword'>else</span> <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN2588">2588</td><td class="line">                                        printf(<span class='string_literal'>"-- cursor: %s\n"</span>, cursor);</td></tr>
-<tr><td class="num" id="LN2589">2589</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2590">2590</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2591">2591</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2592">2592</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2593">2593</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2594">2594</td><td class="line">                r = sd_journal_wait(j, (uint64_t) -1);</td></tr>
-<tr><td class="num" id="LN2595">2595</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2596">2596</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Couldn't wait for journal event: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2596, __func__, "Couldn't wait for journal event: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2597">2597</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN2598">2598</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2599">2599</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2600">2600</td><td class="line">                first_line = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2601">2601</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2602">2602</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2603">2603</td><td class="line">finish:</td></tr>
-<tr><td class="num" id="LN2604">2604</td><td class="line">        pager_close();</td></tr>
-<tr><td class="num" id="LN2605">2605</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2606">2606</td><td class="line">        strv_free(arg_file);</td></tr>
+<tr><td class="num" id="LN2458">2458</td><td class="line">                r = sd_journal_previous(j);</td></tr>
+<tr><td class="num" id="LN2459">2459</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2460">2460</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN2461">2461</td><td class="line">                r = sd_journal_seek_head(j);</td></tr>
+<tr><td class="num" id="LN2462">2462</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2463">2463</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to seek to head: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2463, __func__, "Failed to seek to head: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN2464">2464</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2465">2465</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2466">2466</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2467">2467</td><td class="line">                r = sd_journal_next(j);</td></tr>
+<tr><td class="num" id="LN2468">2468</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2469">2469</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2470">2470</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2471">2471</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to iterate through journal: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2471, __func__, "Failed to iterate through journal: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2472">2472</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2473">2473</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2474">2474</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
+<tr><td class="num" id="LN2475">2475</td><td class="line">                <span class='keyword'>if</span> (arg_follow)</td></tr>
+<tr><td class="num" id="LN2476">2476</td><td class="line">                        need_seek = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2477">2477</td><td class="line">                <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN2478">2478</td><td class="line">                        <span class='keyword'>if</span> (!arg_quiet)</td></tr>
+<tr><td class="num" id="LN2479">2479</td><td class="line">                                printf(<span class='string_literal'>"-- No entries --\n"</span>);</td></tr>
+<tr><td class="num" id="LN2480">2480</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2481">2481</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2482">2482</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2483">2483</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2484">2484</td><td class="line">        <span class='keyword'>if</span> (!arg_follow)</td></tr>
+<tr><td class="num" id="LN2485">2485</td><td class="line">                pager_open(arg_no_pager, arg_pager_end);</td></tr>
+<tr><td class="num" id="LN2486">2486</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2487">2487</td><td class="line">        <span class='keyword'>if</span> (!arg_quiet) {</td></tr>
+<tr><td class="num" id="LN2488">2488</td><td class="line">                usec_t start, end;</td></tr>
+<tr><td class="num" id="LN2489">2489</td><td class="line">                <span class='keyword'>char</span> start_buf[<span class='macro'>FORMAT_TIMESTAMP_MAX<span class='expansion'>(3+1+10+1+8+1+6+1+6+1)</span></span>], end_buf[<span class='macro'>FORMAT_TIMESTAMP_MAX<span class='expansion'>(3+1+10+1+8+1+6+1+6+1)</span></span>];</td></tr>
+<tr><td class="num" id="LN2490">2490</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2491">2491</td><td class="line">                r = sd_journal_get_cutoff_realtime_usec(j, &amp;start, &amp;end);</td></tr>
+<tr><td class="num" id="LN2492">2492</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2493">2493</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to get cutoff: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2493, __func__, "Failed to get cutoff: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2494">2494</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2495">2495</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2496">2496</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2497">2497</td><td class="line">                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
+<tr><td class="num" id="LN2498">2498</td><td class="line">                        <span class='keyword'>if</span> (arg_follow)</td></tr>
+<tr><td class="num" id="LN2499">2499</td><td class="line">                                printf(<span class='string_literal'>"-- Logs begin at %s. --\n"</span>,</td></tr>
+<tr><td class="num" id="LN2500">2500</td><td class="line">                                       format_timestamp_maybe_utc(start_buf, <span class='keyword'>sizeof</span>(start_buf), start));</td></tr>
+<tr><td class="num" id="LN2501">2501</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN2502">2502</td><td class="line">                                printf(<span class='string_literal'>"-- Logs begin at %s, end at %s. --\n"</span>,</td></tr>
+<tr><td class="num" id="LN2503">2503</td><td class="line">                                       format_timestamp_maybe_utc(start_buf, <span class='keyword'>sizeof</span>(start_buf), start),</td></tr>
+<tr><td class="num" id="LN2504">2504</td><td class="line">                                       format_timestamp_maybe_utc(end_buf, <span class='keyword'>sizeof</span>(end_buf), end));</td></tr>
+<tr><td class="num" id="LN2505">2505</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2506">2506</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2507">2507</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2508">2508</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN2509">2509</td><td class="line">                <span class='keyword'>while</span> (arg_lines &lt; 0 || n_shown &lt; arg_lines || (arg_follow &amp;&amp; !first_line)) {</td></tr>
+<tr><td class="num" id="LN2510">2510</td><td class="line">                        <span class='keyword'>int</span> flags;</td></tr>
+<tr><td class="num" id="LN2511">2511</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2512">2512</td><td class="line">                        <span class='keyword'>if</span> (need_seek) {</td></tr>
+<tr><td class="num" id="LN2513">2513</td><td class="line">                                <span class='keyword'>if</span> (!arg_reverse)</td></tr>
+<tr><td class="num" id="LN2514">2514</td><td class="line">                                        r = sd_journal_next(j);</td></tr>
+<tr><td class="num" id="LN2515">2515</td><td class="line">                                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN2516">2516</td><td class="line">                                        r = sd_journal_previous(j);</td></tr>
+<tr><td class="num" id="LN2517">2517</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2518">2518</td><td class="line">                                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to iterate through journal: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2518, __func__, "Failed to iterate through journal: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2519">2519</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2520">2520</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN2521">2521</td><td class="line">                                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN2522">2522</td><td class="line">                                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2523">2523</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2524">2524</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2525">2525</td><td class="line">                        <span class='keyword'>if</span> (arg_until_set &amp;&amp; !arg_reverse) {</td></tr>
+<tr><td class="num" id="LN2526">2526</td><td class="line">                                usec_t usec;</td></tr>
+<tr><td class="num" id="LN2527">2527</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2528">2528</td><td class="line">                                r = sd_journal_get_realtime_usec(j, &amp;usec);</td></tr>
+<tr><td class="num" id="LN2529">2529</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2530">2530</td><td class="line">                                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine timestamp: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2530, __func__, "Failed to determine timestamp: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2531">2531</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2532">2532</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN2533">2533</td><td class="line">                                <span class='keyword'>if</span> (usec &gt; arg_until)</td></tr>
+<tr><td class="num" id="LN2534">2534</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2535">2535</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2536">2536</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2537">2537</td><td class="line">                        <span class='keyword'>if</span> (arg_since_set &amp;&amp; arg_reverse) {</td></tr>
+<tr><td class="num" id="LN2538">2538</td><td class="line">                                usec_t usec;</td></tr>
+<tr><td class="num" id="LN2539">2539</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2540">2540</td><td class="line">                                r = sd_journal_get_realtime_usec(j, &amp;usec);</td></tr>
+<tr><td class="num" id="LN2541">2541</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2542">2542</td><td class="line">                                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine timestamp: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2542, __func__, "Failed to determine timestamp: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2543">2543</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2544">2544</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN2545">2545</td><td class="line">                                <span class='keyword'>if</span> (usec &lt; arg_since)</td></tr>
+<tr><td class="num" id="LN2546">2546</td><td class="line">                                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2547">2547</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2548">2548</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2549">2549</td><td class="line">                        <span class='keyword'>if</span> (!arg_merge &amp;&amp; !arg_quiet) {</td></tr>
+<tr><td class="num" id="LN2550">2550</td><td class="line">                                sd_id128_t boot_id;</td></tr>
+<tr><td class="num" id="LN2551">2551</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2552">2552</td><td class="line">                                r = sd_journal_get_monotonic_usec(j, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;boot_id);</td></tr>
+<tr><td class="num" id="LN2553">2553</td><td class="line">                                <span class='keyword'>if</span> (r &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN2554">2554</td><td class="line">                                        <span class='keyword'>if</span> (previous_boot_id_valid &amp;&amp;</td></tr>
+<tr><td class="num" id="LN2555">2555</td><td class="line">                                            !sd_id128_equal(boot_id, previous_boot_id))</td></tr>
+<tr><td class="num" id="LN2556">2556</td><td class="line">                                                printf(<span class='string_literal'>"%s-- Reboot --%s\n"</span>,</td></tr>
+<tr><td class="num" id="LN2557">2557</td><td class="line">                                                       ansi_highlight(), ansi_normal());</td></tr>
+<tr><td class="num" id="LN2558">2558</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2559">2559</td><td class="line">                                        previous_boot_id = boot_id;</td></tr>
+<tr><td class="num" id="LN2560">2560</td><td class="line">                                        previous_boot_id_valid = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2561">2561</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN2562">2562</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2563">2563</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2564">2564</td><td class="line">                        flags =</td></tr>
+<tr><td class="num" id="LN2565">2565</td><td class="line">                                arg_all * OUTPUT_SHOW_ALL |</td></tr>
+<tr><td class="num" id="LN2566">2566</td><td class="line">                                arg_full * OUTPUT_FULL_WIDTH |</td></tr>
+<tr><td class="num" id="LN2567">2567</td><td class="line">                                colors_enabled() * OUTPUT_COLOR |</td></tr>
+<tr><td class="num" id="LN2568">2568</td><td class="line">                                arg_catalog * OUTPUT_CATALOG |</td></tr>
+<tr><td class="num" id="LN2569">2569</td><td class="line">                                arg_utc * OUTPUT_UTC |</td></tr>
+<tr><td class="num" id="LN2570">2570</td><td class="line">                                arg_no_hostname * OUTPUT_NO_HOSTNAME;</td></tr>
+<tr><td class="num" id="LN2571">2571</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2572">2572</td><td class="line">                        r = output_journal(<span class='macro'>stdout<span class='expansion'>stdout</span></span>, j, arg_output, 0, flags, &amp;ellipsized);</td></tr>
+<tr><td class="num" id="LN2573">2573</td><td class="line">                        need_seek = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2574">2574</td><td class="line">                        <span class='keyword'>if</span> (r == -<span class='macro'>EADDRNOTAVAIL<span class='expansion'>99</span></span>)</td></tr>
+<tr><td class="num" id="LN2575">2575</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2576">2576</td><td class="line">                        <span class='keyword'>else</span> <span class='keyword'>if</span> (r &lt; 0 || ferror(<span class='macro'>stdout<span class='expansion'>stdout</span></span>))</td></tr>
+<tr><td class="num" id="LN2577">2577</td><td class="line">                                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2578">2578</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2579">2579</td><td class="line">                        n_shown++;</td></tr>
+<tr><td class="num" id="LN2580">2580</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2581">2581</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2582">2582</td><td class="line">                <span class='keyword'>if</span> (!arg_follow) {</td></tr>
+<tr><td class="num" id="LN2583">2583</td><td class="line">                        <span class='keyword'>if</span> (arg_show_cursor) {</td></tr>
+<tr><td class="num" id="LN2584">2584</td><td class="line">                                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *cursor = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2585">2585</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2586">2586</td><td class="line">                                r = sd_journal_get_cursor(j, &amp;cursor);</td></tr>
+<tr><td class="num" id="LN2587">2587</td><td class="line">                                <span class='keyword'>if</span> (r &lt; 0 &amp;&amp; r != -<span class='macro'>EADDRNOTAVAIL<span class='expansion'>99</span></span>)</td></tr>
+<tr><td class="num" id="LN2588">2588</td><td class="line">                                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to get cursor: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2588, __func__, "Failed to get cursor: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2589">2589</td><td class="line">                                <span class='keyword'>else</span> <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN2590">2590</td><td class="line">                                        printf(<span class='string_literal'>"-- cursor: %s\n"</span>, cursor);</td></tr>
+<tr><td class="num" id="LN2591">2591</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2592">2592</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2593">2593</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2594">2594</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2595">2595</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2596">2596</td><td class="line">                r = sd_journal_wait(j, (uint64_t) -1);</td></tr>
+<tr><td class="num" id="LN2597">2597</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2598">2598</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Couldn't wait for journal event: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journalctl.c"<br>, 2598, __func__, "Couldn't wait for journal event: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2599">2599</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN2600">2600</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2601">2601</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2602">2602</td><td class="line">                first_line = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2603">2603</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2604">2604</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2605">2605</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN2606">2606</td><td class="line">        pager_close();</td></tr>
 <tr><td class="num" id="LN2607">2607</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2608">2608</td><td class="line">        strv_free(arg_syslog_identifier);</td></tr>
-<tr><td class="num" id="LN2609">2609</td><td class="line">        strv_free(arg_system_units);</td></tr>
-<tr><td class="num" id="LN2610">2610</td><td class="line">        strv_free(arg_user_units);</td></tr>
-<tr><td class="num" id="LN2611">2611</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2612">2612</td><td class="line">        free(arg_root);</td></tr>
+<tr><td class="num" id="LN2608">2608</td><td class="line">        strv_free(arg_file);</td></tr>
+<tr><td class="num" id="LN2609">2609</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2610">2610</td><td class="line">        strv_free(arg_syslog_identifier);</td></tr>
+<tr><td class="num" id="LN2611">2611</td><td class="line">        strv_free(arg_system_units);</td></tr>
+<tr><td class="num" id="LN2612">2612</td><td class="line">        strv_free(arg_user_units);</td></tr>
 <tr><td class="num" id="LN2613">2613</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2614">2614</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2615">2615</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN2614">2614</td><td class="line">        free(arg_root);</td></tr>
+<tr><td class="num" id="LN2615">2615</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2616">2616</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2617">2617</td><td class="line">}</td></tr>
 </table></body></html>
