@@ -1,0 +1,519 @@
+<!doctype html>
+<html>
+<head>
+<title>src/network/networkd-lldp-tx.c</title>
+<style type="text/css">
+ body { color:#000000; background-color:#ffffff }
+ body { font-family:Helvetica, sans-serif; font-size:10pt }
+ h1 { font-size:14pt }
+ .code { border-collapse:collapse; width:100%; }
+ .code { font-family: "Monospace", monospace; font-size:10pt }
+ .code { line-height: 1.2em }
+ .comment { color: green; font-style: oblique }
+ .keyword { color: blue }
+ .string_literal { color: red }
+ .directive { color: darkmagenta }
+ .expansion { display: none; }
+ .macro:hover .expansion { display: block; border: 2px solid #FF0000; padding: 2px; background-color:#FFF0F0; font-weight: normal;   -webkit-border-radius:5px;  -webkit-box-shadow:1px 1px 7px #000; position: absolute; top: -1em; left:10em; z-index: 1 } 
+ .macro { color: darkmagenta; background-color:LemonChiffon; position: relative }
+ .num { width:2.5em; padding-right:2ex; background-color:#eeeeee }
+ .num { text-align:right; font-size:8pt }
+ .num { color:#444444 }
+ .line { padding-left: 1ex; border-left: 3px solid #ccc }
+ .line { white-space: pre }
+ .msg { -webkit-box-shadow:1px 1px 7px #000 }
+ .msg { -webkit-border-radius:5px }
+ .msg { font-family:Helvetica, sans-serif; font-size:8pt }
+ .msg { float:left }
+ .msg { padding:0.25em 1ex 0.25em 1ex }
+ .msg { margin-top:10px; margin-bottom:10px }
+ .msg { font-weight:bold }
+ .msg { max-width:60em; word-wrap: break-word; white-space: pre-wrap }
+ .msgT { padding:0x; spacing:0x }
+ .msgEvent { background-color:#fff8b4; color:#000000 }
+ .msgControl { background-color:#bbbbbb; color:#000000 }
+ .mrange { background-color:#dfddf3 }
+ .mrange { border-bottom:1px solid #6F9DBE }
+ .PathIndex { font-weight: bold; padding:0px 5px; margin-right:5px; }
+ .PathIndex { -webkit-border-radius:8px }
+ .PathIndexEvent { background-color:#bfba87 }
+ .PathIndexControl { background-color:#8c8c8c }
+ .PathNav a { text-decoration:none; font-size: larger }
+ .CodeInsertionHint { font-weight: bold; background-color: #10dd10 }
+ .CodeRemovalHint { background-color:#de1010 }
+ .CodeRemovalHint { border-bottom:1px solid #6F9DBE }
+ table.simpletable {
+   padding: 5px;
+   font-size:12pt;
+   margin:20px;
+   border-collapse: collapse; border-spacing: 0px;
+ }
+ td.rowname {
+   text-align:right; font-weight:bold; color:#444444;
+   padding-right:2ex; }
+</style>
+</head>
+<body>
+<!-- BUGDESC Potential leak of memory pointed to by 'h' -->
+
+<!-- BUGTYPE Memory leak -->
+
+<!-- BUGCATEGORY Memory Error -->
+
+<!-- BUGFILE /home/runner/systemd/src/network/networkd-lldp-tx.c -->
+
+<!-- FILENAME networkd-lldp-tx.c -->
+
+<!-- FUNCTIONNAME lldp_make_packet -->
+
+<!-- BUGLINE 149 -->
+
+<!-- BUGCOLUMN 24 -->
+
+<!-- BUGPATHLENGTH 14 -->
+
+<!-- BUGMETAEND -->
+<!-- REPORTHEADER -->
+<h3>Bug Summary</h3>
+<table class="simpletable">
+<tr><td class="rowname">File:</td><td>network/networkd-lldp-tx.c</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 149, column 24</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'h'</td></tr>
+</table>
+<!-- REPORTSUMMARYEXTRA -->
+<h3>Annotated Source Code</h3>
+<table class="code">
+<tr><td class="num" id="LN1">1</td><td class="line"><span class='comment'>/***</span></td></tr>
+<tr><td class="num" id="LN2">2</td><td class="line">  <span class='comment'>This file is part of systemd.</span></td></tr>
+<tr><td class="num" id="LN3">3</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN4">4</td><td class="line">  <span class='comment'>Copyright 2016 Lennart Poettering</span></td></tr>
+<tr><td class="num" id="LN5">5</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN6">6</td><td class="line">  <span class='comment'>systemd is free software; you can redistribute it and/or modify it</span></td></tr>
+<tr><td class="num" id="LN7">7</td><td class="line">  <span class='comment'>under the terms of the GNU Lesser General Public License as published by</span></td></tr>
+<tr><td class="num" id="LN8">8</td><td class="line">  <span class='comment'>the Free Software Foundation; either version 2.1 of the License, or</span></td></tr>
+<tr><td class="num" id="LN9">9</td><td class="line">  <span class='comment'>(at your option) any later version.</span></td></tr>
+<tr><td class="num" id="LN10">10</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN11">11</td><td class="line">  <span class='comment'>systemd is distributed in the hope that it will be useful, but</span></td></tr>
+<tr><td class="num" id="LN12">12</td><td class="line">  <span class='comment'>WITHOUT ANY WARRANTY; without even the implied warranty of</span></td></tr>
+<tr><td class="num" id="LN13">13</td><td class="line">  <span class='comment'>MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU</span></td></tr>
+<tr><td class="num" id="LN14">14</td><td class="line">  <span class='comment'>Lesser General Public License for more details.</span></td></tr>
+<tr><td class="num" id="LN15">15</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN16">16</td><td class="line">  <span class='comment'>You should have received a copy of the GNU Lesser General Public License</span></td></tr>
+<tr><td class="num" id="LN17">17</td><td class="line">  <span class='comment'>along with systemd; If not, see &lt;http://www.gnu.org/licenses/&gt;.</span></td></tr>
+<tr><td class="num" id="LN18">18</td><td class="line"><span class='comment'>***/</span></td></tr>
+<tr><td class="num" id="LN19">19</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN20">20</td><td class="line"><span class='directive'>#include &lt;endian.h&gt;</span></td></tr>
+<tr><td class="num" id="LN21">21</td><td class="line"><span class='directive'>#include &lt;inttypes.h&gt;</span></td></tr>
+<tr><td class="num" id="LN22">22</td><td class="line"><span class='directive'>#include &lt;string.h&gt;</span></td></tr>
+<tr><td class="num" id="LN23">23</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN24">24</td><td class="line"><span class='directive'>#include "alloc-util.h"</span></td></tr>
+<tr><td class="num" id="LN25">25</td><td class="line"><span class='directive'>#include "fd-util.h"</span></td></tr>
+<tr><td class="num" id="LN26">26</td><td class="line"><span class='directive'>#include "fileio.h"</span></td></tr>
+<tr><td class="num" id="LN27">27</td><td class="line"><span class='directive'>#include "hostname-util.h"</span></td></tr>
+<tr><td class="num" id="LN28">28</td><td class="line"><span class='directive'>#include "networkd-lldp-tx.h"</span></td></tr>
+<tr><td class="num" id="LN29">29</td><td class="line"><span class='directive'>#include "networkd.h"</span></td></tr>
+<tr><td class="num" id="LN30">30</td><td class="line"><span class='directive'>#include "parse-util.h"</span></td></tr>
+<tr><td class="num" id="LN31">31</td><td class="line"><span class='directive'>#include "random-util.h"</span></td></tr>
+<tr><td class="num" id="LN32">32</td><td class="line"><span class='directive'>#include "socket-util.h"</span></td></tr>
+<tr><td class="num" id="LN33">33</td><td class="line"><span class='directive'>#include "string-util.h"</span></td></tr>
+<tr><td class="num" id="LN34">34</td><td class="line"><span class='directive'>#include "unaligned.h"</span></td></tr>
+<tr><td class="num" id="LN35">35</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN36">36</td><td class="line"><span class='comment'>/* The LLDP spec calls this "txFastInit", see 9.2.5.19 */</span></td></tr>
+<tr><td class="num" id="LN37">37</td><td class="line"><span class='directive'>#define <span class='macro'>LLDP_TX_FAST_INIT<span class='expansion'>4U</span></span> 4U</span></td></tr>
+<tr><td class="num" id="LN38">38</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN39">39</td><td class="line"><span class='comment'>/* The LLDP spec calls this "msgTxHold", see 9.2.5.6 */</span></td></tr>
+<tr><td class="num" id="LN40">40</td><td class="line"><span class='directive'>#define <span class='macro'>LLDP_TX_HOLD<span class='expansion'>4U</span></span> 4U</span></td></tr>
+<tr><td class="num" id="LN41">41</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN42">42</td><td class="line"><span class='comment'>/* The jitter range to add, see 9.2.2. */</span></td></tr>
+<tr><td class="num" id="LN43">43</td><td class="line"><span class='directive'>#define <span class='macro'>LLDP_JITTER_USEC<span class='expansion'>(400U * ((usec_t) 1000ULL))</span></span> (400U * <span class='macro'>USEC_PER_MSEC<span class='expansion'>((usec_t) 1000ULL)</span></span>)</span></td></tr>
+<tr><td class="num" id="LN44">44</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN45">45</td><td class="line"><span class='comment'>/* The LLDP spec calls this msgTxInterval, but we subtract half the jitter off it. */</span></td></tr>
+<tr><td class="num" id="LN46">46</td><td class="line"><span class='directive'>#define <span class='macro'>LLDP_TX_INTERVAL_USEC<span class='expansion'>(30U * ((usec_t) 1000000ULL) - (400U * ((usec_t) 1000ULL)) / 2<br>)</span></span> (30U * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span> - <span class='macro'>LLDP_JITTER_USEC<span class='expansion'>(400U * ((usec_t) 1000ULL))</span></span> / 2)</span></td></tr>
+<tr><td class="num" id="LN47">47</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN48">48</td><td class="line"><span class='comment'>/* The LLDP spec calls this msgFastTx, but we subtract half the jitter off it. */</span></td></tr>
+<tr><td class="num" id="LN49">49</td><td class="line"><span class='directive'>#define <span class='macro'>LLDP_FAST_TX_USEC<span class='expansion'>(1U * ((usec_t) 1000000ULL) - (400U * ((usec_t) 1000ULL)) / 2<br>)</span></span> (1U * <span class='macro'>USEC_PER_SEC<span class='expansion'>((usec_t) 1000000ULL)</span></span> - <span class='macro'>LLDP_JITTER_USEC<span class='expansion'>(400U * ((usec_t) 1000ULL))</span></span> / 2)</span></td></tr>
+<tr><td class="num" id="LN50">50</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN51">51</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>struct</span> ether_addr lldp_multicast_addr[_LLDP_EMIT_MAX] = {</td></tr>
+<tr><td class="num" id="LN52">52</td><td class="line">        [LLDP_EMIT_NEAREST_BRIDGE]  = {{ 0x01, 0x80, 0xc2, 0x00, 0x00, 0x0e }},</td></tr>
+<tr><td class="num" id="LN53">53</td><td class="line">        [LLDP_EMIT_NON_TPMR_BRIDGE] = {{ 0x01, 0x80, 0xc2, 0x00, 0x00, 0x03 }},</td></tr>
+<tr><td class="num" id="LN54">54</td><td class="line">        [LLDP_EMIT_CUSTOMER_BRIDGE] = {{ 0x01, 0x80, 0xc2, 0x00, 0x00, 0x00 }},</td></tr>
+<tr><td class="num" id="LN55">55</td><td class="line">};</td></tr>
+<tr><td class="num" id="LN56">56</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN57">57</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_write_tlv_header(uint8_t **p, uint8_t id, size_t sz) {</td></tr>
+<tr><td class="num" id="LN58">58</td><td class="line">        <span class='macro'>assert(p)<span class='expansion'>do { if ((__builtin_expect(!!(!(p)),0))) log_assert_failed("p"<br>, "src/network/networkd-lldp-tx.c", 58, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN59">59</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN60">60</td><td class="line">        <span class='keyword'>if</span> (id &gt; 127)</td></tr>
+<tr><td class="num" id="LN61">61</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EBADMSG<span class='expansion'>74</span></span>;</td></tr>
+<tr><td class="num" id="LN62">62</td><td class="line">        <span class='keyword'>if</span> (sz &gt; 511)</td></tr>
+<tr><td class="num" id="LN63">63</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOBUFS<span class='expansion'>105</span></span>;</td></tr>
+<tr><td class="num" id="LN64">64</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN65">65</td><td class="line">        (*p)[0] = (id &lt;&lt; 1) | !!(sz &amp; 256);</td></tr>
+<tr><td class="num" id="LN66">66</td><td class="line">        (*p)[1] = sz &amp; 255;</td></tr>
+<tr><td class="num" id="LN67">67</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN68">68</td><td class="line">        *p = *p + 2;</td></tr>
+<tr><td class="num" id="LN69">69</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN70">70</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN71">71</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN72">72</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_make_packet(</td></tr>
+<tr><td class="num" id="LN73">73</td><td class="line">                LLDPEmit mode,</td></tr>
+<tr><td class="num" id="LN74">74</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> ether_addr *hwaddr,</td></tr>
+<tr><td class="num" id="LN75">75</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *machine_id,</td></tr>
+<tr><td class="num" id="LN76">76</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *ifname,</td></tr>
+<tr><td class="num" id="LN77">77</td><td class="line">                uint16_t ttl,</td></tr>
+<tr><td class="num" id="LN78">78</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *port_description,</td></tr>
+<tr><td class="num" id="LN79">79</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *hostname,</td></tr>
+<tr><td class="num" id="LN80">80</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *pretty_hostname,</td></tr>
+<tr><td class="num" id="LN81">81</td><td class="line">                uint16_t system_capabilities,</td></tr>
+<tr><td class="num" id="LN82">82</td><td class="line">                uint16_t enabled_capabilities,</td></tr>
+<tr><td class="num" id="LN83">83</td><td class="line">                <span class='keyword'>void</span> **ret, size_t *sz) {</td></tr>
+<tr><td class="num" id="LN84">84</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN85">85</td><td class="line">        size_t machine_id_length, ifname_length, port_description_length = 0, hostname_length = 0, pretty_hostname_length = 0;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>void</span> *packet = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN87">87</td><td class="line">        <span class='keyword'>struct</span> ether_header *h;</td></tr>
+<tr><td class="num" id="LN88">88</td><td class="line">        uint8_t *p;</td></tr>
+<tr><td class="num" id="LN89">89</td><td class="line">        size_t l;</td></tr>
+<tr><td class="num" id="LN90">90</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN92">92</td><td class="line">        <span class='macro'>assert(mode &gt; LLDP_EMIT_NO)<span class='expansion'>do { if ((__builtin_expect(!!(!(mode &gt; LLDP_EMIT_NO)),0)))<br> log_assert_failed("mode &gt; LLDP_EMIT_NO", "src/network/networkd-lldp-tx.c"<br>, 92, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN93">93</td><td class="line">        <span class='macro'>assert(mode &lt; _LLDP_EMIT_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(mode &lt; _LLDP_EMIT_MAX)),0)<br>)) log_assert_failed("mode &lt; _LLDP_EMIT_MAX", "src/network/networkd-lldp-tx.c"<br>, 93, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN94">94</td><td class="line">        <span class='macro'>assert(hwaddr)<span class='expansion'>do { if ((__builtin_expect(!!(!(hwaddr)),0))) log_assert_failed<br>("hwaddr", "src/network/networkd-lldp-tx.c", 94, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN95">95</td><td class="line">        <span class='macro'>assert(machine_id)<span class='expansion'>do { if ((__builtin_expect(!!(!(machine_id)),0))) log_assert_failed<br>("machine_id", "src/network/networkd-lldp-tx.c", 95, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">        <span class='macro'>assert(ifname)<span class='expansion'>do { if ((__builtin_expect(!!(!(ifname)),0))) log_assert_failed<br>("ifname", "src/network/networkd-lldp-tx.c", 96, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">        <span class='macro'>assert(ret)<span class='expansion'>do { if ((__builtin_expect(!!(!(ret)),0))) log_assert_failed(<br>"ret", "src/network/networkd-lldp-tx.c", 97, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">        <span class='macro'>assert(sz)<span class='expansion'>do { if ((__builtin_expect(!!(!(sz)),0))) log_assert_failed("sz"<br>, "src/network/networkd-lldp-tx.c", 98, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line">        machine_id_length = strlen(machine_id);</td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">        ifname_length = strlen(ifname);</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">port_description</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'port_description' is null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">                port_description_length = strlen(port_description);</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">hostname</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'hostname' is null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">                hostname_length = strlen(hostname);</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">pretty_hostname</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'pretty_hostname' is null</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line">                pretty_hostname_length = strlen(pretty_hostname);</td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">        l = <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> ether_header) +</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line">                <span class='comment'>/* Chassis ID */</span></td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">                2 + 1 + machine_id_length +</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">                <span class='comment'>/* Port ID */</span></td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line">                2 + 1 + ifname_length +</td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">                <span class='comment'>/* TTL */</span></td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">                2 + 2 +</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line">                <span class='comment'>/* System Capabilities */</span></td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">                2 + 4 +</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">                <span class='comment'>/* End */</span></td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line">                2;</td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">        <span class='comment'>/* Port Description */</span></td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line">        <span class='keyword'>if</span> (port_description)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">                l += 2 + port_description_length;</td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">        <span class='comment'>/* System Name */</span></td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">        <span class='keyword'>if</span> (hostname)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line">                l += 2 + hostname_length;</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">        <span class='comment'>/* System Description */</span></td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">        <span class='keyword'>if</span> (pretty_hostname)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">                l += 2 + pretty_hostname_length;</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">        packet = <span class="mrange">malloc(l)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:18ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!packet</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'packet' is non-null</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">        h = (<span class='keyword'>struct</span> ether_header*) packet;</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line">        h-&gt;ether_type = htobe16(<span class='macro'>ETHERTYPE_LLDP<span class='expansion'>0x88cc</span></span>);</td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line">        memcpy(h-&gt;ether_dhost, lldp_multicast_addr + mode, <span class='macro'>ETH_ALEN<span class='expansion'>6</span></span>);</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">        memcpy(h-&gt;ether_shost, hwaddr, <span class='macro'>ETH_ALEN<span class='expansion'>6</span></span>);</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">        p = (uint8_t*) packet + <span class='keyword'>sizeof</span>(<span class='keyword'>struct</span> ether_header);</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line">        r = lldp_write_tlv_header(&amp;p, SD_LLDP_TYPE_CHASSIS_ID, 1 + machine_id_length);</td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'h'</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN150">150</td><td class="line">        *(p++) = SD_LLDP_CHASSIS_SUBTYPE_LOCALLY_ASSIGNED;</td></tr>
+<tr><td class="num" id="LN151">151</td><td class="line">        p = mempcpy(p, machine_id, machine_id_length);</td></tr>
+<tr><td class="num" id="LN152">152</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN153">153</td><td class="line">        r = lldp_write_tlv_header(&amp;p, SD_LLDP_TYPE_PORT_ID, 1 + ifname_length);</td></tr>
+<tr><td class="num" id="LN154">154</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN155">155</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN156">156</td><td class="line">        *(p++) = SD_LLDP_PORT_SUBTYPE_INTERFACE_NAME;</td></tr>
+<tr><td class="num" id="LN157">157</td><td class="line">        p = mempcpy(p, ifname, ifname_length);</td></tr>
+<tr><td class="num" id="LN158">158</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN159">159</td><td class="line">        r = lldp_write_tlv_header(&amp;p, SD_LLDP_TYPE_TTL, 2);</td></tr>
+<tr><td class="num" id="LN160">160</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN161">161</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN162">162</td><td class="line">        unaligned_write_be16(p, ttl);</td></tr>
+<tr><td class="num" id="LN163">163</td><td class="line">        p += 2;</td></tr>
+<tr><td class="num" id="LN164">164</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN165">165</td><td class="line">        <span class='keyword'>if</span> (port_description) {</td></tr>
+<tr><td class="num" id="LN166">166</td><td class="line">                r = lldp_write_tlv_header(&amp;p, SD_LLDP_TYPE_PORT_DESCRIPTION, port_description_length);</td></tr>
+<tr><td class="num" id="LN167">167</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN168">168</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN169">169</td><td class="line">                p = mempcpy(p, port_description, port_description_length);</td></tr>
+<tr><td class="num" id="LN170">170</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN171">171</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN172">172</td><td class="line">        <span class='keyword'>if</span> (hostname) {</td></tr>
+<tr><td class="num" id="LN173">173</td><td class="line">                r = lldp_write_tlv_header(&amp;p, SD_LLDP_TYPE_SYSTEM_NAME, hostname_length);</td></tr>
+<tr><td class="num" id="LN174">174</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN175">175</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN176">176</td><td class="line">                p = mempcpy(p, hostname, hostname_length);</td></tr>
+<tr><td class="num" id="LN177">177</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN178">178</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN179">179</td><td class="line">        <span class='keyword'>if</span> (pretty_hostname) {</td></tr>
+<tr><td class="num" id="LN180">180</td><td class="line">                r = lldp_write_tlv_header(&amp;p, SD_LLDP_TYPE_SYSTEM_DESCRIPTION, pretty_hostname_length);</td></tr>
+<tr><td class="num" id="LN181">181</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN182">182</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN183">183</td><td class="line">                p = mempcpy(p, pretty_hostname, pretty_hostname_length);</td></tr>
+<tr><td class="num" id="LN184">184</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN185">185</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN186">186</td><td class="line">        r = lldp_write_tlv_header(&amp;p, SD_LLDP_TYPE_SYSTEM_CAPABILITIES, 4);</td></tr>
+<tr><td class="num" id="LN187">187</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN188">188</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN189">189</td><td class="line">        unaligned_write_be16(p, system_capabilities);</td></tr>
+<tr><td class="num" id="LN190">190</td><td class="line">        p += 2;</td></tr>
+<tr><td class="num" id="LN191">191</td><td class="line">        unaligned_write_be16(p, enabled_capabilities);</td></tr>
+<tr><td class="num" id="LN192">192</td><td class="line">        p += 2;</td></tr>
+<tr><td class="num" id="LN193">193</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN194">194</td><td class="line">        r = lldp_write_tlv_header(&amp;p, SD_LLDP_TYPE_END, 0);</td></tr>
+<tr><td class="num" id="LN195">195</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN196">196</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN197">197</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN198">198</td><td class="line">        <span class='macro'>assert(p == (uint8_t*) packet + l)<span class='expansion'>do { if ((__builtin_expect(!!(!(p == (uint8_t*) packet + l)),<br>0))) log_assert_failed("p == (uint8_t*) packet + l", "src/network/networkd-lldp-tx.c"<br>, 198, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN199">199</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN200">200</td><td class="line">        *ret = packet;</td></tr>
+<tr><td class="num" id="LN201">201</td><td class="line">        *sz = l;</td></tr>
+<tr><td class="num" id="LN202">202</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN203">203</td><td class="line">        packet = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN204">204</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN206">206</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN207">207</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> lldp_send_packet(</td></tr>
+<tr><td class="num" id="LN208">208</td><td class="line">                <span class='keyword'>int</span> ifindex,</td></tr>
+<tr><td class="num" id="LN209">209</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>struct</span> ether_addr *address,</td></tr>
+<tr><td class="num" id="LN210">210</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>void</span> *packet,</td></tr>
+<tr><td class="num" id="LN211">211</td><td class="line">                size_t packet_size) {</td></tr>
+<tr><td class="num" id="LN212">212</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN213">213</td><td class="line">        <span class='keyword'>union</span> sockaddr_union sa = {</td></tr>
+<tr><td class="num" id="LN214">214</td><td class="line">                .ll.sll_family = <span class='macro'>AF_PACKET<span class='expansion'>17</span></span>,</td></tr>
+<tr><td class="num" id="LN215">215</td><td class="line">                .ll.sll_protocol = htobe16(<span class='macro'>ETHERTYPE_LLDP<span class='expansion'>0x88cc</span></span>),</td></tr>
+<tr><td class="num" id="LN216">216</td><td class="line">                .ll.sll_ifindex = ifindex,</td></tr>
+<tr><td class="num" id="LN217">217</td><td class="line">                .ll.sll_halen = <span class='macro'>ETH_ALEN<span class='expansion'>6</span></span>,</td></tr>
+<tr><td class="num" id="LN218">218</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
+<tr><td class="num" id="LN221">221</td><td class="line">        ssize_t l;</td></tr>
+<tr><td class="num" id="LN222">222</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN223">223</td><td class="line">        <span class='macro'>assert(ifindex &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(ifindex &gt; 0)),0))) log_assert_failed<br>("ifindex &gt; 0", "src/network/networkd-lldp-tx.c", 223, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN224">224</td><td class="line">        <span class='macro'>assert(address)<span class='expansion'>do { if ((__builtin_expect(!!(!(address)),0))) log_assert_failed<br>("address", "src/network/networkd-lldp-tx.c", 224, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN225">225</td><td class="line">        <span class='macro'>assert(packet || packet_size &lt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(packet || packet_size &lt;= 0<br>)),0))) log_assert_failed("packet || packet_size &lt;= 0", "src/network/networkd-lldp-tx.c"<br>, 225, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN226">226</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line">        memcpy(sa.ll.sll_addr, address, <span class='macro'>ETH_ALEN<span class='expansion'>6</span></span>);</td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">        fd = socket(<span class='macro'>PF_PACKET<span class='expansion'>17</span></span>, <span class='macro'>SOCK_RAW<span class='expansion'>SOCK_RAW</span></span>|<span class='macro'>SOCK_CLOEXEC<span class='expansion'>SOCK_CLOEXEC</span></span>, <span class='macro'>IPPROTO_RAW<span class='expansion'>IPPROTO_RAW</span></span>);</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">        l = sendto(fd, packet, packet_size, <span class='macro'>MSG_NOSIGNAL<span class='expansion'>MSG_NOSIGNAL</span></span>, &amp;sa.sa, <span class='keyword'>sizeof</span>(sa.ll));</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">        <span class='keyword'>if</span> (l &lt; 0)</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">        <span class='keyword'>if</span> ((size_t) l != packet_size)</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> link_send_lldp(Link *link) {</td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">        <span class='keyword'>char</span> machine_id_string[<span class='macro'>SD_ID128_STRING_MAX<span class='expansion'>33</span></span>];</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *hostname = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *pretty_hostname = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>void</span> *packet = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">        size_t packet_size = 0;</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">        sd_id128_t machine_id;</td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line">        uint16_t caps;</td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">        usec_t ttl;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">        <span class='macro'>assert(link)<span class='expansion'>do { if ((__builtin_expect(!!(!(link)),0))) log_assert_failed<br>("link", "src/network/networkd-lldp-tx.c", 253, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN255">255</td><td class="line">        <span class='keyword'>if</span> (!link-&gt;network || link-&gt;network-&gt;lldp_emit == LLDP_EMIT_NO)</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">        <span class='macro'>assert(link-&gt;network-&gt;lldp_emit &lt; _LLDP_EMIT_MAX)<span class='expansion'>do { if ((__builtin_expect(!!(!(link-&gt;network-&gt;lldp_emit<br> &lt; _LLDP_EMIT_MAX)),0))) log_assert_failed("link-&gt;network-&gt;lldp_emit &lt; _LLDP_EMIT_MAX"<br>, "src/network/networkd-lldp-tx.c", 258, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line">        r = sd_id128_get_machine(&amp;machine_id);</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line">        (<span class='keyword'>void</span>) gethostname_strict(&amp;hostname);</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">        (<span class='keyword'>void</span>) parse_env_file(<span class='string_literal'>"/etc/machine-info"</span>, <span class='macro'>NEWLINE<span class='expansion'>"\n\r"</span></span>, <span class='string_literal'>"PRETTY_HOSTNAME"</span>, &amp;pretty_hostname, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line">        <span class='macro'>assert_cc(LLDP_TX_INTERVAL_USEC * LLDP_TX_HOLD + 1 &lt;= (UINT16_MAX - 1) * USEC_PER_SEC)<span class='expansion'>GCC diagnostic push
+; GCC diagnostic ignored "-Wdeclaration-after-statement"<br>
+; _Static_assert((30U * ((usec_t) 1000000ULL) - (400U * ((usec_t<br>) 1000ULL)) / 2) * 4U + 1 &lt;= ((65535) - 1) * ((usec_t) 1000000ULL<br>), "LLDP_TX_INTERVAL_USEC * LLDP_TX_HOLD + 1 &lt;= (UINT16_MAX - 1) * USEC_PER_SEC"<br>); GCC diagnostic pop
+</span></span>;</td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line">        ttl = <span class='macro'>DIV_ROUND_UP(LLDP_TX_INTERVAL_USEC * LLDP_TX_HOLD + 1, USEC_PER_SEC)<span class='expansion'>__extension__ ({ const typeof((30U * ((usec_t) 1000000ULL) - (<br>400U * ((usec_t) 1000ULL)) / 2) * 4U + 1) __x = ((30U * ((usec_t<br>) 1000000ULL) - (400U * ((usec_t) 1000ULL)) / 2) * 4U + 1); const<br> typeof(((usec_t) 1000000ULL)) __y = (((usec_t) 1000000ULL));<br> (__x / __y + !!(__x % __y)); })</span></span>;</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">        caps = (link-&gt;network &amp;&amp; link-&gt;network-&gt;ip_forward != ADDRESS_FAMILY_NO) ?</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line">                SD_LLDP_SYSTEM_CAPABILITIES_ROUTER :</td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line">                SD_LLDP_SYSTEM_CAPABILITIES_STATION;</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line">        r = lldp_make_packet(link-&gt;network-&gt;lldp_emit,</td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">                             &amp;link-&gt;mac,</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">                             sd_id128_to_string(machine_id, machine_id_string),</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">                             link-&gt;ifname,</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">                             (uint16_t) ttl,</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">                             link-&gt;network ? link-&gt;network-&gt;description : <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN280">280</td><td class="line">                             hostname,</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">                             pretty_hostname,</td></tr>
+<tr><td class="num" id="LN282">282</td><td class="line">                             SD_LLDP_SYSTEM_CAPABILITIES_STATION|SD_LLDP_SYSTEM_CAPABILITIES_BRIDGE|SD_LLDP_SYSTEM_CAPABILITIES_ROUTER,</td></tr>
+<tr><td class="num" id="LN283">283</td><td class="line">                             caps,</td></tr>
+<tr><td class="num" id="LN284">284</td><td class="line">                             &amp;packet, &amp;packet_size);</td></tr>
+<tr><td class="num" id="LN285">285</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN286">286</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">        <span class='keyword'>return</span> lldp_send_packet(link-&gt;ifindex, lldp_multicast_addr + link-&gt;network-&gt;lldp_emit, packet, packet_size);</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> on_lldp_timer(sd_event_source *s, usec_t t, <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">        Link *link = userdata;</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line">        usec_t current, delay, next;</td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/network/networkd-lldp-tx.c", 296, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        <span class='macro'>assert(userdata)<span class='expansion'>do { if ((__builtin_expect(!!(!(userdata)),0))) log_assert_failed<br>("userdata", "src/network/networkd-lldp-tx.c", 297, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">        <span class='macro'>log_link_debug(link, <span class='string_literal'>"Sending LLDP packet..."</span>)<span class='expansion'>({ const Link *_l = (link); _l ? log_object_internal(7, 0, "src/network/networkd-lldp-tx.c"<br>, 299, __func__, "INTERFACE=", _l-&gt;ifname, "Sending LLDP packet..."<br>) : log_internal(7, 0, "src/network/networkd-lldp-tx.c", 299,<br> __func__, "Sending LLDP packet..."); })</span></span>;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">        r = link_send_lldp(link);</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">                <span class='macro'>log_link_debug_errno(link, r, <span class='string_literal'>"Failed to send LLDP packet, ignoring: %m"</span>)<span class='expansion'>({ const Link *_l = (link); _l ? log_object_internal(7, r, "src/network/networkd-lldp-tx.c"<br>, 303, __func__, "INTERFACE=", _l-&gt;ifname, "Failed to send LLDP packet, ignoring: %m"<br>) : log_internal(7, r, "src/network/networkd-lldp-tx.c", 303,<br> __func__, "Failed to send LLDP packet, ignoring: %m"); })</span></span>;</td></tr>
+<tr><td class="num" id="LN304">304</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">        <span class='keyword'>if</span> (link-&gt;lldp_tx_fast &gt; 0)</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">                link-&gt;lldp_tx_fast--;</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">        <span class='macro'>assert_se(sd_event_now(sd_event_source_get_event(s), clock_boottime_or_monotonic(), &amp;current) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(sd_event_now(sd_event_source_get_event<br>(s), clock_boottime_or_monotonic(), &amp;current) &gt;= 0)),0<br>))) log_assert_failed("sd_event_now(sd_event_source_get_event(s), clock_boottime_or_monotonic(), &amp;current) &gt;= 0"<br>, "src/network/networkd-lldp-tx.c", 308, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">        delay = link-&gt;lldp_tx_fast &gt; 0 ? <span class='macro'>LLDP_FAST_TX_USEC<span class='expansion'>(1U * ((usec_t) 1000000ULL) - (400U * ((usec_t) 1000ULL)) / 2<br>)</span></span> : <span class='macro'>LLDP_TX_INTERVAL_USEC<span class='expansion'>(30U * ((usec_t) 1000000ULL) - (400U * ((usec_t) 1000ULL)) / 2<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">        next = usec_add(usec_add(current, delay), (usec_t) random_u64() % <span class='macro'>LLDP_JITTER_USEC<span class='expansion'>(400U * ((usec_t) 1000ULL))</span></span>);</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        r = sd_event_source_set_time(s, next);</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN315">315</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_link_error_errno(link, r, <span class='string_literal'>"Failed to restart LLDP timer: %m"</span>)<span class='expansion'>({ const Link *_l = (link); _l ? log_object_internal(3, r, "src/network/networkd-lldp-tx.c"<br>, 315, __func__, "INTERFACE=", _l-&gt;ifname, "Failed to restart LLDP timer: %m"<br>) : log_internal(3, r, "src/network/networkd-lldp-tx.c", 315,<br> __func__, "Failed to restart LLDP timer: %m"); })</span></span>;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">        r = sd_event_source_set_enabled(s, SD_EVENT_ONESHOT);</td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_link_error_errno(link, r, <span class='string_literal'>"Failed to enable LLDP timer: %m"</span>)<span class='expansion'>({ const Link *_l = (link); _l ? log_object_internal(3, r, "src/network/networkd-lldp-tx.c"<br>, 319, __func__, "INTERFACE=", _l-&gt;ifname, "Failed to enable LLDP timer: %m"<br>) : log_internal(3, r, "src/network/networkd-lldp-tx.c", 319,<br> __func__, "Failed to enable LLDP timer: %m"); })</span></span>;</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN324">324</td><td class="line"><span class='keyword'>int</span> link_lldp_emit_start(Link *link) {</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">        usec_t next;</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">        <span class='macro'>assert(link)<span class='expansion'>do { if ((__builtin_expect(!!(!(link)),0))) log_assert_failed<br>("link", "src/network/networkd-lldp-tx.c", 328, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">        <span class='keyword'>if</span> (!link-&gt;network || link-&gt;network-&gt;lldp_emit == LLDP_EMIT_NO) {</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">                link_lldp_emit_stop(link);</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">        <span class='comment'>/* Starts the LLDP transmission in "fast" mode. If it is already started, turns "fast" mode back on again. */</span></td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">        link-&gt;lldp_tx_fast = <span class='macro'>LLDP_TX_FAST_INIT<span class='expansion'>4U</span></span>;</td></tr>
+<tr><td class="num" id="LN338">338</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">        next = usec_add(usec_add(now(clock_boottime_or_monotonic()), <span class='macro'>LLDP_FAST_TX_USEC<span class='expansion'>(1U * ((usec_t) 1000000ULL) - (400U * ((usec_t) 1000ULL)) / 2<br>)</span></span>),</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line">                     (usec_t) random_u64() % <span class='macro'>LLDP_JITTER_USEC<span class='expansion'>(400U * ((usec_t) 1000ULL))</span></span>);</td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line">        <span class='keyword'>if</span> (link-&gt;lldp_emit_event_source) {</td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">                usec_t old;</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">                <span class='comment'>/* Lower the timeout, maybe */</span></td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">                r = sd_event_source_get_time(link-&gt;lldp_emit_event_source, &amp;old);</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line">                <span class='keyword'>if</span> (old &lt;= next)</td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">                <span class='keyword'>return</span> sd_event_source_set_time(link-&gt;lldp_emit_event_source, next);</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">                r = sd_event_add_time(</td></tr>
+<tr><td class="num" id="LN356">356</td><td class="line">                                link-&gt;manager-&gt;event,</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">                                &amp;link-&gt;lldp_emit_event_source,</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">                                clock_boottime_or_monotonic(),</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">                                next,</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">                                0,</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">                                on_lldp_timer,</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line">                                link);</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line">                (<span class='keyword'>void</span>) sd_event_source_set_description(link-&gt;lldp_emit_event_source, <span class='string_literal'>"lldp-tx"</span>);</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line"><span class='keyword'>void</span> link_lldp_emit_stop(Link *link) {</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line">        <span class='macro'>assert(link)<span class='expansion'>do { if ((__builtin_expect(!!(!(link)),0))) log_assert_failed<br>("link", "src/network/networkd-lldp-tx.c", 373, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">        link-&gt;lldp_emit_event_source = sd_event_source_unref(link-&gt;lldp_emit_event_source);</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line"><span class='keyword'>int</span> config_parse_lldp_emit(</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *unit,</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *filename,</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">                <span class='keyword'>unsigned</span> line,</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *section,</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line">                <span class='keyword'>unsigned</span> section_line,</td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *lvalue,</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">                <span class='keyword'>int</span> ltype,</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *rvalue,</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">                <span class='keyword'>void</span> *data,</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">                <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">        LLDPEmit *emit = data;</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        <span class='macro'>assert(filename)<span class='expansion'>do { if ((__builtin_expect(!!(!(filename)),0))) log_assert_failed<br>("filename", "src/network/networkd-lldp-tx.c", 393, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">        <span class='macro'>assert(lvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(lvalue)),0))) log_assert_failed<br>("lvalue", "src/network/networkd-lldp-tx.c", 394, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">        <span class='macro'>assert(rvalue)<span class='expansion'>do { if ((__builtin_expect(!!(!(rvalue)),0))) log_assert_failed<br>("rvalue", "src/network/networkd-lldp-tx.c", 395, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">        <span class='keyword'>if</span> (isempty(rvalue))</td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">                *emit = LLDP_EMIT_NO;</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"nearest-bridge"</span>)<span class='expansion'>(strcmp((rvalue),("nearest-bridge")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">                *emit = LLDP_EMIT_NEAREST_BRIDGE;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"non-tpmr-bridge"</span>)<span class='expansion'>(strcmp((rvalue),("non-tpmr-bridge")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">                *emit = LLDP_EMIT_NON_TPMR_BRIDGE;</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>streq(rvalue, <span class='string_literal'>"customer-bridge"</span>)<span class='expansion'>(strcmp((rvalue),("customer-bridge")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">                *emit = LLDP_EMIT_CUSTOMER_BRIDGE;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">                r = parse_boolean(rvalue);</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">                        <span class='macro'>log_syntax(unit, LOG_ERR, filename, line, 0, <span class='string_literal'>"Failed to parse LLDP emission setting, ignoring: %s"</span>, rvalue)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_syntax_internal(unit, _level, filename, line<br>, _e, "src/network/networkd-lldp-tx.c", 408, __func__, "Failed to parse LLDP emission setting, ignoring: %s"<br>, rvalue) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">                *emit = r ? LLDP_EMIT_NEAREST_BRIDGE : LLDP_EMIT_NO;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">}</td></tr>
+</table></body></html>
