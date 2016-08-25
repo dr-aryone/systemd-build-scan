@@ -1294,71 +1294,73 @@
 <tr><td class="num" id="LN1185">1185</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1186">1186</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1187">1187</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1188">1188</td><td class="line">        <span class='macro'>log_info(<span class='string_literal'>"Running timer as unit: %s"</span>, timer)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1188<br>, __func__, "Running timer as unit: %s", timer) : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN1189">1189</td><td class="line">        <span class='keyword'>if</span> (argv[0])</td></tr>
-<tr><td class="num" id="LN1190">1190</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Will run service as unit: %s"</span>, service)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1190<br>, __func__, "Will run service as unit: %s", service) : -abs(_e<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1191">1191</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1192">1192</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN1193">1193</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1194">1194</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1195">1195</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span>* argv[]) {</td></tr>
-<tr><td class="num" id="LN1196">1196</td><td class="line">        <span class='macro'>_cleanup_(sd_bus_flush_close_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_flush_close_unrefp)))</span></span> sd_bus *bus = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1197">1197</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *description = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *command = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1198">1198</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN1199">1199</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1200">1200</td><td class="line">        log_parse_environment();</td></tr>
-<tr><td class="num" id="LN1201">1201</td><td class="line">        log_open();</td></tr>
-<tr><td class="num" id="LN1202">1202</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1203">1203</td><td class="line">        r = parse_argv(argc, argv);</td></tr>
-<tr><td class="num" id="LN1204">1204</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
-<tr><td class="num" id="LN1205">1205</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1206">1206</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1207">1207</td><td class="line">        <span class='keyword'>if</span> (argc &gt; optind &amp;&amp; arg_transport == BUS_TRANSPORT_LOCAL) {</td></tr>
-<tr><td class="num" id="LN1208">1208</td><td class="line">                <span class='comment'>/* Patch in an absolute path */</span></td></tr>
-<tr><td class="num" id="LN1209">1209</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1210">1210</td><td class="line">                r = find_binary(argv[optind], &amp;command);</td></tr>
-<tr><td class="num" id="LN1211">1211</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1212">1212</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to find executable %s: %m"</span>, argv[optind])<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1212<br>, __func__, "Failed to find executable %s: %m", argv[optind])<br> : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1213">1213</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1214">1214</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1215">1215</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1216">1216</td><td class="line">                argv[optind] = command;</td></tr>
-<tr><td class="num" id="LN1217">1217</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1218">1218</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1219">1219</td><td class="line">        <span class='keyword'>if</span> (!arg_description) {</td></tr>
-<tr><td class="num" id="LN1220">1220</td><td class="line">                description = strv_join(argv + optind, <span class='string_literal'>" "</span>);</td></tr>
-<tr><td class="num" id="LN1221">1221</td><td class="line">                <span class='keyword'>if</span> (!description) {</td></tr>
-<tr><td class="num" id="LN1222">1222</td><td class="line">                        r = <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/run/run.c", 1222, __func__)</span></span>;</td></tr>
-<tr><td class="num" id="LN1223">1223</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1224">1224</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1225">1225</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1226">1226</td><td class="line">                <span class='keyword'>if</span> (arg_unit &amp;&amp; isempty(description)) {</td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">                        r = free_and_strdup(&amp;description, arg_unit);</td></tr>
-<tr><td class="num" id="LN1228">1228</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1229">1229</td><td class="line">                                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1230">1230</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1231">1231</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1232">1232</td><td class="line">                arg_description = description;</td></tr>
-<tr><td class="num" id="LN1233">1233</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1234">1234</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1235">1235</td><td class="line">        r = bus_connect_transport_systemd(arg_transport, arg_host, arg_user, &amp;bus);</td></tr>
-<tr><td class="num" id="LN1236">1236</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN1237">1237</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to create bus connection: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1237<br>, __func__, "Failed to create bus connection: %m") : -abs(_e)<br>; })</span></span>;</td></tr>
-<tr><td class="num" id="LN1238">1238</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN1239">1239</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1240">1240</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1241">1241</td><td class="line">        <span class='keyword'>if</span> (arg_scope)</td></tr>
-<tr><td class="num" id="LN1242">1242</td><td class="line">                r = start_transient_scope(bus, argv + optind);</td></tr>
-<tr><td class="num" id="LN1243">1243</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (with_timer())</td></tr>
-<tr><td class="num" id="LN1244">1244</td><td class="line">                r = start_transient_timer(bus, argv + optind);</td></tr>
-<tr><td class="num" id="LN1245">1245</td><td class="line">        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN1246">1246</td><td class="line">                r = start_transient_service(bus, argv + optind);</td></tr>
-<tr><td class="num" id="LN1247">1247</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1248">1248</td><td class="line">finish:</td></tr>
-<tr><td class="num" id="LN1249">1249</td><td class="line">        strv_free(arg_environment);</td></tr>
-<tr><td class="num" id="LN1250">1250</td><td class="line">        strv_free(arg_property);</td></tr>
-<tr><td class="num" id="LN1251">1251</td><td class="line">        strv_free(arg_timer_property);</td></tr>
-<tr><td class="num" id="LN1252">1252</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1253">1253</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN1254">1254</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1188">1188</td><td class="line">        <span class='keyword'>if</span> (!arg_quiet) {</td></tr>
+<tr><td class="num" id="LN1189">1189</td><td class="line">                <span class='macro'>log_info(<span class='string_literal'>"Running timer as unit: %s"</span>, timer)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1189<br>, __func__, "Running timer as unit: %s", timer) : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN1190">1190</td><td class="line">                <span class='keyword'>if</span> (argv[0])</td></tr>
+<tr><td class="num" id="LN1191">1191</td><td class="line">                        <span class='macro'>log_info(<span class='string_literal'>"Will run service as unit: %s"</span>, service)<span class='expansion'>({ int _level = (6), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1191<br>, __func__, "Will run service as unit: %s", service) : -abs(_e<br>); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1192">1192</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1193">1193</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1194">1194</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1195">1195</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1196">1196</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1197">1197</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span>* argv[]) {</td></tr>
+<tr><td class="num" id="LN1198">1198</td><td class="line">        <span class='macro'>_cleanup_(sd_bus_flush_close_unrefp)<span class='expansion'>__attribute__((cleanup(sd_bus_flush_close_unrefp)))</span></span> sd_bus *bus = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1199">1199</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *description = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *command = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1200">1200</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN1201">1201</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1202">1202</td><td class="line">        log_parse_environment();</td></tr>
+<tr><td class="num" id="LN1203">1203</td><td class="line">        log_open();</td></tr>
+<tr><td class="num" id="LN1204">1204</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1205">1205</td><td class="line">        r = parse_argv(argc, argv);</td></tr>
+<tr><td class="num" id="LN1206">1206</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
+<tr><td class="num" id="LN1207">1207</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1208">1208</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1209">1209</td><td class="line">        <span class='keyword'>if</span> (argc &gt; optind &amp;&amp; arg_transport == BUS_TRANSPORT_LOCAL) {</td></tr>
+<tr><td class="num" id="LN1210">1210</td><td class="line">                <span class='comment'>/* Patch in an absolute path */</span></td></tr>
+<tr><td class="num" id="LN1211">1211</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1212">1212</td><td class="line">                r = find_binary(argv[optind], &amp;command);</td></tr>
+<tr><td class="num" id="LN1213">1213</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1214">1214</td><td class="line">                        <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to find executable %s: %m"</span>, argv[optind])<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1214<br>, __func__, "Failed to find executable %s: %m", argv[optind])<br> : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN1215">1215</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1216">1216</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1217">1217</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1218">1218</td><td class="line">                argv[optind] = command;</td></tr>
+<tr><td class="num" id="LN1219">1219</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1220">1220</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1221">1221</td><td class="line">        <span class='keyword'>if</span> (!arg_description) {</td></tr>
+<tr><td class="num" id="LN1222">1222</td><td class="line">                description = strv_join(argv + optind, <span class='string_literal'>" "</span>);</td></tr>
+<tr><td class="num" id="LN1223">1223</td><td class="line">                <span class='keyword'>if</span> (!description) {</td></tr>
+<tr><td class="num" id="LN1224">1224</td><td class="line">                        r = <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/run/run.c", 1224, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN1225">1225</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1226">1226</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1228">1228</td><td class="line">                <span class='keyword'>if</span> (arg_unit &amp;&amp; isempty(description)) {</td></tr>
+<tr><td class="num" id="LN1229">1229</td><td class="line">                        r = free_and_strdup(&amp;description, arg_unit);</td></tr>
+<tr><td class="num" id="LN1230">1230</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1231">1231</td><td class="line">                                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1232">1232</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1233">1233</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1234">1234</td><td class="line">                arg_description = description;</td></tr>
+<tr><td class="num" id="LN1235">1235</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1236">1236</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1237">1237</td><td class="line">        r = bus_connect_transport_systemd(arg_transport, arg_host, arg_user, &amp;bus);</td></tr>
+<tr><td class="num" id="LN1238">1238</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN1239">1239</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to create bus connection: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/run/run.c", 1239<br>, __func__, "Failed to create bus connection: %m") : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN1240">1240</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN1241">1241</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1242">1242</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1243">1243</td><td class="line">        <span class='keyword'>if</span> (arg_scope)</td></tr>
+<tr><td class="num" id="LN1244">1244</td><td class="line">                r = start_transient_scope(bus, argv + optind);</td></tr>
+<tr><td class="num" id="LN1245">1245</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (with_timer())</td></tr>
+<tr><td class="num" id="LN1246">1246</td><td class="line">                r = start_transient_timer(bus, argv + optind);</td></tr>
+<tr><td class="num" id="LN1247">1247</td><td class="line">        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN1248">1248</td><td class="line">                r = start_transient_service(bus, argv + optind);</td></tr>
+<tr><td class="num" id="LN1249">1249</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1250">1250</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN1251">1251</td><td class="line">        strv_free(arg_environment);</td></tr>
+<tr><td class="num" id="LN1252">1252</td><td class="line">        strv_free(arg_property);</td></tr>
+<tr><td class="num" id="LN1253">1253</td><td class="line">        strv_free(arg_timer_property);</td></tr>
+<tr><td class="num" id="LN1254">1254</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1255">1255</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN1256">1256</td><td class="line">}</td></tr>
 </table></body></html>
