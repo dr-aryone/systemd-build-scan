@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'nfd' is never read -->
+<!-- BUGDESC Value stored to 'fd' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME dbus.c -->
 
-<!-- FUNCTIONNAME bus_on_connection -->
+<!-- FUNCTIONNAME bus_init_private -->
 
-<!-- BUGLINE 660 -->
+<!-- BUGLINE 1019 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/dbus.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 660, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'nfd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1019, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -742,8 +742,7 @@
 <tr><td class="num" id="LN657">657</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN658">658</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN659">659</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN660">660</td><td class="line">        nfd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'nfd' is never read</div></td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">        nfd = -1;</td></tr>
 <tr><td class="num" id="LN661">661</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN662">662</td><td class="line">        r = bus_check_peercred(bus);</td></tr>
 <tr><td class="num" id="LN663">663</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
@@ -1102,7 +1101,8 @@
 <tr><td class="num" id="LN1016">1016</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1017">1017</td><td class="line">        m-&gt;private_listen_fd = fd;</td></tr>
 <tr><td class="num" id="LN1018">1018</td><td class="line">        m-&gt;private_listen_event_source = s;</td></tr>
-<tr><td class="num" id="LN1019">1019</td><td class="line">        fd = -1;</td></tr>
+<tr><td class="num" id="LN1019">1019</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
 <tr><td class="num" id="LN1020">1020</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1021">1021</td><td class="line">        <span class='macro'>log_debug(<span class='string_literal'>"Successfully created private D-Bus server."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/core/dbus.c", 1021<br>, __func__, "Successfully created private D-Bus server.") : -<br>abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN1022">1022</td><td class="line"> </td></tr>
@@ -1254,77 +1254,74 @@
 <tr><td class="num" id="LN1168">1168</td><td class="line">        <span class='keyword'>return</span> ret;</td></tr>
 <tr><td class="num" id="LN1169">1169</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1170">1170</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1171">1171</td><td class="line"><span class='keyword'>void</span> bus_track_serialize(sd_bus_track *t, FILE *f) {</td></tr>
+<tr><td class="num" id="LN1171">1171</td><td class="line"><span class='keyword'>void</span> bus_track_serialize(sd_bus_track *t, FILE *f, <span class='keyword'>const</span> <span class='keyword'>char</span> *prefix) {</td></tr>
 <tr><td class="num" id="LN1172">1172</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *n;</td></tr>
 <tr><td class="num" id="LN1173">1173</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1174">1174</td><td class="line">        <span class='macro'>assert(f)<span class='expansion'>do { if ((__builtin_expect(!!(!(f)),0))) log_assert_failed("f"<br>, "src/core/dbus.c", 1174, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1175">1175</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1176">1176</td><td class="line">        <span class='keyword'>for</span> (n = sd_bus_track_first(t); n; n = sd_bus_track_next(t))</td></tr>
-<tr><td class="num" id="LN1177">1177</td><td class="line">                fprintf(f, <span class='string_literal'>"subscribed=%s\n"</span>, n);</td></tr>
-<tr><td class="num" id="LN1178">1178</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1175">1175</td><td class="line">        <span class='macro'>assert(prefix)<span class='expansion'>do { if ((__builtin_expect(!!(!(prefix)),0))) log_assert_failed<br>("prefix", "src/core/dbus.c", 1175, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1176">1176</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1177">1177</td><td class="line">        <span class='keyword'>for</span> (n = sd_bus_track_first(t); n; n = sd_bus_track_next(t)) {</td></tr>
+<tr><td class="num" id="LN1178">1178</td><td class="line">                <span class='keyword'>int</span> c, j;</td></tr>
 <tr><td class="num" id="LN1179">1179</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1180">1180</td><td class="line"><span class='keyword'>int</span> bus_track_deserialize_item(<span class='keyword'>char</span> ***l, <span class='keyword'>const</span> <span class='keyword'>char</span> *line) {</td></tr>
-<tr><td class="num" id="LN1181">1181</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *e;</td></tr>
-<tr><td class="num" id="LN1182">1182</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN1183">1183</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1184">1184</td><td class="line">        <span class='macro'>assert(l)<span class='expansion'>do { if ((__builtin_expect(!!(!(l)),0))) log_assert_failed("l"<br>, "src/core/dbus.c", 1184, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1185">1185</td><td class="line">        <span class='macro'>assert(line)<span class='expansion'>do { if ((__builtin_expect(!!(!(line)),0))) log_assert_failed<br>("line", "src/core/dbus.c", 1185, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1186">1186</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1187">1187</td><td class="line">        e = startswith(line, <span class='string_literal'>"subscribed="</span>);</td></tr>
-<tr><td class="num" id="LN1188">1188</td><td class="line">        <span class='keyword'>if</span> (!e)</td></tr>
-<tr><td class="num" id="LN1189">1189</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1180">1180</td><td class="line">                c = sd_bus_track_count_name(t, n);</td></tr>
+<tr><td class="num" id="LN1181">1181</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1182">1182</td><td class="line">                <span class='keyword'>for</span> (j = 0; j &lt; c; j++) {</td></tr>
+<tr><td class="num" id="LN1183">1183</td><td class="line">                        fputs(prefix, f);</td></tr>
+<tr><td class="num" id="LN1184">1184</td><td class="line">                        fputc('=', f);</td></tr>
+<tr><td class="num" id="LN1185">1185</td><td class="line">                        fputs(n, f);</td></tr>
+<tr><td class="num" id="LN1186">1186</td><td class="line">                        fputc('\n', f);</td></tr>
+<tr><td class="num" id="LN1187">1187</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1188">1188</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1189">1189</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1190">1190</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1191">1191</td><td class="line">        r = strv_extend(l, e);</td></tr>
-<tr><td class="num" id="LN1192">1192</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1193">1193</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1191">1191</td><td class="line"><span class='keyword'>int</span> bus_track_coldplug(Manager *m, sd_bus_track **t, <span class='macro'>bool<span class='expansion'>_Bool</span></span> recursive, <span class='keyword'>char</span> **l) {</td></tr>
+<tr><td class="num" id="LN1192">1192</td><td class="line">        <span class='keyword'>char</span> **i;</td></tr>
+<tr><td class="num" id="LN1193">1193</td><td class="line">        <span class='keyword'>int</span> r = 0;</td></tr>
 <tr><td class="num" id="LN1194">1194</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1195">1195</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN1196">1196</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1195">1195</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/dbus.c", 1195, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN1196">1196</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/core/dbus.c", 1196, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1197">1197</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1198">1198</td><td class="line"><span class='keyword'>int</span> bus_track_coldplug(Manager *m, sd_bus_track **t, <span class='keyword'>char</span> ***l) {</td></tr>
-<tr><td class="num" id="LN1199">1199</td><td class="line">        <span class='keyword'>int</span> r = 0;</td></tr>
+<tr><td class="num" id="LN1198">1198</td><td class="line">        <span class='keyword'>if</span> (strv_isempty(l))</td></tr>
+<tr><td class="num" id="LN1199">1199</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1200">1200</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1201">1201</td><td class="line">        <span class='macro'>assert(m)<span class='expansion'>do { if ((__builtin_expect(!!(!(m)),0))) log_assert_failed("m"<br>, "src/core/dbus.c", 1201, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1202">1202</td><td class="line">        <span class='macro'>assert(t)<span class='expansion'>do { if ((__builtin_expect(!!(!(t)),0))) log_assert_failed("t"<br>, "src/core/dbus.c", 1202, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1203">1203</td><td class="line">        <span class='macro'>assert(l)<span class='expansion'>do { if ((__builtin_expect(!!(!(l)),0))) log_assert_failed("l"<br>, "src/core/dbus.c", 1203, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN1204">1204</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1205">1205</td><td class="line">        <span class='keyword'>if</span> (!strv_isempty(*l) &amp;&amp; m-&gt;api_bus) {</td></tr>
-<tr><td class="num" id="LN1206">1206</td><td class="line">                <span class='keyword'>char</span> **i;</td></tr>
-<tr><td class="num" id="LN1207">1207</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1208">1208</td><td class="line">                <span class='keyword'>if</span> (!*t) {</td></tr>
-<tr><td class="num" id="LN1209">1209</td><td class="line">                        r = sd_bus_track_new(m-&gt;api_bus, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN1210">1210</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN1211">1211</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1212">1212</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN1201">1201</td><td class="line">        <span class='keyword'>if</span> (!m-&gt;api_bus)</td></tr>
+<tr><td class="num" id="LN1202">1202</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN1203">1203</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1204">1204</td><td class="line">        <span class='keyword'>if</span> (!*t) {</td></tr>
+<tr><td class="num" id="LN1205">1205</td><td class="line">                r = sd_bus_track_new(m-&gt;api_bus, t, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN1206">1206</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1207">1207</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1208">1208</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1209">1209</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1210">1210</td><td class="line">        r = sd_bus_track_set_recursive(*t, recursive);</td></tr>
+<tr><td class="num" id="LN1211">1211</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1212">1212</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1213">1213</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1214">1214</td><td class="line">                r = 0;</td></tr>
-<tr><td class="num" id="LN1215">1215</td><td class="line">                <span class='macro'>STRV_FOREACH(i, *l)<span class='expansion'>for ((i) = (*l); (i) &amp;&amp; *(i); (i)++)</span></span> {</td></tr>
-<tr><td class="num" id="LN1216">1216</td><td class="line">                        <span class='keyword'>int</span> k;</td></tr>
+<tr><td class="num" id="LN1214">1214</td><td class="line">        r = 0;</td></tr>
+<tr><td class="num" id="LN1215">1215</td><td class="line">        <span class='macro'>STRV_FOREACH(i, l)<span class='expansion'>for ((i) = (l); (i) &amp;&amp; *(i); (i)++)</span></span> {</td></tr>
+<tr><td class="num" id="LN1216">1216</td><td class="line">                <span class='keyword'>int</span> k;</td></tr>
 <tr><td class="num" id="LN1217">1217</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1218">1218</td><td class="line">                        k = sd_bus_track_add_name(*t, *i);</td></tr>
-<tr><td class="num" id="LN1219">1219</td><td class="line">                        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN1220">1220</td><td class="line">                                r = k;</td></tr>
-<tr><td class="num" id="LN1221">1221</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN1222">1222</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN1223">1223</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1224">1224</td><td class="line">        *l = strv_free(*l);</td></tr>
+<tr><td class="num" id="LN1218">1218</td><td class="line">                k = sd_bus_track_add_name(*t, *i);</td></tr>
+<tr><td class="num" id="LN1219">1219</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN1220">1220</td><td class="line">                        r = k;</td></tr>
+<tr><td class="num" id="LN1221">1221</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN1222">1222</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1223">1223</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN1224">1224</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN1225">1225</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1226">1226</td><td class="line">        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1228">1228</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1229">1229</td><td class="line"><span class='keyword'>int</span> bus_verify_manage_units_async(Manager *m, sd_bus_message *call, sd_bus_error *error) {</td></tr>
-<tr><td class="num" id="LN1230">1230</td><td class="line">        <span class='keyword'>return</span> bus_verify_polkit_async(call, <span class='macro'>CAP_SYS_ADMIN<span class='expansion'>21</span></span>, <span class='string_literal'>"org.freedesktop.systemd1.manage-units"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>, &amp;m-&gt;polkit_registry, error);</td></tr>
-<tr><td class="num" id="LN1231">1231</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1232">1232</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1233">1233</td><td class="line"><span class='keyword'>int</span> bus_verify_manage_unit_files_async(Manager *m, sd_bus_message *call, sd_bus_error *error) {</td></tr>
-<tr><td class="num" id="LN1234">1234</td><td class="line">        <span class='keyword'>return</span> bus_verify_polkit_async(call, <span class='macro'>CAP_SYS_ADMIN<span class='expansion'>21</span></span>, <span class='string_literal'>"org.freedesktop.systemd1.manage-unit-files"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>, &amp;m-&gt;polkit_registry, error);</td></tr>
-<tr><td class="num" id="LN1235">1235</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1236">1236</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1237">1237</td><td class="line"><span class='keyword'>int</span> bus_verify_reload_daemon_async(Manager *m, sd_bus_message *call, sd_bus_error *error) {</td></tr>
-<tr><td class="num" id="LN1238">1238</td><td class="line">        <span class='keyword'>return</span> bus_verify_polkit_async(call, <span class='macro'>CAP_SYS_ADMIN<span class='expansion'>21</span></span>, <span class='string_literal'>"org.freedesktop.systemd1.reload-daemon"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>, &amp;m-&gt;polkit_registry, error);</td></tr>
-<tr><td class="num" id="LN1239">1239</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN1240">1240</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1241">1241</td><td class="line"><span class='keyword'>int</span> bus_verify_set_environment_async(Manager *m, sd_bus_message *call, sd_bus_error *error) {</td></tr>
-<tr><td class="num" id="LN1242">1242</td><td class="line">        <span class='keyword'>return</span> bus_verify_polkit_async(call, <span class='macro'>CAP_SYS_ADMIN<span class='expansion'>21</span></span>, <span class='string_literal'>"org.freedesktop.systemd1.set-environment"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>, &amp;m-&gt;polkit_registry, error);</td></tr>
-<tr><td class="num" id="LN1243">1243</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1226">1226</td><td class="line"><span class='keyword'>int</span> bus_verify_manage_units_async(Manager *m, sd_bus_message *call, sd_bus_error *error) {</td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line">        <span class='keyword'>return</span> bus_verify_polkit_async(call, <span class='macro'>CAP_SYS_ADMIN<span class='expansion'>21</span></span>, <span class='string_literal'>"org.freedesktop.systemd1.manage-units"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>, &amp;m-&gt;polkit_registry, error);</td></tr>
+<tr><td class="num" id="LN1228">1228</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1229">1229</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1230">1230</td><td class="line"><span class='keyword'>int</span> bus_verify_manage_unit_files_async(Manager *m, sd_bus_message *call, sd_bus_error *error) {</td></tr>
+<tr><td class="num" id="LN1231">1231</td><td class="line">        <span class='keyword'>return</span> bus_verify_polkit_async(call, <span class='macro'>CAP_SYS_ADMIN<span class='expansion'>21</span></span>, <span class='string_literal'>"org.freedesktop.systemd1.manage-unit-files"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>, &amp;m-&gt;polkit_registry, error);</td></tr>
+<tr><td class="num" id="LN1232">1232</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1233">1233</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1234">1234</td><td class="line"><span class='keyword'>int</span> bus_verify_reload_daemon_async(Manager *m, sd_bus_message *call, sd_bus_error *error) {</td></tr>
+<tr><td class="num" id="LN1235">1235</td><td class="line">        <span class='keyword'>return</span> bus_verify_polkit_async(call, <span class='macro'>CAP_SYS_ADMIN<span class='expansion'>21</span></span>, <span class='string_literal'>"org.freedesktop.systemd1.reload-daemon"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>, &amp;m-&gt;polkit_registry, error);</td></tr>
+<tr><td class="num" id="LN1236">1236</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN1237">1237</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN1238">1238</td><td class="line"><span class='keyword'>int</span> bus_verify_set_environment_async(Manager *m, sd_bus_message *call, sd_bus_error *error) {</td></tr>
+<tr><td class="num" id="LN1239">1239</td><td class="line">        <span class='keyword'>return</span> bus_verify_polkit_async(call, <span class='macro'>CAP_SYS_ADMIN<span class='expansion'>21</span></span>, <span class='string_literal'>"org.freedesktop.systemd1.set-environment"</span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>false<span class='expansion'>0</span></span>, <span class='macro'>UID_INVALID<span class='expansion'>((uid_t) -1)</span></span>, &amp;m-&gt;polkit_registry, error);</td></tr>
+<tr><td class="num" id="LN1240">1240</td><td class="line">}</td></tr>
 </table></body></html>
