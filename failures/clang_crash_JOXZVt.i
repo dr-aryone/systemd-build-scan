@@ -9084,9 +9084,9 @@ static __inline__ char *btrfs_err_str(enum btrfs_err_code err_code)
  }
 }
 # 51 "./src/basic/missing.h" 2
-# 993 "./src/basic/missing.h"
+# 1002 "./src/basic/missing.h"
 typedef int32_t key_serial_t;
-# 1048 "./src/basic/missing.h"
+# 1057 "./src/basic/missing.h"
 # 1 "./src/basic/missing_syscall.h" 1
 # 26 "./src/basic/missing_syscall.h"
 static inline int pivot_root(const char *new_root, const char *put_old) {
@@ -9191,7 +9191,7 @@ static inline ssize_t copy_file_range(int fd_in, loff_t *off_in,
 
 
 }
-# 1049 "./src/basic/missing.h" 2
+# 1058 "./src/basic/missing.h" 2
 # 47 "./src/basic/util.h" 2
 # 1 "./src/basic/time-util.h" 1
 # 24 "./src/basic/time-util.h"
@@ -15058,6 +15058,7 @@ struct Mount {
         _Bool sloppy_options;
 
         _Bool lazy_unmount;
+        _Bool force_unmount;
 
         MountResult result;
         MountResult reload_result;
