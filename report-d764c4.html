@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'tmpdir_backup' -->
+<!-- BUGDESC Potential leak of memory pointed to by 'tmp_backup' -->
 
 <!-- BUGTYPE Memory leak -->
 
@@ -66,19 +66,19 @@
 
 <!-- FUNCTIONNAME test_var_tmp -->
 
-<!-- BUGLINE 114 -->
+<!-- BUGLINE 138 -->
 
 <!-- BUGCOLUMN 17 -->
 
-<!-- BUGPATHLENGTH 7 -->
+<!-- BUGPATHLENGTH 12 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>test/test-fs-util.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 114, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'tmpdir_backup'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 138, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'tmp_backup'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -168,55 +168,84 @@
 <tr><td class="num" id="LN83">83</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN84">84</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN85">85</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> test_var_tmp(<span class='keyword'>void</span>) {</td></tr>
-<tr><td class="num" id="LN86">86</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *tmpdir_backup = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN86">86</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *tmpdir_backup = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *temp_backup = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *tmp_backup = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN87">87</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *tmp_dir = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *t;</td></tr>
 <tr><td class="num" id="LN88">88</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN89">89</td><td class="line">        t = getenv(<span class='string_literal'>"TMPDIR"</span>);</td></tr>
 <tr><td class="num" id="LN90">90</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">t</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 't' is non-null</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN91">91</td><td class="line">                tmpdir_backup = <span class="mrange">strdup(t)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 't' is null</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN91">91</td><td class="line">                tmpdir_backup = strdup(t);</td></tr>
 <tr><td class="num" id="LN92">92</td><td class="line">                <span class='macro'>assert_se(tmpdir_backup)<span class='expansion'>do { if ((__builtin_expect(!!(!(tmpdir_backup)),0))) log_assert_failed<br>("tmpdir_backup", "src/test/test-fs-util.c", 92, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
-</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming 'tmpdir_backup' is non-null</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN93">93</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN94">94</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN95">95</td><td class="line">        <span class='macro'>assert(unsetenv(<span class='string_literal'>"TMPDIR"</span>) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(unsetenv("TMPDIR") &gt;= 0)),<br>0))) log_assert_failed("unsetenv(\"TMPDIR\") &gt;= 0", "src/test/test-fs-util.c"<br>, 95, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN96">96</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN97">97</td><td class="line">        <span class='macro'>assert_se(var_tmp_dir(&amp;tmp_dir) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(var_tmp_dir(&amp;tmp_dir) &gt;=<br> 0)),0))) log_assert_failed("var_tmp_dir(&amp;tmp_dir) &gt;= 0"<br>, "src/test/test-fs-util.c", 97, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN98">98</td><td class="line">        <span class='macro'>assert_se(streq(tmp_dir, <span class='string_literal'>"/var/tmp"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((tmp_dir),("/var/tmp"<br>)) == 0))),0))) log_assert_failed("streq(tmp_dir, \"/var/tmp\")"<br>, "src/test/test-fs-util.c", 98, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN99">99</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN100">100</td><td class="line">        <span class='macro'>assert_se(setenv(<span class='string_literal'>"TMPDIR"</span>, <span class='string_literal'>"/tmp"</span>, true) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(setenv("TMPDIR", "/tmp", 1) &gt;=<br> 0)),0))) log_assert_failed("setenv(\"TMPDIR\", \"/tmp\", true) &gt;= 0"<br>, "src/test/test-fs-util.c", 100, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN101">101</td><td class="line">        <span class='macro'>assert_se(streq(getenv(<span class='string_literal'>"TMPDIR"</span>), <span class='string_literal'>"/tmp"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((getenv("TMPDIR")),("/tmp"<br>)) == 0))),0))) log_assert_failed("streq(getenv(\"TMPDIR\"), \"/tmp\")"<br>, "src/test/test-fs-util.c", 101, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN102">102</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN103">103</td><td class="line">        <span class='macro'>assert_se(var_tmp_dir(&amp;tmp_dir) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(var_tmp_dir(&amp;tmp_dir) &gt;=<br> 0)),0))) log_assert_failed("var_tmp_dir(&amp;tmp_dir) &gt;= 0"<br>, "src/test/test-fs-util.c", 103, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN104">104</td><td class="line">        <span class='macro'>assert_se(streq(tmp_dir, <span class='string_literal'>"/tmp"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((tmp_dir),("/tmp")) ==<br> 0))),0))) log_assert_failed("streq(tmp_dir, \"/tmp\")", "src/test/test-fs-util.c"<br>, 104, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN105">105</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN106">106</td><td class="line">        <span class='macro'>assert_se(setenv(<span class='string_literal'>"TMPDIR"</span>, <span class='string_literal'>"/88_does_not_exist_88"</span>, true) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(setenv("TMPDIR", "/88_does_not_exist_88"<br>, 1) &gt;= 0)),0))) log_assert_failed("setenv(\"TMPDIR\", \"/88_does_not_exist_88\", true) &gt;= 0"<br>, "src/test/test-fs-util.c", 106, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN107">107</td><td class="line">        <span class='macro'>assert_se(streq(getenv(<span class='string_literal'>"TMPDIR"</span>), <span class='string_literal'>"/88_does_not_exist_88"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((getenv("TMPDIR")),("/88_does_not_exist_88"<br>)) == 0))),0))) log_assert_failed("streq(getenv(\"TMPDIR\"), \"/88_does_not_exist_88\")"<br>, "src/test/test-fs-util.c", 107, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN108">108</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN109">109</td><td class="line">        <span class='macro'>assert_se(var_tmp_dir(&amp;tmp_dir) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(var_tmp_dir(&amp;tmp_dir) &gt;=<br> 0)),0))) log_assert_failed("var_tmp_dir(&amp;tmp_dir) &gt;= 0"<br>, "src/test/test-fs-util.c", 109, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN110">110</td><td class="line">        <span class='macro'>assert_se(streq(tmp_dir, <span class='string_literal'>"/var/tmp"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((tmp_dir),("/var/tmp"<br>)) == 0))),0))) log_assert_failed("streq(tmp_dir, \"/var/tmp\")"<br>, "src/test/test-fs-util.c", 110, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN111">111</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN112">112</td><td class="line">        <span class='keyword'>if</span> (tmpdir_backup)  {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN113">113</td><td class="line">                <span class='macro'>assert_se(setenv(<span class='string_literal'>"TMPDIR"</span>, tmpdir_backup, true) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(setenv("TMPDIR", tmpdir_backup<br>, 1) &gt;= 0)),0))) log_assert_failed("setenv(\"TMPDIR\", tmpdir_backup, true) &gt;= 0"<br>, "src/test/test-fs-util.c", 113, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN114">114</td><td class="line">                <span class='macro'>assert_se(streq(getenv(<span class='string_literal'>"TMPDIR"</span>), tmpdir_backup))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((getenv("TMPDIR")),(tmpdir_backup<br>)) == 0))),0))) log_assert_failed("streq(getenv(\"TMPDIR\"), tmpdir_backup)"<br>, "src/test/test-fs-util.c", 114, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'tmpdir_backup'</td></tr></table></div>
+<tr><td class="num" id="LN95">95</td><td class="line">        t = getenv(<span class='string_literal'>"TEMP"</span>);</td></tr>
+<tr><td class="num" id="LN96">96</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">t</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 't' is null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN97">97</td><td class="line">                temp_backup = strdup(t);</td></tr>
+<tr><td class="num" id="LN98">98</td><td class="line">                <span class='macro'>assert_se(temp_backup)<span class='expansion'>do { if ((__builtin_expect(!!(!(temp_backup)),0))) log_assert_failed<br>("temp_backup", "src/test/test-fs-util.c", 98, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN99">99</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN100">100</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN101">101</td><td class="line">        t = getenv(<span class='string_literal'>"TMP"</span>);</td></tr>
+<tr><td class="num" id="LN102">102</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">t</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 't' is non-null</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN103">103</td><td class="line">                tmp_backup = <span class="mrange">strdup(t)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:30ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN104">104</td><td class="line">                <span class='macro'>assert_se(tmp_backup)<span class='expansion'>do { if ((__builtin_expect(!!(!(tmp_backup)),0))) log_assert_failed<br>("tmp_backup", "src/test/test-fs-util.c", 104, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
+</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming 'tmp_backup' is non-null</td></tr></table></div>
 </div></td></tr>
-<tr><td class="num" id="LN115">115</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN116">116</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN117">117</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN118">118</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
-<tr><td class="num" id="LN119">119</td><td class="line">        test_unlink_noerrno();</td></tr>
-<tr><td class="num" id="LN120">120</td><td class="line">        test_readlink_and_make_absolute();</td></tr>
-<tr><td class="num" id="LN121">121</td><td class="line">        test_get_files_in_directory();</td></tr>
-<tr><td class="num" id="LN122">122</td><td class="line">        <span class="mrange">test_var_tmp()</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Calling 'test_var_tmp'</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN123">123</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN124">124</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN125">125</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN105">105</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN106">106</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN107">107</td><td class="line">        <span class='macro'>assert(unsetenv(<span class='string_literal'>"TMPDIR"</span>) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(unsetenv("TMPDIR") &gt;= 0)),<br>0))) log_assert_failed("unsetenv(\"TMPDIR\") &gt;= 0", "src/test/test-fs-util.c"<br>, 107, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN108">108</td><td class="line">        <span class='macro'>assert(unsetenv(<span class='string_literal'>"TEMP"</span>) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(unsetenv("TEMP") &gt;= 0)),0)<br>)) log_assert_failed("unsetenv(\"TEMP\") &gt;= 0", "src/test/test-fs-util.c"<br>, 108, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN109">109</td><td class="line">        <span class='macro'>assert(unsetenv(<span class='string_literal'>"TMP"</span>) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(unsetenv("TMP") &gt;= 0)),0))<br>) log_assert_failed("unsetenv(\"TMP\") &gt;= 0", "src/test/test-fs-util.c"<br>, 109, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN110">110</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN111">111</td><td class="line">        <span class='macro'>assert_se(var_tmp_dir(&amp;tmp_dir) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(var_tmp_dir(&amp;tmp_dir) &gt;=<br> 0)),0))) log_assert_failed("var_tmp_dir(&amp;tmp_dir) &gt;= 0"<br>, "src/test/test-fs-util.c", 111, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN112">112</td><td class="line">        <span class='macro'>assert_se(streq(tmp_dir, <span class='string_literal'>"/var/tmp"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((tmp_dir),("/var/tmp"<br>)) == 0))),0))) log_assert_failed("streq(tmp_dir, \"/var/tmp\")"<br>, "src/test/test-fs-util.c", 112, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN113">113</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN114">114</td><td class="line">        <span class='macro'>assert_se(setenv(<span class='string_literal'>"TMPDIR"</span>, <span class='string_literal'>"/tmp"</span>, true) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(setenv("TMPDIR", "/tmp", 1) &gt;=<br> 0)),0))) log_assert_failed("setenv(\"TMPDIR\", \"/tmp\", true) &gt;= 0"<br>, "src/test/test-fs-util.c", 114, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN115">115</td><td class="line">        <span class='macro'>assert_se(streq(getenv(<span class='string_literal'>"TMPDIR"</span>), <span class='string_literal'>"/tmp"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((getenv("TMPDIR")),("/tmp"<br>)) == 0))),0))) log_assert_failed("streq(getenv(\"TMPDIR\"), \"/tmp\")"<br>, "src/test/test-fs-util.c", 115, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN116">116</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN117">117</td><td class="line">        <span class='macro'>assert_se(var_tmp_dir(&amp;tmp_dir) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(var_tmp_dir(&amp;tmp_dir) &gt;=<br> 0)),0))) log_assert_failed("var_tmp_dir(&amp;tmp_dir) &gt;= 0"<br>, "src/test/test-fs-util.c", 117, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN118">118</td><td class="line">        <span class='macro'>assert_se(streq(tmp_dir, <span class='string_literal'>"/tmp"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((tmp_dir),("/tmp")) ==<br> 0))),0))) log_assert_failed("streq(tmp_dir, \"/tmp\")", "src/test/test-fs-util.c"<br>, 118, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN119">119</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN120">120</td><td class="line">        <span class='macro'>assert_se(setenv(<span class='string_literal'>"TMPDIR"</span>, <span class='string_literal'>"/88_does_not_exist_88"</span>, true) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(setenv("TMPDIR", "/88_does_not_exist_88"<br>, 1) &gt;= 0)),0))) log_assert_failed("setenv(\"TMPDIR\", \"/88_does_not_exist_88\", true) &gt;= 0"<br>, "src/test/test-fs-util.c", 120, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN121">121</td><td class="line">        <span class='macro'>assert_se(streq(getenv(<span class='string_literal'>"TMPDIR"</span>), <span class='string_literal'>"/88_does_not_exist_88"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((getenv("TMPDIR")),("/88_does_not_exist_88"<br>)) == 0))),0))) log_assert_failed("streq(getenv(\"TMPDIR\"), \"/88_does_not_exist_88\")"<br>, "src/test/test-fs-util.c", 121, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN122">122</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN123">123</td><td class="line">        <span class='macro'>assert_se(var_tmp_dir(&amp;tmp_dir) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(var_tmp_dir(&amp;tmp_dir) &gt;=<br> 0)),0))) log_assert_failed("var_tmp_dir(&amp;tmp_dir) &gt;= 0"<br>, "src/test/test-fs-util.c", 123, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN124">124</td><td class="line">        <span class='macro'>assert_se(streq(tmp_dir, <span class='string_literal'>"/var/tmp"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((tmp_dir),("/var/tmp"<br>)) == 0))),0))) log_assert_failed("streq(tmp_dir, \"/var/tmp\")"<br>, "src/test/test-fs-util.c", 124, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN125">125</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN126">126</td><td class="line">        <span class='keyword'>if</span> (tmpdir_backup)  {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN127">127</td><td class="line">                <span class='macro'>assert_se(setenv(<span class='string_literal'>"TMPDIR"</span>, tmpdir_backup, true) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(setenv("TMPDIR", tmpdir_backup<br>, 1) &gt;= 0)),0))) log_assert_failed("setenv(\"TMPDIR\", tmpdir_backup, true) &gt;= 0"<br>, "src/test/test-fs-util.c", 127, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN128">128</td><td class="line">                <span class='macro'>assert_se(streq(getenv(<span class='string_literal'>"TMPDIR"</span>), tmpdir_backup))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((getenv("TMPDIR")),(tmpdir_backup<br>)) == 0))),0))) log_assert_failed("streq(getenv(\"TMPDIR\"), tmpdir_backup)"<br>, "src/test/test-fs-util.c", 128, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN129">129</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN130">130</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">        <span class='keyword'>if</span> (temp_backup)  {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN132">132</td><td class="line">                <span class='macro'>assert_se(setenv(<span class='string_literal'>"TEMP"</span>, temp_backup, true) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(setenv("TEMP", temp_backup, 1<br>) &gt;= 0)),0))) log_assert_failed("setenv(\"TEMP\", temp_backup, true) &gt;= 0"<br>, "src/test/test-fs-util.c", 132, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN133">133</td><td class="line">                <span class='macro'>assert_se(streq(getenv(<span class='string_literal'>"TEMP"</span>), temp_backup))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((getenv("TEMP")),(temp_backup<br>)) == 0))),0))) log_assert_failed("streq(getenv(\"TEMP\"), temp_backup)"<br>, "src/test/test-fs-util.c", 133, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN134">134</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN135">135</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN136">136</td><td class="line">        <span class='keyword'>if</span> (tmp_backup)  {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN137">137</td><td class="line">                <span class='macro'>assert_se(setenv(<span class='string_literal'>"TMP"</span>, tmp_backup, true) &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(setenv("TMP", tmp_backup, 1) &gt;=<br> 0)),0))) log_assert_failed("setenv(\"TMP\", tmp_backup, true) &gt;= 0"<br>, "src/test/test-fs-util.c", 137, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN138">138</td><td class="line">                <span class='macro'>assert_se(streq(getenv(<span class='string_literal'>"TMP"</span>), tmp_backup))<span class='expansion'>do { if ((__builtin_expect(!!(!((strcmp((getenv("TMP")),(tmp_backup<br>)) == 0))),0))) log_assert_failed("streq(getenv(\"TMP\"), tmp_backup)"<br>, "src/test/test-fs-util.c", 138, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:17ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert_se':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'tmp_backup'</td></tr></table></div>
+</div></td></tr>
+<tr><td class="num" id="LN139">139</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN140">140</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN141">141</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN142">142</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN143">143</td><td class="line">        test_unlink_noerrno();</td></tr>
+<tr><td class="num" id="LN144">144</td><td class="line">        test_readlink_and_make_absolute();</td></tr>
+<tr><td class="num" id="LN145">145</td><td class="line">        test_get_files_in_directory();</td></tr>
+<tr><td class="num" id="LN146">146</td><td class="line">        test_var_tmp();</td></tr>
+<tr><td class="num" id="LN147">147</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN148">148</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN149">149</td><td class="line">}</td></tr>
 </table></body></html>

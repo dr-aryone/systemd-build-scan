@@ -13670,9 +13670,6 @@ struct Manager {
         Hashmap *units_requiring_mounts_for;
 
 
-        int kdbus_fd;
-
-
         Hashmap *polkit_registry;
 
 
