@@ -9252,6 +9252,7 @@ static inline _Bool triple_timestamp_is_set(triple_timestamp *ts) {
 usec_t triple_timestamp_by_clock(triple_timestamp *ts, clockid_t clock);
 
 usec_t timespec_load(const struct timespec *ts) __attribute__ ((pure));
+nsec_t timespec_load_nsec(const struct timespec *ts) __attribute__ ((pure));
 struct timespec *timespec_store(struct timespec *ts, usec_t u);
 
 usec_t timeval_load(const struct timeval *tv) __attribute__ ((pure));
