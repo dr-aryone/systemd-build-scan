@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'kmsg_socket' is never read -->
+<!-- BUGDESC Value stored to 'e' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,11 +64,11 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME inner_child -->
+<!-- FUNCTIONNAME dissect_image -->
 
-<!-- BUGLINE 2714 -->
+<!-- BUGLINE 2013 -->
 
-<!-- BUGCOLUMN 9 -->
+<!-- BUGCOLUMN 17 -->
 
 <!-- BUGPATHLENGTH 1 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2714, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'kmsg_socket' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 2013, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'e' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1309,7 +1309,7 @@
 <tr><td class="num" id="LN1224">1224</td><td class="line">                 <span class='comment'>* it /w a symbolic link to a time zone data file.</span></td></tr>
 <tr><td class="num" id="LN1225">1225</td><td class="line">                 <span class='comment'>*</span></td></tr>
 <tr><td class="num" id="LN1226">1226</td><td class="line">                 <span class='comment'>* Example:</span></td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">                 <span class='comment'>* ln -s /etc/localtime /usr/share/zoneinfo/UTC</span></td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line">                 <span class='comment'>* ln -s /usr/share/zoneinfo/UTC /etc/localtime</span></td></tr>
 <tr><td class="num" id="LN1228">1228</td><td class="line">                 <span class='comment'>*/</span></td></tr>
 <tr><td class="num" id="LN1229">1229</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1230">1230</td><td class="line">        }</td></tr>
@@ -2095,7 +2095,8 @@
 <tr><td class="num" id="LN2010">2010</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to reread partition table: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 2010, __func__, "Failed to reread partition table: %m") : -<br>abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN2011">2011</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN2012">2012</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2013">2013</td><td class="line">                e = udev_enumerate_unref(e);</td></tr>
+<tr><td class="num" id="LN2013">2013</td><td class="line">                e = <span class="mrange">udev_enumerate_unref(e)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'e' is never read</div></td></tr>
 <tr><td class="num" id="LN2014">2014</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN2015">2015</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2016">2016</td><td class="line">        first = udev_enumerate_get_list_entry(e);</td></tr>
@@ -2796,8 +2797,7 @@
 <tr><td class="num" id="LN2711">2711</td><td class="line">        r = setup_kmsg(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, kmsg_socket);</td></tr>
 <tr><td class="num" id="LN2712">2712</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN2713">2713</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN2714">2714</td><td class="line">        kmsg_socket = <span class="mrange">safe_close(kmsg_socket)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'kmsg_socket' is never read</div></td></tr>
+<tr><td class="num" id="LN2714">2714</td><td class="line">        kmsg_socket = safe_close(kmsg_socket);</td></tr>
 <tr><td class="num" id="LN2715">2715</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2716">2716</td><td class="line">        umask(0022);</td></tr>
 <tr><td class="num" id="LN2717">2717</td><td class="line"> </td></tr>

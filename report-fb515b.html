@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Value stored to 'notify_socket' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME setup_image -->
+<!-- FUNCTIONNAME outer_child -->
 
-<!-- BUGLINE 1792 -->
+<!-- BUGLINE 3115 -->
 
 <!-- BUGCOLUMN 17 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1792, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3115, column 17</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'notify_socket' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1309,7 +1309,7 @@
 <tr><td class="num" id="LN1224">1224</td><td class="line">                 <span class='comment'>* it /w a symbolic link to a time zone data file.</span></td></tr>
 <tr><td class="num" id="LN1225">1225</td><td class="line">                 <span class='comment'>*</span></td></tr>
 <tr><td class="num" id="LN1226">1226</td><td class="line">                 <span class='comment'>* Example:</span></td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">                 <span class='comment'>* ln -s /etc/localtime /usr/share/zoneinfo/UTC</span></td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line">                 <span class='comment'>* ln -s /usr/share/zoneinfo/UTC /etc/localtime</span></td></tr>
 <tr><td class="num" id="LN1228">1228</td><td class="line">                 <span class='comment'>*/</span></td></tr>
 <tr><td class="num" id="LN1229">1229</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1230">1230</td><td class="line">        }</td></tr>
@@ -1874,8 +1874,7 @@
 <tr><td class="num" id="LN1789">1789</td><td class="line">                *loop_nr = -1;</td></tr>
 <tr><td class="num" id="LN1790">1790</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1791">1791</td><td class="line">                r = fd;</td></tr>
-<tr><td class="num" id="LN1792">1792</td><td class="line">                fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN1792">1792</td><td class="line">                fd = -1;</td></tr>
 <tr><td class="num" id="LN1793">1793</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1794">1794</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN1795">1795</td><td class="line">        }</td></tr>
@@ -3198,7 +3197,8 @@
 <tr><td class="num" id="LN3112">3112</td><td class="line">        <span class='keyword'>if</span> (pid == 0) {</td></tr>
 <tr><td class="num" id="LN3113">3113</td><td class="line">                pid_socket = safe_close(pid_socket);</td></tr>
 <tr><td class="num" id="LN3114">3114</td><td class="line">                uuid_socket = safe_close(uuid_socket);</td></tr>
-<tr><td class="num" id="LN3115">3115</td><td class="line">                notify_socket = safe_close(notify_socket);</td></tr>
+<tr><td class="num" id="LN3115">3115</td><td class="line">                notify_socket = <span class="mrange">safe_close(notify_socket)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex">Value stored to 'notify_socket' is never read</div></td></tr>
 <tr><td class="num" id="LN3116">3116</td><td class="line">                uid_shift_socket = safe_close(uid_shift_socket);</td></tr>
 <tr><td class="num" id="LN3117">3117</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3118">3118</td><td class="line">                <span class='comment'>/* The inner child has all namespaces that are</span></td></tr>

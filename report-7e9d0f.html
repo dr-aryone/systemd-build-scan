@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'u' is never read -->
+<!-- BUGDESC Value stored to 'kmsg_socket' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME setup_kmsg -->
+<!-- FUNCTIONNAME outer_child -->
 
-<!-- BUGLINE 1501 -->
+<!-- BUGLINE 3152 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1501, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'u' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3152, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'kmsg_socket' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1309,7 +1309,7 @@
 <tr><td class="num" id="LN1224">1224</td><td class="line">                 <span class='comment'>* it /w a symbolic link to a time zone data file.</span></td></tr>
 <tr><td class="num" id="LN1225">1225</td><td class="line">                 <span class='comment'>*</span></td></tr>
 <tr><td class="num" id="LN1226">1226</td><td class="line">                 <span class='comment'>* Example:</span></td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">                 <span class='comment'>* ln -s /etc/localtime /usr/share/zoneinfo/UTC</span></td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line">                 <span class='comment'>* ln -s /usr/share/zoneinfo/UTC /etc/localtime</span></td></tr>
 <tr><td class="num" id="LN1228">1228</td><td class="line">                 <span class='comment'>*/</span></td></tr>
 <tr><td class="num" id="LN1229">1229</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1230">1230</td><td class="line">        }</td></tr>
@@ -1583,8 +1583,7 @@
 <tr><td class="num" id="LN1498">1498</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1499">1499</td><td class="line">        <span class='macro'>assert(kmsg_socket &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(kmsg_socket &gt;= 0)),0))) log_assert_failed<br>("kmsg_socket &gt;= 0", "src/nspawn/nspawn.c", 1499, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1500">1500</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1501">1501</td><td class="line">        u = <span class="mrange">umask(0000)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'u' is never read</div></td></tr>
+<tr><td class="num" id="LN1501">1501</td><td class="line">        u = umask(0000);</td></tr>
 <tr><td class="num" id="LN1502">1502</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1503">1503</td><td class="line">        <span class='comment'>/* We create the kmsg FIFO as /run/kmsg, but immediately</span></td></tr>
 <tr><td class="num" id="LN1504">1504</td><td class="line">         <span class='comment'>* delete it after bind mounting it to /proc/kmsg. While FIFOs</span></td></tr>
@@ -3235,7 +3234,8 @@
 <tr><td class="num" id="LN3149">3149</td><td class="line">        pid_socket = safe_close(pid_socket);</td></tr>
 <tr><td class="num" id="LN3150">3150</td><td class="line">        uuid_socket = safe_close(uuid_socket);</td></tr>
 <tr><td class="num" id="LN3151">3151</td><td class="line">        notify_socket = safe_close(notify_socket);</td></tr>
-<tr><td class="num" id="LN3152">3152</td><td class="line">        kmsg_socket = safe_close(kmsg_socket);</td></tr>
+<tr><td class="num" id="LN3152">3152</td><td class="line">        kmsg_socket = <span class="mrange">safe_close(kmsg_socket)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'kmsg_socket' is never read</div></td></tr>
 <tr><td class="num" id="LN3153">3153</td><td class="line">        rtnl_socket = safe_close(rtnl_socket);</td></tr>
 <tr><td class="num" id="LN3154">3154</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3155">3155</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>

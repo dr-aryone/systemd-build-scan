@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'u' is never read -->
+<!-- BUGDESC Value stored to 'uuid_socket' is never read -->
 
 <!-- BUGTYPE Dead assignment -->
 
@@ -64,9 +64,9 @@
 
 <!-- FILENAME nspawn.c -->
 
-<!-- FUNCTIONNAME copy_devnodes -->
+<!-- FUNCTIONNAME outer_child -->
 
-<!-- BUGLINE 1372 -->
+<!-- BUGLINE 3150 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,8 +77,8 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1372, column 9</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'u' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 3150, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'uuid_socket' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1309,7 +1309,7 @@
 <tr><td class="num" id="LN1224">1224</td><td class="line">                 <span class='comment'>* it /w a symbolic link to a time zone data file.</span></td></tr>
 <tr><td class="num" id="LN1225">1225</td><td class="line">                 <span class='comment'>*</span></td></tr>
 <tr><td class="num" id="LN1226">1226</td><td class="line">                 <span class='comment'>* Example:</span></td></tr>
-<tr><td class="num" id="LN1227">1227</td><td class="line">                 <span class='comment'>* ln -s /etc/localtime /usr/share/zoneinfo/UTC</span></td></tr>
+<tr><td class="num" id="LN1227">1227</td><td class="line">                 <span class='comment'>* ln -s /usr/share/zoneinfo/UTC /etc/localtime</span></td></tr>
 <tr><td class="num" id="LN1228">1228</td><td class="line">                 <span class='comment'>*/</span></td></tr>
 <tr><td class="num" id="LN1229">1229</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN1230">1230</td><td class="line">        }</td></tr>
@@ -1454,8 +1454,7 @@
 <tr><td class="num" id="LN1369">1369</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1370">1370</td><td class="line">        <span class='macro'>assert(dest)<span class='expansion'>do { if ((__builtin_expect(!!(!(dest)),0))) log_assert_failed<br>("dest", "src/nspawn/nspawn.c", 1370, __PRETTY_FUNCTION__); }<br> while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1371">1371</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1372">1372</td><td class="line">        u = <span class="mrange">umask(0000)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'u' is never read</div></td></tr>
+<tr><td class="num" id="LN1372">1372</td><td class="line">        u = umask(0000);</td></tr>
 <tr><td class="num" id="LN1373">1373</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1374">1374</td><td class="line">        <span class='comment'>/* Create /dev/net, so that we can create /dev/net/tun in it */</span></td></tr>
 <tr><td class="num" id="LN1375">1375</td><td class="line">        <span class='keyword'>if</span> (userns_mkdir(dest, <span class='string_literal'>"/dev/net"</span>, 0755, 0, 0) &lt; 0)</td></tr>
@@ -3233,7 +3232,8 @@
 <tr><td class="num" id="LN3147">3147</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to send notify fd: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn.c"<br>, 3147, __func__, "Failed to send notify fd: %m") : -abs(_e);<br> })</span></span>;</td></tr>
 <tr><td class="num" id="LN3148">3148</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN3149">3149</td><td class="line">        pid_socket = safe_close(pid_socket);</td></tr>
-<tr><td class="num" id="LN3150">3150</td><td class="line">        uuid_socket = safe_close(uuid_socket);</td></tr>
+<tr><td class="num" id="LN3150">3150</td><td class="line">        uuid_socket = <span class="mrange">safe_close(uuid_socket)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'uuid_socket' is never read</div></td></tr>
 <tr><td class="num" id="LN3151">3151</td><td class="line">        notify_socket = safe_close(notify_socket);</td></tr>
 <tr><td class="num" id="LN3152">3152</td><td class="line">        kmsg_socket = safe_close(kmsg_socket);</td></tr>
 <tr><td class="num" id="LN3153">3153</td><td class="line">        rtnl_socket = safe_close(rtnl_socket);</td></tr>
