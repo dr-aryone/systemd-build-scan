@@ -66,7 +66,7 @@
 
 <!-- FUNCTIONNAME stdout_stream_restore -->
 
-<!-- BUGLINE 639 -->
+<!-- BUGLINE 642 -->
 
 <!-- BUGCOLUMN 23 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>journal/journald-stream.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 639, column 23</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 642, column 23</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Dereference of undefined pointer value</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -478,407 +478,410 @@
 <tr><td class="num" id="LN393">393</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN394">394</td><td class="line">        p = s-&gt;buffer;</td></tr>
 <tr><td class="num" id="LN395">395</td><td class="line">        remaining = s-&gt;length;</td></tr>
-<tr><td class="num" id="LN396">396</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN397">397</td><td class="line">                <span class='keyword'>char</span> *end;</td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">                size_t skip;</td></tr>
-<tr><td class="num" id="LN399">399</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN400">400</td><td class="line">                end = memchr(p, '\n', remaining);</td></tr>
-<tr><td class="num" id="LN401">401</td><td class="line">                <span class='keyword'>if</span> (end)</td></tr>
-<tr><td class="num" id="LN402">402</td><td class="line">                        skip = end - p + 1;</td></tr>
-<tr><td class="num" id="LN403">403</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (remaining &gt;= <span class='keyword'>sizeof</span>(s-&gt;buffer) - 1) {</td></tr>
-<tr><td class="num" id="LN404">404</td><td class="line">                        end = p + <span class='keyword'>sizeof</span>(s-&gt;buffer) - 1;</td></tr>
-<tr><td class="num" id="LN405">405</td><td class="line">                        skip = remaining;</td></tr>
-<tr><td class="num" id="LN406">406</td><td class="line">                } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN407">407</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN408">408</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN409">409</td><td class="line">                *end = 0;</td></tr>
-<tr><td class="num" id="LN410">410</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN411">411</td><td class="line">                r = stdout_stream_line(s, p);</td></tr>
-<tr><td class="num" id="LN412">412</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN413">413</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN414">414</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN415">415</td><td class="line">                remaining -= skip;</td></tr>
-<tr><td class="num" id="LN416">416</td><td class="line">                p += skip;</td></tr>
-<tr><td class="num" id="LN417">417</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN418">418</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN419">419</td><td class="line">        <span class='keyword'>if</span> (force_flush &amp;&amp; remaining &gt; 0) {</td></tr>
-<tr><td class="num" id="LN420">420</td><td class="line">                p[remaining] = 0;</td></tr>
-<tr><td class="num" id="LN421">421</td><td class="line">                r = stdout_stream_line(s, p);</td></tr>
-<tr><td class="num" id="LN422">422</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN423">423</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN424">424</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN425">425</td><td class="line">                p += remaining;</td></tr>
-<tr><td class="num" id="LN426">426</td><td class="line">                remaining = 0;</td></tr>
-<tr><td class="num" id="LN427">427</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN428">428</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN429">429</td><td class="line">        <span class='keyword'>if</span> (p &gt; s-&gt;buffer) {</td></tr>
-<tr><td class="num" id="LN430">430</td><td class="line">                memmove(s-&gt;buffer, p, remaining);</td></tr>
-<tr><td class="num" id="LN431">431</td><td class="line">                s-&gt;length = remaining;</td></tr>
-<tr><td class="num" id="LN432">432</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN433">433</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN434">434</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN435">435</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line">        <span class='comment'>/* XXX: This function does nothing if (s-&gt;length == 0) */</span></td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">                <span class='keyword'>char</span> *end;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line">                size_t skip;</td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">                end = memchr(p, '\n', remaining);</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">                <span class='keyword'>if</span> (end)</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">                        skip = end - p + 1;</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (remaining &gt;= <span class='keyword'>sizeof</span>(s-&gt;buffer) - 1) {</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">                        end = p + <span class='keyword'>sizeof</span>(s-&gt;buffer) - 1;</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">                        skip = remaining;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line">                } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">                *end = 0;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">                r = stdout_stream_line(s, p);</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">                remaining -= skip;</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">                p += skip;</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">        <span class='keyword'>if</span> (force_flush &amp;&amp; remaining &gt; 0) {</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line">                p[remaining] = 0;</td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">                r = stdout_stream_line(s, p);</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">                p += remaining;</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">                remaining = 0;</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">        <span class='keyword'>if</span> (p &gt; s-&gt;buffer) {</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">                memmove(s-&gt;buffer, p, remaining);</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">                s-&gt;length = remaining;</td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN436">436</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN437">437</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_process(sd_event_source *es, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN438">438</td><td class="line">        StdoutStream *s = userdata;</td></tr>
-<tr><td class="num" id="LN439">439</td><td class="line">        ssize_t l;</td></tr>
-<tr><td class="num" id="LN440">440</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN441">441</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN442">442</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 442, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN443">443</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN444">444</td><td class="line">        <span class='keyword'>if</span> ((revents|<span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>|<span class='macro'>EPOLLHUP<span class='expansion'>EPOLLHUP</span></span>) != (<span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>|<span class='macro'>EPOLLHUP<span class='expansion'>EPOLLHUP</span></span>)) {</td></tr>
-<tr><td class="num" id="LN445">445</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Got invalid event from epoll for stdout stream: %"</span>PRIx32, revents)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 445, __func__, "Got invalid event from epoll for stdout stream: %"<br>"x", revents) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN446">446</td><td class="line">                <span class='keyword'>goto</span> terminate;</td></tr>
-<tr><td class="num" id="LN447">447</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN448">448</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN449">449</td><td class="line">        l = read(s-&gt;fd, s-&gt;buffer+s-&gt;length, <span class='keyword'>sizeof</span>(s-&gt;buffer)-1-s-&gt;length);</td></tr>
-<tr><td class="num" id="LN450">450</td><td class="line">        <span class='keyword'>if</span> (l &lt; 0) {</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_process(sd_event_source *es, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">        StdoutStream *s = userdata;</td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">        ssize_t l;</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 445, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">        <span class='keyword'>if</span> ((revents|<span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>|<span class='macro'>EPOLLHUP<span class='expansion'>EPOLLHUP</span></span>) != (<span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>|<span class='macro'>EPOLLHUP<span class='expansion'>EPOLLHUP</span></span>)) {</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Got invalid event from epoll for stdout stream: %"</span>PRIx32, revents)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 448, __func__, "Got invalid event from epoll for stdout stream: %"<br>"x", revents) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line">                <span class='keyword'>goto</span> terminate;</td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN451">451</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN452">452</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
-<tr><td class="num" id="LN453">453</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">        l = read(s-&gt;fd, s-&gt;buffer+s-&gt;length, <span class='keyword'>sizeof</span>(s-&gt;buffer)-1-s-&gt;length);</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">        <span class='keyword'>if</span> (l &lt; 0) {</td></tr>
 <tr><td class="num" id="LN454">454</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN455">455</td><td class="line">                <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to read from stream: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 455, __func__, "Failed to read from stream: %m") : -abs(_e)<br>; })</span></span>;</td></tr>
-<tr><td class="num" id="LN456">456</td><td class="line">                <span class='keyword'>goto</span> terminate;</td></tr>
-<tr><td class="num" id="LN457">457</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN458">458</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN459">459</td><td class="line">        <span class='keyword'>if</span> (l == 0) {</td></tr>
-<tr><td class="num" id="LN460">460</td><td class="line">                stdout_stream_scan(s, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
-<tr><td class="num" id="LN461">461</td><td class="line">                <span class='keyword'>goto</span> terminate;</td></tr>
-<tr><td class="num" id="LN462">462</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN463">463</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN464">464</td><td class="line">        s-&gt;length += l;</td></tr>
-<tr><td class="num" id="LN465">465</td><td class="line">        r = stdout_stream_scan(s, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN466">466</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN467">467</td><td class="line">                <span class='keyword'>goto</span> terminate;</td></tr>
-<tr><td class="num" id="LN468">468</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN469">469</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN470">470</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN471">471</td><td class="line">terminate:</td></tr>
-<tr><td class="num" id="LN472">472</td><td class="line">        stdout_stream_destroy(s);</td></tr>
-<tr><td class="num" id="LN473">473</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN474">474</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN475">475</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN476">476</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_install(Server *s, <span class='keyword'>int</span> fd, StdoutStream **ret) {</td></tr>
-<tr><td class="num" id="LN477">477</td><td class="line">        <span class='macro'>_cleanup_(stdout_stream_freep)<span class='expansion'>__attribute__((cleanup(stdout_stream_freep)))</span></span> StdoutStream *stream = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN478">478</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN479">479</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN480">480</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 480, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">                <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to read from stream: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 458, __func__, "Failed to read from stream: %m") : -abs(_e)<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line">                <span class='keyword'>goto</span> terminate;</td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">        <span class='keyword'>if</span> (l == 0) {</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line">                stdout_stream_scan(s, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">                <span class='keyword'>goto</span> terminate;</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">        s-&gt;length += l;</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line">        r = stdout_stream_scan(s, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">                <span class='keyword'>goto</span> terminate;</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line">terminate:</td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line">        stdout_stream_destroy(s);</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_install(Server *s, <span class='keyword'>int</span> fd, StdoutStream **ret) {</td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">        <span class='macro'>_cleanup_(stdout_stream_freep)<span class='expansion'>__attribute__((cleanup(stdout_stream_freep)))</span></span> StdoutStream *stream = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 483, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
 </td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN481">481</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/journald-stream.c", 481, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/journald-stream.c", 484, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'assert':
 </td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN482">482</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN483">483</td><td class="line">        stream = <span class='macro'>new0(StdoutStream, 1)<span class='expansion'>((StdoutStream*) calloc((1), sizeof(StdoutStream)))</span></span>;</td></tr>
-<tr><td class="num" id="LN484">484</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!stream</span>)</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">        stream = <span class='macro'>new0(StdoutStream, 1)<span class='expansion'>((StdoutStream*) calloc((1), sizeof(StdoutStream)))</span></span>;</td></tr>
+<tr><td class="num" id="LN487">487</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!stream</span>)</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'stream' is null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN485">485</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-stream.c", 485, __func__<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN487">487</td><td class="line">        stream-&gt;fd = -1;</td></tr>
-<tr><td class="num" id="LN488">488</td><td class="line">        stream-&gt;priority = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>;</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-stream.c", 488, __func__<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN489">489</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN490">490</td><td class="line">        r = getpeercred(fd, &amp;stream-&gt;ucred);</td></tr>
-<tr><td class="num" id="LN491">491</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN492">492</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine peer credentials: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 492, __func__, "Failed to determine peer credentials: %m") :<br> -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN494">494</td><td class="line">        <span class='keyword'>if</span> (mac_selinux_have()) {</td></tr>
-<tr><td class="num" id="LN495">495</td><td class="line">                r = getpeersec(fd, &amp;stream-&gt;label);</td></tr>
-<tr><td class="num" id="LN496">496</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0 &amp;&amp; r != -<span class='macro'>EOPNOTSUPP<span class='expansion'>95</span></span>)</td></tr>
-<tr><td class="num" id="LN497">497</td><td class="line">                        (<span class='keyword'>void</span>) <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to determine peer security context: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 497, __func__, "Failed to determine peer security context: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN498">498</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN499">499</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN500">500</td><td class="line">        (<span class='keyword'>void</span>) shutdown(fd, <span class='macro'>SHUT_WR<span class='expansion'>SHUT_WR</span></span>);</td></tr>
-<tr><td class="num" id="LN501">501</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN502">502</td><td class="line">        r = sd_event_add_io(s-&gt;event, &amp;stream-&gt;event_source, fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>, stdout_stream_process, stream);</td></tr>
-<tr><td class="num" id="LN503">503</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN504">504</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add stream to event loop: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 504, __func__, "Failed to add stream to event loop: %m") : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN505">505</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN506">506</td><td class="line">        r = sd_event_source_set_priority(stream-&gt;event_source, SD_EVENT_PRIORITY_NORMAL+5);</td></tr>
-<tr><td class="num" id="LN507">507</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN508">508</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to adjust stdout event source priority: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 508, __func__, "Failed to adjust stdout event source priority: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN510">510</td><td class="line">        stream-&gt;fd = fd;</td></tr>
-<tr><td class="num" id="LN511">511</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN512">512</td><td class="line">        stream-&gt;server = s;</td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line">        <span class='macro'>LIST_PREPEND(stdout_stream, s-&gt;stdout_streams, stream)<span class='expansion'>do { typeof(*(s-&gt;stdout_streams)) **_head = &amp;(s-&gt;stdout_streams<br>), *_item = (stream); do { if ((__builtin_expect(!!(!(_item))<br>,0))) log_assert_failed("_item", "src/journal/journald-stream.c"<br>, 513, __PRETTY_FUNCTION__); } while (0); if ((_item-&gt;stdout_stream_next<br> = *_head)) _item-&gt;stdout_stream_next-&gt;stdout_stream_prev<br> = _item; _item-&gt;stdout_stream_prev = ((void*)0); *_head =<br> _item; } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line">        s-&gt;n_stdout_streams++;</td></tr>
-<tr><td class="num" id="LN515">515</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN516">516</td><td class="line">        <span class='keyword'>if</span> (ret)</td></tr>
-<tr><td class="num" id="LN517">517</td><td class="line">                *ret = stream;</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">        stream-&gt;fd = -1;</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">        stream-&gt;priority = <span class='macro'>LOG_INFO<span class='expansion'>6</span></span>;</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line">        r = getpeercred(fd, &amp;stream-&gt;ucred);</td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine peer credentials: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 495, __func__, "Failed to determine peer credentials: %m") :<br> -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">        <span class='keyword'>if</span> (mac_selinux_have()) {</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">                r = getpeersec(fd, &amp;stream-&gt;label);</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0 &amp;&amp; r != -<span class='macro'>EOPNOTSUPP<span class='expansion'>95</span></span>)</td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">                        (<span class='keyword'>void</span>) <span class='macro'>log_warning_errno(r, <span class='string_literal'>"Failed to determine peer security context: %m"</span>)<span class='expansion'>({ int _level = (4), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 500, __func__, "Failed to determine peer security context: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line">        (<span class='keyword'>void</span>) shutdown(fd, <span class='macro'>SHUT_WR<span class='expansion'>SHUT_WR</span></span>);</td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">        r = sd_event_add_io(s-&gt;event, &amp;stream-&gt;event_source, fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>, stdout_stream_process, stream);</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add stream to event loop: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 507, __func__, "Failed to add stream to event loop: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">        r = sd_event_source_set_priority(stream-&gt;event_source, SD_EVENT_PRIORITY_NORMAL+5);</td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to adjust stdout event source priority: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 511, __func__, "Failed to adjust stdout event source priority: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">        stream-&gt;fd = fd;</td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">        stream-&gt;server = s;</td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">        <span class='macro'>LIST_PREPEND(stdout_stream, s-&gt;stdout_streams, stream)<span class='expansion'>do { typeof(*(s-&gt;stdout_streams)) **_head = &amp;(s-&gt;stdout_streams<br>), *_item = (stream); do { if ((__builtin_expect(!!(!(_item))<br>,0))) log_assert_failed("_item", "src/journal/journald-stream.c"<br>, 516, __PRETTY_FUNCTION__); } while (0); if ((_item-&gt;stdout_stream_next<br> = *_head)) _item-&gt;stdout_stream_next-&gt;stdout_stream_prev<br> = _item; _item-&gt;stdout_stream_prev = ((void*)0); *_head =<br> _item; } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">        s-&gt;n_stdout_streams++;</td></tr>
 <tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN519">519</td><td class="line">        stream = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN521">521</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN522">522</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line">        <span class='keyword'>if</span> (ret)</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">                *ret = stream;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line">        stream = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN523">523</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN524">524</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_new(sd_event_source *es, <span class='keyword'>int</span> listen_fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN525">525</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
-<tr><td class="num" id="LN526">526</td><td class="line">        Server *s = userdata;</td></tr>
-<tr><td class="num" id="LN527">527</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN528">528</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 529, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line">        <span class='keyword'>if</span> (revents != <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>) {</td></tr>
-<tr><td class="num" id="LN532">532</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Got invalid event from epoll for stdout server fd: %"</span>PRIx32, revents)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 532, __func__, "Got invalid event from epoll for stdout server fd: %"<br>"x", revents) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
-<tr><td class="num" id="LN534">534</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line">        fd = accept4(s-&gt;stdout_fd, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>SOCK_NONBLOCK<span class='expansion'>SOCK_NONBLOCK</span></span>|<span class='macro'>SOCK_CLOEXEC<span class='expansion'>SOCK_CLOEXEC</span></span>);</td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
-<tr><td class="num" id="LN539">539</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to accept stdout connection: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 541, __func__, "Failed to accept stdout connection: %m") : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_new(sd_event_source *es, <span class='keyword'>int</span> listen_fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">        Server *s = userdata;</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 532, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">        <span class='keyword'>if</span> (revents != <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>) {</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">                <span class='macro'>log_error(<span class='string_literal'>"Got invalid event from epoll for stdout server fd: %"</span>PRIx32, revents)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 535, __func__, "Got invalid event from epoll for stdout server fd: %"<br>"x", revents) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EIO<span class='expansion'>5</span></span>;</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">        fd = accept4(s-&gt;stdout_fd, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>SOCK_NONBLOCK<span class='expansion'>SOCK_NONBLOCK</span></span>|<span class='macro'>SOCK_CLOEXEC<span class='expansion'>SOCK_CLOEXEC</span></span>);</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN543">543</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line">        <span class='keyword'>if</span> (s-&gt;n_stdout_streams &gt;= <span class='macro'>STDOUT_STREAMS_MAX<span class='expansion'>4096</span></span>) {</td></tr>
-<tr><td class="num" id="LN545">545</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Too many stdout streams, refusing connection."</span>)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 545, __func__, "Too many stdout streams, refusing connection."<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN547">547</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line">        r = stdout_stream_install(s, fd, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line">        fd = -1;</td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_load(StdoutStream *stream, <span class='keyword'>const</span> <span class='keyword'>char</span> *fname) {</td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span></td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">                *priority = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line">                *level_prefix = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line">                *forward_to_syslog = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line">                *forward_to_kmsg = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line">                *forward_to_console = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN566">566</td><td class="line">        <span class='macro'>assert(stream)<span class='expansion'>do { if ((__builtin_expect(!!(!(stream)),0))) log_assert_failed<br>("stream", "src/journal/journald-stream.c", 566, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">        <span class='macro'>assert(fname)<span class='expansion'>do { if ((__builtin_expect(!!(!(fname)),0))) log_assert_failed<br>("fname", "src/journal/journald-stream.c", 567, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to accept stdout connection: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 544, __func__, "Failed to accept stdout connection: %m") : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN545">545</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">        <span class='keyword'>if</span> (s-&gt;n_stdout_streams &gt;= <span class='macro'>STDOUT_STREAMS_MAX<span class='expansion'>4096</span></span>) {</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Too many stdout streams, refusing connection."</span>)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 548, __func__, "Too many stdout streams, refusing connection."<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">        r = stdout_stream_install(s, fd, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">        fd = -1;</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_load(StdoutStream *stream, <span class='keyword'>const</span> <span class='keyword'>char</span> *fname) {</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span></td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line">                *priority = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">                *level_prefix = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">                *forward_to_syslog = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line">                *forward_to_kmsg = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">                *forward_to_console = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN568">568</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN569">569</td><td class="line">        <span class='keyword'>if</span> (!stream-&gt;state_file) {</td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line">                stream-&gt;state_file = strappend(<span class='string_literal'>"/run/systemd/journal/streams/"</span>, fname);</td></tr>
-<tr><td class="num" id="LN571">571</td><td class="line">                <span class='keyword'>if</span> (!stream-&gt;state_file)</td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-stream.c", 572, __func__<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line">        r = parse_env_file(stream-&gt;state_file, <span class='macro'>NEWLINE<span class='expansion'>"\n\r"</span></span>,</td></tr>
-<tr><td class="num" id="LN576">576</td><td class="line">                           <span class='string_literal'>"PRIORITY"</span>, &amp;priority,</td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line">                           <span class='string_literal'>"LEVEL_PREFIX"</span>, &amp;level_prefix,</td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">                           <span class='string_literal'>"FORWARD_TO_SYSLOG"</span>, &amp;forward_to_syslog,</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line">                           <span class='string_literal'>"FORWARD_TO_KMSG"</span>, &amp;forward_to_kmsg,</td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">                           <span class='string_literal'>"FORWARD_TO_CONSOLE"</span>, &amp;forward_to_console,</td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line">                           <span class='string_literal'>"IDENTIFIER"</span>, &amp;stream-&gt;identifier,</td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">                           <span class='string_literal'>"UNIT"</span>, &amp;stream-&gt;unit_id,</td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line">                           <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN584">584</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to read: %s"</span>, stream-&gt;state_file)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 585, __func__, "Failed to read: %s", stream-&gt;state_file)<br> : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line">        <span class='keyword'>if</span> (priority) {</td></tr>
-<tr><td class="num" id="LN588">588</td><td class="line">                <span class='keyword'>int</span> p;</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line">        <span class='macro'>assert(stream)<span class='expansion'>do { if ((__builtin_expect(!!(!(stream)),0))) log_assert_failed<br>("stream", "src/journal/journald-stream.c", 569, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">        <span class='macro'>assert(fname)<span class='expansion'>do { if ((__builtin_expect(!!(!(fname)),0))) log_assert_failed<br>("fname", "src/journal/journald-stream.c", 570, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">        <span class='keyword'>if</span> (!stream-&gt;state_file) {</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line">                stream-&gt;state_file = strappend(<span class='string_literal'>"/run/systemd/journal/streams/"</span>, fname);</td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">                <span class='keyword'>if</span> (!stream-&gt;state_file)</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/journal/journald-stream.c", 575, __func__<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN576">576</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">        r = parse_env_file(stream-&gt;state_file, <span class='macro'>NEWLINE<span class='expansion'>"\n\r"</span></span>,</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">                           <span class='string_literal'>"PRIORITY"</span>, &amp;priority,</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line">                           <span class='string_literal'>"LEVEL_PREFIX"</span>, &amp;level_prefix,</td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">                           <span class='string_literal'>"FORWARD_TO_SYSLOG"</span>, &amp;forward_to_syslog,</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">                           <span class='string_literal'>"FORWARD_TO_KMSG"</span>, &amp;forward_to_kmsg,</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">                           <span class='string_literal'>"FORWARD_TO_CONSOLE"</span>, &amp;forward_to_console,</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">                           <span class='string_literal'>"IDENTIFIER"</span>, &amp;stream-&gt;identifier,</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">                           <span class='string_literal'>"UNIT"</span>, &amp;stream-&gt;unit_id,</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">                           <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to read: %s"</span>, stream-&gt;state_file)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 588, __func__, "Failed to read: %s", stream-&gt;state_file)<br> : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN589">589</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN590">590</td><td class="line">                p = log_level_from_string(priority);</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line">                <span class='keyword'>if</span> (p &gt;= 0)</td></tr>
-<tr><td class="num" id="LN592">592</td><td class="line">                        stream-&gt;priority = p;</td></tr>
-<tr><td class="num" id="LN593">593</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN594">594</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line">        <span class='keyword'>if</span> (level_prefix) {</td></tr>
-<tr><td class="num" id="LN596">596</td><td class="line">                r = parse_boolean(level_prefix);</td></tr>
-<tr><td class="num" id="LN597">597</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN598">598</td><td class="line">                        stream-&gt;level_prefix = r;</td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN600">600</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">        <span class='keyword'>if</span> (forward_to_syslog) {</td></tr>
-<tr><td class="num" id="LN602">602</td><td class="line">                r = parse_boolean(forward_to_syslog);</td></tr>
-<tr><td class="num" id="LN603">603</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN604">604</td><td class="line">                        stream-&gt;forward_to_syslog = r;</td></tr>
-<tr><td class="num" id="LN605">605</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line">        <span class='keyword'>if</span> (forward_to_kmsg) {</td></tr>
-<tr><td class="num" id="LN608">608</td><td class="line">                r = parse_boolean(forward_to_kmsg);</td></tr>
-<tr><td class="num" id="LN609">609</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN610">610</td><td class="line">                        stream-&gt;forward_to_kmsg = r;</td></tr>
-<tr><td class="num" id="LN611">611</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN613">613</td><td class="line">        <span class='keyword'>if</span> (forward_to_console) {</td></tr>
-<tr><td class="num" id="LN614">614</td><td class="line">                r = parse_boolean(forward_to_console);</td></tr>
-<tr><td class="num" id="LN615">615</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN616">616</td><td class="line">                        stream-&gt;forward_to_console = r;</td></tr>
-<tr><td class="num" id="LN617">617</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN618">618</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN619">619</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN620">620</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">        <span class='keyword'>if</span> (priority) {</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line">                <span class='keyword'>int</span> p;</td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">                p = log_level_from_string(priority);</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">                <span class='keyword'>if</span> (p &gt;= 0)</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">                        stream-&gt;priority = p;</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">        <span class='keyword'>if</span> (level_prefix) {</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">                r = parse_boolean(level_prefix);</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">                        stream-&gt;level_prefix = r;</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">        <span class='keyword'>if</span> (forward_to_syslog) {</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">                r = parse_boolean(forward_to_syslog);</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line">                        stream-&gt;forward_to_syslog = r;</td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line">        <span class='keyword'>if</span> (forward_to_kmsg) {</td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">                r = parse_boolean(forward_to_kmsg);</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">                        stream-&gt;forward_to_kmsg = r;</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">        <span class='keyword'>if</span> (forward_to_console) {</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line">                r = parse_boolean(forward_to_console);</td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line">                <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">                        stream-&gt;forward_to_console = r;</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN621">621</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN622">622</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_restore(Server *s, <span class='keyword'>const</span> <span class='keyword'>char</span> *fname, <span class='keyword'>int</span> fd) {</td></tr>
-<tr><td class="num" id="LN623">623</td><td class="line">        <span class="mrange">StdoutStream *stream</span>;</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> stdout_stream_restore(Server *s, <span class='keyword'>const</span> <span class='keyword'>char</span> *fname, <span class='keyword'>int</span> fd) {</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">        <span class="mrange">StdoutStream *stream</span>;</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>'stream' declared without an initial value</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN625">625</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN626">626</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 626, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN627">627</td><td class="line">        <span class='macro'>assert(fname)<span class='expansion'>do { if ((__builtin_expect(!!(!(fname)),0))) log_assert_failed<br>("fname", "src/journal/journald-stream.c", 627, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/journald-stream.c", 628, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN630">630</td><td class="line">        <span class='keyword'>if</span> (s-&gt;n_stdout_streams &gt;= <span class='macro'>STDOUT_STREAMS_MAX<span class='expansion'>4096</span></span>) {</td></tr>
+<tr><td class="num" id="LN627">627</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 629, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN630">630</td><td class="line">        <span class='macro'>assert(fname)<span class='expansion'>do { if ((__builtin_expect(!!(!(fname)),0))) log_assert_failed<br>("fname", "src/journal/journald-stream.c", 630, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">        <span class='macro'>assert(fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd &gt;= 0)),0))) log_assert_failed<br>("fd &gt;= 0", "src/journal/journald-stream.c", 631, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">        <span class='keyword'>if</span> (s-&gt;n_stdout_streams &gt;= <span class='macro'>STDOUT_STREAMS_MAX<span class='expansion'>4096</span></span>) {</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Too many stdout streams, refusing restoring of stream."</span>)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 631, __func__, "Too many stdout streams, refusing restoring of stream."<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOBUFS<span class='expansion'>105</span></span>;</td></tr>
-<tr><td class="num" id="LN633">633</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line">        r = <span class="mrange"><span class="mrange">stdout_stream_install(s, fd, &amp;stream)</span></span>;</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">                <span class='macro'>log_warning(<span class='string_literal'>"Too many stdout streams, refusing restoring of stream."</span>)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 634, __func__, "Too many stdout streams, refusing restoring of stream."<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOBUFS<span class='expansion'>105</span></span>;</td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">        r = <span class="mrange"><span class="mrange">stdout_stream_install(s, fd, &amp;stream)</span></span>;</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Calling 'stdout_stream_install'</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Returning from 'stdout_stream_install'</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN636">636</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN637">637</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN638">638</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN639">639</td><td class="line">        <span class="mrange">stream-&gt;state = STDOUT_STREAM_RUNNING</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:23ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Dereference of undefined pointer value</td></tr></table></div></td></tr>
-<tr><td class="num" id="LN640">640</td><td class="line">        stream-&gt;fdstore = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN641">641</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN642">642</td><td class="line">        <span class='comment'>/* Ignore all parsing errors */</span></td></tr>
-<tr><td class="num" id="LN643">643</td><td class="line">        (<span class='keyword'>void</span>) stdout_stream_load(stream, fname);</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">        <span class="mrange">stream-&gt;state = STDOUT_STREAM_RUNNING</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:23ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Dereference of undefined pointer value</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line">        stream-&gt;fdstore = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
 <tr><td class="num" id="LN644">644</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN645">645</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN646">646</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">        <span class='comment'>/* Ignore all parsing errors */</span></td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">        (<span class='keyword'>void</span>) stdout_stream_load(stream, fname);</td></tr>
 <tr><td class="num" id="LN647">647</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN648">648</td><td class="line"><span class='keyword'>int</span> server_restore_streams(Server *s, FDSet *fds) {</td></tr>
-<tr><td class="num" id="LN649">649</td><td class="line">        <span class='macro'>_cleanup_closedir_<span class='expansion'>__attribute__((cleanup(closedirp)))</span></span> DIR *d = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN650">650</td><td class="line">        <span class='keyword'>struct</span> dirent *de;</td></tr>
-<tr><td class="num" id="LN651">651</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN652">652</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN653">653</td><td class="line">        d = opendir(<span class='string_literal'>"/run/systemd/journal/streams"</span>);</td></tr>
-<tr><td class="num" id="LN654">654</td><td class="line">        <span class='keyword'>if</span> (!d) {</td></tr>
-<tr><td class="num" id="LN655">655</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN656">656</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN657">657</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN658">658</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to enumerate /run/systemd/journal/streams: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 658, __func__, "Failed to enumerate /run/systemd/journal/streams: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN659">659</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line"><span class='keyword'>int</span> server_restore_streams(Server *s, FDSet *fds) {</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">        <span class='macro'>_cleanup_closedir_<span class='expansion'>__attribute__((cleanup(closedirp)))</span></span> DIR *d = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">        <span class='keyword'>struct</span> dirent *de;</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">        d = opendir(<span class='string_literal'>"/run/systemd/journal/streams"</span>);</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">        <span class='keyword'>if</span> (!d) {</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN660">660</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN661">661</td><td class="line">        <span class='macro'>FOREACH_DIRENT(de, d, <span class='keyword'>goto</span> fail)<span class='expansion'>for ((*__errno_location ()) = 0, de = readdir(d);; (*__errno_location<br> ()) = 0, de = readdir(d)) if (!de) { if ((*__errno_location (<br>)) &gt; 0) { goto fail; } break; } else if (hidden_or_backup_file<br>((de)-&gt;d_name)) continue; else</span></span> {</td></tr>
-<tr><td class="num" id="LN662">662</td><td class="line">                <span class='keyword'>unsigned</span> <span class='keyword'>long</span> st_dev, st_ino;</td></tr>
-<tr><td class="num" id="LN663">663</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> found = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN664">664</td><td class="line">                Iterator i;</td></tr>
-<tr><td class="num" id="LN665">665</td><td class="line">                <span class='keyword'>int</span> fd;</td></tr>
-<tr><td class="num" id="LN666">666</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN667">667</td><td class="line">                <span class='keyword'>if</span> (sscanf(de-&gt;d_name, <span class='string_literal'>"%lu:%lu"</span>, &amp;st_dev, &amp;st_ino) != 2)</td></tr>
-<tr><td class="num" id="LN668">668</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_warning_errno(errno, <span class='string_literal'>"Failed to enumerate /run/systemd/journal/streams: %m"</span>)<span class='expansion'>({ int _level = (4), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 661, __func__, "Failed to enumerate /run/systemd/journal/streams: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line">        <span class='macro'>FOREACH_DIRENT(de, d, <span class='keyword'>goto</span> fail)<span class='expansion'>for ((*__errno_location ()) = 0, de = readdir(d);; (*__errno_location<br> ()) = 0, de = readdir(d)) if (!de) { if ((*__errno_location (<br>)) &gt; 0) { goto fail; } break; } else if (hidden_or_backup_file<br>((de)-&gt;d_name)) continue; else</span></span> {</td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">                <span class='keyword'>unsigned</span> <span class='keyword'>long</span> st_dev, st_ino;</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">                <span class='macro'>bool<span class='expansion'>_Bool</span></span> found = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN667">667</td><td class="line">                Iterator i;</td></tr>
+<tr><td class="num" id="LN668">668</td><td class="line">                <span class='keyword'>int</span> fd;</td></tr>
 <tr><td class="num" id="LN669">669</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN670">670</td><td class="line">                <span class='macro'>FDSET_FOREACH(fd, fds, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }), (fd) = fdset_iterate((fds), &amp;(i<br>)); (fd) &gt;= 0; (fd) = fdset_iterate((fds), &amp;(i)))</span></span> {</td></tr>
-<tr><td class="num" id="LN671">671</td><td class="line">                        <span class='keyword'>struct</span> stat st;</td></tr>
+<tr><td class="num" id="LN670">670</td><td class="line">                <span class='keyword'>if</span> (sscanf(de-&gt;d_name, <span class='string_literal'>"%lu:%lu"</span>, &amp;st_dev, &amp;st_ino) != 2)</td></tr>
+<tr><td class="num" id="LN671">671</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN672">672</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN673">673</td><td class="line">                        <span class='keyword'>if</span> (fstat(fd, &amp;st) &lt; 0)</td></tr>
-<tr><td class="num" id="LN674">674</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to stat %s: %m"</span>, de-&gt;d_name)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 674, __func__, "Failed to stat %s: %m", de-&gt;d_name) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN673">673</td><td class="line">                <span class='macro'>FDSET_FOREACH(fd, fds, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }), (fd) = fdset_iterate((fds), &amp;(i<br>)); (fd) &gt;= 0; (fd) = fdset_iterate((fds), &amp;(i)))</span></span> {</td></tr>
+<tr><td class="num" id="LN674">674</td><td class="line">                        <span class='keyword'>struct</span> stat st;</td></tr>
 <tr><td class="num" id="LN675">675</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN676">676</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>S_ISSOCK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0140000))</span></span> &amp;&amp; st.st_dev == st_dev &amp;&amp; st.st_ino == st_ino) {</td></tr>
-<tr><td class="num" id="LN677">677</td><td class="line">                                found = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN678">678</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN679">679</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN680">680</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN681">681</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN682">682</td><td class="line">                <span class='keyword'>if</span> (!found) {</td></tr>
-<tr><td class="num" id="LN683">683</td><td class="line">                        <span class='comment'>/* No file descriptor? Then let's delete the state file */</span></td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line">                        <span class='macro'>log_debug(<span class='string_literal'>"Cannot restore stream file %s"</span>, de-&gt;d_name)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 684, __func__, "Cannot restore stream file %s", de-&gt;d_name<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN685">685</td><td class="line">                        unlinkat(dirfd(d), de-&gt;d_name, 0);</td></tr>
-<tr><td class="num" id="LN686">686</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
-<tr><td class="num" id="LN687">687</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN688">688</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN689">689</td><td class="line">                fdset_remove(fds, fd);</td></tr>
-<tr><td class="num" id="LN690">690</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN691">691</td><td class="line">                r = stdout_stream_restore(s, de-&gt;d_name, fd);</td></tr>
-<tr><td class="num" id="LN692">692</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN693">693</td><td class="line">                        safe_close(fd);</td></tr>
-<tr><td class="num" id="LN694">694</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN695">695</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN696">696</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN697">697</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN698">698</td><td class="line">fail:</td></tr>
-<tr><td class="num" id="LN699">699</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to read streams directory: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 699, __func__, "Failed to read streams directory: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN700">700</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN701">701</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN702">702</td><td class="line"><span class='keyword'>int</span> server_open_stdout_socket(Server *s) {</td></tr>
-<tr><td class="num" id="LN703">703</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>union</span> sockaddr_union sa = {</td></tr>
-<tr><td class="num" id="LN704">704</td><td class="line">                .un.sun_family = <span class='macro'>AF_UNIX<span class='expansion'>1</span></span>,</td></tr>
-<tr><td class="num" id="LN705">705</td><td class="line">                .un.sun_path = <span class='string_literal'>"/run/systemd/journal/stdout"</span>,</td></tr>
-<tr><td class="num" id="LN706">706</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN707">707</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN708">708</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN709">709</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 709, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN710">710</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN711">711</td><td class="line">        <span class='keyword'>if</span> (s-&gt;stdout_fd &lt; 0) {</td></tr>
-<tr><td class="num" id="LN712">712</td><td class="line">                s-&gt;stdout_fd = socket(<span class='macro'>AF_UNIX<span class='expansion'>1</span></span>, <span class='macro'>SOCK_STREAM<span class='expansion'>SOCK_STREAM</span></span>|<span class='macro'>SOCK_CLOEXEC<span class='expansion'>SOCK_CLOEXEC</span></span>|<span class='macro'>SOCK_NONBLOCK<span class='expansion'>SOCK_NONBLOCK</span></span>, 0);</td></tr>
-<tr><td class="num" id="LN713">713</td><td class="line">                <span class='keyword'>if</span> (s-&gt;stdout_fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN714">714</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"socket() failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 714, __func__, "socket() failed: %m") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN715">715</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN716">716</td><td class="line">                (<span class='keyword'>void</span>) unlink(sa.un.sun_path);</td></tr>
-<tr><td class="num" id="LN717">717</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN718">718</td><td class="line">                r = bind(s-&gt;stdout_fd, &amp;sa.sa, <span class='macro'>SOCKADDR_UN_LEN(sa.un)<span class='expansion'>({ const struct sockaddr_un *_sa = &amp;(sa.un); do { if ((__builtin_expect<br>(!!(!(_sa-&gt;sun_family == 1)),0))) log_assert_failed("_sa-&gt;sun_family == AF_UNIX"<br>, "src/journal/journald-stream.c", 718, __PRETTY_FUNCTION__);<br> } while (0); __builtin_offsetof(struct sockaddr_un, sun_path<br>) + (_sa-&gt;sun_path[0] == 0 ? 1 + strnlen(_sa-&gt;sun_path+<br>1, sizeof(_sa-&gt;sun_path)-1) : strnlen(_sa-&gt;sun_path, sizeof<br>(_sa-&gt;sun_path))); })</span></span>);</td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN720">720</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"bind(%s) failed: %m"</span>, sa.un.sun_path)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 720, __func__, "bind(%s) failed: %m", sa.un.sun_path) : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN722">722</td><td class="line">                (<span class='keyword'>void</span>) chmod(sa.un.sun_path, 0666);</td></tr>
-<tr><td class="num" id="LN723">723</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN724">724</td><td class="line">                <span class='keyword'>if</span> (listen(s-&gt;stdout_fd, <span class='macro'>SOMAXCONN<span class='expansion'>128</span></span>) &lt; 0)</td></tr>
-<tr><td class="num" id="LN725">725</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"listen(%s) failed: %m"</span>, sa.un.sun_path)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 725, __func__, "listen(%s) failed: %m", sa.un.sun_path) : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN726">726</td><td class="line">        } <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN727">727</td><td class="line">                fd_nonblock(s-&gt;stdout_fd, 1);</td></tr>
-<tr><td class="num" id="LN728">728</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN729">729</td><td class="line">        r = sd_event_add_io(s-&gt;event, &amp;s-&gt;stdout_event_source, s-&gt;stdout_fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>, stdout_stream_new, s);</td></tr>
-<tr><td class="num" id="LN730">730</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN731">731</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add stdout server fd to event source: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 731, __func__, "Failed to add stdout server fd to event source: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN732">732</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN733">733</td><td class="line">        r = sd_event_source_set_priority(s-&gt;stdout_event_source, SD_EVENT_PRIORITY_NORMAL+5);</td></tr>
-<tr><td class="num" id="LN734">734</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN735">735</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to adjust priority of stdout server event source: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 735, __func__, "Failed to adjust priority of stdout server event source: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN736">736</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN737">737</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN738">738</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN676">676</td><td class="line">                        <span class='keyword'>if</span> (fstat(fd, &amp;st) &lt; 0)</td></tr>
+<tr><td class="num" id="LN677">677</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to stat %s: %m"</span>, de-&gt;d_name)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 677, __func__, "Failed to stat %s: %m", de-&gt;d_name) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN678">678</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN679">679</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>S_ISSOCK(st.st_mode)<span class='expansion'>((((st.st_mode)) &amp; 0170000) == (0140000))</span></span> &amp;&amp; st.st_dev == st_dev &amp;&amp; st.st_ino == st_ino) {</td></tr>
+<tr><td class="num" id="LN680">680</td><td class="line">                                found = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN681">681</td><td class="line">                                <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN682">682</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN683">683</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN685">685</td><td class="line">                <span class='keyword'>if</span> (!found) {</td></tr>
+<tr><td class="num" id="LN686">686</td><td class="line">                        <span class='comment'>/* No file descriptor? Then let's delete the state file */</span></td></tr>
+<tr><td class="num" id="LN687">687</td><td class="line">                        <span class='macro'>log_debug(<span class='string_literal'>"Cannot restore stream file %s"</span>, de-&gt;d_name)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 687, __func__, "Cannot restore stream file %s", de-&gt;d_name<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN688">688</td><td class="line">                        unlinkat(dirfd(d), de-&gt;d_name, 0);</td></tr>
+<tr><td class="num" id="LN689">689</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN690">690</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN691">691</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN692">692</td><td class="line">                fdset_remove(fds, fd);</td></tr>
+<tr><td class="num" id="LN693">693</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN694">694</td><td class="line">                r = stdout_stream_restore(s, de-&gt;d_name, fd);</td></tr>
+<tr><td class="num" id="LN695">695</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN696">696</td><td class="line">                        safe_close(fd);</td></tr>
+<tr><td class="num" id="LN697">697</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN698">698</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN699">699</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN700">700</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN701">701</td><td class="line">fail:</td></tr>
+<tr><td class="num" id="LN702">702</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to read streams directory: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 702, __func__, "Failed to read streams directory: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN703">703</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN704">704</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN705">705</td><td class="line"><span class='keyword'>int</span> server_open_stdout_socket(Server *s) {</td></tr>
+<tr><td class="num" id="LN706">706</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>union</span> sockaddr_union sa = {</td></tr>
+<tr><td class="num" id="LN707">707</td><td class="line">                .un.sun_family = <span class='macro'>AF_UNIX<span class='expansion'>1</span></span>,</td></tr>
+<tr><td class="num" id="LN708">708</td><td class="line">                .un.sun_path = <span class='string_literal'>"/run/systemd/journal/stdout"</span>,</td></tr>
+<tr><td class="num" id="LN709">709</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN710">710</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN711">711</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN712">712</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 712, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN713">713</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN714">714</td><td class="line">        <span class='keyword'>if</span> (s-&gt;stdout_fd &lt; 0) {</td></tr>
+<tr><td class="num" id="LN715">715</td><td class="line">                s-&gt;stdout_fd = socket(<span class='macro'>AF_UNIX<span class='expansion'>1</span></span>, <span class='macro'>SOCK_STREAM<span class='expansion'>SOCK_STREAM</span></span>|<span class='macro'>SOCK_CLOEXEC<span class='expansion'>SOCK_CLOEXEC</span></span>|<span class='macro'>SOCK_NONBLOCK<span class='expansion'>SOCK_NONBLOCK</span></span>, 0);</td></tr>
+<tr><td class="num" id="LN716">716</td><td class="line">                <span class='keyword'>if</span> (s-&gt;stdout_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN717">717</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"socket() failed: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 717, __func__, "socket() failed: %m") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN718">718</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">                (<span class='keyword'>void</span>) unlink(sa.un.sun_path);</td></tr>
+<tr><td class="num" id="LN720">720</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">                r = bind(s-&gt;stdout_fd, &amp;sa.sa, <span class='macro'>SOCKADDR_UN_LEN(sa.un)<span class='expansion'>({ const struct sockaddr_un *_sa = &amp;(sa.un); do { if ((__builtin_expect<br>(!!(!(_sa-&gt;sun_family == 1)),0))) log_assert_failed("_sa-&gt;sun_family == AF_UNIX"<br>, "src/journal/journald-stream.c", 721, __PRETTY_FUNCTION__);<br> } while (0); __builtin_offsetof(struct sockaddr_un, sun_path<br>) + (_sa-&gt;sun_path[0] == 0 ? 1 + strnlen(_sa-&gt;sun_path+<br>1, sizeof(_sa-&gt;sun_path)-1) : strnlen(_sa-&gt;sun_path, sizeof<br>(_sa-&gt;sun_path))); })</span></span>);</td></tr>
+<tr><td class="num" id="LN722">722</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN723">723</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"bind(%s) failed: %m"</span>, sa.un.sun_path)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 723, __func__, "bind(%s) failed: %m", sa.un.sun_path) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN724">724</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN725">725</td><td class="line">                (<span class='keyword'>void</span>) chmod(sa.un.sun_path, 0666);</td></tr>
+<tr><td class="num" id="LN726">726</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN727">727</td><td class="line">                <span class='keyword'>if</span> (listen(s-&gt;stdout_fd, <span class='macro'>SOMAXCONN<span class='expansion'>128</span></span>) &lt; 0)</td></tr>
+<tr><td class="num" id="LN728">728</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"listen(%s) failed: %m"</span>, sa.un.sun_path)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 728, __func__, "listen(%s) failed: %m", sa.un.sun_path) : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN729">729</td><td class="line">        } <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN730">730</td><td class="line">                fd_nonblock(s-&gt;stdout_fd, 1);</td></tr>
+<tr><td class="num" id="LN731">731</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN732">732</td><td class="line">        r = sd_event_add_io(s-&gt;event, &amp;s-&gt;stdout_event_source, s-&gt;stdout_fd, <span class='macro'>EPOLLIN<span class='expansion'>EPOLLIN</span></span>, stdout_stream_new, s);</td></tr>
+<tr><td class="num" id="LN733">733</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN734">734</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to add stdout server fd to event source: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 734, __func__, "Failed to add stdout server fd to event source: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN735">735</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN736">736</td><td class="line">        r = sd_event_source_set_priority(s-&gt;stdout_event_source, SD_EVENT_PRIORITY_NORMAL+5);</td></tr>
+<tr><td class="num" id="LN737">737</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN738">738</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to adjust priority of stdout server event source: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 738, __func__, "Failed to adjust priority of stdout server event source: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN739">739</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN740">740</td><td class="line"><span class='keyword'>void</span> stdout_stream_send_notify(StdoutStream *s) {</td></tr>
-<tr><td class="num" id="LN741">741</td><td class="line">        <span class='keyword'>struct</span> iovec iovec = {</td></tr>
-<tr><td class="num" id="LN742">742</td><td class="line">                .iov_base = (<span class='keyword'>char</span>*) <span class='string_literal'>"FDSTORE=1"</span>,</td></tr>
-<tr><td class="num" id="LN743">743</td><td class="line">                .iov_len = strlen(<span class='string_literal'>"FDSTORE=1"</span>),</td></tr>
-<tr><td class="num" id="LN744">744</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN745">745</td><td class="line">        <span class='keyword'>struct</span> msghdr msghdr = {</td></tr>
-<tr><td class="num" id="LN746">746</td><td class="line">                .msg_iov = &amp;iovec,</td></tr>
-<tr><td class="num" id="LN747">747</td><td class="line">                .msg_iovlen = 1,</td></tr>
-<tr><td class="num" id="LN748">748</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN749">749</td><td class="line">        <span class='keyword'>struct</span> cmsghdr *cmsg;</td></tr>
-<tr><td class="num" id="LN750">750</td><td class="line">        ssize_t l;</td></tr>
-<tr><td class="num" id="LN751">751</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN752">752</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 752, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN753">753</td><td class="line">        <span class='macro'>assert(!s-&gt;fdstore)<span class='expansion'>do { if ((__builtin_expect(!!(!(!s-&gt;fdstore)),0))) log_assert_failed<br>("!s-&gt;fdstore", "src/journal/journald-stream.c", 753, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN754">754</td><td class="line">        <span class='macro'>assert(s-&gt;in_notify_queue)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;in_notify_queue)),0))) log_assert_failed<br>("s-&gt;in_notify_queue", "src/journal/journald-stream.c", 754<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN755">755</td><td class="line">        <span class='macro'>assert(s-&gt;server)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;server)),0))) log_assert_failed<br>("s-&gt;server", "src/journal/journald-stream.c", 755, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN756">756</td><td class="line">        <span class='macro'>assert(s-&gt;server-&gt;notify_fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;server-&gt;notify_fd &gt;=<br> 0)),0))) log_assert_failed("s-&gt;server-&gt;notify_fd &gt;= 0"<br>, "src/journal/journald-stream.c", 756, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN757">757</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN758">758</td><td class="line">        <span class='comment'>/* Store the connection fd in PID 1, so that we get it passed</span></td></tr>
-<tr><td class="num" id="LN759">759</td><td class="line">         <span class='comment'>* in again on next start */</span></td></tr>
+<tr><td class="num" id="LN740">740</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN741">741</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN742">742</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN743">743</td><td class="line"><span class='keyword'>void</span> stdout_stream_send_notify(StdoutStream *s) {</td></tr>
+<tr><td class="num" id="LN744">744</td><td class="line">        <span class='keyword'>struct</span> iovec iovec = {</td></tr>
+<tr><td class="num" id="LN745">745</td><td class="line">                .iov_base = (<span class='keyword'>char</span>*) <span class='string_literal'>"FDSTORE=1"</span>,</td></tr>
+<tr><td class="num" id="LN746">746</td><td class="line">                .iov_len = strlen(<span class='string_literal'>"FDSTORE=1"</span>),</td></tr>
+<tr><td class="num" id="LN747">747</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN748">748</td><td class="line">        <span class='keyword'>struct</span> msghdr msghdr = {</td></tr>
+<tr><td class="num" id="LN749">749</td><td class="line">                .msg_iov = &amp;iovec,</td></tr>
+<tr><td class="num" id="LN750">750</td><td class="line">                .msg_iovlen = 1,</td></tr>
+<tr><td class="num" id="LN751">751</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN752">752</td><td class="line">        <span class='keyword'>struct</span> cmsghdr *cmsg;</td></tr>
+<tr><td class="num" id="LN753">753</td><td class="line">        ssize_t l;</td></tr>
+<tr><td class="num" id="LN754">754</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN755">755</td><td class="line">        <span class='macro'>assert(s)<span class='expansion'>do { if ((__builtin_expect(!!(!(s)),0))) log_assert_failed("s"<br>, "src/journal/journald-stream.c", 755, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN756">756</td><td class="line">        <span class='macro'>assert(!s-&gt;fdstore)<span class='expansion'>do { if ((__builtin_expect(!!(!(!s-&gt;fdstore)),0))) log_assert_failed<br>("!s-&gt;fdstore", "src/journal/journald-stream.c", 756, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN757">757</td><td class="line">        <span class='macro'>assert(s-&gt;in_notify_queue)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;in_notify_queue)),0))) log_assert_failed<br>("s-&gt;in_notify_queue", "src/journal/journald-stream.c", 757<br>, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN758">758</td><td class="line">        <span class='macro'>assert(s-&gt;server)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;server)),0))) log_assert_failed<br>("s-&gt;server", "src/journal/journald-stream.c", 758, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN759">759</td><td class="line">        <span class='macro'>assert(s-&gt;server-&gt;notify_fd &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;server-&gt;notify_fd &gt;=<br> 0)),0))) log_assert_failed("s-&gt;server-&gt;notify_fd &gt;= 0"<br>, "src/journal/journald-stream.c", 759, __PRETTY_FUNCTION__);<br> } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN760">760</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN761">761</td><td class="line">        msghdr.msg_controllen = <span class='macro'>CMSG_SPACE(<span class='keyword'>sizeof</span>(<span class='keyword'>int</span>))<span class='expansion'>((((sizeof(int)) + sizeof (size_t) - 1) &amp; (size_t) ~(sizeof<br> (size_t) - 1)) + (((sizeof (struct cmsghdr)) + sizeof (size_t<br>) - 1) &amp; (size_t) ~(sizeof (size_t) - 1)))</span></span>;</td></tr>
-<tr><td class="num" id="LN762">762</td><td class="line">        msghdr.msg_control = <span class='macro'>alloca0(msghdr.msg_controllen)<span class='expansion'>({ char *_new_; size_t _len_ = msghdr.msg_controllen; _new_ =<br> __builtin_alloca (_len_); (void *) memset(_new_, 0, _len_); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN761">761</td><td class="line">        <span class='comment'>/* Store the connection fd in PID 1, so that we get it passed</span></td></tr>
+<tr><td class="num" id="LN762">762</td><td class="line">         <span class='comment'>* in again on next start */</span></td></tr>
 <tr><td class="num" id="LN763">763</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN764">764</td><td class="line">        cmsg = <span class='macro'>CMSG_FIRSTHDR(&amp;msghdr)<span class='expansion'>((size_t) (&amp;msghdr)-&gt;msg_controllen &gt;= sizeof (struct<br> cmsghdr) ? (struct cmsghdr *) (&amp;msghdr)-&gt;msg_control :<br> (struct cmsghdr *) 0)</span></span>;</td></tr>
-<tr><td class="num" id="LN765">765</td><td class="line">        cmsg-&gt;cmsg_level = <span class='macro'>SOL_SOCKET<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN766">766</td><td class="line">        cmsg-&gt;cmsg_type = <span class='macro'>SCM_RIGHTS<span class='expansion'>SCM_RIGHTS</span></span>;</td></tr>
-<tr><td class="num" id="LN767">767</td><td class="line">        cmsg-&gt;cmsg_len = <span class='macro'>CMSG_LEN(<span class='keyword'>sizeof</span>(<span class='keyword'>int</span>))<span class='expansion'>((((sizeof (struct cmsghdr)) + sizeof (size_t) - 1) &amp; (size_t<br>) ~(sizeof (size_t) - 1)) + (sizeof(int)))</span></span>;</td></tr>
-<tr><td class="num" id="LN768">768</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN769">769</td><td class="line">        memcpy(<span class='macro'>CMSG_DATA(cmsg)<span class='expansion'>((cmsg)-&gt;__cmsg_data)</span></span>, &amp;s-&gt;fd, <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>));</td></tr>
-<tr><td class="num" id="LN770">770</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN771">771</td><td class="line">        l = sendmsg(s-&gt;server-&gt;notify_fd, &amp;msghdr, <span class='macro'>MSG_DONTWAIT<span class='expansion'>MSG_DONTWAIT</span></span>|<span class='macro'>MSG_NOSIGNAL<span class='expansion'>MSG_NOSIGNAL</span></span>);</td></tr>
-<tr><td class="num" id="LN772">772</td><td class="line">        <span class='keyword'>if</span> (l &lt; 0) {</td></tr>
-<tr><td class="num" id="LN773">773</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
-<tr><td class="num" id="LN774">774</td><td class="line">                        <span class='keyword'>return</span>;</td></tr>
-<tr><td class="num" id="LN775">775</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN776">776</td><td class="line">                <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to send stream file descriptor to service manager: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 776, __func__, "Failed to send stream file descriptor to service manager: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN777">777</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN778">778</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Successfully sent stream file descriptor to service manager."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 778, __func__, "Successfully sent stream file descriptor to service manager."<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN779">779</td><td class="line">                s-&gt;fdstore = 1;</td></tr>
-<tr><td class="num" id="LN780">780</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN781">781</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN782">782</td><td class="line">        <span class='macro'>LIST_REMOVE(stdout_stream_notify_queue, s-&gt;server-&gt;stdout_streams_notify_queue, s)<span class='expansion'>do { typeof(*(s-&gt;server-&gt;stdout_streams_notify_queue)) *<br>*_head = &amp;(s-&gt;server-&gt;stdout_streams_notify_queue),<br> *_item = (s); do { if ((__builtin_expect(!!(!(_item)),0))) log_assert_failed<br>("_item", "src/journal/journald-stream.c", 782, __PRETTY_FUNCTION__<br>); } while (0); if (_item-&gt;stdout_stream_notify_queue_next<br>) _item-&gt;stdout_stream_notify_queue_next-&gt;stdout_stream_notify_queue_prev<br> = _item-&gt;stdout_stream_notify_queue_prev; if (_item-&gt;stdout_stream_notify_queue_prev<br>) _item-&gt;stdout_stream_notify_queue_prev-&gt;stdout_stream_notify_queue_next<br> = _item-&gt;stdout_stream_notify_queue_next; else { do { if (<br>(__builtin_expect(!!(!(*_head == _item)),0))) log_assert_failed<br>("*_head == _item", "src/journal/journald-stream.c", 782, __PRETTY_FUNCTION__<br>); } while (0); *_head = _item-&gt;stdout_stream_notify_queue_next<br>; } _item-&gt;stdout_stream_notify_queue_next = _item-&gt;stdout_stream_notify_queue_prev<br> = ((void*)0); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN783">783</td><td class="line">        s-&gt;in_notify_queue = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN764">764</td><td class="line">        msghdr.msg_controllen = <span class='macro'>CMSG_SPACE(<span class='keyword'>sizeof</span>(<span class='keyword'>int</span>))<span class='expansion'>((((sizeof(int)) + sizeof (size_t) - 1) &amp; (size_t) ~(sizeof<br> (size_t) - 1)) + (((sizeof (struct cmsghdr)) + sizeof (size_t<br>) - 1) &amp; (size_t) ~(sizeof (size_t) - 1)))</span></span>;</td></tr>
+<tr><td class="num" id="LN765">765</td><td class="line">        msghdr.msg_control = <span class='macro'>alloca0(msghdr.msg_controllen)<span class='expansion'>({ char *_new_; size_t _len_ = msghdr.msg_controllen; _new_ =<br> __builtin_alloca (_len_); (void *) memset(_new_, 0, _len_); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN766">766</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN767">767</td><td class="line">        cmsg = <span class='macro'>CMSG_FIRSTHDR(&amp;msghdr)<span class='expansion'>((size_t) (&amp;msghdr)-&gt;msg_controllen &gt;= sizeof (struct<br> cmsghdr) ? (struct cmsghdr *) (&amp;msghdr)-&gt;msg_control :<br> (struct cmsghdr *) 0)</span></span>;</td></tr>
+<tr><td class="num" id="LN768">768</td><td class="line">        cmsg-&gt;cmsg_level = <span class='macro'>SOL_SOCKET<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN769">769</td><td class="line">        cmsg-&gt;cmsg_type = <span class='macro'>SCM_RIGHTS<span class='expansion'>SCM_RIGHTS</span></span>;</td></tr>
+<tr><td class="num" id="LN770">770</td><td class="line">        cmsg-&gt;cmsg_len = <span class='macro'>CMSG_LEN(<span class='keyword'>sizeof</span>(<span class='keyword'>int</span>))<span class='expansion'>((((sizeof (struct cmsghdr)) + sizeof (size_t) - 1) &amp; (size_t<br>) ~(sizeof (size_t) - 1)) + (sizeof(int)))</span></span>;</td></tr>
+<tr><td class="num" id="LN771">771</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN772">772</td><td class="line">        memcpy(<span class='macro'>CMSG_DATA(cmsg)<span class='expansion'>((cmsg)-&gt;__cmsg_data)</span></span>, &amp;s-&gt;fd, <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>));</td></tr>
+<tr><td class="num" id="LN773">773</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN774">774</td><td class="line">        l = sendmsg(s-&gt;server-&gt;notify_fd, &amp;msghdr, <span class='macro'>MSG_DONTWAIT<span class='expansion'>MSG_DONTWAIT</span></span>|<span class='macro'>MSG_NOSIGNAL<span class='expansion'>MSG_NOSIGNAL</span></span>);</td></tr>
+<tr><td class="num" id="LN775">775</td><td class="line">        <span class='keyword'>if</span> (l &lt; 0) {</td></tr>
+<tr><td class="num" id="LN776">776</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EAGAIN<span class='expansion'>11</span></span>)</td></tr>
+<tr><td class="num" id="LN777">777</td><td class="line">                        <span class='keyword'>return</span>;</td></tr>
+<tr><td class="num" id="LN778">778</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN779">779</td><td class="line">                <span class='macro'>log_error_errno(errno, <span class='string_literal'>"Failed to send stream file descriptor to service manager: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 779, __func__, "Failed to send stream file descriptor to service manager: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN780">780</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN781">781</td><td class="line">                <span class='macro'>log_debug(<span class='string_literal'>"Successfully sent stream file descriptor to service manager."</span>)<span class='expansion'>({ int _level = (7), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/journal/journald-stream.c"<br>, 781, __func__, "Successfully sent stream file descriptor to service manager."<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN782">782</td><td class="line">                s-&gt;fdstore = 1;</td></tr>
+<tr><td class="num" id="LN783">783</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN784">784</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN785">785</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN785">785</td><td class="line">        <span class='macro'>LIST_REMOVE(stdout_stream_notify_queue, s-&gt;server-&gt;stdout_streams_notify_queue, s)<span class='expansion'>do { typeof(*(s-&gt;server-&gt;stdout_streams_notify_queue)) *<br>*_head = &amp;(s-&gt;server-&gt;stdout_streams_notify_queue),<br> *_item = (s); do { if ((__builtin_expect(!!(!(_item)),0))) log_assert_failed<br>("_item", "src/journal/journald-stream.c", 785, __PRETTY_FUNCTION__<br>); } while (0); if (_item-&gt;stdout_stream_notify_queue_next<br>) _item-&gt;stdout_stream_notify_queue_next-&gt;stdout_stream_notify_queue_prev<br> = _item-&gt;stdout_stream_notify_queue_prev; if (_item-&gt;stdout_stream_notify_queue_prev<br>) _item-&gt;stdout_stream_notify_queue_prev-&gt;stdout_stream_notify_queue_next<br> = _item-&gt;stdout_stream_notify_queue_next; else { do { if (<br>(__builtin_expect(!!(!(*_head == _item)),0))) log_assert_failed<br>("*_head == _item", "src/journal/journald-stream.c", 785, __PRETTY_FUNCTION__<br>); } while (0); *_head = _item-&gt;stdout_stream_notify_queue_next<br>; } _item-&gt;stdout_stream_notify_queue_next = _item-&gt;stdout_stream_notify_queue_prev<br> = ((void*)0); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN786">786</td><td class="line">        s-&gt;in_notify_queue = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN787">787</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN788">788</td><td class="line">}</td></tr>
 </table></body></html>
