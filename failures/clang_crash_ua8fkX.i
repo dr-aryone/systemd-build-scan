@@ -9506,12 +9506,14 @@ enum {
         ARCHITECTURE_TILEGX,
         ARCHITECTURE_CRIS,
         ARCHITECTURE_NIOS2,
+        ARCHITECTURE_RISCV32,
+        ARCHITECTURE_RISCV64,
         _ARCHITECTURE_MAX,
         _ARCHITECTURE_INVALID = -1
 };
 
 int uname_architecture(void);
-# 198 "./src/basic/architecture.h"
+# 210 "./src/basic/architecture.h"
 const char *architecture_to_string(int a) __attribute__ ((const));
 int architecture_from_string(const char *s) __attribute__ ((pure));
 # 26 "src/core/dbus-manager.c" 2
