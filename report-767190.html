@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Call to 'alloca' has an allocation size of 0 bytes -->
+<!-- BUGDESC Potential leak of memory pointed to by 'addresses' -->
 
-<!-- BUGTYPE Undefined allocation of 0 bytes (CERT MEM04-C; CWE-131) -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Unix API -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/machine/machinectl.c -->
 
 <!-- FILENAME machinectl.c -->
 
-<!-- FUNCTIONNAME get_os_release_property -->
+<!-- FUNCTIONNAME print_addresses -->
 
-<!-- BUGLINE 154 -->
+<!-- BUGLINE 561 -->
 
-<!-- BUGCOLUMN 21 -->
+<!-- BUGCOLUMN 24 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 8 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>machine/machinectl.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 154, column 21</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Call to 'alloca' has an allocation size of 0 bytes</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 561, column 24</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'addresses'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -237,10 +237,6 @@
 <tr><td class="num" id="LN152">152</td><td class="line">        <span class='macro'>NULSTR_FOREACH(iter, query)<span class='expansion'>for ((iter) = (query); (iter) &amp;&amp; *(iter); (iter) = strchr<br>((iter), 0)+1)</span></span></td></tr>
 <tr><td class="num" id="LN153">153</td><td class="line">                awaited_args++;</td></tr>
 <tr><td class="num" id="LN154">154</td><td class="line">        query_res = <span class='macro'>newa0(<span class='keyword'>const</span> <span class='keyword'>char</span> *, awaited_args)<span class='expansion'>((const char **) ({ char *_new_; size_t _len_ = sizeof(const char<br> *)*(awaited_args); _new_ = __builtin_alloca (_len_); (void *<br>) memset(_new_, 0, _len_); }))</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:21ex; max-width:100em">Within the expansion of the macro 'newa0':
-<div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">'_len_' initialized to 0</td></tr></table></div>
-<div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">b</div></td><td valign="top">Call to 'alloca' has an allocation size of 0 bytes</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN155">155</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN156">156</td><td class="line">        r = sd_bus_call_method(bus,</td></tr>
 <tr><td class="num" id="LN157">157</td><td class="line">                <span class='string_literal'>"org.freedesktop.machine1"</span>,</td></tr>
@@ -478,7 +474,7 @@
 <tr><td class="num" id="LN389">389</td><td class="line">                <span class='keyword'>return</span> bus_log_parse_error(r);</td></tr>
 <tr><td class="num" id="LN390">390</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN391">391</td><td class="line">        <span class='keyword'>while</span> ((r = sd_bus_message_read(reply, <span class='string_literal'>"(ssbttto)"</span>, &amp;name, &amp;type, &amp;read_only, &amp;crtime, &amp;mtime, &amp;size, &amp;object)) &gt; 0) {</td></tr>
-<tr><td class="num" id="LN392">392</td><td class="line">                <span class='keyword'>char</span> buf[<span class='macro'>MAX(FORMAT_TIMESTAMP_MAX, FORMAT_BYTES_MAX)<span class='expansion'>__extension__ ({ const typeof(((3+1+10+1+8+1+6+1+6+1))) __unique_prefix_A10<br> = (((3+1+10+1+8+1+6+1+6+1))); const typeof((8)) __unique_prefix_B11<br> = ((8)); __unique_prefix_A10 &gt; __unique_prefix_B11 ? __unique_prefix_A10<br> : __unique_prefix_B11; })</span></span>];</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">                <span class='keyword'>char</span> buf[<span class='macro'>MAX(FORMAT_TIMESTAMP_MAX, FORMAT_BYTES_MAX)<span class='expansion'>__extension__ ({ const typeof(((3+1+10+1+8+1+6+1+6+1))) __unique_prefix_A18<br> = (((3+1+10+1+8+1+6+1+6+1))); const typeof((8)) __unique_prefix_B19<br> = ((8)); __unique_prefix_A18 &gt; __unique_prefix_B19 ? __unique_prefix_A18<br> : __unique_prefix_B19; })</span></span>];</td></tr>
 <tr><td class="num" id="LN393">393</td><td class="line">                size_t l;</td></tr>
 <tr><td class="num" id="LN394">394</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN395">395</td><td class="line">                <span class='keyword'>if</span> (name[0] == '.' &amp;&amp; !arg_all)</td></tr>
@@ -637,23 +633,31 @@
 <tr><td class="num" id="LN548">548</td><td class="line">                               <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>,</td></tr>
 <tr><td class="num" id="LN549">549</td><td class="line">                               &amp;reply,</td></tr>
 <tr><td class="num" id="LN550">550</td><td class="line">                               <span class='string_literal'>"s"</span>, name);</td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN552">552</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN553">553</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line">        addresses = strdup(prefix);</td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">        <span class='keyword'>if</span> (!addresses)</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">        addresses = <span class="mrange">strdup(prefix)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!addresses</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 'addresses' is non-null</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN556">556</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/machine/machinectl.c", 556, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN557">557</td><td class="line">        prefix = <span class='string_literal'>""</span>;</td></tr>
 <tr><td class="num" id="LN558">558</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN559">559</td><td class="line">        r = sd_bus_message_enter_container(reply, 'a', <span class='string_literal'>"(iay)"</span>);</td></tr>
-<tr><td class="num" id="LN560">560</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN560">560</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN561">561</td><td class="line">                <span class='keyword'>return</span> bus_log_parse_error(r);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'addresses'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN562">562</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN563">563</td><td class="line">        <span class='keyword'>while</span> ((r = sd_bus_message_enter_container(reply, 'r', <span class='string_literal'>"iay"</span>)) &gt; 0) {</td></tr>
 <tr><td class="num" id="LN564">564</td><td class="line">                <span class='keyword'>int</span> family;</td></tr>
 <tr><td class="num" id="LN565">565</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>void</span> *a;</td></tr>
 <tr><td class="num" id="LN566">566</td><td class="line">                size_t sz;</td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">                <span class='keyword'>char</span> buf_ifi[<span class='macro'>DECIMAL_STR_MAX(<span class='keyword'>int</span>)<span class='expansion'>(2+(sizeof(int) &lt;= 1 ? 3 : sizeof(int) &lt;= 2 ? 5 : sizeof<br>(int) &lt;= 4 ? 10 : sizeof(int) &lt;= 8 ? 20 : sizeof(int[-2<br>*(sizeof(int) &gt; 8)])))</span></span> + 2], buffer[<span class='macro'>MAX(INET6_ADDRSTRLEN, INET_ADDRSTRLEN)<span class='expansion'>__extension__ ({ const typeof((46)) __unique_prefix_A12 = ((46<br>)); const typeof((16)) __unique_prefix_B13 = ((16)); __unique_prefix_A12<br> &gt; __unique_prefix_B13 ? __unique_prefix_A12 : __unique_prefix_B13<br>; })</span></span>];</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line">                <span class='keyword'>char</span> buf_ifi[<span class='macro'>DECIMAL_STR_MAX(<span class='keyword'>int</span>)<span class='expansion'>(2+(sizeof(int) &lt;= 1 ? 3 : sizeof(int) &lt;= 2 ? 5 : sizeof<br>(int) &lt;= 4 ? 10 : sizeof(int) &lt;= 8 ? 20 : sizeof(int[-2<br>*(sizeof(int) &gt; 8)])))</span></span> + 2], buffer[<span class='macro'>MAX(INET6_ADDRSTRLEN, INET_ADDRSTRLEN)<span class='expansion'>__extension__ ({ const typeof((46)) __unique_prefix_A20 = ((46<br>)); const typeof((16)) __unique_prefix_B21 = ((16)); __unique_prefix_A20<br> &gt; __unique_prefix_B21 ? __unique_prefix_A20 : __unique_prefix_B21<br>; })</span></span>];</td></tr>
 <tr><td class="num" id="LN568">568</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN569">569</td><td class="line">                r = sd_bus_message_read(reply, <span class='string_literal'>"i"</span>, &amp;family);</td></tr>
 <tr><td class="num" id="LN570">570</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
@@ -2567,7 +2571,7 @@
 <tr><td class="num" id="LN2475">2475</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2476">2476</td><td class="line">        <span class='keyword'>if</span> (arg_legend &amp;&amp; n_transfers &gt; 0)</td></tr>
 <tr><td class="num" id="LN2477">2477</td><td class="line">                printf(<span class='string_literal'>"%-*s %-*s %-*s %-*s %-*s\n"</span>,</td></tr>
-<tr><td class="num" id="LN2478">2478</td><td class="line">                       (<span class='keyword'>int</span>) <span class='macro'>MAX(2U, DECIMAL_STR_WIDTH(max_id))<span class='expansion'>__extension__ ({ const typeof((2U)) __unique_prefix_A14 = ((2U<br>)); const typeof((({ typeof(max_id) _x_ = (max_id); unsigned ans<br> = 1; while (_x_ /= 10) ans++; ans; }))) __unique_prefix_B15 =<br> ((({ typeof(max_id) _x_ = (max_id); unsigned ans = 1; while (<br>_x_ /= 10) ans++; ans; }))); __unique_prefix_A14 &gt; __unique_prefix_B15<br> ? __unique_prefix_A14 : __unique_prefix_B15; })</span></span>, <span class='string_literal'>"ID"</span>,</td></tr>
+<tr><td class="num" id="LN2478">2478</td><td class="line">                       (<span class='keyword'>int</span>) <span class='macro'>MAX(2U, DECIMAL_STR_WIDTH(max_id))<span class='expansion'>__extension__ ({ const typeof((2U)) __unique_prefix_A22 = ((2U<br>)); const typeof((({ typeof(max_id) _x_ = (max_id); unsigned ans<br> = 1; while (_x_ /= 10) ans++; ans; }))) __unique_prefix_B23 =<br> ((({ typeof(max_id) _x_ = (max_id); unsigned ans = 1; while (<br>_x_ /= 10) ans++; ans; }))); __unique_prefix_A22 &gt; __unique_prefix_B23<br> ? __unique_prefix_A22 : __unique_prefix_B23; })</span></span>, <span class='string_literal'>"ID"</span>,</td></tr>
 <tr><td class="num" id="LN2479">2479</td><td class="line">                       (<span class='keyword'>int</span>) 7, <span class='string_literal'>"PERCENT"</span>,</td></tr>
 <tr><td class="num" id="LN2480">2480</td><td class="line">                       (<span class='keyword'>int</span>) max_type, <span class='string_literal'>"TYPE"</span>,</td></tr>
 <tr><td class="num" id="LN2481">2481</td><td class="line">                       (<span class='keyword'>int</span>) max_local, <span class='string_literal'>"LOCAL"</span>,</td></tr>
@@ -2575,7 +2579,7 @@
 <tr><td class="num" id="LN2483">2483</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2484">2484</td><td class="line">        <span class='keyword'>for</span> (j = 0; j &lt; n_transfers; j++)</td></tr>
 <tr><td class="num" id="LN2485">2485</td><td class="line">                printf(<span class='string_literal'>"%*"</span> <span class='macro'>PRIu32<span class='expansion'>"u"</span></span> <span class='string_literal'>" %*u%% %-*s %-*s %-*s\n"</span>,</td></tr>
-<tr><td class="num" id="LN2486">2486</td><td class="line">                       (<span class='keyword'>int</span>) <span class='macro'>MAX(2U, DECIMAL_STR_WIDTH(max_id))<span class='expansion'>__extension__ ({ const typeof((2U)) __unique_prefix_A16 = ((2U<br>)); const typeof((({ typeof(max_id) _x_ = (max_id); unsigned ans<br> = 1; while (_x_ /= 10) ans++; ans; }))) __unique_prefix_B17 =<br> ((({ typeof(max_id) _x_ = (max_id); unsigned ans = 1; while (<br>_x_ /= 10) ans++; ans; }))); __unique_prefix_A16 &gt; __unique_prefix_B17<br> ? __unique_prefix_A16 : __unique_prefix_B17; })</span></span>, transfers[j].id,</td></tr>
+<tr><td class="num" id="LN2486">2486</td><td class="line">                       (<span class='keyword'>int</span>) <span class='macro'>MAX(2U, DECIMAL_STR_WIDTH(max_id))<span class='expansion'>__extension__ ({ const typeof((2U)) __unique_prefix_A24 = ((2U<br>)); const typeof((({ typeof(max_id) _x_ = (max_id); unsigned ans<br> = 1; while (_x_ /= 10) ans++; ans; }))) __unique_prefix_B25 =<br> ((({ typeof(max_id) _x_ = (max_id); unsigned ans = 1; while (<br>_x_ /= 10) ans++; ans; }))); __unique_prefix_A24 &gt; __unique_prefix_B25<br> ? __unique_prefix_A24 : __unique_prefix_B25; })</span></span>, transfers[j].id,</td></tr>
 <tr><td class="num" id="LN2487">2487</td><td class="line">                       (<span class='keyword'>int</span>) 6, (<span class='keyword'>unsigned</span>) (transfers[j].progress * 100),</td></tr>
 <tr><td class="num" id="LN2488">2488</td><td class="line">                       (<span class='keyword'>int</span>) max_type, transfers[j].type,</td></tr>
 <tr><td class="num" id="LN2489">2489</td><td class="line">                       (<span class='keyword'>int</span>) max_local, transfers[j].local,</td></tr>
@@ -2721,424 +2725,425 @@
 <tr><td class="num" id="LN2629">2629</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN2630">2630</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN2631">2631</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> help(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[], <span class='keyword'>void</span> *userdata) {</td></tr>
-<tr><td class="num" id="LN2632">2632</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2633">2633</td><td class="line">        printf(<span class='string_literal'>"%s [OPTIONS...] {COMMAND} ...\n\n"</span></td></tr>
-<tr><td class="num" id="LN2634">2634</td><td class="line">               <span class='string_literal'>"Send control commands to or query the virtual machine and container\n"</span></td></tr>
-<tr><td class="num" id="LN2635">2635</td><td class="line">               <span class='string_literal'>"registration manager.\n\n"</span></td></tr>
-<tr><td class="num" id="LN2636">2636</td><td class="line">               <span class='string_literal'>"  -h --help                   Show this help\n"</span></td></tr>
-<tr><td class="num" id="LN2637">2637</td><td class="line">               <span class='string_literal'>"     --version                Show package version\n"</span></td></tr>
-<tr><td class="num" id="LN2638">2638</td><td class="line">               <span class='string_literal'>"     --no-pager               Do not pipe output into a pager\n"</span></td></tr>
-<tr><td class="num" id="LN2639">2639</td><td class="line">               <span class='string_literal'>"     --no-legend              Do not show the headers and footers\n"</span></td></tr>
-<tr><td class="num" id="LN2640">2640</td><td class="line">               <span class='string_literal'>"     --no-ask-password        Do not ask for system passwords\n"</span></td></tr>
-<tr><td class="num" id="LN2641">2641</td><td class="line">               <span class='string_literal'>"  -H --host=[USER@]HOST       Operate on remote host\n"</span></td></tr>
-<tr><td class="num" id="LN2642">2642</td><td class="line">               <span class='string_literal'>"  -M --machine=CONTAINER      Operate on local container\n"</span></td></tr>
-<tr><td class="num" id="LN2643">2643</td><td class="line">               <span class='string_literal'>"  -p --property=NAME          Show only properties by this name\n"</span></td></tr>
-<tr><td class="num" id="LN2644">2644</td><td class="line">               <span class='string_literal'>"  -q --quiet                  Suppress output\n"</span></td></tr>
-<tr><td class="num" id="LN2645">2645</td><td class="line">               <span class='string_literal'>"  -a --all                    Show all properties, including empty ones\n"</span></td></tr>
-<tr><td class="num" id="LN2646">2646</td><td class="line">               <span class='string_literal'>"     --value                  When showing properties, only print the value\n"</span></td></tr>
-<tr><td class="num" id="LN2647">2647</td><td class="line">               <span class='string_literal'>"  -l --full                   Do not ellipsize output\n"</span></td></tr>
-<tr><td class="num" id="LN2648">2648</td><td class="line">               <span class='string_literal'>"     --kill-who=WHO           Who to send signal to\n"</span></td></tr>
-<tr><td class="num" id="LN2649">2649</td><td class="line">               <span class='string_literal'>"  -s --signal=SIGNAL          Which signal to send\n"</span></td></tr>
-<tr><td class="num" id="LN2650">2650</td><td class="line">               <span class='string_literal'>"     --uid=USER               Specify user ID to invoke shell as\n"</span></td></tr>
-<tr><td class="num" id="LN2651">2651</td><td class="line">               <span class='string_literal'>"  -E --setenv=VAR=VALUE       Add an environment variable for shell\n"</span></td></tr>
-<tr><td class="num" id="LN2652">2652</td><td class="line">               <span class='string_literal'>"     --read-only              Create read-only bind mount\n"</span></td></tr>
-<tr><td class="num" id="LN2653">2653</td><td class="line">               <span class='string_literal'>"     --mkdir                  Create directory before bind mounting, if missing\n"</span></td></tr>
-<tr><td class="num" id="LN2654">2654</td><td class="line">               <span class='string_literal'>"  -n --lines=INTEGER          Number of journal entries to show\n"</span></td></tr>
-<tr><td class="num" id="LN2655">2655</td><td class="line">               <span class='string_literal'>"     --max-addresses=INTEGER  Number of internet addresses to show at most\n"</span></td></tr>
-<tr><td class="num" id="LN2656">2656</td><td class="line">               <span class='string_literal'>"  -o --output=STRING          Change journal output mode (short,\n"</span></td></tr>
-<tr><td class="num" id="LN2657">2657</td><td class="line">               <span class='string_literal'>"                              short-monotonic, verbose, export, json,\n"</span></td></tr>
-<tr><td class="num" id="LN2658">2658</td><td class="line">               <span class='string_literal'>"                              json-pretty, json-sse, cat)\n"</span></td></tr>
-<tr><td class="num" id="LN2659">2659</td><td class="line">               <span class='string_literal'>"      --verify=MODE           Verification mode for downloaded images (no,\n"</span></td></tr>
-<tr><td class="num" id="LN2660">2660</td><td class="line">               <span class='string_literal'>"                              checksum, signature)\n"</span></td></tr>
-<tr><td class="num" id="LN2661">2661</td><td class="line">               <span class='string_literal'>"      --force                 Download image even if already exists\n\n"</span></td></tr>
-<tr><td class="num" id="LN2662">2662</td><td class="line">               <span class='string_literal'>"Machine Commands:\n"</span></td></tr>
-<tr><td class="num" id="LN2663">2663</td><td class="line">               <span class='string_literal'>"  list                        List running VMs and containers\n"</span></td></tr>
-<tr><td class="num" id="LN2664">2664</td><td class="line">               <span class='string_literal'>"  status NAME...              Show VM/container details\n"</span></td></tr>
-<tr><td class="num" id="LN2665">2665</td><td class="line">               <span class='string_literal'>"  show [NAME...]              Show properties of one or more VMs/containers\n"</span></td></tr>
-<tr><td class="num" id="LN2666">2666</td><td class="line">               <span class='string_literal'>"  start NAME...               Start container as a service\n"</span></td></tr>
-<tr><td class="num" id="LN2667">2667</td><td class="line">               <span class='string_literal'>"  login [NAME]                Get a login prompt in a container or on the\n"</span></td></tr>
-<tr><td class="num" id="LN2668">2668</td><td class="line">               <span class='string_literal'>"                              local host\n"</span></td></tr>
-<tr><td class="num" id="LN2669">2669</td><td class="line">               <span class='string_literal'>"  shell [[USER@]NAME [COMMAND...]]\n"</span></td></tr>
-<tr><td class="num" id="LN2670">2670</td><td class="line">               <span class='string_literal'>"                              Invoke a shell (or other command) in a container\n"</span></td></tr>
-<tr><td class="num" id="LN2671">2671</td><td class="line">               <span class='string_literal'>"                              or on the local host\n"</span></td></tr>
-<tr><td class="num" id="LN2672">2672</td><td class="line">               <span class='string_literal'>"  enable NAME...              Enable automatic container start at boot\n"</span></td></tr>
-<tr><td class="num" id="LN2673">2673</td><td class="line">               <span class='string_literal'>"  disable NAME...             Disable automatic container start at boot\n"</span></td></tr>
-<tr><td class="num" id="LN2674">2674</td><td class="line">               <span class='string_literal'>"  poweroff NAME...            Power off one or more containers\n"</span></td></tr>
-<tr><td class="num" id="LN2675">2675</td><td class="line">               <span class='string_literal'>"  reboot NAME...              Reboot one or more containers\n"</span></td></tr>
-<tr><td class="num" id="LN2676">2676</td><td class="line">               <span class='string_literal'>"  terminate NAME...           Terminate one or more VMs/containers\n"</span></td></tr>
-<tr><td class="num" id="LN2677">2677</td><td class="line">               <span class='string_literal'>"  kill NAME...                Send signal to processes of a VM/container\n"</span></td></tr>
-<tr><td class="num" id="LN2678">2678</td><td class="line">               <span class='string_literal'>"  copy-to NAME PATH [PATH]    Copy files from the host to a container\n"</span></td></tr>
-<tr><td class="num" id="LN2679">2679</td><td class="line">               <span class='string_literal'>"  copy-from NAME PATH [PATH]  Copy files from a container to the host\n"</span></td></tr>
-<tr><td class="num" id="LN2680">2680</td><td class="line">               <span class='string_literal'>"  bind NAME PATH [PATH]       Bind mount a path from the host into a container\n\n"</span></td></tr>
-<tr><td class="num" id="LN2681">2681</td><td class="line">               <span class='string_literal'>"Image Commands:\n"</span></td></tr>
-<tr><td class="num" id="LN2682">2682</td><td class="line">               <span class='string_literal'>"  list-images                 Show available container and VM images\n"</span></td></tr>
-<tr><td class="num" id="LN2683">2683</td><td class="line">               <span class='string_literal'>"  image-status [NAME...]      Show image details\n"</span></td></tr>
-<tr><td class="num" id="LN2684">2684</td><td class="line">               <span class='string_literal'>"  show-image [NAME...]        Show properties of image\n"</span></td></tr>
-<tr><td class="num" id="LN2685">2685</td><td class="line">               <span class='string_literal'>"  clone NAME NAME             Clone an image\n"</span></td></tr>
-<tr><td class="num" id="LN2686">2686</td><td class="line">               <span class='string_literal'>"  rename NAME NAME            Rename an image\n"</span></td></tr>
-<tr><td class="num" id="LN2687">2687</td><td class="line">               <span class='string_literal'>"  read-only NAME [BOOL]       Mark or unmark image read-only\n"</span></td></tr>
-<tr><td class="num" id="LN2688">2688</td><td class="line">               <span class='string_literal'>"  remove NAME...              Remove an image\n"</span></td></tr>
-<tr><td class="num" id="LN2689">2689</td><td class="line">               <span class='string_literal'>"  set-limit [NAME] BYTES      Set image or pool size limit (disk quota)\n"</span></td></tr>
-<tr><td class="num" id="LN2690">2690</td><td class="line">               <span class='string_literal'>"  clean                       Remove hidden (or all) images\n\n"</span></td></tr>
-<tr><td class="num" id="LN2691">2691</td><td class="line">               <span class='string_literal'>"Image Transfer Commands:\n"</span></td></tr>
-<tr><td class="num" id="LN2692">2692</td><td class="line">               <span class='string_literal'>"  pull-tar URL [NAME]         Download a TAR container image\n"</span></td></tr>
-<tr><td class="num" id="LN2693">2693</td><td class="line">               <span class='string_literal'>"  pull-raw URL [NAME]         Download a RAW container or VM image\n"</span></td></tr>
-<tr><td class="num" id="LN2694">2694</td><td class="line">               <span class='string_literal'>"  import-tar FILE [NAME]      Import a local TAR container image\n"</span></td></tr>
-<tr><td class="num" id="LN2695">2695</td><td class="line">               <span class='string_literal'>"  import-raw FILE [NAME]      Import a local RAW container or VM image\n"</span></td></tr>
-<tr><td class="num" id="LN2696">2696</td><td class="line">               <span class='string_literal'>"  export-tar NAME [FILE]      Export a TAR container image locally\n"</span></td></tr>
-<tr><td class="num" id="LN2697">2697</td><td class="line">               <span class='string_literal'>"  export-raw NAME [FILE]      Export a RAW container or VM image locally\n"</span></td></tr>
-<tr><td class="num" id="LN2698">2698</td><td class="line">               <span class='string_literal'>"  list-transfers              Show list of downloads in progress\n"</span></td></tr>
-<tr><td class="num" id="LN2699">2699</td><td class="line">               <span class='string_literal'>"  cancel-transfer             Cancel a download\n"</span></td></tr>
-<tr><td class="num" id="LN2700">2700</td><td class="line">               , program_invocation_short_name);</td></tr>
-<tr><td class="num" id="LN2701">2701</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2702">2702</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN2703">2703</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN2704">2704</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2705">2705</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> parse_argv(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
-<tr><td class="num" id="LN2706">2706</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2707">2707</td><td class="line">        <span class='keyword'>enum</span> {</td></tr>
-<tr><td class="num" id="LN2708">2708</td><td class="line">                ARG_VERSION = 0x100,</td></tr>
-<tr><td class="num" id="LN2709">2709</td><td class="line">                ARG_NO_PAGER,</td></tr>
-<tr><td class="num" id="LN2710">2710</td><td class="line">                ARG_NO_LEGEND,</td></tr>
-<tr><td class="num" id="LN2711">2711</td><td class="line">                ARG_VALUE,</td></tr>
-<tr><td class="num" id="LN2712">2712</td><td class="line">                ARG_KILL_WHO,</td></tr>
-<tr><td class="num" id="LN2713">2713</td><td class="line">                ARG_READ_ONLY,</td></tr>
-<tr><td class="num" id="LN2714">2714</td><td class="line">                ARG_MKDIR,</td></tr>
-<tr><td class="num" id="LN2715">2715</td><td class="line">                ARG_NO_ASK_PASSWORD,</td></tr>
-<tr><td class="num" id="LN2716">2716</td><td class="line">                ARG_VERIFY,</td></tr>
-<tr><td class="num" id="LN2717">2717</td><td class="line">                ARG_FORCE,</td></tr>
-<tr><td class="num" id="LN2718">2718</td><td class="line">                ARG_FORMAT,</td></tr>
-<tr><td class="num" id="LN2719">2719</td><td class="line">                ARG_UID,</td></tr>
-<tr><td class="num" id="LN2720">2720</td><td class="line">                ARG_NUMBER_IPS,</td></tr>
-<tr><td class="num" id="LN2721">2721</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN2722">2722</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2723">2723</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>struct</span> option options[] = {</td></tr>
-<tr><td class="num" id="LN2724">2724</td><td class="line">                { <span class='string_literal'>"help"</span>,            <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'h'                 },</td></tr>
-<tr><td class="num" id="LN2725">2725</td><td class="line">                { <span class='string_literal'>"version"</span>,         <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VERSION         },</td></tr>
-<tr><td class="num" id="LN2726">2726</td><td class="line">                { <span class='string_literal'>"property"</span>,        <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'p'                 },</td></tr>
-<tr><td class="num" id="LN2727">2727</td><td class="line">                { <span class='string_literal'>"all"</span>,             <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'a'                 },</td></tr>
-<tr><td class="num" id="LN2728">2728</td><td class="line">                { <span class='string_literal'>"value"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VALUE           },</td></tr>
-<tr><td class="num" id="LN2729">2729</td><td class="line">                { <span class='string_literal'>"full"</span>,            <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'l'                 },</td></tr>
-<tr><td class="num" id="LN2730">2730</td><td class="line">                { <span class='string_literal'>"no-pager"</span>,        <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NO_PAGER        },</td></tr>
-<tr><td class="num" id="LN2731">2731</td><td class="line">                { <span class='string_literal'>"no-legend"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NO_LEGEND       },</td></tr>
-<tr><td class="num" id="LN2732">2732</td><td class="line">                { <span class='string_literal'>"kill-who"</span>,        <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_KILL_WHO        },</td></tr>
-<tr><td class="num" id="LN2733">2733</td><td class="line">                { <span class='string_literal'>"signal"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 's'                 },</td></tr>
-<tr><td class="num" id="LN2734">2734</td><td class="line">                { <span class='string_literal'>"host"</span>,            <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'H'                 },</td></tr>
-<tr><td class="num" id="LN2735">2735</td><td class="line">                { <span class='string_literal'>"machine"</span>,         <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'M'                 },</td></tr>
-<tr><td class="num" id="LN2736">2736</td><td class="line">                { <span class='string_literal'>"read-only"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_READ_ONLY       },</td></tr>
-<tr><td class="num" id="LN2737">2737</td><td class="line">                { <span class='string_literal'>"mkdir"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_MKDIR           },</td></tr>
-<tr><td class="num" id="LN2738">2738</td><td class="line">                { <span class='string_literal'>"quiet"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'q'                 },</td></tr>
-<tr><td class="num" id="LN2739">2739</td><td class="line">                { <span class='string_literal'>"lines"</span>,           <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'n'                 },</td></tr>
-<tr><td class="num" id="LN2740">2740</td><td class="line">                { <span class='string_literal'>"output"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'o'                 },</td></tr>
-<tr><td class="num" id="LN2741">2741</td><td class="line">                { <span class='string_literal'>"no-ask-password"</span>, <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NO_ASK_PASSWORD },</td></tr>
-<tr><td class="num" id="LN2742">2742</td><td class="line">                { <span class='string_literal'>"verify"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VERIFY          },</td></tr>
-<tr><td class="num" id="LN2743">2743</td><td class="line">                { <span class='string_literal'>"force"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_FORCE           },</td></tr>
-<tr><td class="num" id="LN2744">2744</td><td class="line">                { <span class='string_literal'>"format"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_FORMAT          },</td></tr>
-<tr><td class="num" id="LN2745">2745</td><td class="line">                { <span class='string_literal'>"uid"</span>,             <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_UID             },</td></tr>
-<tr><td class="num" id="LN2746">2746</td><td class="line">                { <span class='string_literal'>"setenv"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'E'                 },</td></tr>
-<tr><td class="num" id="LN2747">2747</td><td class="line">                { <span class='string_literal'>"max-addresses"</span>,   <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NUMBER_IPS      },</td></tr>
-<tr><td class="num" id="LN2748">2748</td><td class="line">                {}</td></tr>
-<tr><td class="num" id="LN2749">2749</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN2750">2750</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2751">2751</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> reorder = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2752">2752</td><td class="line">        <span class='keyword'>int</span> c, r, shell = -1;</td></tr>
-<tr><td class="num" id="LN2753">2753</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2754">2754</td><td class="line">        <span class='macro'>assert(argc &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(argc &gt;= 0)),0))) log_assert_failed<br>("argc &gt;= 0", "src/machine/machinectl.c", 2754, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2755">2755</td><td class="line">        <span class='macro'>assert(argv)<span class='expansion'>do { if ((__builtin_expect(!!(!(argv)),0))) log_assert_failed<br>("argv", "src/machine/machinectl.c", 2755, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2756">2756</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2757">2757</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN2758">2758</td><td class="line">                <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> option_string[] = <span class='string_literal'>"-hp:als:H:M:qn:o:"</span>;</td></tr>
-<tr><td class="num" id="LN2759">2759</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2760">2760</td><td class="line">                c = getopt_long(argc, argv, option_string + reorder, options, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN2761">2761</td><td class="line">                <span class='keyword'>if</span> (c &lt; 0)</td></tr>
-<tr><td class="num" id="LN2762">2762</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2763">2763</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2764">2764</td><td class="line">                <span class='keyword'>switch</span> (c) {</td></tr>
-<tr><td class="num" id="LN2765">2765</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2766">2766</td><td class="line">                <span class='keyword'>case</span> 1: <span class='comment'>/* getopt_long() returns 1 if "-" was the first character of the option string, and a</span></td></tr>
-<tr><td class="num" id="LN2767">2767</td><td class="line">                         <span class='comment'>* non-option argument was discovered. */</span></td></tr>
-<tr><td class="num" id="LN2768">2768</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2769">2769</td><td class="line">                        <span class='macro'>assert(!reorder)<span class='expansion'>do { if ((__builtin_expect(!!(!(!reorder)),0))) log_assert_failed<br>("!reorder", "src/machine/machinectl.c", 2769, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2770">2770</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2771">2771</td><td class="line">                        <span class='comment'>/* We generally are fine with the fact that getopt_long() reorders the command line, and looks</span></td></tr>
-<tr><td class="num" id="LN2772">2772</td><td class="line">                         <span class='comment'>* for switches after the main verb. However, for "shell" we really don't want that, since we</span></td></tr>
-<tr><td class="num" id="LN2773">2773</td><td class="line">                         <span class='comment'>* want that switches specified after the machine name are passed to the program to execute,</span></td></tr>
-<tr><td class="num" id="LN2774">2774</td><td class="line">                         <span class='comment'>* and not processed by us. To make this possible, we'll first invoke getopt_long() with</span></td></tr>
-<tr><td class="num" id="LN2775">2775</td><td class="line">                         <span class='comment'>* reordering disabled (i.e. with the "-" prefix in the option string), looking for the first</span></td></tr>
-<tr><td class="num" id="LN2776">2776</td><td class="line">                         <span class='comment'>* non-option parameter. If it's the verb "shell" we remember its position and continue</span></td></tr>
-<tr><td class="num" id="LN2777">2777</td><td class="line">                         <span class='comment'>* processing options. In this case, as soon as we hit the next non-option argument we found</span></td></tr>
-<tr><td class="num" id="LN2778">2778</td><td class="line">                         <span class='comment'>* the machine name, and stop further processing. If the first non-option argument is any other</span></td></tr>
-<tr><td class="num" id="LN2779">2779</td><td class="line">                         <span class='comment'>* verb than "shell" we switch to normal reordering mode and continue processing arguments</span></td></tr>
-<tr><td class="num" id="LN2780">2780</td><td class="line">                         <span class='comment'>* normally. */</span></td></tr>
-<tr><td class="num" id="LN2781">2781</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2782">2782</td><td class="line">                        <span class='keyword'>if</span> (shell &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN2783">2783</td><td class="line">                                <span class='comment'>/* If we already found the "shell" verb on the command line, and now found the next</span></td></tr>
-<tr><td class="num" id="LN2784">2784</td><td class="line">                                 <span class='comment'>* non-option argument, then this is the machine name and we should stop processing</span></td></tr>
-<tr><td class="num" id="LN2785">2785</td><td class="line">                                 <span class='comment'>* further arguments.  */</span></td></tr>
-<tr><td class="num" id="LN2786">2786</td><td class="line">                                optind --; <span class='comment'>/* don't process this argument, go one step back */</span></td></tr>
-<tr><td class="num" id="LN2787">2787</td><td class="line">                                <span class='keyword'>goto</span> done;</td></tr>
-<tr><td class="num" id="LN2788">2788</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2789">2789</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>streq(optarg, <span class='string_literal'>"shell"</span>)<span class='expansion'>(strcmp((optarg),("shell")) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN2790">2790</td><td class="line">                                <span class='comment'>/* Remember the position of the "shell" verb, and continue processing normally. */</span></td></tr>
-<tr><td class="num" id="LN2791">2791</td><td class="line">                                shell = optind - 1;</td></tr>
-<tr><td class="num" id="LN2792">2792</td><td class="line">                        <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN2793">2793</td><td class="line">                                <span class='keyword'>int</span> saved_optind;</td></tr>
-<tr><td class="num" id="LN2794">2794</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2795">2795</td><td class="line">                                <span class='comment'>/* OK, this is some other verb. In this case, turn on reordering again, and continue</span></td></tr>
-<tr><td class="num" id="LN2796">2796</td><td class="line">                                 <span class='comment'>* processing normally. */</span></td></tr>
-<tr><td class="num" id="LN2797">2797</td><td class="line">                                reorder = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2798">2798</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2799">2799</td><td class="line">                                <span class='comment'>/* We changed the option string. getopt_long() only looks at it again if we invoke it</span></td></tr>
-<tr><td class="num" id="LN2800">2800</td><td class="line">                                 <span class='comment'>* at least once with a reset option index. Hence, let's reset the option index here,</span></td></tr>
-<tr><td class="num" id="LN2801">2801</td><td class="line">                                 <span class='comment'>* then invoke getopt_long() again (ignoring what it has to say, after all we most</span></td></tr>
-<tr><td class="num" id="LN2802">2802</td><td class="line">                                 <span class='comment'>* likely already processed it), and the bump the option index so that we read the</span></td></tr>
-<tr><td class="num" id="LN2803">2803</td><td class="line">                                 <span class='comment'>* intended argument again. */</span></td></tr>
-<tr><td class="num" id="LN2804">2804</td><td class="line">                                saved_optind = optind;</td></tr>
-<tr><td class="num" id="LN2805">2805</td><td class="line">                                optind = 0;</td></tr>
-<tr><td class="num" id="LN2806">2806</td><td class="line">                                (<span class='keyword'>void</span>) getopt_long(argc, argv, option_string + reorder, options, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN2807">2807</td><td class="line">                                optind = saved_optind - 1; <span class='comment'>/* go one step back, process this argument again */</span></td></tr>
-<tr><td class="num" id="LN2808">2808</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2809">2809</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2810">2810</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2811">2811</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2812">2812</td><td class="line">                <span class='keyword'>case</span> 'h':</td></tr>
-<tr><td class="num" id="LN2813">2813</td><td class="line">                        <span class='keyword'>return</span> help(0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN2814">2814</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2815">2815</td><td class="line">                <span class='keyword'>case</span> ARG_VERSION:</td></tr>
-<tr><td class="num" id="LN2816">2816</td><td class="line">                        <span class='keyword'>return</span> version();</td></tr>
-<tr><td class="num" id="LN2817">2817</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2818">2818</td><td class="line">                <span class='keyword'>case</span> 'p':</td></tr>
-<tr><td class="num" id="LN2819">2819</td><td class="line">                        r = strv_extend(&amp;arg_property, optarg);</td></tr>
-<tr><td class="num" id="LN2820">2820</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2821">2821</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/machine/machinectl.c", 2821, __func__)</span></span>;</td></tr>
-<tr><td class="num" id="LN2822">2822</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2823">2823</td><td class="line">                        <span class='comment'>/* If the user asked for a particular</span></td></tr>
-<tr><td class="num" id="LN2824">2824</td><td class="line">                         <span class='comment'>* property, show it to him, even if it is</span></td></tr>
-<tr><td class="num" id="LN2825">2825</td><td class="line">                         <span class='comment'>* empty. */</span></td></tr>
-<tr><td class="num" id="LN2826">2826</td><td class="line">                        arg_all = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2827">2827</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2828">2828</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2829">2829</td><td class="line">                <span class='keyword'>case</span> 'a':</td></tr>
-<tr><td class="num" id="LN2830">2830</td><td class="line">                        arg_all = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2831">2831</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2832">2832</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2833">2833</td><td class="line">                <span class='keyword'>case</span> ARG_VALUE:</td></tr>
-<tr><td class="num" id="LN2834">2834</td><td class="line">                        arg_value = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2835">2835</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2836">2836</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2837">2837</td><td class="line">                <span class='keyword'>case</span> 'l':</td></tr>
-<tr><td class="num" id="LN2838">2838</td><td class="line">                        arg_full = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2839">2839</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2840">2840</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2841">2841</td><td class="line">                <span class='keyword'>case</span> 'n':</td></tr>
-<tr><td class="num" id="LN2842">2842</td><td class="line">                        <span class='keyword'>if</span> (safe_atou(optarg, &amp;arg_lines) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2843">2843</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to parse lines '%s'"</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2843, __func__, "Failed to parse lines '%s'", optarg) : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2844">2844</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2845">2845</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2846">2846</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2847">2847</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2848">2848</td><td class="line">                <span class='keyword'>case</span> 'o':</td></tr>
-<tr><td class="num" id="LN2849">2849</td><td class="line">                        arg_output = output_mode_from_string(optarg);</td></tr>
-<tr><td class="num" id="LN2850">2850</td><td class="line">                        <span class='keyword'>if</span> (arg_output &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2851">2851</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Unknown output '%s'."</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2851, __func__, "Unknown output '%s'.", optarg) : -abs(_e);<br> })</span></span>;</td></tr>
-<tr><td class="num" id="LN2852">2852</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2853">2853</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2854">2854</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2855">2855</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2856">2856</td><td class="line">                <span class='keyword'>case</span> ARG_NO_PAGER:</td></tr>
-<tr><td class="num" id="LN2857">2857</td><td class="line">                        arg_no_pager = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2858">2858</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2859">2859</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2860">2860</td><td class="line">                <span class='keyword'>case</span> ARG_NO_LEGEND:</td></tr>
-<tr><td class="num" id="LN2861">2861</td><td class="line">                        arg_legend = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2862">2862</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2863">2863</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2864">2864</td><td class="line">                <span class='keyword'>case</span> ARG_KILL_WHO:</td></tr>
-<tr><td class="num" id="LN2865">2865</td><td class="line">                        arg_kill_who = optarg;</td></tr>
-<tr><td class="num" id="LN2866">2866</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2867">2867</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2868">2868</td><td class="line">                <span class='keyword'>case</span> 's':</td></tr>
-<tr><td class="num" id="LN2869">2869</td><td class="line">                        arg_signal = signal_from_string_try_harder(optarg);</td></tr>
-<tr><td class="num" id="LN2870">2870</td><td class="line">                        <span class='keyword'>if</span> (arg_signal &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2871">2871</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to parse signal string %s."</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2871, __func__, "Failed to parse signal string %s.", optarg<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2872">2872</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2873">2873</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2874">2874</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2875">2875</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2876">2876</td><td class="line">                <span class='keyword'>case</span> ARG_NO_ASK_PASSWORD:</td></tr>
-<tr><td class="num" id="LN2877">2877</td><td class="line">                        arg_ask_password = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN2878">2878</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2879">2879</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2880">2880</td><td class="line">                <span class='keyword'>case</span> 'H':</td></tr>
-<tr><td class="num" id="LN2881">2881</td><td class="line">                        arg_transport = BUS_TRANSPORT_REMOTE;</td></tr>
-<tr><td class="num" id="LN2882">2882</td><td class="line">                        arg_host = optarg;</td></tr>
-<tr><td class="num" id="LN2883">2883</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2884">2884</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2885">2885</td><td class="line">                <span class='keyword'>case</span> 'M':</td></tr>
-<tr><td class="num" id="LN2886">2886</td><td class="line">                        arg_transport = BUS_TRANSPORT_MACHINE;</td></tr>
-<tr><td class="num" id="LN2887">2887</td><td class="line">                        arg_host = optarg;</td></tr>
-<tr><td class="num" id="LN2888">2888</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2889">2889</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2890">2890</td><td class="line">                <span class='keyword'>case</span> ARG_READ_ONLY:</td></tr>
-<tr><td class="num" id="LN2891">2891</td><td class="line">                        arg_read_only = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2892">2892</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2893">2893</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2894">2894</td><td class="line">                <span class='keyword'>case</span> ARG_MKDIR:</td></tr>
-<tr><td class="num" id="LN2895">2895</td><td class="line">                        arg_mkdir = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2896">2896</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2897">2897</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2898">2898</td><td class="line">                <span class='keyword'>case</span> 'q':</td></tr>
-<tr><td class="num" id="LN2899">2899</td><td class="line">                        arg_quiet = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2900">2900</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2901">2901</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2902">2902</td><td class="line">                <span class='keyword'>case</span> ARG_VERIFY:</td></tr>
-<tr><td class="num" id="LN2903">2903</td><td class="line">                        arg_verify = import_verify_from_string(optarg);</td></tr>
-<tr><td class="num" id="LN2904">2904</td><td class="line">                        <span class='keyword'>if</span> (arg_verify &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2905">2905</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to parse --verify= setting: %s"</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2905, __func__, "Failed to parse --verify= setting: %s", optarg<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2906">2906</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2907">2907</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2908">2908</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2909">2909</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2910">2910</td><td class="line">                <span class='keyword'>case</span> ARG_FORCE:</td></tr>
-<tr><td class="num" id="LN2911">2911</td><td class="line">                        arg_force = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN2912">2912</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2913">2913</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2914">2914</td><td class="line">                <span class='keyword'>case</span> ARG_FORMAT:</td></tr>
-<tr><td class="num" id="LN2915">2915</td><td class="line">                        <span class='keyword'>if</span> (!<span class='macro'>STR_IN_SET(optarg, <span class='string_literal'>"uncompressed"</span>, <span class='string_literal'>"xz"</span>, <span class='string_literal'>"gzip"</span>, <span class='string_literal'>"bzip2"</span>)<span class='expansion'>(!!strv_find((((char**) ((const char*[]) { "uncompressed", "xz"<br>, "gzip", "bzip2", ((void*)0) }))), (optarg)))</span></span>) {</td></tr>
-<tr><td class="num" id="LN2916">2916</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Unknown format: %s"</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2916, __func__, "Unknown format: %s", optarg) : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN2917">2917</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2918">2918</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2919">2919</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2920">2920</td><td class="line">                        arg_format = optarg;</td></tr>
-<tr><td class="num" id="LN2921">2921</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2922">2922</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2923">2923</td><td class="line">                <span class='keyword'>case</span> ARG_UID:</td></tr>
-<tr><td class="num" id="LN2924">2924</td><td class="line">                        arg_uid = optarg;</td></tr>
-<tr><td class="num" id="LN2925">2925</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2926">2926</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2927">2927</td><td class="line">                <span class='keyword'>case</span> 'E':</td></tr>
-<tr><td class="num" id="LN2928">2928</td><td class="line">                        <span class='keyword'>if</span> (!env_assignment_is_valid(optarg)) {</td></tr>
-<tr><td class="num" id="LN2929">2929</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Environment assignment invalid: %s"</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2929, __func__, "Environment assignment invalid: %s", optarg<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2930">2930</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2931">2931</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2932">2932</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2933">2933</td><td class="line">                        r = strv_extend(&amp;arg_setenv, optarg);</td></tr>
-<tr><td class="num" id="LN2934">2934</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN2935">2935</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/machine/machinectl.c", 2935, __func__)</span></span>;</td></tr>
-<tr><td class="num" id="LN2936">2936</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2937">2937</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2938">2938</td><td class="line">                <span class='keyword'>case</span> ARG_NUMBER_IPS:</td></tr>
-<tr><td class="num" id="LN2939">2939</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>streq(optarg, <span class='string_literal'>"all"</span>)<span class='expansion'>(strcmp((optarg),("all")) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN2940">2940</td><td class="line">                                arg_addrs = <span class='macro'>ALL_IP_ADDRESSES<span class='expansion'>-1</span></span>;</td></tr>
-<tr><td class="num" id="LN2941">2941</td><td class="line">                        <span class='keyword'>else</span> <span class='keyword'>if</span> (safe_atoi(optarg, &amp;arg_addrs) &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2942">2942</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Invalid number of IPs"</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2942, __func__, "Invalid number of IPs") : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2943">2943</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2944">2944</td><td class="line">                        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_addrs &lt; 0) {</td></tr>
-<tr><td class="num" id="LN2945">2945</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Number of IPs cannot be negative"</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2945, __func__, "Number of IPs cannot be negative") : -abs(<br>_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN2946">2946</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2947">2947</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN2948">2948</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN2949">2949</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2950">2950</td><td class="line">                <span class='keyword'>case</span> '?':</td></tr>
-<tr><td class="num" id="LN2951">2951</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN2952">2952</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2953">2953</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN2954">2954</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Unhandled option"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unhandled option", "src/machine/machinectl.c"<br>, 2954, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN2955">2955</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN2956">2956</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2957">2957</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2958">2958</td><td class="line">done:</td></tr>
-<tr><td class="num" id="LN2959">2959</td><td class="line">        <span class='keyword'>if</span> (shell &gt;= 0) {</td></tr>
-<tr><td class="num" id="LN2960">2960</td><td class="line">                <span class='keyword'>char</span> *t;</td></tr>
-<tr><td class="num" id="LN2961">2961</td><td class="line">                <span class='keyword'>int</span> i;</td></tr>
-<tr><td class="num" id="LN2962">2962</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2963">2963</td><td class="line">                <span class='comment'>/* We found the "shell" verb while processing the argument list. Since we turned off reordering of the</span></td></tr>
-<tr><td class="num" id="LN2964">2964</td><td class="line">                 <span class='comment'>* argument list initially let's readjust it now, and move the "shell" verb to the back. */</span></td></tr>
-<tr><td class="num" id="LN2965">2965</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2966">2966</td><td class="line">                optind -= 1; <span class='comment'>/* place the option index where the "shell" verb will be placed */</span></td></tr>
-<tr><td class="num" id="LN2967">2967</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2968">2968</td><td class="line">                t = argv[shell];</td></tr>
-<tr><td class="num" id="LN2969">2969</td><td class="line">                <span class='keyword'>for</span> (i = shell; i &lt; optind; i++)</td></tr>
-<tr><td class="num" id="LN2970">2970</td><td class="line">                        argv[i] = argv[i+1];</td></tr>
-<tr><td class="num" id="LN2971">2971</td><td class="line">                argv[optind] = t;</td></tr>
-<tr><td class="num" id="LN2972">2972</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN2973">2973</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2974">2974</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN2975">2975</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN2976">2976</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2977">2977</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> machinectl_main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[], sd_bus *bus) {</td></tr>
-<tr><td class="num" id="LN2978">2978</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN2979">2979</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> Verb verbs[] = {</td></tr>
-<tr><td class="num" id="LN2980">2980</td><td class="line">                { <span class='string_literal'>"help"</span>,            <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            help              },</td></tr>
-<tr><td class="num" id="LN2981">2981</td><td class="line">                { <span class='string_literal'>"list"</span>,            <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 1,        <span class='macro'>VERB_DEFAULT<span class='expansion'>1U</span></span>, list_machines     },</td></tr>
-<tr><td class="num" id="LN2982">2982</td><td class="line">                { <span class='string_literal'>"list-images"</span>,     <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 1,        0,            list_images       },</td></tr>
-<tr><td class="num" id="LN2983">2983</td><td class="line">                { <span class='string_literal'>"status"</span>,          2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            show_machine      },</td></tr>
-<tr><td class="num" id="LN2984">2984</td><td class="line">                { <span class='string_literal'>"image-status"</span>,    <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            show_image        },</td></tr>
-<tr><td class="num" id="LN2985">2985</td><td class="line">                { <span class='string_literal'>"show"</span>,            <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            show_machine      },</td></tr>
-<tr><td class="num" id="LN2986">2986</td><td class="line">                { <span class='string_literal'>"show-image"</span>,      <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            show_image        },</td></tr>
-<tr><td class="num" id="LN2987">2987</td><td class="line">                { <span class='string_literal'>"terminate"</span>,       2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            terminate_machine },</td></tr>
-<tr><td class="num" id="LN2988">2988</td><td class="line">                { <span class='string_literal'>"reboot"</span>,          2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            reboot_machine    },</td></tr>
-<tr><td class="num" id="LN2989">2989</td><td class="line">                { <span class='string_literal'>"poweroff"</span>,        2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            poweroff_machine  },</td></tr>
-<tr><td class="num" id="LN2990">2990</td><td class="line">                { <span class='string_literal'>"stop"</span>,            2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            poweroff_machine  }, <span class='comment'>/* Convenience alias */</span></td></tr>
-<tr><td class="num" id="LN2991">2991</td><td class="line">                { <span class='string_literal'>"kill"</span>,            2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            kill_machine      },</td></tr>
-<tr><td class="num" id="LN2992">2992</td><td class="line">                { <span class='string_literal'>"login"</span>,           <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 2,        0,            login_machine     },</td></tr>
-<tr><td class="num" id="LN2993">2993</td><td class="line">                { <span class='string_literal'>"shell"</span>,           <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            shell_machine     },</td></tr>
-<tr><td class="num" id="LN2994">2994</td><td class="line">                { <span class='string_literal'>"bind"</span>,            3,        4,        0,            bind_mount        },</td></tr>
-<tr><td class="num" id="LN2995">2995</td><td class="line">                { <span class='string_literal'>"copy-to"</span>,         3,        4,        0,            copy_files        },</td></tr>
-<tr><td class="num" id="LN2996">2996</td><td class="line">                { <span class='string_literal'>"copy-from"</span>,       3,        4,        0,            copy_files        },</td></tr>
-<tr><td class="num" id="LN2997">2997</td><td class="line">                { <span class='string_literal'>"remove"</span>,          2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            remove_image      },</td></tr>
-<tr><td class="num" id="LN2998">2998</td><td class="line">                { <span class='string_literal'>"rename"</span>,          3,        3,        0,            rename_image      },</td></tr>
-<tr><td class="num" id="LN2999">2999</td><td class="line">                { <span class='string_literal'>"clone"</span>,           3,        3,        0,            clone_image       },</td></tr>
-<tr><td class="num" id="LN3000">3000</td><td class="line">                { <span class='string_literal'>"read-only"</span>,       2,        3,        0,            read_only_image   },</td></tr>
-<tr><td class="num" id="LN3001">3001</td><td class="line">                { <span class='string_literal'>"start"</span>,           2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            start_machine     },</td></tr>
-<tr><td class="num" id="LN3002">3002</td><td class="line">                { <span class='string_literal'>"enable"</span>,          2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            enable_machine    },</td></tr>
-<tr><td class="num" id="LN3003">3003</td><td class="line">                { <span class='string_literal'>"disable"</span>,         2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            enable_machine    },</td></tr>
-<tr><td class="num" id="LN3004">3004</td><td class="line">                { <span class='string_literal'>"import-tar"</span>,      2,        3,        0,            import_tar        },</td></tr>
-<tr><td class="num" id="LN3005">3005</td><td class="line">                { <span class='string_literal'>"import-raw"</span>,      2,        3,        0,            import_raw        },</td></tr>
-<tr><td class="num" id="LN3006">3006</td><td class="line">                { <span class='string_literal'>"export-tar"</span>,      2,        3,        0,            export_tar        },</td></tr>
-<tr><td class="num" id="LN3007">3007</td><td class="line">                { <span class='string_literal'>"export-raw"</span>,      2,        3,        0,            export_raw        },</td></tr>
-<tr><td class="num" id="LN3008">3008</td><td class="line">                { <span class='string_literal'>"pull-tar"</span>,        2,        3,        0,            pull_tar          },</td></tr>
-<tr><td class="num" id="LN3009">3009</td><td class="line">                { <span class='string_literal'>"pull-raw"</span>,        2,        3,        0,            pull_raw          },</td></tr>
-<tr><td class="num" id="LN3010">3010</td><td class="line">                { <span class='string_literal'>"list-transfers"</span>,  <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 1,        0,            list_transfers    },</td></tr>
-<tr><td class="num" id="LN3011">3011</td><td class="line">                { <span class='string_literal'>"cancel-transfer"</span>, 2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            cancel_transfer   },</td></tr>
-<tr><td class="num" id="LN3012">3012</td><td class="line">                { <span class='string_literal'>"set-limit"</span>,       2,        3,        0,            set_limit         },</td></tr>
-<tr><td class="num" id="LN3013">3013</td><td class="line">                { <span class='string_literal'>"clean"</span>,           <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 1,        0,            clean_images      },</td></tr>
-<tr><td class="num" id="LN3014">3014</td><td class="line">                {}</td></tr>
-<tr><td class="num" id="LN3015">3015</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN3016">3016</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3017">3017</td><td class="line">        <span class='keyword'>return</span> dispatch_verb(argc, argv, verbs, bus);</td></tr>
-<tr><td class="num" id="LN3018">3018</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN3019">3019</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3020">3020</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span>*argv[]) {</td></tr>
-<tr><td class="num" id="LN3021">3021</td><td class="line">        sd_bus *bus = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN3022">3022</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
-<tr><td class="num" id="LN3023">3023</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3024">3024</td><td class="line">        setlocale(<span class='macro'>LC_ALL<span class='expansion'>6</span></span>, <span class='string_literal'>""</span>);</td></tr>
-<tr><td class="num" id="LN3025">3025</td><td class="line">        log_parse_environment();</td></tr>
-<tr><td class="num" id="LN3026">3026</td><td class="line">        log_open();</td></tr>
-<tr><td class="num" id="LN3027">3027</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3028">3028</td><td class="line">        r = parse_argv(argc, argv);</td></tr>
-<tr><td class="num" id="LN3029">3029</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
-<tr><td class="num" id="LN3030">3030</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN3031">3031</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3032">3032</td><td class="line">        r = bus_connect_transport(arg_transport, arg_host, <span class='macro'>false<span class='expansion'>0</span></span>, &amp;bus);</td></tr>
-<tr><td class="num" id="LN3033">3033</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
-<tr><td class="num" id="LN3034">3034</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to create bus connection: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 3034, __func__, "Failed to create bus connection: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN3035">3035</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN3036">3036</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN3037">3037</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3038">3038</td><td class="line">        sd_bus_set_allow_interactive_authorization(bus, arg_ask_password);</td></tr>
-<tr><td class="num" id="LN3039">3039</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3040">3040</td><td class="line">        r = machinectl_main(argc, argv, bus);</td></tr>
-<tr><td class="num" id="LN3041">3041</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3042">3042</td><td class="line">finish:</td></tr>
-<tr><td class="num" id="LN3043">3043</td><td class="line">        sd_bus_flush_close_unref(bus);</td></tr>
-<tr><td class="num" id="LN3044">3044</td><td class="line">        pager_close();</td></tr>
-<tr><td class="num" id="LN3045">3045</td><td class="line">        polkit_agent_close();</td></tr>
-<tr><td class="num" id="LN3046">3046</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3047">3047</td><td class="line">        strv_free(arg_property);</td></tr>
-<tr><td class="num" id="LN3048">3048</td><td class="line">        strv_free(arg_setenv);</td></tr>
-<tr><td class="num" id="LN3049">3049</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN3050">3050</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN3051">3051</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN2632">2632</td><td class="line">        pager_open(arg_no_pager, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN2633">2633</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2634">2634</td><td class="line">        printf(<span class='string_literal'>"%s [OPTIONS...] {COMMAND} ...\n\n"</span></td></tr>
+<tr><td class="num" id="LN2635">2635</td><td class="line">               <span class='string_literal'>"Send control commands to or query the virtual machine and container\n"</span></td></tr>
+<tr><td class="num" id="LN2636">2636</td><td class="line">               <span class='string_literal'>"registration manager.\n\n"</span></td></tr>
+<tr><td class="num" id="LN2637">2637</td><td class="line">               <span class='string_literal'>"  -h --help                   Show this help\n"</span></td></tr>
+<tr><td class="num" id="LN2638">2638</td><td class="line">               <span class='string_literal'>"     --version                Show package version\n"</span></td></tr>
+<tr><td class="num" id="LN2639">2639</td><td class="line">               <span class='string_literal'>"     --no-pager               Do not pipe output into a pager\n"</span></td></tr>
+<tr><td class="num" id="LN2640">2640</td><td class="line">               <span class='string_literal'>"     --no-legend              Do not show the headers and footers\n"</span></td></tr>
+<tr><td class="num" id="LN2641">2641</td><td class="line">               <span class='string_literal'>"     --no-ask-password        Do not ask for system passwords\n"</span></td></tr>
+<tr><td class="num" id="LN2642">2642</td><td class="line">               <span class='string_literal'>"  -H --host=[USER@]HOST       Operate on remote host\n"</span></td></tr>
+<tr><td class="num" id="LN2643">2643</td><td class="line">               <span class='string_literal'>"  -M --machine=CONTAINER      Operate on local container\n"</span></td></tr>
+<tr><td class="num" id="LN2644">2644</td><td class="line">               <span class='string_literal'>"  -p --property=NAME          Show only properties by this name\n"</span></td></tr>
+<tr><td class="num" id="LN2645">2645</td><td class="line">               <span class='string_literal'>"  -q --quiet                  Suppress output\n"</span></td></tr>
+<tr><td class="num" id="LN2646">2646</td><td class="line">               <span class='string_literal'>"  -a --all                    Show all properties, including empty ones\n"</span></td></tr>
+<tr><td class="num" id="LN2647">2647</td><td class="line">               <span class='string_literal'>"     --value                  When showing properties, only print the value\n"</span></td></tr>
+<tr><td class="num" id="LN2648">2648</td><td class="line">               <span class='string_literal'>"  -l --full                   Do not ellipsize output\n"</span></td></tr>
+<tr><td class="num" id="LN2649">2649</td><td class="line">               <span class='string_literal'>"     --kill-who=WHO           Who to send signal to\n"</span></td></tr>
+<tr><td class="num" id="LN2650">2650</td><td class="line">               <span class='string_literal'>"  -s --signal=SIGNAL          Which signal to send\n"</span></td></tr>
+<tr><td class="num" id="LN2651">2651</td><td class="line">               <span class='string_literal'>"     --uid=USER               Specify user ID to invoke shell as\n"</span></td></tr>
+<tr><td class="num" id="LN2652">2652</td><td class="line">               <span class='string_literal'>"  -E --setenv=VAR=VALUE       Add an environment variable for shell\n"</span></td></tr>
+<tr><td class="num" id="LN2653">2653</td><td class="line">               <span class='string_literal'>"     --read-only              Create read-only bind mount\n"</span></td></tr>
+<tr><td class="num" id="LN2654">2654</td><td class="line">               <span class='string_literal'>"     --mkdir                  Create directory before bind mounting, if missing\n"</span></td></tr>
+<tr><td class="num" id="LN2655">2655</td><td class="line">               <span class='string_literal'>"  -n --lines=INTEGER          Number of journal entries to show\n"</span></td></tr>
+<tr><td class="num" id="LN2656">2656</td><td class="line">               <span class='string_literal'>"     --max-addresses=INTEGER  Number of internet addresses to show at most\n"</span></td></tr>
+<tr><td class="num" id="LN2657">2657</td><td class="line">               <span class='string_literal'>"  -o --output=STRING          Change journal output mode (short,\n"</span></td></tr>
+<tr><td class="num" id="LN2658">2658</td><td class="line">               <span class='string_literal'>"                              short-monotonic, verbose, export, json,\n"</span></td></tr>
+<tr><td class="num" id="LN2659">2659</td><td class="line">               <span class='string_literal'>"                              json-pretty, json-sse, cat)\n"</span></td></tr>
+<tr><td class="num" id="LN2660">2660</td><td class="line">               <span class='string_literal'>"      --verify=MODE           Verification mode for downloaded images (no,\n"</span></td></tr>
+<tr><td class="num" id="LN2661">2661</td><td class="line">               <span class='string_literal'>"                              checksum, signature)\n"</span></td></tr>
+<tr><td class="num" id="LN2662">2662</td><td class="line">               <span class='string_literal'>"      --force                 Download image even if already exists\n\n"</span></td></tr>
+<tr><td class="num" id="LN2663">2663</td><td class="line">               <span class='string_literal'>"Machine Commands:\n"</span></td></tr>
+<tr><td class="num" id="LN2664">2664</td><td class="line">               <span class='string_literal'>"  list                        List running VMs and containers\n"</span></td></tr>
+<tr><td class="num" id="LN2665">2665</td><td class="line">               <span class='string_literal'>"  status NAME...              Show VM/container details\n"</span></td></tr>
+<tr><td class="num" id="LN2666">2666</td><td class="line">               <span class='string_literal'>"  show [NAME...]              Show properties of one or more VMs/containers\n"</span></td></tr>
+<tr><td class="num" id="LN2667">2667</td><td class="line">               <span class='string_literal'>"  start NAME...               Start container as a service\n"</span></td></tr>
+<tr><td class="num" id="LN2668">2668</td><td class="line">               <span class='string_literal'>"  login [NAME]                Get a login prompt in a container or on the\n"</span></td></tr>
+<tr><td class="num" id="LN2669">2669</td><td class="line">               <span class='string_literal'>"                              local host\n"</span></td></tr>
+<tr><td class="num" id="LN2670">2670</td><td class="line">               <span class='string_literal'>"  shell [[USER@]NAME [COMMAND...]]\n"</span></td></tr>
+<tr><td class="num" id="LN2671">2671</td><td class="line">               <span class='string_literal'>"                              Invoke a shell (or other command) in a container\n"</span></td></tr>
+<tr><td class="num" id="LN2672">2672</td><td class="line">               <span class='string_literal'>"                              or on the local host\n"</span></td></tr>
+<tr><td class="num" id="LN2673">2673</td><td class="line">               <span class='string_literal'>"  enable NAME...              Enable automatic container start at boot\n"</span></td></tr>
+<tr><td class="num" id="LN2674">2674</td><td class="line">               <span class='string_literal'>"  disable NAME...             Disable automatic container start at boot\n"</span></td></tr>
+<tr><td class="num" id="LN2675">2675</td><td class="line">               <span class='string_literal'>"  poweroff NAME...            Power off one or more containers\n"</span></td></tr>
+<tr><td class="num" id="LN2676">2676</td><td class="line">               <span class='string_literal'>"  reboot NAME...              Reboot one or more containers\n"</span></td></tr>
+<tr><td class="num" id="LN2677">2677</td><td class="line">               <span class='string_literal'>"  terminate NAME...           Terminate one or more VMs/containers\n"</span></td></tr>
+<tr><td class="num" id="LN2678">2678</td><td class="line">               <span class='string_literal'>"  kill NAME...                Send signal to processes of a VM/container\n"</span></td></tr>
+<tr><td class="num" id="LN2679">2679</td><td class="line">               <span class='string_literal'>"  copy-to NAME PATH [PATH]    Copy files from the host to a container\n"</span></td></tr>
+<tr><td class="num" id="LN2680">2680</td><td class="line">               <span class='string_literal'>"  copy-from NAME PATH [PATH]  Copy files from a container to the host\n"</span></td></tr>
+<tr><td class="num" id="LN2681">2681</td><td class="line">               <span class='string_literal'>"  bind NAME PATH [PATH]       Bind mount a path from the host into a container\n\n"</span></td></tr>
+<tr><td class="num" id="LN2682">2682</td><td class="line">               <span class='string_literal'>"Image Commands:\n"</span></td></tr>
+<tr><td class="num" id="LN2683">2683</td><td class="line">               <span class='string_literal'>"  list-images                 Show available container and VM images\n"</span></td></tr>
+<tr><td class="num" id="LN2684">2684</td><td class="line">               <span class='string_literal'>"  image-status [NAME...]      Show image details\n"</span></td></tr>
+<tr><td class="num" id="LN2685">2685</td><td class="line">               <span class='string_literal'>"  show-image [NAME...]        Show properties of image\n"</span></td></tr>
+<tr><td class="num" id="LN2686">2686</td><td class="line">               <span class='string_literal'>"  clone NAME NAME             Clone an image\n"</span></td></tr>
+<tr><td class="num" id="LN2687">2687</td><td class="line">               <span class='string_literal'>"  rename NAME NAME            Rename an image\n"</span></td></tr>
+<tr><td class="num" id="LN2688">2688</td><td class="line">               <span class='string_literal'>"  read-only NAME [BOOL]       Mark or unmark image read-only\n"</span></td></tr>
+<tr><td class="num" id="LN2689">2689</td><td class="line">               <span class='string_literal'>"  remove NAME...              Remove an image\n"</span></td></tr>
+<tr><td class="num" id="LN2690">2690</td><td class="line">               <span class='string_literal'>"  set-limit [NAME] BYTES      Set image or pool size limit (disk quota)\n"</span></td></tr>
+<tr><td class="num" id="LN2691">2691</td><td class="line">               <span class='string_literal'>"  clean                       Remove hidden (or all) images\n\n"</span></td></tr>
+<tr><td class="num" id="LN2692">2692</td><td class="line">               <span class='string_literal'>"Image Transfer Commands:\n"</span></td></tr>
+<tr><td class="num" id="LN2693">2693</td><td class="line">               <span class='string_literal'>"  pull-tar URL [NAME]         Download a TAR container image\n"</span></td></tr>
+<tr><td class="num" id="LN2694">2694</td><td class="line">               <span class='string_literal'>"  pull-raw URL [NAME]         Download a RAW container or VM image\n"</span></td></tr>
+<tr><td class="num" id="LN2695">2695</td><td class="line">               <span class='string_literal'>"  import-tar FILE [NAME]      Import a local TAR container image\n"</span></td></tr>
+<tr><td class="num" id="LN2696">2696</td><td class="line">               <span class='string_literal'>"  import-raw FILE [NAME]      Import a local RAW container or VM image\n"</span></td></tr>
+<tr><td class="num" id="LN2697">2697</td><td class="line">               <span class='string_literal'>"  export-tar NAME [FILE]      Export a TAR container image locally\n"</span></td></tr>
+<tr><td class="num" id="LN2698">2698</td><td class="line">               <span class='string_literal'>"  export-raw NAME [FILE]      Export a RAW container or VM image locally\n"</span></td></tr>
+<tr><td class="num" id="LN2699">2699</td><td class="line">               <span class='string_literal'>"  list-transfers              Show list of downloads in progress\n"</span></td></tr>
+<tr><td class="num" id="LN2700">2700</td><td class="line">               <span class='string_literal'>"  cancel-transfer             Cancel a download\n"</span></td></tr>
+<tr><td class="num" id="LN2701">2701</td><td class="line">               , program_invocation_short_name);</td></tr>
+<tr><td class="num" id="LN2702">2702</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2703">2703</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN2704">2704</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN2705">2705</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2706">2706</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> parse_argv(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN2707">2707</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2708">2708</td><td class="line">        <span class='keyword'>enum</span> {</td></tr>
+<tr><td class="num" id="LN2709">2709</td><td class="line">                ARG_VERSION = 0x100,</td></tr>
+<tr><td class="num" id="LN2710">2710</td><td class="line">                ARG_NO_PAGER,</td></tr>
+<tr><td class="num" id="LN2711">2711</td><td class="line">                ARG_NO_LEGEND,</td></tr>
+<tr><td class="num" id="LN2712">2712</td><td class="line">                ARG_VALUE,</td></tr>
+<tr><td class="num" id="LN2713">2713</td><td class="line">                ARG_KILL_WHO,</td></tr>
+<tr><td class="num" id="LN2714">2714</td><td class="line">                ARG_READ_ONLY,</td></tr>
+<tr><td class="num" id="LN2715">2715</td><td class="line">                ARG_MKDIR,</td></tr>
+<tr><td class="num" id="LN2716">2716</td><td class="line">                ARG_NO_ASK_PASSWORD,</td></tr>
+<tr><td class="num" id="LN2717">2717</td><td class="line">                ARG_VERIFY,</td></tr>
+<tr><td class="num" id="LN2718">2718</td><td class="line">                ARG_FORCE,</td></tr>
+<tr><td class="num" id="LN2719">2719</td><td class="line">                ARG_FORMAT,</td></tr>
+<tr><td class="num" id="LN2720">2720</td><td class="line">                ARG_UID,</td></tr>
+<tr><td class="num" id="LN2721">2721</td><td class="line">                ARG_NUMBER_IPS,</td></tr>
+<tr><td class="num" id="LN2722">2722</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN2723">2723</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2724">2724</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>struct</span> option options[] = {</td></tr>
+<tr><td class="num" id="LN2725">2725</td><td class="line">                { <span class='string_literal'>"help"</span>,            <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'h'                 },</td></tr>
+<tr><td class="num" id="LN2726">2726</td><td class="line">                { <span class='string_literal'>"version"</span>,         <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VERSION         },</td></tr>
+<tr><td class="num" id="LN2727">2727</td><td class="line">                { <span class='string_literal'>"property"</span>,        <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'p'                 },</td></tr>
+<tr><td class="num" id="LN2728">2728</td><td class="line">                { <span class='string_literal'>"all"</span>,             <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'a'                 },</td></tr>
+<tr><td class="num" id="LN2729">2729</td><td class="line">                { <span class='string_literal'>"value"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VALUE           },</td></tr>
+<tr><td class="num" id="LN2730">2730</td><td class="line">                { <span class='string_literal'>"full"</span>,            <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'l'                 },</td></tr>
+<tr><td class="num" id="LN2731">2731</td><td class="line">                { <span class='string_literal'>"no-pager"</span>,        <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NO_PAGER        },</td></tr>
+<tr><td class="num" id="LN2732">2732</td><td class="line">                { <span class='string_literal'>"no-legend"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NO_LEGEND       },</td></tr>
+<tr><td class="num" id="LN2733">2733</td><td class="line">                { <span class='string_literal'>"kill-who"</span>,        <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_KILL_WHO        },</td></tr>
+<tr><td class="num" id="LN2734">2734</td><td class="line">                { <span class='string_literal'>"signal"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 's'                 },</td></tr>
+<tr><td class="num" id="LN2735">2735</td><td class="line">                { <span class='string_literal'>"host"</span>,            <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'H'                 },</td></tr>
+<tr><td class="num" id="LN2736">2736</td><td class="line">                { <span class='string_literal'>"machine"</span>,         <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'M'                 },</td></tr>
+<tr><td class="num" id="LN2737">2737</td><td class="line">                { <span class='string_literal'>"read-only"</span>,       <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_READ_ONLY       },</td></tr>
+<tr><td class="num" id="LN2738">2738</td><td class="line">                { <span class='string_literal'>"mkdir"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_MKDIR           },</td></tr>
+<tr><td class="num" id="LN2739">2739</td><td class="line">                { <span class='string_literal'>"quiet"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'q'                 },</td></tr>
+<tr><td class="num" id="LN2740">2740</td><td class="line">                { <span class='string_literal'>"lines"</span>,           <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'n'                 },</td></tr>
+<tr><td class="num" id="LN2741">2741</td><td class="line">                { <span class='string_literal'>"output"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'o'                 },</td></tr>
+<tr><td class="num" id="LN2742">2742</td><td class="line">                { <span class='string_literal'>"no-ask-password"</span>, <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NO_ASK_PASSWORD },</td></tr>
+<tr><td class="num" id="LN2743">2743</td><td class="line">                { <span class='string_literal'>"verify"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VERIFY          },</td></tr>
+<tr><td class="num" id="LN2744">2744</td><td class="line">                { <span class='string_literal'>"force"</span>,           <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_FORCE           },</td></tr>
+<tr><td class="num" id="LN2745">2745</td><td class="line">                { <span class='string_literal'>"format"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_FORMAT          },</td></tr>
+<tr><td class="num" id="LN2746">2746</td><td class="line">                { <span class='string_literal'>"uid"</span>,             <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_UID             },</td></tr>
+<tr><td class="num" id="LN2747">2747</td><td class="line">                { <span class='string_literal'>"setenv"</span>,          <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'E'                 },</td></tr>
+<tr><td class="num" id="LN2748">2748</td><td class="line">                { <span class='string_literal'>"max-addresses"</span>,   <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NUMBER_IPS      },</td></tr>
+<tr><td class="num" id="LN2749">2749</td><td class="line">                {}</td></tr>
+<tr><td class="num" id="LN2750">2750</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN2751">2751</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2752">2752</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> reorder = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2753">2753</td><td class="line">        <span class='keyword'>int</span> c, r, shell = -1;</td></tr>
+<tr><td class="num" id="LN2754">2754</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2755">2755</td><td class="line">        <span class='macro'>assert(argc &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(argc &gt;= 0)),0))) log_assert_failed<br>("argc &gt;= 0", "src/machine/machinectl.c", 2755, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2756">2756</td><td class="line">        <span class='macro'>assert(argv)<span class='expansion'>do { if ((__builtin_expect(!!(!(argv)),0))) log_assert_failed<br>("argv", "src/machine/machinectl.c", 2756, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2757">2757</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2758">2758</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
+<tr><td class="num" id="LN2759">2759</td><td class="line">                <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>char</span> option_string[] = <span class='string_literal'>"-hp:als:H:M:qn:o:"</span>;</td></tr>
+<tr><td class="num" id="LN2760">2760</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2761">2761</td><td class="line">                c = getopt_long(argc, argv, option_string + reorder, options, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN2762">2762</td><td class="line">                <span class='keyword'>if</span> (c &lt; 0)</td></tr>
+<tr><td class="num" id="LN2763">2763</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2764">2764</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2765">2765</td><td class="line">                <span class='keyword'>switch</span> (c) {</td></tr>
+<tr><td class="num" id="LN2766">2766</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2767">2767</td><td class="line">                <span class='keyword'>case</span> 1: <span class='comment'>/* getopt_long() returns 1 if "-" was the first character of the option string, and a</span></td></tr>
+<tr><td class="num" id="LN2768">2768</td><td class="line">                         <span class='comment'>* non-option argument was discovered. */</span></td></tr>
+<tr><td class="num" id="LN2769">2769</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2770">2770</td><td class="line">                        <span class='macro'>assert(!reorder)<span class='expansion'>do { if ((__builtin_expect(!!(!(!reorder)),0))) log_assert_failed<br>("!reorder", "src/machine/machinectl.c", 2770, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2771">2771</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2772">2772</td><td class="line">                        <span class='comment'>/* We generally are fine with the fact that getopt_long() reorders the command line, and looks</span></td></tr>
+<tr><td class="num" id="LN2773">2773</td><td class="line">                         <span class='comment'>* for switches after the main verb. However, for "shell" we really don't want that, since we</span></td></tr>
+<tr><td class="num" id="LN2774">2774</td><td class="line">                         <span class='comment'>* want that switches specified after the machine name are passed to the program to execute,</span></td></tr>
+<tr><td class="num" id="LN2775">2775</td><td class="line">                         <span class='comment'>* and not processed by us. To make this possible, we'll first invoke getopt_long() with</span></td></tr>
+<tr><td class="num" id="LN2776">2776</td><td class="line">                         <span class='comment'>* reordering disabled (i.e. with the "-" prefix in the option string), looking for the first</span></td></tr>
+<tr><td class="num" id="LN2777">2777</td><td class="line">                         <span class='comment'>* non-option parameter. If it's the verb "shell" we remember its position and continue</span></td></tr>
+<tr><td class="num" id="LN2778">2778</td><td class="line">                         <span class='comment'>* processing options. In this case, as soon as we hit the next non-option argument we found</span></td></tr>
+<tr><td class="num" id="LN2779">2779</td><td class="line">                         <span class='comment'>* the machine name, and stop further processing. If the first non-option argument is any other</span></td></tr>
+<tr><td class="num" id="LN2780">2780</td><td class="line">                         <span class='comment'>* verb than "shell" we switch to normal reordering mode and continue processing arguments</span></td></tr>
+<tr><td class="num" id="LN2781">2781</td><td class="line">                         <span class='comment'>* normally. */</span></td></tr>
+<tr><td class="num" id="LN2782">2782</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2783">2783</td><td class="line">                        <span class='keyword'>if</span> (shell &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN2784">2784</td><td class="line">                                <span class='comment'>/* If we already found the "shell" verb on the command line, and now found the next</span></td></tr>
+<tr><td class="num" id="LN2785">2785</td><td class="line">                                 <span class='comment'>* non-option argument, then this is the machine name and we should stop processing</span></td></tr>
+<tr><td class="num" id="LN2786">2786</td><td class="line">                                 <span class='comment'>* further arguments.  */</span></td></tr>
+<tr><td class="num" id="LN2787">2787</td><td class="line">                                optind --; <span class='comment'>/* don't process this argument, go one step back */</span></td></tr>
+<tr><td class="num" id="LN2788">2788</td><td class="line">                                <span class='keyword'>goto</span> done;</td></tr>
+<tr><td class="num" id="LN2789">2789</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2790">2790</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>streq(optarg, <span class='string_literal'>"shell"</span>)<span class='expansion'>(strcmp((optarg),("shell")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN2791">2791</td><td class="line">                                <span class='comment'>/* Remember the position of the "shell" verb, and continue processing normally. */</span></td></tr>
+<tr><td class="num" id="LN2792">2792</td><td class="line">                                shell = optind - 1;</td></tr>
+<tr><td class="num" id="LN2793">2793</td><td class="line">                        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN2794">2794</td><td class="line">                                <span class='keyword'>int</span> saved_optind;</td></tr>
+<tr><td class="num" id="LN2795">2795</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2796">2796</td><td class="line">                                <span class='comment'>/* OK, this is some other verb. In this case, turn on reordering again, and continue</span></td></tr>
+<tr><td class="num" id="LN2797">2797</td><td class="line">                                 <span class='comment'>* processing normally. */</span></td></tr>
+<tr><td class="num" id="LN2798">2798</td><td class="line">                                reorder = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2799">2799</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2800">2800</td><td class="line">                                <span class='comment'>/* We changed the option string. getopt_long() only looks at it again if we invoke it</span></td></tr>
+<tr><td class="num" id="LN2801">2801</td><td class="line">                                 <span class='comment'>* at least once with a reset option index. Hence, let's reset the option index here,</span></td></tr>
+<tr><td class="num" id="LN2802">2802</td><td class="line">                                 <span class='comment'>* then invoke getopt_long() again (ignoring what it has to say, after all we most</span></td></tr>
+<tr><td class="num" id="LN2803">2803</td><td class="line">                                 <span class='comment'>* likely already processed it), and the bump the option index so that we read the</span></td></tr>
+<tr><td class="num" id="LN2804">2804</td><td class="line">                                 <span class='comment'>* intended argument again. */</span></td></tr>
+<tr><td class="num" id="LN2805">2805</td><td class="line">                                saved_optind = optind;</td></tr>
+<tr><td class="num" id="LN2806">2806</td><td class="line">                                optind = 0;</td></tr>
+<tr><td class="num" id="LN2807">2807</td><td class="line">                                (<span class='keyword'>void</span>) getopt_long(argc, argv, option_string + reorder, options, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN2808">2808</td><td class="line">                                optind = saved_optind - 1; <span class='comment'>/* go one step back, process this argument again */</span></td></tr>
+<tr><td class="num" id="LN2809">2809</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2810">2810</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2811">2811</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2812">2812</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2813">2813</td><td class="line">                <span class='keyword'>case</span> 'h':</td></tr>
+<tr><td class="num" id="LN2814">2814</td><td class="line">                        <span class='keyword'>return</span> help(0, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN2815">2815</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2816">2816</td><td class="line">                <span class='keyword'>case</span> ARG_VERSION:</td></tr>
+<tr><td class="num" id="LN2817">2817</td><td class="line">                        <span class='keyword'>return</span> version();</td></tr>
+<tr><td class="num" id="LN2818">2818</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2819">2819</td><td class="line">                <span class='keyword'>case</span> 'p':</td></tr>
+<tr><td class="num" id="LN2820">2820</td><td class="line">                        r = strv_extend(&amp;arg_property, optarg);</td></tr>
+<tr><td class="num" id="LN2821">2821</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2822">2822</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/machine/machinectl.c", 2822, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN2823">2823</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2824">2824</td><td class="line">                        <span class='comment'>/* If the user asked for a particular</span></td></tr>
+<tr><td class="num" id="LN2825">2825</td><td class="line">                         <span class='comment'>* property, show it to him, even if it is</span></td></tr>
+<tr><td class="num" id="LN2826">2826</td><td class="line">                         <span class='comment'>* empty. */</span></td></tr>
+<tr><td class="num" id="LN2827">2827</td><td class="line">                        arg_all = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2828">2828</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2829">2829</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2830">2830</td><td class="line">                <span class='keyword'>case</span> 'a':</td></tr>
+<tr><td class="num" id="LN2831">2831</td><td class="line">                        arg_all = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2832">2832</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2833">2833</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2834">2834</td><td class="line">                <span class='keyword'>case</span> ARG_VALUE:</td></tr>
+<tr><td class="num" id="LN2835">2835</td><td class="line">                        arg_value = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2836">2836</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2837">2837</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2838">2838</td><td class="line">                <span class='keyword'>case</span> 'l':</td></tr>
+<tr><td class="num" id="LN2839">2839</td><td class="line">                        arg_full = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2840">2840</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2841">2841</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2842">2842</td><td class="line">                <span class='keyword'>case</span> 'n':</td></tr>
+<tr><td class="num" id="LN2843">2843</td><td class="line">                        <span class='keyword'>if</span> (safe_atou(optarg, &amp;arg_lines) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2844">2844</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to parse lines '%s'"</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2844, __func__, "Failed to parse lines '%s'", optarg) : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2845">2845</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2846">2846</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2847">2847</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2848">2848</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2849">2849</td><td class="line">                <span class='keyword'>case</span> 'o':</td></tr>
+<tr><td class="num" id="LN2850">2850</td><td class="line">                        arg_output = output_mode_from_string(optarg);</td></tr>
+<tr><td class="num" id="LN2851">2851</td><td class="line">                        <span class='keyword'>if</span> (arg_output &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2852">2852</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Unknown output '%s'."</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2852, __func__, "Unknown output '%s'.", optarg) : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN2853">2853</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2854">2854</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2855">2855</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2856">2856</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2857">2857</td><td class="line">                <span class='keyword'>case</span> ARG_NO_PAGER:</td></tr>
+<tr><td class="num" id="LN2858">2858</td><td class="line">                        arg_no_pager = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2859">2859</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2860">2860</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2861">2861</td><td class="line">                <span class='keyword'>case</span> ARG_NO_LEGEND:</td></tr>
+<tr><td class="num" id="LN2862">2862</td><td class="line">                        arg_legend = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2863">2863</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2864">2864</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2865">2865</td><td class="line">                <span class='keyword'>case</span> ARG_KILL_WHO:</td></tr>
+<tr><td class="num" id="LN2866">2866</td><td class="line">                        arg_kill_who = optarg;</td></tr>
+<tr><td class="num" id="LN2867">2867</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2868">2868</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2869">2869</td><td class="line">                <span class='keyword'>case</span> 's':</td></tr>
+<tr><td class="num" id="LN2870">2870</td><td class="line">                        arg_signal = signal_from_string_try_harder(optarg);</td></tr>
+<tr><td class="num" id="LN2871">2871</td><td class="line">                        <span class='keyword'>if</span> (arg_signal &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2872">2872</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to parse signal string %s."</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2872, __func__, "Failed to parse signal string %s.", optarg<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2873">2873</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2874">2874</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2875">2875</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2876">2876</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2877">2877</td><td class="line">                <span class='keyword'>case</span> ARG_NO_ASK_PASSWORD:</td></tr>
+<tr><td class="num" id="LN2878">2878</td><td class="line">                        arg_ask_password = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN2879">2879</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2880">2880</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2881">2881</td><td class="line">                <span class='keyword'>case</span> 'H':</td></tr>
+<tr><td class="num" id="LN2882">2882</td><td class="line">                        arg_transport = BUS_TRANSPORT_REMOTE;</td></tr>
+<tr><td class="num" id="LN2883">2883</td><td class="line">                        arg_host = optarg;</td></tr>
+<tr><td class="num" id="LN2884">2884</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2885">2885</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2886">2886</td><td class="line">                <span class='keyword'>case</span> 'M':</td></tr>
+<tr><td class="num" id="LN2887">2887</td><td class="line">                        arg_transport = BUS_TRANSPORT_MACHINE;</td></tr>
+<tr><td class="num" id="LN2888">2888</td><td class="line">                        arg_host = optarg;</td></tr>
+<tr><td class="num" id="LN2889">2889</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2890">2890</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2891">2891</td><td class="line">                <span class='keyword'>case</span> ARG_READ_ONLY:</td></tr>
+<tr><td class="num" id="LN2892">2892</td><td class="line">                        arg_read_only = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2893">2893</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2894">2894</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2895">2895</td><td class="line">                <span class='keyword'>case</span> ARG_MKDIR:</td></tr>
+<tr><td class="num" id="LN2896">2896</td><td class="line">                        arg_mkdir = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2897">2897</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2898">2898</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2899">2899</td><td class="line">                <span class='keyword'>case</span> 'q':</td></tr>
+<tr><td class="num" id="LN2900">2900</td><td class="line">                        arg_quiet = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2901">2901</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2902">2902</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2903">2903</td><td class="line">                <span class='keyword'>case</span> ARG_VERIFY:</td></tr>
+<tr><td class="num" id="LN2904">2904</td><td class="line">                        arg_verify = import_verify_from_string(optarg);</td></tr>
+<tr><td class="num" id="LN2905">2905</td><td class="line">                        <span class='keyword'>if</span> (arg_verify &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2906">2906</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to parse --verify= setting: %s"</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2906, __func__, "Failed to parse --verify= setting: %s", optarg<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2907">2907</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2908">2908</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2909">2909</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2910">2910</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2911">2911</td><td class="line">                <span class='keyword'>case</span> ARG_FORCE:</td></tr>
+<tr><td class="num" id="LN2912">2912</td><td class="line">                        arg_force = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN2913">2913</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2914">2914</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2915">2915</td><td class="line">                <span class='keyword'>case</span> ARG_FORMAT:</td></tr>
+<tr><td class="num" id="LN2916">2916</td><td class="line">                        <span class='keyword'>if</span> (!<span class='macro'>STR_IN_SET(optarg, <span class='string_literal'>"uncompressed"</span>, <span class='string_literal'>"xz"</span>, <span class='string_literal'>"gzip"</span>, <span class='string_literal'>"bzip2"</span>)<span class='expansion'>(!!strv_find((((char**) ((const char*[]) { "uncompressed", "xz"<br>, "gzip", "bzip2", ((void*)0) }))), (optarg)))</span></span>) {</td></tr>
+<tr><td class="num" id="LN2917">2917</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Unknown format: %s"</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2917, __func__, "Unknown format: %s", optarg) : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN2918">2918</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2919">2919</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2920">2920</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2921">2921</td><td class="line">                        arg_format = optarg;</td></tr>
+<tr><td class="num" id="LN2922">2922</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2923">2923</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2924">2924</td><td class="line">                <span class='keyword'>case</span> ARG_UID:</td></tr>
+<tr><td class="num" id="LN2925">2925</td><td class="line">                        arg_uid = optarg;</td></tr>
+<tr><td class="num" id="LN2926">2926</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2927">2927</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2928">2928</td><td class="line">                <span class='keyword'>case</span> 'E':</td></tr>
+<tr><td class="num" id="LN2929">2929</td><td class="line">                        <span class='keyword'>if</span> (!env_assignment_is_valid(optarg)) {</td></tr>
+<tr><td class="num" id="LN2930">2930</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Environment assignment invalid: %s"</span>, optarg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2930, __func__, "Environment assignment invalid: %s", optarg<br>) : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2931">2931</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2932">2932</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2933">2933</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2934">2934</td><td class="line">                        r = strv_extend(&amp;arg_setenv, optarg);</td></tr>
+<tr><td class="num" id="LN2935">2935</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN2936">2936</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/machine/machinectl.c", 2936, __func__)</span></span>;</td></tr>
+<tr><td class="num" id="LN2937">2937</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2938">2938</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2939">2939</td><td class="line">                <span class='keyword'>case</span> ARG_NUMBER_IPS:</td></tr>
+<tr><td class="num" id="LN2940">2940</td><td class="line">                        <span class='keyword'>if</span> (<span class='macro'>streq(optarg, <span class='string_literal'>"all"</span>)<span class='expansion'>(strcmp((optarg),("all")) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN2941">2941</td><td class="line">                                arg_addrs = <span class='macro'>ALL_IP_ADDRESSES<span class='expansion'>-1</span></span>;</td></tr>
+<tr><td class="num" id="LN2942">2942</td><td class="line">                        <span class='keyword'>else</span> <span class='keyword'>if</span> (safe_atoi(optarg, &amp;arg_addrs) &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2943">2943</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Invalid number of IPs"</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2943, __func__, "Invalid number of IPs") : -abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2944">2944</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2945">2945</td><td class="line">                        } <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_addrs &lt; 0) {</td></tr>
+<tr><td class="num" id="LN2946">2946</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Number of IPs cannot be negative"</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 2946, __func__, "Number of IPs cannot be negative") : -abs(<br>_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN2947">2947</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2948">2948</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN2949">2949</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN2950">2950</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2951">2951</td><td class="line">                <span class='keyword'>case</span> '?':</td></tr>
+<tr><td class="num" id="LN2952">2952</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN2953">2953</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2954">2954</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN2955">2955</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Unhandled option"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unhandled option", "src/machine/machinectl.c"<br>, 2955, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN2956">2956</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN2957">2957</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2958">2958</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2959">2959</td><td class="line">done:</td></tr>
+<tr><td class="num" id="LN2960">2960</td><td class="line">        <span class='keyword'>if</span> (shell &gt;= 0) {</td></tr>
+<tr><td class="num" id="LN2961">2961</td><td class="line">                <span class='keyword'>char</span> *t;</td></tr>
+<tr><td class="num" id="LN2962">2962</td><td class="line">                <span class='keyword'>int</span> i;</td></tr>
+<tr><td class="num" id="LN2963">2963</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2964">2964</td><td class="line">                <span class='comment'>/* We found the "shell" verb while processing the argument list. Since we turned off reordering of the</span></td></tr>
+<tr><td class="num" id="LN2965">2965</td><td class="line">                 <span class='comment'>* argument list initially let's readjust it now, and move the "shell" verb to the back. */</span></td></tr>
+<tr><td class="num" id="LN2966">2966</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2967">2967</td><td class="line">                optind -= 1; <span class='comment'>/* place the option index where the "shell" verb will be placed */</span></td></tr>
+<tr><td class="num" id="LN2968">2968</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2969">2969</td><td class="line">                t = argv[shell];</td></tr>
+<tr><td class="num" id="LN2970">2970</td><td class="line">                <span class='keyword'>for</span> (i = shell; i &lt; optind; i++)</td></tr>
+<tr><td class="num" id="LN2971">2971</td><td class="line">                        argv[i] = argv[i+1];</td></tr>
+<tr><td class="num" id="LN2972">2972</td><td class="line">                argv[optind] = t;</td></tr>
+<tr><td class="num" id="LN2973">2973</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN2974">2974</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2975">2975</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN2976">2976</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN2977">2977</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2978">2978</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> machinectl_main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[], sd_bus *bus) {</td></tr>
+<tr><td class="num" id="LN2979">2979</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN2980">2980</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> Verb verbs[] = {</td></tr>
+<tr><td class="num" id="LN2981">2981</td><td class="line">                { <span class='string_literal'>"help"</span>,            <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            help              },</td></tr>
+<tr><td class="num" id="LN2982">2982</td><td class="line">                { <span class='string_literal'>"list"</span>,            <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 1,        <span class='macro'>VERB_DEFAULT<span class='expansion'>1U</span></span>, list_machines     },</td></tr>
+<tr><td class="num" id="LN2983">2983</td><td class="line">                { <span class='string_literal'>"list-images"</span>,     <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 1,        0,            list_images       },</td></tr>
+<tr><td class="num" id="LN2984">2984</td><td class="line">                { <span class='string_literal'>"status"</span>,          2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            show_machine      },</td></tr>
+<tr><td class="num" id="LN2985">2985</td><td class="line">                { <span class='string_literal'>"image-status"</span>,    <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            show_image        },</td></tr>
+<tr><td class="num" id="LN2986">2986</td><td class="line">                { <span class='string_literal'>"show"</span>,            <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            show_machine      },</td></tr>
+<tr><td class="num" id="LN2987">2987</td><td class="line">                { <span class='string_literal'>"show-image"</span>,      <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            show_image        },</td></tr>
+<tr><td class="num" id="LN2988">2988</td><td class="line">                { <span class='string_literal'>"terminate"</span>,       2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            terminate_machine },</td></tr>
+<tr><td class="num" id="LN2989">2989</td><td class="line">                { <span class='string_literal'>"reboot"</span>,          2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            reboot_machine    },</td></tr>
+<tr><td class="num" id="LN2990">2990</td><td class="line">                { <span class='string_literal'>"poweroff"</span>,        2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            poweroff_machine  },</td></tr>
+<tr><td class="num" id="LN2991">2991</td><td class="line">                { <span class='string_literal'>"stop"</span>,            2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            poweroff_machine  }, <span class='comment'>/* Convenience alias */</span></td></tr>
+<tr><td class="num" id="LN2992">2992</td><td class="line">                { <span class='string_literal'>"kill"</span>,            2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            kill_machine      },</td></tr>
+<tr><td class="num" id="LN2993">2993</td><td class="line">                { <span class='string_literal'>"login"</span>,           <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 2,        0,            login_machine     },</td></tr>
+<tr><td class="num" id="LN2994">2994</td><td class="line">                { <span class='string_literal'>"shell"</span>,           <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            shell_machine     },</td></tr>
+<tr><td class="num" id="LN2995">2995</td><td class="line">                { <span class='string_literal'>"bind"</span>,            3,        4,        0,            bind_mount        },</td></tr>
+<tr><td class="num" id="LN2996">2996</td><td class="line">                { <span class='string_literal'>"copy-to"</span>,         3,        4,        0,            copy_files        },</td></tr>
+<tr><td class="num" id="LN2997">2997</td><td class="line">                { <span class='string_literal'>"copy-from"</span>,       3,        4,        0,            copy_files        },</td></tr>
+<tr><td class="num" id="LN2998">2998</td><td class="line">                { <span class='string_literal'>"remove"</span>,          2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            remove_image      },</td></tr>
+<tr><td class="num" id="LN2999">2999</td><td class="line">                { <span class='string_literal'>"rename"</span>,          3,        3,        0,            rename_image      },</td></tr>
+<tr><td class="num" id="LN3000">3000</td><td class="line">                { <span class='string_literal'>"clone"</span>,           3,        3,        0,            clone_image       },</td></tr>
+<tr><td class="num" id="LN3001">3001</td><td class="line">                { <span class='string_literal'>"read-only"</span>,       2,        3,        0,            read_only_image   },</td></tr>
+<tr><td class="num" id="LN3002">3002</td><td class="line">                { <span class='string_literal'>"start"</span>,           2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            start_machine     },</td></tr>
+<tr><td class="num" id="LN3003">3003</td><td class="line">                { <span class='string_literal'>"enable"</span>,          2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            enable_machine    },</td></tr>
+<tr><td class="num" id="LN3004">3004</td><td class="line">                { <span class='string_literal'>"disable"</span>,         2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            enable_machine    },</td></tr>
+<tr><td class="num" id="LN3005">3005</td><td class="line">                { <span class='string_literal'>"import-tar"</span>,      2,        3,        0,            import_tar        },</td></tr>
+<tr><td class="num" id="LN3006">3006</td><td class="line">                { <span class='string_literal'>"import-raw"</span>,      2,        3,        0,            import_raw        },</td></tr>
+<tr><td class="num" id="LN3007">3007</td><td class="line">                { <span class='string_literal'>"export-tar"</span>,      2,        3,        0,            export_tar        },</td></tr>
+<tr><td class="num" id="LN3008">3008</td><td class="line">                { <span class='string_literal'>"export-raw"</span>,      2,        3,        0,            export_raw        },</td></tr>
+<tr><td class="num" id="LN3009">3009</td><td class="line">                { <span class='string_literal'>"pull-tar"</span>,        2,        3,        0,            pull_tar          },</td></tr>
+<tr><td class="num" id="LN3010">3010</td><td class="line">                { <span class='string_literal'>"pull-raw"</span>,        2,        3,        0,            pull_raw          },</td></tr>
+<tr><td class="num" id="LN3011">3011</td><td class="line">                { <span class='string_literal'>"list-transfers"</span>,  <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 1,        0,            list_transfers    },</td></tr>
+<tr><td class="num" id="LN3012">3012</td><td class="line">                { <span class='string_literal'>"cancel-transfer"</span>, 2,        <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 0,            cancel_transfer   },</td></tr>
+<tr><td class="num" id="LN3013">3013</td><td class="line">                { <span class='string_literal'>"set-limit"</span>,       2,        3,        0,            set_limit         },</td></tr>
+<tr><td class="num" id="LN3014">3014</td><td class="line">                { <span class='string_literal'>"clean"</span>,           <span class='macro'>VERB_ANY<span class='expansion'>((unsigned) -1)</span></span>, 1,        0,            clean_images      },</td></tr>
+<tr><td class="num" id="LN3015">3015</td><td class="line">                {}</td></tr>
+<tr><td class="num" id="LN3016">3016</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN3017">3017</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3018">3018</td><td class="line">        <span class='keyword'>return</span> dispatch_verb(argc, argv, verbs, bus);</td></tr>
+<tr><td class="num" id="LN3019">3019</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN3020">3020</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3021">3021</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span>*argv[]) {</td></tr>
+<tr><td class="num" id="LN3022">3022</td><td class="line">        sd_bus *bus = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN3023">3023</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN3024">3024</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3025">3025</td><td class="line">        setlocale(<span class='macro'>LC_ALL<span class='expansion'>6</span></span>, <span class='string_literal'>""</span>);</td></tr>
+<tr><td class="num" id="LN3026">3026</td><td class="line">        log_parse_environment();</td></tr>
+<tr><td class="num" id="LN3027">3027</td><td class="line">        log_open();</td></tr>
+<tr><td class="num" id="LN3028">3028</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3029">3029</td><td class="line">        r = parse_argv(argc, argv);</td></tr>
+<tr><td class="num" id="LN3030">3030</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
+<tr><td class="num" id="LN3031">3031</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN3032">3032</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3033">3033</td><td class="line">        r = bus_connect_transport(arg_transport, arg_host, <span class='macro'>false<span class='expansion'>0</span></span>, &amp;bus);</td></tr>
+<tr><td class="num" id="LN3034">3034</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0) {</td></tr>
+<tr><td class="num" id="LN3035">3035</td><td class="line">                <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to create bus connection: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/machine/machinectl.c"<br>, 3035, __func__, "Failed to create bus connection: %m") : -abs<br>(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN3036">3036</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN3037">3037</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN3038">3038</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3039">3039</td><td class="line">        sd_bus_set_allow_interactive_authorization(bus, arg_ask_password);</td></tr>
+<tr><td class="num" id="LN3040">3040</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3041">3041</td><td class="line">        r = machinectl_main(argc, argv, bus);</td></tr>
+<tr><td class="num" id="LN3042">3042</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3043">3043</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN3044">3044</td><td class="line">        sd_bus_flush_close_unref(bus);</td></tr>
+<tr><td class="num" id="LN3045">3045</td><td class="line">        pager_close();</td></tr>
+<tr><td class="num" id="LN3046">3046</td><td class="line">        polkit_agent_close();</td></tr>
+<tr><td class="num" id="LN3047">3047</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3048">3048</td><td class="line">        strv_free(arg_property);</td></tr>
+<tr><td class="num" id="LN3049">3049</td><td class="line">        strv_free(arg_setenv);</td></tr>
+<tr><td class="num" id="LN3050">3050</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN3051">3051</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN3052">3052</td><td class="line">}</td></tr>
 </table></body></html>
