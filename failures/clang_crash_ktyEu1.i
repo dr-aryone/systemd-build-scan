@@ -13287,10 +13287,10 @@ struct UnitFileInstallInfo {
         char **also;
 
         char *default_instance;
+        char *symlink_target;
 
         UnitFileType type;
-
-        char *symlink_target;
+        _Bool auxiliary;
 };
 
 static inline _Bool UNIT_FILE_INSTALL_INFO_HAS_RULES(UnitFileInstallInfo *i) {
