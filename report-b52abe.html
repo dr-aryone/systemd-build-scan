@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Value stored to 'fd' is never read -->
+<!-- BUGDESC Potential leak of memory pointed to by 'rfds' -->
 
-<!-- BUGTYPE Dead assignment -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY Dead store -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/core/service.c -->
 
 <!-- FILENAME service.c -->
 
-<!-- FUNCTIONNAME service_add_fd_store_set -->
+<!-- FUNCTIONNAME service_collect_fds -->
 
-<!-- BUGLINE 435 -->
+<!-- BUGLINE 1145 -->
 
-<!-- BUGCOLUMN 25 -->
+<!-- BUGCOLUMN 33 -->
 
-<!-- BUGPATHLENGTH 1 -->
+<!-- BUGPATHLENGTH 8 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/service.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 435, column 25</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1145, column 33</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'rfds'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -517,8 +517,7 @@
 <tr><td class="num" id="LN432">432</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_unit_error_errno(UNIT(s), r, <span class='string_literal'>"Couldn't add fd to fd store: %m"</span>)<span class='expansion'>({ const Unit *_u = ((&amp;(s)-&gt;meta)); _u ? log_object_internal<br>(3, r, "src/core/service.c", 432, __func__, _u-&gt;manager-&gt;<br>unit_log_field, _u-&gt;id, _u-&gt;manager-&gt;invocation_log_field<br>, _u-&gt;invocation_id_string, "Couldn't add fd to fd store: %m"<br>) : log_internal(3, r, "src/core/service.c", 432, __func__, "Couldn't add fd to fd store: %m"<br>); })</span></span>;</td></tr>
 <tr><td class="num" id="LN433">433</td><td class="line">                <span class='keyword'>if</span> (r &gt; 0) {</td></tr>
 <tr><td class="num" id="LN434">434</td><td class="line">                        <span class='macro'>log_unit_debug(UNIT(s), <span class='string_literal'>"Added fd to fd store."</span>)<span class='expansion'>({ const Unit *_u = ((&amp;(s)-&gt;meta)); _u ? log_object_internal<br>(7, 0, "src/core/service.c", 434, __func__, _u-&gt;manager-&gt;<br>unit_log_field, _u-&gt;id, _u-&gt;manager-&gt;invocation_log_field<br>, _u-&gt;invocation_id_string, "Added fd to fd store.") : log_internal<br>(7, 0, "src/core/service.c", 434, __func__, "Added fd to fd store."<br>); })</span></span>;</td></tr>
-<tr><td class="num" id="LN435">435</td><td class="line">                        fd = <span class="mrange">-1</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:25ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">                        fd = -1;</td></tr>
 <tr><td class="num" id="LN436">436</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN437">437</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN438">438</td><td class="line"> </td></tr>
@@ -1155,6 +1154,7 @@
 <tr><td class="num" id="LN1069">1069</td><td class="line">        <span class='macro'>assert(fd_names)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd_names)),0))) log_assert_failed<br>("fd_names", "src/core/service.c", 1069, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1070">1070</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1071">1071</td><td class="line">        <span class='keyword'>if</span> (s-&gt;socket_fd &gt;= 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1072">1072</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1073">1073</td><td class="line">                <span class='comment'>/* Pass the per-connection socket */</span></td></tr>
 <tr><td class="num" id="LN1074">1074</td><td class="line"> </td></tr>
@@ -1216,19 +1216,28 @@
 <tr><td class="num" id="LN1130">1130</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1131">1131</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1132">1132</td><td class="line">        <span class='keyword'>if</span> (s-&gt;n_fd_store &gt; 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1133">1133</td><td class="line">                ServiceFDStore *fs;</td></tr>
 <tr><td class="num" id="LN1134">1134</td><td class="line">                <span class='keyword'>char</span> **nl;</td></tr>
 <tr><td class="num" id="LN1135">1135</td><td class="line">                <span class='keyword'>int</span> *t;</td></tr>
 <tr><td class="num" id="LN1136">1136</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1137">1137</td><td class="line">                t = realloc(rfds, (rn_fds + s-&gt;n_fd_store) * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>));</td></tr>
-<tr><td class="num" id="LN1138">1138</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN1137">1137</td><td class="line">                t = <span class="mrange">realloc(rfds, (rn_fds + s-&gt;n_fd_store) * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>))</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1138">1138</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!t</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 't' is non-null</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1139">1139</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1140">1140</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1141">1141</td><td class="line">                rfds = t;</td></tr>
 <tr><td class="num" id="LN1142">1142</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1143">1143</td><td class="line">                nl = realloc(rfd_names, (rn_fds + s-&gt;n_fd_store + 1) * <span class='keyword'>sizeof</span>(<span class='keyword'>char</span>*));</td></tr>
-<tr><td class="num" id="LN1144">1144</td><td class="line">                <span class='keyword'>if</span> (!nl)</td></tr>
+<tr><td class="num" id="LN1144">1144</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!nl</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'nl' is null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1145">1145</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:33ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'rfds'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN1146">1146</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1147">1147</td><td class="line">                rfd_names = nl;</td></tr>
 <tr><td class="num" id="LN1148">1148</td><td class="line"> </td></tr>
@@ -1541,7 +1550,7 @@
 <tr><td class="num" id="LN1455">1455</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1456">1456</td><td class="line">        <span class='keyword'>if</span> (s-&gt;result != SERVICE_SUCCESS) {</td></tr>
 <tr><td class="num" id="LN1457">1457</td><td class="line">                <span class='macro'>log_unit_warning(UNIT(s), <span class='string_literal'>"Failed with result '%s'."</span>, service_result_to_string(s-&gt;result))<span class='expansion'>({ const Unit *_u = ((&amp;(s)-&gt;meta)); _u ? log_object_internal<br>(4, 0, "src/core/service.c", 1457, __func__, _u-&gt;manager-&gt;<br>unit_log_field, _u-&gt;id, _u-&gt;manager-&gt;invocation_log_field<br>, _u-&gt;invocation_id_string, "Failed with result '%s'.", service_result_to_string<br>(s-&gt;result)) : log_internal(4, 0, "src/core/service.c", 1457<br>, __func__, "Failed with result '%s'.", service_result_to_string<br>(s-&gt;result)); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1458">1458</td><td class="line">                failure_action(<span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;manager, s-&gt;failure_action, <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;reboot_arg);</td></tr>
+<tr><td class="num" id="LN1458">1458</td><td class="line">                emergency_action(<span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;manager, s-&gt;emergency_action, <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;reboot_arg, <span class='string_literal'>"service failed"</span>);</td></tr>
 <tr><td class="num" id="LN1459">1459</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1460">1460</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1461">1461</td><td class="line">        <span class='keyword'>if</span> (allow_restart &amp;&amp; service_shall_restart(s)) {</td></tr>

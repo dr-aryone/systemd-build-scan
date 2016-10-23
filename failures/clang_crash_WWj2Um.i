@@ -11780,19 +11780,19 @@ ConditionType assert_type_from_string(const char *s) __attribute__ ((pure));
 const char* condition_result_to_string(ConditionResult r) __attribute__ ((const));
 ConditionResult condition_result_from_string(const char *s) __attribute__ ((pure));
 # 32 "./src/core/unit.h" 2
-# 1 "./src/core/failure-action.h" 1
-# 23 "./src/core/failure-action.h"
-typedef enum FailureAction {
-        FAILURE_ACTION_NONE,
-        FAILURE_ACTION_REBOOT,
-        FAILURE_ACTION_REBOOT_FORCE,
-        FAILURE_ACTION_REBOOT_IMMEDIATE,
-        FAILURE_ACTION_POWEROFF,
-        FAILURE_ACTION_POWEROFF_FORCE,
-        FAILURE_ACTION_POWEROFF_IMMEDIATE,
-        _FAILURE_ACTION_MAX,
-        _FAILURE_ACTION_INVALID = -1
-} FailureAction;
+# 1 "./src/core/emergency-action.h" 1
+# 23 "./src/core/emergency-action.h"
+typedef enum EmergencyAction {
+        EMERGENCY_ACTION_NONE,
+        EMERGENCY_ACTION_REBOOT,
+        EMERGENCY_ACTION_REBOOT_FORCE,
+        EMERGENCY_ACTION_REBOOT_IMMEDIATE,
+        EMERGENCY_ACTION_POWEROFF,
+        EMERGENCY_ACTION_POWEROFF_FORCE,
+        EMERGENCY_ACTION_POWEROFF_IMMEDIATE,
+        _EMERGENCY_ACTION_MAX,
+        _EMERGENCY_ACTION_INVALID = -1
+} EmergencyAction;
 
 
 
@@ -12508,14 +12508,6 @@ typedef enum ManagerExitCode {
         _MANAGER_EXIT_CODE_INVALID = -1
 } ManagerExitCode;
 
-typedef enum CADBurstAction {
-        CAD_BURST_ACTION_IGNORE,
-        CAD_BURST_ACTION_REBOOT,
-        CAD_BURST_ACTION_POWEROFF,
-        _CAD_BURST_ACTION_MAX,
-        _CAD_BURST_ACTION_INVALID = -1
-} CADBurstAction;
-
 typedef enum StatusType {
         STATUS_TYPE_EPHEMERAL,
         STATUS_TYPE_NORMAL,
@@ -13077,7 +13069,7 @@ const char* job_result_to_string(JobResult t) __attribute__ ((const));
 JobResult job_result_from_string(const char *s) __attribute__ ((pure));
 
 const char* job_type_to_access_method(JobType t);
-# 81 "./src/core/manager.h" 2
+# 73 "./src/core/manager.h" 2
 # 1 "./src/shared/path-lookup.h" 1
 # 24 "./src/shared/path-lookup.h"
 typedef struct LookupPaths LookupPaths;
@@ -13473,7 +13465,7 @@ void lookup_paths_free(LookupPaths *p);
 
 
 char **generator_binary_paths(UnitFileScope scope);
-# 82 "./src/core/manager.h" 2
+# 74 "./src/core/manager.h" 2
 # 1 "./src/core/show-status.h" 1
 # 28 "./src/core/show-status.h"
 typedef enum ShowStatus {
@@ -13488,7 +13480,7 @@ int parse_show_status(const char *v, ShowStatus *ret);
 
 int status_vprintf(const char *status, _Bool ellipse, _Bool ephemeral, const char *format, va_list ap) __attribute__ ((format (printf, 4, 0)));
 int status_printf(const char *status, _Bool ellipse, _Bool ephemeral, const char *format, ...) __attribute__ ((format (printf, 4, 5)));
-# 83 "./src/core/manager.h" 2
+# 75 "./src/core/manager.h" 2
 
 
 struct Manager {
@@ -13724,7 +13716,7 @@ struct Manager {
 
 
         RateLimit ctrl_alt_del_ratelimit;
-        CADBurstAction cad_burst_action;
+        EmergencyAction cad_burst_action;
 
         const char *unit_log_field;
         const char *unit_log_format_string;
@@ -13820,15 +13812,12 @@ void manager_deserialize_gid_refs_one(Manager *m, const char *value);
 
 const char *manager_state_to_string(ManagerState m) __attribute__ ((const));
 ManagerState manager_state_from_string(const char *s) __attribute__ ((pure));
+# 37 "./src/core/emergency-action.h" 2
 
-const char *cad_burst_action_to_string(CADBurstAction a) __attribute__ ((const));
-CADBurstAction cad_burst_action_from_string(const char *s) __attribute__ ((pure));
-# 37 "./src/core/failure-action.h" 2
+int emergency_action(Manager *m, EmergencyAction action, const char *reboot_arg, const char *reason);
 
-int failure_action(Manager *m, FailureAction action, const char *reboot_arg);
-
-const char* failure_action_to_string(FailureAction i) __attribute__ ((const));
-FailureAction failure_action_from_string(const char *s) __attribute__ ((pure));
+const char* emergency_action_to_string(EmergencyAction i) __attribute__ ((const));
+EmergencyAction emergency_action_from_string(const char *s) __attribute__ ((pure));
 # 33 "./src/core/unit.h" 2
 
 
@@ -13914,7 +13903,7 @@ struct Unit {
 
 
         usec_t job_timeout;
-        FailureAction job_timeout_action;
+        EmergencyAction job_timeout_action;
         char *job_timeout_reboot_arg;
 
 
@@ -13978,7 +13967,7 @@ struct Unit {
 
 
         RateLimit start_limit;
-        FailureAction start_limit_action;
+        EmergencyAction start_limit_action;
         char *reboot_arg;
 
 
@@ -15390,7 +15379,7 @@ struct Service {
         char *status_text;
         int status_errno;
 
-        FailureAction failure_action;
+        EmergencyAction emergency_action;
 
         UnitRef accept_socket;
 

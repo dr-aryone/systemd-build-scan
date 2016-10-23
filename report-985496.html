@@ -54,7 +54,7 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'rfds' -->
+<!-- BUGDESC Potential leak of memory pointed to by 'rfd_names' -->
 
 <!-- BUGTYPE Memory leak -->
 
@@ -66,19 +66,19 @@
 
 <!-- FUNCTIONNAME service_collect_fds -->
 
-<!-- BUGLINE 1128 -->
+<!-- BUGLINE 1153 -->
 
-<!-- BUGCOLUMN 40 -->
+<!-- BUGCOLUMN 41 -->
 
-<!-- BUGPATHLENGTH 22 -->
+<!-- BUGPATHLENGTH 9 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/service.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1128, column 40</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'rfds'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1153, column 41</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'rfd_names'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -1180,31 +1180,18 @@
 <tr><td class="num" id="LN1094">1094</td><td class="line">                        <span class='keyword'>int</span> cn_fds;</td></tr>
 <tr><td class="num" id="LN1095">1095</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1096">1096</td><td class="line">                        <span class='keyword'>if</span> (u-&gt;type != UNIT_SOCKET)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1097">1097</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN1098">1098</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1099">1099</td><td class="line">                        sock = SOCKET(u);</td></tr>
 <tr><td class="num" id="LN1100">1100</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1101">1101</td><td class="line">                        cn_fds = socket_collect_fds(sock, &amp;cfds);</td></tr>
-<tr><td class="num" id="LN1102">1102</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange"><span class="mrange">cn_fds &lt; 0</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'cn_fds' is &gt;= 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'cn_fds' is &gt;= 0</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1102">1102</td><td class="line">                        <span class='keyword'>if</span> (cn_fds &lt; 0)</td></tr>
 <tr><td class="num" id="LN1103">1103</td><td class="line">                                <span class='keyword'>return</span> cn_fds;</td></tr>
 <tr><td class="num" id="LN1104">1104</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1105">1105</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange"><span class="mrange">cn_fds &lt;= 0</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'cn_fds' is &gt; 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'cn_fds' is &gt; 0</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1105">1105</td><td class="line">                        <span class='keyword'>if</span> (cn_fds &lt;= 0)</td></tr>
 <tr><td class="num" id="LN1106">1106</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN1107">1107</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1108">1108</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!rfds</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'rfds' is non-null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1108">1108</td><td class="line">                        <span class='keyword'>if</span> (!rfds) {</td></tr>
 <tr><td class="num" id="LN1109">1109</td><td class="line">                                rfds = cfds;</td></tr>
 <tr><td class="num" id="LN1110">1110</td><td class="line">                                rn_fds = cn_fds;</td></tr>
 <tr><td class="num" id="LN1111">1111</td><td class="line"> </td></tr>
@@ -1212,11 +1199,8 @@
 <tr><td class="num" id="LN1113">1113</td><td class="line">                        } <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN1114">1114</td><td class="line">                                <span class='keyword'>int</span> *t;</td></tr>
 <tr><td class="num" id="LN1115">1115</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1116">1116</td><td class="line">                                t = <span class="mrange">realloc(rfds, (rn_fds + cn_fds) * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>))</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN1117">1117</td><td class="line">                                <span class='keyword'>if</span> (<span class="mrange">!t</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Assuming 't' is non-null</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1116">1116</td><td class="line">                                t = realloc(rfds, (rn_fds + cn_fds) * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>));</td></tr>
+<tr><td class="num" id="LN1117">1117</td><td class="line">                                <span class='keyword'>if</span> (!t)</td></tr>
 <tr><td class="num" id="LN1118">1118</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1119">1119</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1120">1120</td><td class="line">                                memcpy(t + rn_fds, cfds, cn_fds * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>));</td></tr>
@@ -1226,29 +1210,30 @@
 <tr><td class="num" id="LN1124">1124</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN1125">1125</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1126">1126</td><td class="line">                        r = strv_extend_n(&amp;rfd_names, socket_fdname(sock), cn_fds);</td></tr>
-<tr><td class="num" id="LN1127">1127</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange"><span class="mrange">r &lt; 0</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1127">1127</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN1128">1128</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:40ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'rfds'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1129">1129</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1130">1130</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1131">1131</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1132">1132</td><td class="line">        <span class='keyword'>if</span> (s-&gt;n_fd_store &gt; 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1133">1133</td><td class="line">                ServiceFDStore *fs;</td></tr>
 <tr><td class="num" id="LN1134">1134</td><td class="line">                <span class='keyword'>char</span> **nl;</td></tr>
 <tr><td class="num" id="LN1135">1135</td><td class="line">                <span class='keyword'>int</span> *t;</td></tr>
 <tr><td class="num" id="LN1136">1136</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1137">1137</td><td class="line">                t = realloc(rfds, (rn_fds + s-&gt;n_fd_store) * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>));</td></tr>
-<tr><td class="num" id="LN1138">1138</td><td class="line">                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN1138">1138</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!t</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 't' is non-null</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1139">1139</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1140">1140</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1141">1141</td><td class="line">                rfds = t;</td></tr>
 <tr><td class="num" id="LN1142">1142</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1143">1143</td><td class="line">                nl = realloc(rfd_names, (rn_fds + s-&gt;n_fd_store + 1) * <span class='keyword'>sizeof</span>(<span class='keyword'>char</span>*));</td></tr>
-<tr><td class="num" id="LN1144">1144</td><td class="line">                <span class='keyword'>if</span> (!nl)</td></tr>
+<tr><td class="num" id="LN1143">1143</td><td class="line">                nl = <span class="mrange">realloc(rfd_names, (rn_fds + s-&gt;n_fd_store + 1) * <span class='keyword'>sizeof</span>(<span class='keyword'>char</span>*))</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:22ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1144">1144</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!nl</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'nl' is non-null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1145">1145</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1146">1146</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1147">1147</td><td class="line">                rfd_names = nl;</td></tr>
@@ -1257,7 +1242,11 @@
 <tr><td class="num" id="LN1150">1150</td><td class="line">                        rfds[rn_fds] = fs-&gt;fd;</td></tr>
 <tr><td class="num" id="LN1151">1151</td><td class="line">                        rfd_names[rn_fds] = strdup(strempty(fs-&gt;fdname));</td></tr>
 <tr><td class="num" id="LN1152">1152</td><td class="line">                        <span class='keyword'>if</span> (!rfd_names[rn_fds])</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1153">1153</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:41ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'ENOMEM':
+</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'rfd_names'</td></tr></table></div>
+</div></td></tr>
 <tr><td class="num" id="LN1154">1154</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1155">1155</td><td class="line">                        rn_fds++;</td></tr>
 <tr><td class="num" id="LN1156">1156</td><td class="line">                }</td></tr>
@@ -1562,7 +1551,7 @@
 <tr><td class="num" id="LN1455">1455</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1456">1456</td><td class="line">        <span class='keyword'>if</span> (s-&gt;result != SERVICE_SUCCESS) {</td></tr>
 <tr><td class="num" id="LN1457">1457</td><td class="line">                <span class='macro'>log_unit_warning(UNIT(s), <span class='string_literal'>"Failed with result '%s'."</span>, service_result_to_string(s-&gt;result))<span class='expansion'>({ const Unit *_u = ((&amp;(s)-&gt;meta)); _u ? log_object_internal<br>(4, 0, "src/core/service.c", 1457, __func__, _u-&gt;manager-&gt;<br>unit_log_field, _u-&gt;id, _u-&gt;manager-&gt;invocation_log_field<br>, _u-&gt;invocation_id_string, "Failed with result '%s'.", service_result_to_string<br>(s-&gt;result)) : log_internal(4, 0, "src/core/service.c", 1457<br>, __func__, "Failed with result '%s'.", service_result_to_string<br>(s-&gt;result)); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1458">1458</td><td class="line">                failure_action(<span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;manager, s-&gt;failure_action, <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;reboot_arg);</td></tr>
+<tr><td class="num" id="LN1458">1458</td><td class="line">                emergency_action(<span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;manager, s-&gt;emergency_action, <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;reboot_arg, <span class='string_literal'>"service failed"</span>);</td></tr>
 <tr><td class="num" id="LN1459">1459</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1460">1460</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1461">1461</td><td class="line">        <span class='keyword'>if</span> (allow_restart &amp;&amp; service_shall_restart(s)) {</td></tr>

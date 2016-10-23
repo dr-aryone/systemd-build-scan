@@ -54,9 +54,9 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Use of memory after it is freed -->
+<!-- BUGDESC Potential leak of memory pointed to by 'rfds' -->
 
-<!-- BUGTYPE Use-after-free -->
+<!-- BUGTYPE Memory leak -->
 
 <!-- BUGCATEGORY Memory Error -->
 
@@ -64,21 +64,21 @@
 
 <!-- FILENAME service.c -->
 
-<!-- FUNCTIONNAME service_release_resources -->
+<!-- FUNCTIONNAME service_collect_fds -->
 
-<!-- BUGLINE 307 -->
+<!-- BUGLINE 1128 -->
 
-<!-- BUGCOLUMN 17 -->
+<!-- BUGCOLUMN 40 -->
 
-<!-- BUGPATHLENGTH 11 -->
+<!-- BUGPATHLENGTH 22 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>core/service.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 307, column 17</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Use of memory after it is freed</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1128, column 40</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'rfds'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -356,26 +356,22 @@
 <tr><td class="num" id="LN271">271</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> service_fd_store_unlink(ServiceFDStore *fs) {</td></tr>
 <tr><td class="num" id="LN272">272</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN273">273</td><td class="line">        <span class='keyword'>if</span> (!fs)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN274">274</td><td class="line">                <span class='keyword'>return</span>;</td></tr>
 <tr><td class="num" id="LN275">275</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN276">276</td><td class="line">        <span class='keyword'>if</span> (fs-&gt;service) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN277">277</td><td class="line">                <span class='macro'>assert(fs-&gt;service-&gt;n_fd_store &gt; 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fs-&gt;service-&gt;n_fd_store<br> &gt; 0)),0))) log_assert_failed("fs-&gt;service-&gt;n_fd_store &gt; 0"<br>, "src/core/service.c", 277, __PRETTY_FUNCTION__); } while (0<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN278">278</td><td class="line">                <span class='macro'>LIST_REMOVE(fd_store, fs-&gt;service-&gt;fd_store, fs)<span class='expansion'>do { typeof(*(fs-&gt;service-&gt;fd_store)) **_head = &amp;(fs<br>-&gt;service-&gt;fd_store), *_item = (fs); do { if ((__builtin_expect<br>(!!(!(_item)),0))) log_assert_failed("_item", "src/core/service.c"<br>, 278, __PRETTY_FUNCTION__); } while (0); if (_item-&gt;fd_store_next<br>) _item-&gt;fd_store_next-&gt;fd_store_prev = _item-&gt;fd_store_prev<br>; if (_item-&gt;fd_store_prev) _item-&gt;fd_store_prev-&gt;fd_store_next<br> = _item-&gt;fd_store_next; else { do { if ((__builtin_expect<br>(!!(!(*_head == _item)),0))) log_assert_failed("*_head == _item"<br>, "src/core/service.c", 278, __PRETTY_FUNCTION__); } while (0<br>); *_head = _item-&gt;fd_store_next; } _item-&gt;fd_store_next<br> = _item-&gt;fd_store_prev = ((void*)0); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN279">279</td><td class="line">                fs-&gt;service-&gt;n_fd_store--;</td></tr>
 <tr><td class="num" id="LN280">280</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN281">281</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN282">282</td><td class="line">        <span class='keyword'>if</span> (fs-&gt;event_source) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN283">283</td><td class="line">                sd_event_source_set_enabled(fs-&gt;event_source, SD_EVENT_OFF);</td></tr>
 <tr><td class="num" id="LN284">284</td><td class="line">                sd_event_source_unref(fs-&gt;event_source);</td></tr>
 <tr><td class="num" id="LN285">285</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN286">286</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN287">287</td><td class="line">        free(fs-&gt;fdname);</td></tr>
 <tr><td class="num" id="LN288">288</td><td class="line">        safe_close(fs-&gt;fd);</td></tr>
-<tr><td class="num" id="LN289">289</td><td class="line">        <span class="mrange">free(fs)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Memory is released</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">        free(fs);</td></tr>
 <tr><td class="num" id="LN290">290</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN291">291</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN292">292</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> service_release_resources(Unit *u) {</td></tr>
@@ -393,12 +389,7 @@
 <tr><td class="num" id="LN304">304</td><td class="line">        s-&gt;stderr_fd = safe_close(s-&gt;stderr_fd);</td></tr>
 <tr><td class="num" id="LN305">305</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN306">306</td><td class="line">        <span class='keyword'>while</span> (s-&gt;fd_store)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#EndPath" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num" id="LN307">307</td><td class="line">                <span class="mrange"><span class="mrange">service_fd_store_unlink(<span class="mrange">s-&gt;fd_store</span>)</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Calling 'service_fd_store_unlink'</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Returning; memory was released via 1st parameter</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Use of memory after it is freed</td></tr></table></div></td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">                service_fd_store_unlink(s-&gt;fd_store);</td></tr>
 <tr><td class="num" id="LN308">308</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN309">309</td><td class="line">        <span class='macro'>assert(s-&gt;n_fd_store == 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(s-&gt;n_fd_store == 0)),0))) log_assert_failed<br>("s-&gt;n_fd_store == 0", "src/core/service.c", 309, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN310">310</td><td class="line">}</td></tr>
@@ -429,7 +420,6 @@
 <tr><td class="num" id="LN335">335</td><td class="line">        service_unwatch_pid_file(s);</td></tr>
 <tr><td class="num" id="LN336">336</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN337">337</td><td class="line">        <span class='keyword'>if</span> (s-&gt;bus_name)  {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN338">338</td><td class="line">                unit_unwatch_bus_name(u, s-&gt;bus_name);</td></tr>
 <tr><td class="num" id="LN339">339</td><td class="line">                s-&gt;bus_name = mfree(s-&gt;bus_name);</td></tr>
 <tr><td class="num" id="LN340">340</td><td class="line">        }</td></tr>
@@ -445,8 +435,7 @@
 <tr><td class="num" id="LN350">350</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN351">351</td><td class="line">        s-&gt;timer_event_source = sd_event_source_unref(s-&gt;timer_event_source);</td></tr>
 <tr><td class="num" id="LN352">352</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN353">353</td><td class="line">        <span class="mrange">service_release_resources(u)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Calling 'service_release_resources'</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">        service_release_resources(u);</td></tr>
 <tr><td class="num" id="LN354">354</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN355">355</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN356">356</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> on_fd_store_io(sd_event_source *e, <span class='keyword'>int</span> fd, uint32_t revents, <span class='keyword'>void</span> *userdata) {</td></tr>
@@ -1165,6 +1154,7 @@
 <tr><td class="num" id="LN1069">1069</td><td class="line">        <span class='macro'>assert(fd_names)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd_names)),0))) log_assert_failed<br>("fd_names", "src/core/service.c", 1069, __PRETTY_FUNCTION__)<br>; } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1070">1070</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1071">1071</td><td class="line">        <span class='keyword'>if</span> (s-&gt;socket_fd &gt;= 0) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1072">1072</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1073">1073</td><td class="line">                <span class='comment'>/* Pass the per-connection socket */</span></td></tr>
 <tr><td class="num" id="LN1074">1074</td><td class="line"> </td></tr>
@@ -1190,18 +1180,31 @@
 <tr><td class="num" id="LN1094">1094</td><td class="line">                        <span class='keyword'>int</span> cn_fds;</td></tr>
 <tr><td class="num" id="LN1095">1095</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1096">1096</td><td class="line">                        <span class='keyword'>if</span> (u-&gt;type != UNIT_SOCKET)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1097">1097</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN1098">1098</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1099">1099</td><td class="line">                        sock = SOCKET(u);</td></tr>
 <tr><td class="num" id="LN1100">1100</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1101">1101</td><td class="line">                        cn_fds = socket_collect_fds(sock, &amp;cfds);</td></tr>
-<tr><td class="num" id="LN1102">1102</td><td class="line">                        <span class='keyword'>if</span> (cn_fds &lt; 0)</td></tr>
+<tr><td class="num" id="LN1102">1102</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange"><span class="mrange">cn_fds &lt; 0</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'cn_fds' is &gt;= 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'cn_fds' is &gt;= 0</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1103">1103</td><td class="line">                                <span class='keyword'>return</span> cn_fds;</td></tr>
 <tr><td class="num" id="LN1104">1104</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1105">1105</td><td class="line">                        <span class='keyword'>if</span> (cn_fds &lt;= 0)</td></tr>
+<tr><td class="num" id="LN1105">1105</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange"><span class="mrange">cn_fds &lt;= 0</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Assuming 'cn_fds' is &gt; 0</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'cn_fds' is &gt; 0</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1106">1106</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN1107">1107</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1108">1108</td><td class="line">                        <span class='keyword'>if</span> (!rfds) {</td></tr>
+<tr><td class="num" id="LN1108">1108</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!rfds</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Assuming 'rfds' is non-null</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1109">1109</td><td class="line">                                rfds = cfds;</td></tr>
 <tr><td class="num" id="LN1110">1110</td><td class="line">                                rn_fds = cn_fds;</td></tr>
 <tr><td class="num" id="LN1111">1111</td><td class="line"> </td></tr>
@@ -1209,8 +1212,11 @@
 <tr><td class="num" id="LN1113">1113</td><td class="line">                        } <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN1114">1114</td><td class="line">                                <span class='keyword'>int</span> *t;</td></tr>
 <tr><td class="num" id="LN1115">1115</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN1116">1116</td><td class="line">                                t = realloc(rfds, (rn_fds + cn_fds) * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>));</td></tr>
-<tr><td class="num" id="LN1117">1117</td><td class="line">                                <span class='keyword'>if</span> (!t)</td></tr>
+<tr><td class="num" id="LN1116">1116</td><td class="line">                                t = <span class="mrange">realloc(rfds, (rn_fds + cn_fds) * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>))</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1117">1117</td><td class="line">                                <span class='keyword'>if</span> (<span class="mrange">!t</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:37ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Assuming 't' is non-null</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:33ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1118">1118</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN1119">1119</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1120">1120</td><td class="line">                                memcpy(t + rn_fds, cfds, cn_fds * <span class='keyword'>sizeof</span>(<span class='keyword'>int</span>));</td></tr>
@@ -1220,8 +1226,13 @@
 <tr><td class="num" id="LN1124">1124</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN1125">1125</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1126">1126</td><td class="line">                        r = strv_extend_n(&amp;rfd_names, socket_fdname(sock), cn_fds);</td></tr>
-<tr><td class="num" id="LN1127">1127</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN1127">1127</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange"><span class="mrange">r &lt; 0</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt; 0</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1128">1128</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:40ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'rfds'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1129">1129</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN1130">1130</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1131">1131</td><td class="line"> </td></tr>
@@ -1551,7 +1562,7 @@
 <tr><td class="num" id="LN1455">1455</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1456">1456</td><td class="line">        <span class='keyword'>if</span> (s-&gt;result != SERVICE_SUCCESS) {</td></tr>
 <tr><td class="num" id="LN1457">1457</td><td class="line">                <span class='macro'>log_unit_warning(UNIT(s), <span class='string_literal'>"Failed with result '%s'."</span>, service_result_to_string(s-&gt;result))<span class='expansion'>({ const Unit *_u = ((&amp;(s)-&gt;meta)); _u ? log_object_internal<br>(4, 0, "src/core/service.c", 1457, __func__, _u-&gt;manager-&gt;<br>unit_log_field, _u-&gt;id, _u-&gt;manager-&gt;invocation_log_field<br>, _u-&gt;invocation_id_string, "Failed with result '%s'.", service_result_to_string<br>(s-&gt;result)) : log_internal(4, 0, "src/core/service.c", 1457<br>, __func__, "Failed with result '%s'.", service_result_to_string<br>(s-&gt;result)); })</span></span>;</td></tr>
-<tr><td class="num" id="LN1458">1458</td><td class="line">                failure_action(<span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;manager, s-&gt;failure_action, <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;reboot_arg);</td></tr>
+<tr><td class="num" id="LN1458">1458</td><td class="line">                emergency_action(<span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;manager, s-&gt;emergency_action, <span class='macro'>UNIT(s)<span class='expansion'>(&amp;(s)-&gt;meta)</span></span>-&gt;reboot_arg, <span class='string_literal'>"service failed"</span>);</td></tr>
 <tr><td class="num" id="LN1459">1459</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1460">1460</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1461">1461</td><td class="line">        <span class='keyword'>if</span> (allow_restart &amp;&amp; service_shall_restart(s)) {</td></tr>
