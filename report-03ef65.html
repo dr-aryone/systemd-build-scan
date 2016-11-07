@@ -450,282 +450,313 @@
 <tr><td class="num" id="LN355">355</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN356">356</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN357">357</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN358">358</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> process_suffix(<span class='keyword'>const</span> <span class='keyword'>char</span> *suffix, <span class='keyword'>const</span> <span class='keyword'>char</span> *onlyprefix) {</td></tr>
-<tr><td class="num" id="LN359">359</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
-<tr><td class="num" id="LN360">360</td><td class="line">        <span class='keyword'>char</span> *f;</td></tr>
-<tr><td class="num" id="LN361">361</td><td class="line">        Hashmap *top, *bottom, *drops;</td></tr>
-<tr><td class="num" id="LN362">362</td><td class="line">        Hashmap *h;</td></tr>
-<tr><td class="num" id="LN363">363</td><td class="line">        <span class='keyword'>char</span> *key;</td></tr>
-<tr><td class="num" id="LN364">364</td><td class="line">        <span class='keyword'>int</span> r = 0, k;</td></tr>
-<tr><td class="num" id="LN365">365</td><td class="line">        Iterator i, j;</td></tr>
-<tr><td class="num" id="LN366">366</td><td class="line">        <span class='keyword'>int</span> n_found = 0;</td></tr>
-<tr><td class="num" id="LN367">367</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> dropins;</td></tr>
-<tr><td class="num" id="LN368">368</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN369">369</td><td class="line">        <span class='macro'>assert(suffix)<span class='expansion'>do { if ((__builtin_expect(!!(!(suffix)),0))) log_assert_failed<br>("suffix", "src/delta/delta.c", 369, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN370">370</td><td class="line">        <span class='macro'>assert(!startswith(suffix, <span class='string_literal'>"/"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!startswith(suffix, "/"))),0)<br>)) log_assert_failed("!startswith(suffix, \"/\")", "src/delta/delta.c"<br>, 370, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN371">371</td><td class="line">        <span class='macro'>assert(!strstr(suffix, <span class='string_literal'>"//"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strstr(suffix, "//"))),0))) log_assert_failed<br>("!strstr(suffix, \"//\")", "src/delta/delta.c", 371, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> should_skip_prefix(<span class='keyword'>const</span> <span class='keyword'>char</span>* p) {</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line"><span class='directive'>#ifdef HAVE_SPLIT_USR</span></td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *target = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN362">362</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">        r = chase_symlinks(p, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, &amp;target);</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line">        <span class='keyword'>return</span> !<span class='macro'>streq(p, target)<span class='expansion'>(strcmp((p),(target)) == 0)</span></span> &amp;&amp; nulstr_contains(prefixes, target);</td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line"><span class='directive'>#else</span></td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line"><span class='directive'>#endif</span></td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN372">372</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN373">373</td><td class="line">        dropins = nulstr_contains(have_dropins, suffix);</td></tr>
-<tr><td class="num" id="LN374">374</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN375">375</td><td class="line">        top = <span class='macro'>hashmap_new(&amp;string_hash_ops)<span class='expansion'>internal_hashmap_new(&amp;string_hash_ops )</span></span>;</td></tr>
-<tr><td class="num" id="LN376">376</td><td class="line">        bottom = <span class='macro'>hashmap_new(&amp;string_hash_ops)<span class='expansion'>internal_hashmap_new(&amp;string_hash_ops )</span></span>;</td></tr>
-<tr><td class="num" id="LN377">377</td><td class="line">        drops = <span class='macro'>hashmap_new(&amp;string_hash_ops)<span class='expansion'>internal_hashmap_new(&amp;string_hash_ops )</span></span>;</td></tr>
-<tr><td class="num" id="LN378">378</td><td class="line">        <span class='keyword'>if</span> (!top || !bottom || !drops) {</td></tr>
-<tr><td class="num" id="LN379">379</td><td class="line">                r = -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN380">380</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN381">381</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN382">382</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN383">383</td><td class="line">        <span class='macro'>NULSTR_FOREACH(p, prefixes)<span class='expansion'>for ((p) = (prefixes); (p) &amp;&amp; *(p); (p) = strchr((p),<br> 0)+1)</span></span> {</td></tr>
-<tr><td class="num" id="LN384">384</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN385">385</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN386">386</td><td class="line">                t = <span class='macro'>strjoin(p, <span class='string_literal'>"/"</span>, suffix)<span class='expansion'>strjoin_real((p), "/", suffix, ((void*)0))</span></span>;</td></tr>
-<tr><td class="num" id="LN387">387</td><td class="line">                <span class='keyword'>if</span> (!t) {</td></tr>
-<tr><td class="num" id="LN388">388</td><td class="line">                        r = -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN389">389</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN390">390</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN391">391</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN392">392</td><td class="line">                k = enumerate_dir(top, bottom, drops, t, dropins);</td></tr>
-<tr><td class="num" id="LN393">393</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN394">394</td><td class="line">                        r = k;</td></tr>
-<tr><td class="num" id="LN395">395</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN396">396</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN397">397</td><td class="line">        <span class='macro'>HASHMAP_FOREACH_KEY(f, key, top, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((top), &amp;(i), (void<br>**)&amp;(f), (const void**) &amp;(key)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">                <span class='keyword'>char</span> *o;</td></tr>
-<tr><td class="num" id="LN399">399</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN400">400</td><td class="line">                o = hashmap_get(bottom, key);</td></tr>
-<tr><td class="num" id="LN401">401</td><td class="line">                <span class='macro'>assert(o)<span class='expansion'>do { if ((__builtin_expect(!!(!(o)),0))) log_assert_failed("o"<br>, "src/delta/delta.c", 401, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN402">402</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN403">403</td><td class="line">                <span class='keyword'>if</span> (!onlyprefix || startswith(o, onlyprefix)) {</td></tr>
-<tr><td class="num" id="LN404">404</td><td class="line">                        <span class='keyword'>if</span> (path_equal(o, f)) {</td></tr>
-<tr><td class="num" id="LN405">405</td><td class="line">                                notify_override_unchanged(f);</td></tr>
-<tr><td class="num" id="LN406">406</td><td class="line">                        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN407">407</td><td class="line">                                k = found_override(f, o);</td></tr>
-<tr><td class="num" id="LN408">408</td><td class="line">                                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN409">409</td><td class="line">                                        r = k;</td></tr>
-<tr><td class="num" id="LN410">410</td><td class="line">                                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN411">411</td><td class="line">                                        n_found += k;</td></tr>
-<tr><td class="num" id="LN412">412</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN413">413</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN414">414</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN415">415</td><td class="line">                h = hashmap_get(drops, key);</td></tr>
-<tr><td class="num" id="LN416">416</td><td class="line">                <span class='keyword'>if</span> (h)</td></tr>
-<tr><td class="num" id="LN417">417</td><td class="line">                        <span class='macro'>HASHMAP_FOREACH(o, h, j)<span class='expansion'>for ((j) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((h), &amp;(j), (void<br>**)&amp;(o), ((void*)0)); )</span></span></td></tr>
-<tr><td class="num" id="LN418">418</td><td class="line">                                <span class='keyword'>if</span> (!onlyprefix || startswith(o, onlyprefix))</td></tr>
-<tr><td class="num" id="LN419">419</td><td class="line">                                        n_found += notify_override_extended(f, o);</td></tr>
-<tr><td class="num" id="LN420">420</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN421">421</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN422">422</td><td class="line">finish:</td></tr>
-<tr><td class="num" id="LN423">423</td><td class="line">        hashmap_free_free(top);</td></tr>
-<tr><td class="num" id="LN424">424</td><td class="line">        hashmap_free_free(bottom);</td></tr>
-<tr><td class="num" id="LN425">425</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN426">426</td><td class="line">        <span class='macro'>HASHMAP_FOREACH_KEY(h, key, drops, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((drops), &amp;(i), (<br>void**)&amp;(h), (const void**) &amp;(key)); )</span></span> {</td></tr>
-<tr><td class="num" id="LN427">427</td><td class="line">                hashmap_free_free(hashmap_remove(drops, key));</td></tr>
-<tr><td class="num" id="LN428">428</td><td class="line">                hashmap_remove(drops, key);</td></tr>
-<tr><td class="num" id="LN429">429</td><td class="line">                free(key);</td></tr>
-<tr><td class="num" id="LN430">430</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN431">431</td><td class="line">        hashmap_free(drops);</td></tr>
-<tr><td class="num" id="LN432">432</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN433">433</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? r : n_found;</td></tr>
-<tr><td class="num" id="LN434">434</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN435">435</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN436">436</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> process_suffixes(<span class='keyword'>const</span> <span class='keyword'>char</span> *onlyprefix) {</td></tr>
-<tr><td class="num" id="LN437">437</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *n;</td></tr>
-<tr><td class="num" id="LN438">438</td><td class="line">        <span class='keyword'>int</span> n_found = 0, r;</td></tr>
-<tr><td class="num" id="LN439">439</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN440">440</td><td class="line">        <span class='macro'>NULSTR_FOREACH(n, suffixes)<span class='expansion'>for ((n) = (suffixes); (n) &amp;&amp; *(n); (n) = strchr((n),<br> 0)+1)</span></span> {</td></tr>
-<tr><td class="num" id="LN441">441</td><td class="line">                r = process_suffix(n, onlyprefix);</td></tr>
-<tr><td class="num" id="LN442">442</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN443">443</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN444">444</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN445">445</td><td class="line">                n_found += r;</td></tr>
-<tr><td class="num" id="LN446">446</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN447">447</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN448">448</td><td class="line">        <span class='keyword'>return</span> n_found;</td></tr>
-<tr><td class="num" id="LN449">449</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN450">450</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN451">451</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> process_suffix_chop(<span class='keyword'>const</span> <span class='keyword'>char</span> *arg) {</td></tr>
-<tr><td class="num" id="LN452">452</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
-<tr><td class="num" id="LN453">453</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN454">454</td><td class="line">        <span class='macro'>assert(arg)<span class='expansion'>do { if ((__builtin_expect(!!(!(arg)),0))) log_assert_failed(<br>"arg", "src/delta/delta.c", 454, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN455">455</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN456">456</td><td class="line">        <span class='keyword'>if</span> (!path_is_absolute(arg))</td></tr>
-<tr><td class="num" id="LN457">457</td><td class="line">                <span class='keyword'>return</span> process_suffix(arg, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN458">458</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN459">459</td><td class="line">        <span class='comment'>/* Strip prefix from the suffix */</span></td></tr>
-<tr><td class="num" id="LN460">460</td><td class="line">        <span class='macro'>NULSTR_FOREACH(p, prefixes)<span class='expansion'>for ((p) = (prefixes); (p) &amp;&amp; *(p); (p) = strchr((p),<br> 0)+1)</span></span> {</td></tr>
-<tr><td class="num" id="LN461">461</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *suffix;</td></tr>
-<tr><td class="num" id="LN462">462</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN463">463</td><td class="line">                suffix = startswith(arg, p);</td></tr>
-<tr><td class="num" id="LN464">464</td><td class="line">                <span class='keyword'>if</span> (suffix) {</td></tr>
-<tr><td class="num" id="LN465">465</td><td class="line">                        suffix += strspn(suffix, <span class='string_literal'>"/"</span>);</td></tr>
-<tr><td class="num" id="LN466">466</td><td class="line">                        <span class='keyword'>if</span> (*suffix)</td></tr>
-<tr><td class="num" id="LN467">467</td><td class="line">                                <span class='keyword'>return</span> process_suffix(suffix, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN468">468</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN469">469</td><td class="line">                                <span class='keyword'>return</span> process_suffixes(arg);</td></tr>
-<tr><td class="num" id="LN470">470</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN471">471</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN472">472</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN473">473</td><td class="line">        <span class='macro'>log_error(<span class='string_literal'>"Invalid suffix specification %s."</span>, arg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/delta/delta.c"<br>, 473, __func__, "Invalid suffix specification %s.", arg) : -<br>abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN474">474</td><td class="line">        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN475">475</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN476">476</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN477">477</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> help(<span class='keyword'>void</span>) {</td></tr>
-<tr><td class="num" id="LN478">478</td><td class="line">        printf(<span class='string_literal'>"%s [OPTIONS...] [SUFFIX...]\n\n"</span></td></tr>
-<tr><td class="num" id="LN479">479</td><td class="line">               <span class='string_literal'>"Find overridden configuration files.\n\n"</span></td></tr>
-<tr><td class="num" id="LN480">480</td><td class="line">               <span class='string_literal'>"  -h --help           Show this help\n"</span></td></tr>
-<tr><td class="num" id="LN481">481</td><td class="line">               <span class='string_literal'>"     --version        Show package version\n"</span></td></tr>
-<tr><td class="num" id="LN482">482</td><td class="line">               <span class='string_literal'>"     --no-pager       Do not pipe output into a pager\n"</span></td></tr>
-<tr><td class="num" id="LN483">483</td><td class="line">               <span class='string_literal'>"     --diff[=1|0]     Show a diff when overridden files differ\n"</span></td></tr>
-<tr><td class="num" id="LN484">484</td><td class="line">               <span class='string_literal'>"  -t --type=LIST...   Only display a selected set of override types\n"</span></td></tr>
-<tr><td class="num" id="LN485">485</td><td class="line">               , program_invocation_short_name);</td></tr>
-<tr><td class="num" id="LN486">486</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> process_suffix(<span class='keyword'>const</span> <span class='keyword'>char</span> *suffix, <span class='keyword'>const</span> <span class='keyword'>char</span> *onlyprefix) {</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">        <span class='keyword'>char</span> *f;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line">        Hashmap *top, *bottom, *drops;</td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">        Hashmap *h;</td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">        <span class='keyword'>char</span> *key;</td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">        <span class='keyword'>int</span> r = 0, k;</td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">        Iterator i, j;</td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">        <span class='keyword'>int</span> n_found = 0;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> dropins;</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line">        <span class='macro'>assert(suffix)<span class='expansion'>do { if ((__builtin_expect(!!(!(suffix)),0))) log_assert_failed<br>("suffix", "src/delta/delta.c", 384, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line">        <span class='macro'>assert(!startswith(suffix, <span class='string_literal'>"/"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!startswith(suffix, "/"))),0)<br>)) log_assert_failed("!startswith(suffix, \"/\")", "src/delta/delta.c"<br>, 385, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">        <span class='macro'>assert(!strstr(suffix, <span class='string_literal'>"//"</span>))<span class='expansion'>do { if ((__builtin_expect(!!(!(!strstr(suffix, "//"))),0))) log_assert_failed<br>("!strstr(suffix, \"//\")", "src/delta/delta.c", 386, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line">        dropins = nulstr_contains(have_dropins, suffix);</td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">        top = <span class='macro'>hashmap_new(&amp;string_hash_ops)<span class='expansion'>internal_hashmap_new(&amp;string_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">        bottom = <span class='macro'>hashmap_new(&amp;string_hash_ops)<span class='expansion'>internal_hashmap_new(&amp;string_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">        drops = <span class='macro'>hashmap_new(&amp;string_hash_ops)<span class='expansion'>internal_hashmap_new(&amp;string_hash_ops )</span></span>;</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        <span class='keyword'>if</span> (!top || !bottom || !drops) {</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">                r = -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN395">395</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN396">396</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN397">397</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN398">398</td><td class="line">        <span class='macro'>NULSTR_FOREACH(p, prefixes)<span class='expansion'>for ((p) = (prefixes); (p) &amp;&amp; *(p); (p) = strchr((p),<br> 0)+1)</span></span> {</td></tr>
+<tr><td class="num" id="LN399">399</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *t = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN400">400</td><td class="line">                <span class='keyword'>int</span> skip;</td></tr>
+<tr><td class="num" id="LN401">401</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN402">402</td><td class="line">                skip = should_skip_prefix(p);</td></tr>
+<tr><td class="num" id="LN403">403</td><td class="line">                <span class='keyword'>if</span> (skip &lt; 0) {</td></tr>
+<tr><td class="num" id="LN404">404</td><td class="line">                        r = skip;</td></tr>
+<tr><td class="num" id="LN405">405</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN406">406</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN407">407</td><td class="line">                <span class='keyword'>if</span> (skip)</td></tr>
+<tr><td class="num" id="LN408">408</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN409">409</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN410">410</td><td class="line">                t = <span class='macro'>strjoin(p, <span class='string_literal'>"/"</span>, suffix)<span class='expansion'>strjoin_real((p), "/", suffix, ((void*)0))</span></span>;</td></tr>
+<tr><td class="num" id="LN411">411</td><td class="line">                <span class='keyword'>if</span> (!t) {</td></tr>
+<tr><td class="num" id="LN412">412</td><td class="line">                        r = -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN413">413</td><td class="line">                        <span class='keyword'>goto</span> finish;</td></tr>
+<tr><td class="num" id="LN414">414</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN415">415</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN416">416</td><td class="line">                k = enumerate_dir(top, bottom, drops, t, dropins);</td></tr>
+<tr><td class="num" id="LN417">417</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN418">418</td><td class="line">                        r = k;</td></tr>
+<tr><td class="num" id="LN419">419</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN420">420</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN421">421</td><td class="line">        <span class='macro'>HASHMAP_FOREACH_KEY(f, key, top, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((top), &amp;(i), (void<br>**)&amp;(f), (const void**) &amp;(key)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN422">422</td><td class="line">                <span class='keyword'>char</span> *o;</td></tr>
+<tr><td class="num" id="LN423">423</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN424">424</td><td class="line">                o = hashmap_get(bottom, key);</td></tr>
+<tr><td class="num" id="LN425">425</td><td class="line">                <span class='macro'>assert(o)<span class='expansion'>do { if ((__builtin_expect(!!(!(o)),0))) log_assert_failed("o"<br>, "src/delta/delta.c", 425, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN426">426</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN427">427</td><td class="line">                <span class='keyword'>if</span> (!onlyprefix || startswith(o, onlyprefix)) {</td></tr>
+<tr><td class="num" id="LN428">428</td><td class="line">                        <span class='keyword'>if</span> (path_equal(o, f)) {</td></tr>
+<tr><td class="num" id="LN429">429</td><td class="line">                                notify_override_unchanged(f);</td></tr>
+<tr><td class="num" id="LN430">430</td><td class="line">                        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN431">431</td><td class="line">                                k = found_override(f, o);</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">                                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN433">433</td><td class="line">                                        r = k;</td></tr>
+<tr><td class="num" id="LN434">434</td><td class="line">                                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN435">435</td><td class="line">                                        n_found += k;</td></tr>
+<tr><td class="num" id="LN436">436</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN437">437</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN438">438</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN439">439</td><td class="line">                h = hashmap_get(drops, key);</td></tr>
+<tr><td class="num" id="LN440">440</td><td class="line">                <span class='keyword'>if</span> (h)</td></tr>
+<tr><td class="num" id="LN441">441</td><td class="line">                        <span class='macro'>HASHMAP_FOREACH(o, h, j)<span class='expansion'>for ((j) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((h), &amp;(j), (void<br>**)&amp;(o), ((void*)0)); )</span></span></td></tr>
+<tr><td class="num" id="LN442">442</td><td class="line">                                <span class='keyword'>if</span> (!onlyprefix || startswith(o, onlyprefix))</td></tr>
+<tr><td class="num" id="LN443">443</td><td class="line">                                        n_found += notify_override_extended(f, o);</td></tr>
+<tr><td class="num" id="LN444">444</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN445">445</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN447">447</td><td class="line">        hashmap_free_free(top);</td></tr>
+<tr><td class="num" id="LN448">448</td><td class="line">        hashmap_free_free(bottom);</td></tr>
+<tr><td class="num" id="LN449">449</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN450">450</td><td class="line">        <span class='macro'>HASHMAP_FOREACH_KEY(h, key, drops, i)<span class='expansion'>for ((i) = ((Iterator) { .idx = ((2147483647 *2U +1U) - 1), .<br>next_key = ((void*)0) }); hashmap_iterate((drops), &amp;(i), (<br>void**)&amp;(h), (const void**) &amp;(key)); )</span></span> {</td></tr>
+<tr><td class="num" id="LN451">451</td><td class="line">                hashmap_free_free(hashmap_remove(drops, key));</td></tr>
+<tr><td class="num" id="LN452">452</td><td class="line">                hashmap_remove(drops, key);</td></tr>
+<tr><td class="num" id="LN453">453</td><td class="line">                free(key);</td></tr>
+<tr><td class="num" id="LN454">454</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN455">455</td><td class="line">        hashmap_free(drops);</td></tr>
+<tr><td class="num" id="LN456">456</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN457">457</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? r : n_found;</td></tr>
+<tr><td class="num" id="LN458">458</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN459">459</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN460">460</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> process_suffixes(<span class='keyword'>const</span> <span class='keyword'>char</span> *onlyprefix) {</td></tr>
+<tr><td class="num" id="LN461">461</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *n;</td></tr>
+<tr><td class="num" id="LN462">462</td><td class="line">        <span class='keyword'>int</span> n_found = 0, r;</td></tr>
+<tr><td class="num" id="LN463">463</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN464">464</td><td class="line">        <span class='macro'>NULSTR_FOREACH(n, suffixes)<span class='expansion'>for ((n) = (suffixes); (n) &amp;&amp; *(n); (n) = strchr((n),<br> 0)+1)</span></span> {</td></tr>
+<tr><td class="num" id="LN465">465</td><td class="line">                r = process_suffix(n, onlyprefix);</td></tr>
+<tr><td class="num" id="LN466">466</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN467">467</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN468">468</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN469">469</td><td class="line">                n_found += r;</td></tr>
+<tr><td class="num" id="LN470">470</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN471">471</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN472">472</td><td class="line">        <span class='keyword'>return</span> n_found;</td></tr>
+<tr><td class="num" id="LN473">473</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN474">474</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN475">475</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> process_suffix_chop(<span class='keyword'>const</span> <span class='keyword'>char</span> *arg) {</td></tr>
+<tr><td class="num" id="LN476">476</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *p;</td></tr>
+<tr><td class="num" id="LN477">477</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN478">478</td><td class="line">        <span class='macro'>assert(arg)<span class='expansion'>do { if ((__builtin_expect(!!(!(arg)),0))) log_assert_failed(<br>"arg", "src/delta/delta.c", 478, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN479">479</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN480">480</td><td class="line">        <span class='keyword'>if</span> (!path_is_absolute(arg))</td></tr>
+<tr><td class="num" id="LN481">481</td><td class="line">                <span class='keyword'>return</span> process_suffix(arg, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN482">482</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN483">483</td><td class="line">        <span class='comment'>/* Strip prefix from the suffix */</span></td></tr>
+<tr><td class="num" id="LN484">484</td><td class="line">        <span class='macro'>NULSTR_FOREACH(p, prefixes)<span class='expansion'>for ((p) = (prefixes); (p) &amp;&amp; *(p); (p) = strchr((p),<br> 0)+1)</span></span> {</td></tr>
+<tr><td class="num" id="LN485">485</td><td class="line">                <span class='keyword'>const</span> <span class='keyword'>char</span> *suffix;</td></tr>
+<tr><td class="num" id="LN486">486</td><td class="line">                <span class='keyword'>int</span> skip;</td></tr>
 <tr><td class="num" id="LN487">487</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN488">488</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> parse_flags(<span class='keyword'>const</span> <span class='keyword'>char</span> *flag_str, <span class='keyword'>int</span> flags) {</td></tr>
-<tr><td class="num" id="LN489">489</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *word, *state;</td></tr>
-<tr><td class="num" id="LN490">490</td><td class="line">        size_t l;</td></tr>
-<tr><td class="num" id="LN491">491</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN492">492</td><td class="line">        <span class='macro'>FOREACH_WORD_SEPARATOR(word, l, flag_str, <span class='string_literal'>","</span>, state)<span class='expansion'>for ((state) = (flag_str), (word) = split(&amp;(state), &amp;<br>(l), (","), (0)); (word); (word) = split(&amp;(state), &amp;(<br>l), (","), (0)))</span></span> {</td></tr>
-<tr><td class="num" id="LN493">493</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"masked"</span>, word, l)<span class='expansion'>(strncmp(("masked"), (word), (l)) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN494">494</td><td class="line">                        flags |= SHOW_MASKED;</td></tr>
-<tr><td class="num" id="LN495">495</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq (<span class='string_literal'>"equivalent"</span>, word, l)<span class='expansion'>(strncmp(("equivalent"), (word), (l)) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN496">496</td><td class="line">                        flags |= SHOW_EQUIVALENT;</td></tr>
-<tr><td class="num" id="LN497">497</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"redirected"</span>, word, l)<span class='expansion'>(strncmp(("redirected"), (word), (l)) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN498">498</td><td class="line">                        flags |= SHOW_REDIRECTED;</td></tr>
-<tr><td class="num" id="LN499">499</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"overridden"</span>, word, l)<span class='expansion'>(strncmp(("overridden"), (word), (l)) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN500">500</td><td class="line">                        flags |= SHOW_OVERRIDDEN;</td></tr>
-<tr><td class="num" id="LN501">501</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"unchanged"</span>, word, l)<span class='expansion'>(strncmp(("unchanged"), (word), (l)) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN502">502</td><td class="line">                        flags |= SHOW_UNCHANGED;</td></tr>
-<tr><td class="num" id="LN503">503</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"extended"</span>, word, l)<span class='expansion'>(strncmp(("extended"), (word), (l)) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN504">504</td><td class="line">                        flags |= SHOW_EXTENDED;</td></tr>
-<tr><td class="num" id="LN505">505</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"default"</span>, word, l)<span class='expansion'>(strncmp(("default"), (word), (l)) == 0)</span></span>)</td></tr>
-<tr><td class="num" id="LN506">506</td><td class="line">                        flags |= SHOW_DEFAULTS;</td></tr>
-<tr><td class="num" id="LN507">507</td><td class="line">                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN508">508</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN509">509</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN510">510</td><td class="line">        <span class='keyword'>return</span> flags;</td></tr>
-<tr><td class="num" id="LN511">511</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN512">512</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN513">513</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> parse_argv(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
-<tr><td class="num" id="LN514">514</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN515">515</td><td class="line">        <span class='keyword'>enum</span> {</td></tr>
-<tr><td class="num" id="LN516">516</td><td class="line">                ARG_NO_PAGER = 0x100,</td></tr>
-<tr><td class="num" id="LN517">517</td><td class="line">                ARG_DIFF,</td></tr>
-<tr><td class="num" id="LN518">518</td><td class="line">                ARG_VERSION</td></tr>
-<tr><td class="num" id="LN519">519</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN520">520</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN521">521</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>struct</span> option options[] = {</td></tr>
-<tr><td class="num" id="LN522">522</td><td class="line">                { <span class='string_literal'>"help"</span>,      <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'h'          },</td></tr>
-<tr><td class="num" id="LN523">523</td><td class="line">                { <span class='string_literal'>"version"</span>,   <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VERSION  },</td></tr>
-<tr><td class="num" id="LN524">524</td><td class="line">                { <span class='string_literal'>"no-pager"</span>,  <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NO_PAGER },</td></tr>
-<tr><td class="num" id="LN525">525</td><td class="line">                { <span class='string_literal'>"diff"</span>,      <span class='macro'>optional_argument<span class='expansion'>2</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_DIFF     },</td></tr>
-<tr><td class="num" id="LN526">526</td><td class="line">                { <span class='string_literal'>"type"</span>,      <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 't'          },</td></tr>
-<tr><td class="num" id="LN527">527</td><td class="line">                {}</td></tr>
-<tr><td class="num" id="LN528">528</td><td class="line">        };</td></tr>
-<tr><td class="num" id="LN529">529</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN530">530</td><td class="line">        <span class='keyword'>int</span> c;</td></tr>
-<tr><td class="num" id="LN531">531</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN532">532</td><td class="line">        <span class='macro'>assert(argc &gt;= 1)<span class='expansion'>do { if ((__builtin_expect(!!(!(argc &gt;= 1)),0))) log_assert_failed<br>("argc &gt;= 1", "src/delta/delta.c", 532, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN533">533</td><td class="line">        <span class='macro'>assert(argv)<span class='expansion'>do { if ((__builtin_expect(!!(!(argv)),0))) log_assert_failed<br>("argv", "src/delta/delta.c", 533, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN534">534</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN535">535</td><td class="line">        <span class='keyword'>while</span> ((c = getopt_long(argc, argv, <span class='string_literal'>"ht:"</span>, options, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) &gt;= 0)</td></tr>
-<tr><td class="num" id="LN536">536</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN537">537</td><td class="line">                <span class='keyword'>switch</span> (c) {</td></tr>
-<tr><td class="num" id="LN538">538</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN539">539</td><td class="line">                <span class='keyword'>case</span> 'h':</td></tr>
-<tr><td class="num" id="LN540">540</td><td class="line">                        help();</td></tr>
-<tr><td class="num" id="LN541">541</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN542">542</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN543">543</td><td class="line">                <span class='keyword'>case</span> ARG_VERSION:</td></tr>
-<tr><td class="num" id="LN544">544</td><td class="line">                        <span class='keyword'>return</span> version();</td></tr>
+<tr><td class="num" id="LN488">488</td><td class="line">                skip = should_skip_prefix(p);</td></tr>
+<tr><td class="num" id="LN489">489</td><td class="line">                <span class='keyword'>if</span> (skip &lt; 0)</td></tr>
+<tr><td class="num" id="LN490">490</td><td class="line">                        <span class='keyword'>return</span> skip;</td></tr>
+<tr><td class="num" id="LN491">491</td><td class="line">                <span class='keyword'>if</span> (skip)</td></tr>
+<tr><td class="num" id="LN492">492</td><td class="line">                        <span class='keyword'>continue</span>;</td></tr>
+<tr><td class="num" id="LN493">493</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN494">494</td><td class="line">                suffix = startswith(arg, p);</td></tr>
+<tr><td class="num" id="LN495">495</td><td class="line">                <span class='keyword'>if</span> (suffix) {</td></tr>
+<tr><td class="num" id="LN496">496</td><td class="line">                        suffix += strspn(suffix, <span class='string_literal'>"/"</span>);</td></tr>
+<tr><td class="num" id="LN497">497</td><td class="line">                        <span class='keyword'>if</span> (*suffix)</td></tr>
+<tr><td class="num" id="LN498">498</td><td class="line">                                <span class='keyword'>return</span> process_suffix(suffix, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN499">499</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN500">500</td><td class="line">                                <span class='keyword'>return</span> process_suffixes(arg);</td></tr>
+<tr><td class="num" id="LN501">501</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN502">502</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN503">503</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN504">504</td><td class="line">        <span class='macro'>log_error(<span class='string_literal'>"Invalid suffix specification %s."</span>, arg)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/delta/delta.c"<br>, 504, __func__, "Invalid suffix specification %s.", arg) : -<br>abs(_e); })</span></span>;</td></tr>
+<tr><td class="num" id="LN505">505</td><td class="line">        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN506">506</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN507">507</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN508">508</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> help(<span class='keyword'>void</span>) {</td></tr>
+<tr><td class="num" id="LN509">509</td><td class="line">        printf(<span class='string_literal'>"%s [OPTIONS...] [SUFFIX...]\n\n"</span></td></tr>
+<tr><td class="num" id="LN510">510</td><td class="line">               <span class='string_literal'>"Find overridden configuration files.\n\n"</span></td></tr>
+<tr><td class="num" id="LN511">511</td><td class="line">               <span class='string_literal'>"  -h --help           Show this help\n"</span></td></tr>
+<tr><td class="num" id="LN512">512</td><td class="line">               <span class='string_literal'>"     --version        Show package version\n"</span></td></tr>
+<tr><td class="num" id="LN513">513</td><td class="line">               <span class='string_literal'>"     --no-pager       Do not pipe output into a pager\n"</span></td></tr>
+<tr><td class="num" id="LN514">514</td><td class="line">               <span class='string_literal'>"     --diff[=1|0]     Show a diff when overridden files differ\n"</span></td></tr>
+<tr><td class="num" id="LN515">515</td><td class="line">               <span class='string_literal'>"  -t --type=LIST...   Only display a selected set of override types\n"</span></td></tr>
+<tr><td class="num" id="LN516">516</td><td class="line">               , program_invocation_short_name);</td></tr>
+<tr><td class="num" id="LN517">517</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN518">518</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN519">519</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> parse_flags(<span class='keyword'>const</span> <span class='keyword'>char</span> *flag_str, <span class='keyword'>int</span> flags) {</td></tr>
+<tr><td class="num" id="LN520">520</td><td class="line">        <span class='keyword'>const</span> <span class='keyword'>char</span> *word, *state;</td></tr>
+<tr><td class="num" id="LN521">521</td><td class="line">        size_t l;</td></tr>
+<tr><td class="num" id="LN522">522</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN523">523</td><td class="line">        <span class='macro'>FOREACH_WORD_SEPARATOR(word, l, flag_str, <span class='string_literal'>","</span>, state)<span class='expansion'>for ((state) = (flag_str), (word) = split(&amp;(state), &amp;<br>(l), (","), (0)); (word); (word) = split(&amp;(state), &amp;(<br>l), (","), (0)))</span></span> {</td></tr>
+<tr><td class="num" id="LN524">524</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"masked"</span>, word, l)<span class='expansion'>(strncmp(("masked"), (word), (l)) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN525">525</td><td class="line">                        flags |= SHOW_MASKED;</td></tr>
+<tr><td class="num" id="LN526">526</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq (<span class='string_literal'>"equivalent"</span>, word, l)<span class='expansion'>(strncmp(("equivalent"), (word), (l)) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN527">527</td><td class="line">                        flags |= SHOW_EQUIVALENT;</td></tr>
+<tr><td class="num" id="LN528">528</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"redirected"</span>, word, l)<span class='expansion'>(strncmp(("redirected"), (word), (l)) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN529">529</td><td class="line">                        flags |= SHOW_REDIRECTED;</td></tr>
+<tr><td class="num" id="LN530">530</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"overridden"</span>, word, l)<span class='expansion'>(strncmp(("overridden"), (word), (l)) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN531">531</td><td class="line">                        flags |= SHOW_OVERRIDDEN;</td></tr>
+<tr><td class="num" id="LN532">532</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"unchanged"</span>, word, l)<span class='expansion'>(strncmp(("unchanged"), (word), (l)) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN533">533</td><td class="line">                        flags |= SHOW_UNCHANGED;</td></tr>
+<tr><td class="num" id="LN534">534</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"extended"</span>, word, l)<span class='expansion'>(strncmp(("extended"), (word), (l)) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN535">535</td><td class="line">                        flags |= SHOW_EXTENDED;</td></tr>
+<tr><td class="num" id="LN536">536</td><td class="line">                <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>strneq(<span class='string_literal'>"default"</span>, word, l)<span class='expansion'>(strncmp(("default"), (word), (l)) == 0)</span></span>)</td></tr>
+<tr><td class="num" id="LN537">537</td><td class="line">                        flags |= SHOW_DEFAULTS;</td></tr>
+<tr><td class="num" id="LN538">538</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN539">539</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN540">540</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN541">541</td><td class="line">        <span class='keyword'>return</span> flags;</td></tr>
+<tr><td class="num" id="LN542">542</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN543">543</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN544">544</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> parse_argv(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
 <tr><td class="num" id="LN545">545</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN546">546</td><td class="line">                <span class='keyword'>case</span> ARG_NO_PAGER:</td></tr>
-<tr><td class="num" id="LN547">547</td><td class="line">                        arg_no_pager = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN548">548</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN549">549</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN550">550</td><td class="line">                <span class='keyword'>case</span> 't': {</td></tr>
-<tr><td class="num" id="LN551">551</td><td class="line">                        <span class='keyword'>int</span> f;</td></tr>
-<tr><td class="num" id="LN552">552</td><td class="line">                        f = parse_flags(optarg, arg_flags);</td></tr>
-<tr><td class="num" id="LN553">553</td><td class="line">                        <span class='keyword'>if</span> (f &lt; 0) {</td></tr>
-<tr><td class="num" id="LN554">554</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to parse flags field."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/delta/delta.c"<br>, 554, __func__, "Failed to parse flags field.") : -abs(_e); }<br>)</span></span>;</td></tr>
-<tr><td class="num" id="LN555">555</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN557">557</td><td class="line">                        arg_flags = f;</td></tr>
-<tr><td class="num" id="LN558">558</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN546">546</td><td class="line">        <span class='keyword'>enum</span> {</td></tr>
+<tr><td class="num" id="LN547">547</td><td class="line">                ARG_NO_PAGER = 0x100,</td></tr>
+<tr><td class="num" id="LN548">548</td><td class="line">                ARG_DIFF,</td></tr>
+<tr><td class="num" id="LN549">549</td><td class="line">                ARG_VERSION</td></tr>
+<tr><td class="num" id="LN550">550</td><td class="line">        };</td></tr>
+<tr><td class="num" id="LN551">551</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN552">552</td><td class="line">        <span class='keyword'>static</span> <span class='keyword'>const</span> <span class='keyword'>struct</span> option options[] = {</td></tr>
+<tr><td class="num" id="LN553">553</td><td class="line">                { <span class='string_literal'>"help"</span>,      <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 'h'          },</td></tr>
+<tr><td class="num" id="LN554">554</td><td class="line">                { <span class='string_literal'>"version"</span>,   <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_VERSION  },</td></tr>
+<tr><td class="num" id="LN555">555</td><td class="line">                { <span class='string_literal'>"no-pager"</span>,  <span class='macro'>no_argument<span class='expansion'>0</span></span>,       <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_NO_PAGER },</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">                { <span class='string_literal'>"diff"</span>,      <span class='macro'>optional_argument<span class='expansion'>2</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, ARG_DIFF     },</td></tr>
+<tr><td class="num" id="LN557">557</td><td class="line">                { <span class='string_literal'>"type"</span>,      <span class='macro'>required_argument<span class='expansion'>1</span></span>, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 't'          },</td></tr>
+<tr><td class="num" id="LN558">558</td><td class="line">                {}</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">        };</td></tr>
 <tr><td class="num" id="LN560">560</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN561">561</td><td class="line">                <span class='keyword'>case</span> ARG_DIFF:</td></tr>
-<tr><td class="num" id="LN562">562</td><td class="line">                        <span class='keyword'>if</span> (!optarg)</td></tr>
-<tr><td class="num" id="LN563">563</td><td class="line">                                arg_diff = 1;</td></tr>
-<tr><td class="num" id="LN564">564</td><td class="line">                        <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN565">565</td><td class="line">                                <span class='keyword'>int</span> b;</td></tr>
-<tr><td class="num" id="LN566">566</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN567">567</td><td class="line">                                b = parse_boolean(optarg);</td></tr>
-<tr><td class="num" id="LN568">568</td><td class="line">                                <span class='keyword'>if</span> (b &lt; 0) {</td></tr>
-<tr><td class="num" id="LN569">569</td><td class="line">                                        <span class='macro'>log_error(<span class='string_literal'>"Failed to parse diff boolean."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/delta/delta.c"<br>, 569, __func__, "Failed to parse diff boolean.") : -abs(_e);<br> })</span></span>;</td></tr>
-<tr><td class="num" id="LN570">570</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN571">571</td><td class="line">                                }</td></tr>
-<tr><td class="num" id="LN572">572</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN573">573</td><td class="line">                                arg_diff = b;</td></tr>
-<tr><td class="num" id="LN574">574</td><td class="line">                        }</td></tr>
-<tr><td class="num" id="LN575">575</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN561">561</td><td class="line">        <span class='keyword'>int</span> c;</td></tr>
+<tr><td class="num" id="LN562">562</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN563">563</td><td class="line">        <span class='macro'>assert(argc &gt;= 1)<span class='expansion'>do { if ((__builtin_expect(!!(!(argc &gt;= 1)),0))) log_assert_failed<br>("argc &gt;= 1", "src/delta/delta.c", 563, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN564">564</td><td class="line">        <span class='macro'>assert(argv)<span class='expansion'>do { if ((__builtin_expect(!!(!(argv)),0))) log_assert_failed<br>("argv", "src/delta/delta.c", 564, __PRETTY_FUNCTION__); } while<br> (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN565">565</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN566">566</td><td class="line">        <span class='keyword'>while</span> ((c = getopt_long(argc, argv, <span class='string_literal'>"ht:"</span>, options, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>)) &gt;= 0)</td></tr>
+<tr><td class="num" id="LN567">567</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN568">568</td><td class="line">                <span class='keyword'>switch</span> (c) {</td></tr>
+<tr><td class="num" id="LN569">569</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN570">570</td><td class="line">                <span class='keyword'>case</span> 'h':</td></tr>
+<tr><td class="num" id="LN571">571</td><td class="line">                        help();</td></tr>
+<tr><td class="num" id="LN572">572</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN573">573</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN574">574</td><td class="line">                <span class='keyword'>case</span> ARG_VERSION:</td></tr>
+<tr><td class="num" id="LN575">575</td><td class="line">                        <span class='keyword'>return</span> version();</td></tr>
 <tr><td class="num" id="LN576">576</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN577">577</td><td class="line">                <span class='keyword'>case</span> '?':</td></tr>
-<tr><td class="num" id="LN578">578</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN579">579</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN580">580</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
-<tr><td class="num" id="LN581">581</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Unhandled option"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unhandled option", "src/delta/delta.c"<br>, 581, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN582">582</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN583">583</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN584">584</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
-<tr><td class="num" id="LN585">585</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN586">586</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN587">587</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
-<tr><td class="num" id="LN588">588</td><td class="line">        <span class='keyword'>int</span> r, k, n_found = 0;</td></tr>
-<tr><td class="num" id="LN589">589</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN590">590</td><td class="line">        log_parse_environment();</td></tr>
-<tr><td class="num" id="LN591">591</td><td class="line">        log_open();</td></tr>
-<tr><td class="num" id="LN592">592</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN593">593</td><td class="line">        r = parse_argv(argc, argv);</td></tr>
-<tr><td class="num" id="LN594">594</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
-<tr><td class="num" id="LN595">595</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
-<tr><td class="num" id="LN596">596</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN597">597</td><td class="line">        <span class='keyword'>if</span> (arg_flags == 0)</td></tr>
-<tr><td class="num" id="LN598">598</td><td class="line">                arg_flags = SHOW_DEFAULTS;</td></tr>
-<tr><td class="num" id="LN599">599</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN600">600</td><td class="line">        <span class='keyword'>if</span> (arg_diff &lt; 0)</td></tr>
-<tr><td class="num" id="LN601">601</td><td class="line">                arg_diff = !!(arg_flags &amp; SHOW_OVERRIDDEN);</td></tr>
-<tr><td class="num" id="LN602">602</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_diff)</td></tr>
-<tr><td class="num" id="LN603">603</td><td class="line">                arg_flags |= SHOW_OVERRIDDEN;</td></tr>
-<tr><td class="num" id="LN604">604</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN605">605</td><td class="line">        pager_open(arg_no_pager, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
-<tr><td class="num" id="LN606">606</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN607">607</td><td class="line">        <span class='keyword'>if</span> (optind &lt; argc) {</td></tr>
-<tr><td class="num" id="LN608">608</td><td class="line">                <span class='keyword'>int</span> i;</td></tr>
-<tr><td class="num" id="LN609">609</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN610">610</td><td class="line">                <span class='keyword'>for</span> (i = optind; i &lt; argc; i++) {</td></tr>
-<tr><td class="num" id="LN611">611</td><td class="line">                        path_kill_slashes(argv[i]);</td></tr>
-<tr><td class="num" id="LN612">612</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN613">613</td><td class="line">                        k = process_suffix_chop(argv[i]);</td></tr>
-<tr><td class="num" id="LN614">614</td><td class="line">                        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN615">615</td><td class="line">                                r = k;</td></tr>
-<tr><td class="num" id="LN616">616</td><td class="line">                        <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN617">617</td><td class="line">                                n_found += k;</td></tr>
-<tr><td class="num" id="LN618">618</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN619">619</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN620">620</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
-<tr><td class="num" id="LN621">621</td><td class="line">                k = process_suffixes(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
-<tr><td class="num" id="LN622">622</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN623">623</td><td class="line">                        r = k;</td></tr>
-<tr><td class="num" id="LN624">624</td><td class="line">                <span class='keyword'>else</span></td></tr>
-<tr><td class="num" id="LN625">625</td><td class="line">                        n_found += k;</td></tr>
-<tr><td class="num" id="LN626">626</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN577">577</td><td class="line">                <span class='keyword'>case</span> ARG_NO_PAGER:</td></tr>
+<tr><td class="num" id="LN578">578</td><td class="line">                        arg_no_pager = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN579">579</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN580">580</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN581">581</td><td class="line">                <span class='keyword'>case</span> 't': {</td></tr>
+<tr><td class="num" id="LN582">582</td><td class="line">                        <span class='keyword'>int</span> f;</td></tr>
+<tr><td class="num" id="LN583">583</td><td class="line">                        f = parse_flags(optarg, arg_flags);</td></tr>
+<tr><td class="num" id="LN584">584</td><td class="line">                        <span class='keyword'>if</span> (f &lt; 0) {</td></tr>
+<tr><td class="num" id="LN585">585</td><td class="line">                                <span class='macro'>log_error(<span class='string_literal'>"Failed to parse flags field."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/delta/delta.c"<br>, 585, __func__, "Failed to parse flags field.") : -abs(_e); }<br>)</span></span>;</td></tr>
+<tr><td class="num" id="LN586">586</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN587">587</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN588">588</td><td class="line">                        arg_flags = f;</td></tr>
+<tr><td class="num" id="LN589">589</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN590">590</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN591">591</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN592">592</td><td class="line">                <span class='keyword'>case</span> ARG_DIFF:</td></tr>
+<tr><td class="num" id="LN593">593</td><td class="line">                        <span class='keyword'>if</span> (!optarg)</td></tr>
+<tr><td class="num" id="LN594">594</td><td class="line">                                arg_diff = 1;</td></tr>
+<tr><td class="num" id="LN595">595</td><td class="line">                        <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN596">596</td><td class="line">                                <span class='keyword'>int</span> b;</td></tr>
+<tr><td class="num" id="LN597">597</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN598">598</td><td class="line">                                b = parse_boolean(optarg);</td></tr>
+<tr><td class="num" id="LN599">599</td><td class="line">                                <span class='keyword'>if</span> (b &lt; 0) {</td></tr>
+<tr><td class="num" id="LN600">600</td><td class="line">                                        <span class='macro'>log_error(<span class='string_literal'>"Failed to parse diff boolean."</span>)<span class='expansion'>({ int _level = (3), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/delta/delta.c"<br>, 600, __func__, "Failed to parse diff boolean.") : -abs(_e);<br> })</span></span>;</td></tr>
+<tr><td class="num" id="LN601">601</td><td class="line">                                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN602">602</td><td class="line">                                }</td></tr>
+<tr><td class="num" id="LN603">603</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN604">604</td><td class="line">                                arg_diff = b;</td></tr>
+<tr><td class="num" id="LN605">605</td><td class="line">                        }</td></tr>
+<tr><td class="num" id="LN606">606</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN607">607</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN608">608</td><td class="line">                <span class='keyword'>case</span> '?':</td></tr>
+<tr><td class="num" id="LN609">609</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
+<tr><td class="num" id="LN610">610</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN611">611</td><td class="line">                <span class='keyword'>default</span>:</td></tr>
+<tr><td class="num" id="LN612">612</td><td class="line">                        <span class='macro'>assert_not_reached(<span class='string_literal'>"Unhandled option"</span>)<span class='expansion'>do { log_assert_failed_unreachable("Unhandled option", "src/delta/delta.c"<br>, 612, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN613">613</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN614">614</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN615">615</td><td class="line">        <span class='keyword'>return</span> 1;</td></tr>
+<tr><td class="num" id="LN616">616</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN617">617</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN618">618</td><td class="line"><span class='keyword'>int</span> main(<span class='keyword'>int</span> argc, <span class='keyword'>char</span> *argv[]) {</td></tr>
+<tr><td class="num" id="LN619">619</td><td class="line">        <span class='keyword'>int</span> r, k, n_found = 0;</td></tr>
+<tr><td class="num" id="LN620">620</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN621">621</td><td class="line">        log_parse_environment();</td></tr>
+<tr><td class="num" id="LN622">622</td><td class="line">        log_open();</td></tr>
+<tr><td class="num" id="LN623">623</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN624">624</td><td class="line">        r = parse_argv(argc, argv);</td></tr>
+<tr><td class="num" id="LN625">625</td><td class="line">        <span class='keyword'>if</span> (r &lt;= 0)</td></tr>
+<tr><td class="num" id="LN626">626</td><td class="line">                <span class='keyword'>goto</span> finish;</td></tr>
 <tr><td class="num" id="LN627">627</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN628">628</td><td class="line">        <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
-<tr><td class="num" id="LN629">629</td><td class="line">                printf(<span class='string_literal'>"%s%i overridden configuration files found.\n"</span>, n_found ? <span class='string_literal'>"\n"</span> : <span class='string_literal'>""</span>, n_found);</td></tr>
+<tr><td class="num" id="LN628">628</td><td class="line">        <span class='keyword'>if</span> (arg_flags == 0)</td></tr>
+<tr><td class="num" id="LN629">629</td><td class="line">                arg_flags = SHOW_DEFAULTS;</td></tr>
 <tr><td class="num" id="LN630">630</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN631">631</td><td class="line">finish:</td></tr>
-<tr><td class="num" id="LN632">632</td><td class="line">        pager_close();</td></tr>
-<tr><td class="num" id="LN633">633</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN634">634</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
-<tr><td class="num" id="LN635">635</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN631">631</td><td class="line">        <span class='keyword'>if</span> (arg_diff &lt; 0)</td></tr>
+<tr><td class="num" id="LN632">632</td><td class="line">                arg_diff = !!(arg_flags &amp; SHOW_OVERRIDDEN);</td></tr>
+<tr><td class="num" id="LN633">633</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (arg_diff)</td></tr>
+<tr><td class="num" id="LN634">634</td><td class="line">                arg_flags |= SHOW_OVERRIDDEN;</td></tr>
+<tr><td class="num" id="LN635">635</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN636">636</td><td class="line">        pager_open(arg_no_pager, <span class='macro'>false<span class='expansion'>0</span></span>);</td></tr>
+<tr><td class="num" id="LN637">637</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN638">638</td><td class="line">        <span class='keyword'>if</span> (optind &lt; argc) {</td></tr>
+<tr><td class="num" id="LN639">639</td><td class="line">                <span class='keyword'>int</span> i;</td></tr>
+<tr><td class="num" id="LN640">640</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN641">641</td><td class="line">                <span class='keyword'>for</span> (i = optind; i &lt; argc; i++) {</td></tr>
+<tr><td class="num" id="LN642">642</td><td class="line">                        path_kill_slashes(argv[i]);</td></tr>
+<tr><td class="num" id="LN643">643</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN644">644</td><td class="line">                        k = process_suffix_chop(argv[i]);</td></tr>
+<tr><td class="num" id="LN645">645</td><td class="line">                        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN646">646</td><td class="line">                                r = k;</td></tr>
+<tr><td class="num" id="LN647">647</td><td class="line">                        <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN648">648</td><td class="line">                                n_found += k;</td></tr>
+<tr><td class="num" id="LN649">649</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN650">650</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN651">651</td><td class="line">        } <span class='keyword'>else</span> {</td></tr>
+<tr><td class="num" id="LN652">652</td><td class="line">                k = process_suffixes(<span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>);</td></tr>
+<tr><td class="num" id="LN653">653</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN654">654</td><td class="line">                        r = k;</td></tr>
+<tr><td class="num" id="LN655">655</td><td class="line">                <span class='keyword'>else</span></td></tr>
+<tr><td class="num" id="LN656">656</td><td class="line">                        n_found += k;</td></tr>
+<tr><td class="num" id="LN657">657</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN658">658</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN659">659</td><td class="line">        <span class='keyword'>if</span> (r &gt;= 0)</td></tr>
+<tr><td class="num" id="LN660">660</td><td class="line">                printf(<span class='string_literal'>"%s%i overridden configuration files found.\n"</span>, n_found ? <span class='string_literal'>"\n"</span> : <span class='string_literal'>""</span>, n_found);</td></tr>
+<tr><td class="num" id="LN661">661</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN662">662</td><td class="line">finish:</td></tr>
+<tr><td class="num" id="LN663">663</td><td class="line">        pager_close();</td></tr>
+<tr><td class="num" id="LN664">664</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN665">665</td><td class="line">        <span class='keyword'>return</span> r &lt; 0 ? <span class='macro'>EXIT_FAILURE<span class='expansion'>1</span></span> : <span class='macro'>EXIT_SUCCESS<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN666">666</td><td class="line">}</td></tr>
 </table></body></html>
