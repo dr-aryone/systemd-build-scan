@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Null pointer passed as an argument to a 'nonnull' parameter -->
+<!-- BUGDESC Potential leak of memory pointed to by 'options' -->
 
-<!-- BUGTYPE Argument with 'nonnull' attribute passed null -->
+<!-- BUGTYPE Memory leak -->
 
-<!-- BUGCATEGORY API -->
+<!-- BUGCATEGORY Memory Error -->
 
 <!-- BUGFILE /home/runner/systemd/src/nspawn/nspawn-mount.c -->
 
 <!-- FILENAME nspawn-mount.c -->
 
-<!-- FUNCTIONNAME mount_legacy_cgroup_hierarchy -->
+<!-- FUNCTIONNAME mount_tmpfs -->
 
-<!-- BUGLINE 728 -->
+<!-- BUGLINE 564 -->
 
-<!-- BUGCOLUMN 13 -->
+<!-- BUGCOLUMN 9 -->
 
-<!-- BUGPATHLENGTH 27 -->
+<!-- BUGPATHLENGTH 13 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>nspawn/nspawn-mount.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 728, column 13</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Null pointer passed as an argument to a 'nonnull' parameter</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 564, column 9</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'options'</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -276,6 +276,7 @@
 <tr><td class="num" id="LN191">191</td><td class="line">        <span class='keyword'>char</span> *buf = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN192">192</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN193">193</td><td class="line">        <span class='keyword'>if</span> ((userns &amp;&amp; uid_shift != 0) || patch_ids) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN194">194</td><td class="line">                <span class='macro'>assert(uid_shift != UID_INVALID)<span class='expansion'>do { if ((__builtin_expect(!!(!(uid_shift != ((uid_t) -1))),0<br>))) log_assert_failed("uid_shift != UID_INVALID", "src/nspawn/nspawn-mount.c"<br>, 194, __PRETTY_FUNCTION__); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN195">195</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN196">196</td><td class="line">                <span class='keyword'>if</span> (asprintf(&amp;buf, <span class='string_literal'>"%s%suid="</span> <span class='macro'>UID_FMT<span class='expansion'>"%" "u"</span></span> <span class='string_literal'>",gid="</span> <span class='macro'>UID_FMT<span class='expansion'>"%" "u"</span></span>,</td></tr>
@@ -287,7 +288,9 @@
 <tr><td class="num" id="LN202">202</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN203">203</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN204">204</td><td class="line"><span class='directive'>#ifdef <span class='macro'>HAVE_SELINUX<span class='expansion'>1</span></span></span></td></tr>
-<tr><td class="num" id="LN205">205</td><td class="line">        <span class='keyword'>if</span> (selinux_apifs_context) {</td></tr>
+<tr><td class="num" id="LN205">205</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">selinux_apifs_context</span>) {</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Assuming 'selinux_apifs_context' is null</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN206">206</td><td class="line">                <span class='keyword'>char</span> *t;</td></tr>
 <tr><td class="num" id="LN207">207</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN208">208</td><td class="line">                t = <span class='macro'>strjoin(options ?: <span class='string_literal'>""</span>, options ? <span class='string_literal'>","</span> : <span class='string_literal'>""</span>,<span class='expansion'>strjoin_real((options ?: ""), options ? "," : "", "context=\""<br>, selinux_apifs_context, "\"", ((void*)0))</span></span></td></tr>
@@ -301,8 +304,12 @@
 <tr><td class="num" id="LN216">216</td><td class="line"><span class='directive'>#endif</span></td></tr>
 <tr><td class="num" id="LN217">217</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN218">218</td><td class="line">        <span class='keyword'>if</span> (!buf &amp;&amp; options) {</td></tr>
-<tr><td class="num" id="LN219">219</td><td class="line">                buf = strdup(options);</td></tr>
-<tr><td class="num" id="LN220">220</td><td class="line">                <span class='keyword'>if</span> (!buf)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN219">219</td><td class="line">                buf = <span class="mrange">strdup(options)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgEvent" style="margin-left:23ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Memory is allocated</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN220">220</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!buf</span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'buf' is non-null</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN221">221</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
 <tr><td class="num" id="LN222">222</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN223">223</td><td class="line">        *ret = buf;</td></tr>
@@ -514,7 +521,7 @@
 <tr><td class="num" id="LN429">429</td><td class="line">                                o = options;</td></tr>
 <tr><td class="num" id="LN430">430</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN431">431</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN432">432</td><td class="line">                r = mount_verbose(mount_table[k].fatal ? <span class='macro'>LOG_ERR<span class='expansion'>3</span></span> : <span class='macro'>LOG_WARNING<span class='expansion'>4</span></span>,</td></tr>
+<tr><td class="num" id="LN432">432</td><td class="line">                r = mount_verbose(mount_table[k].fatal ? <span class='macro'>LOG_ERR<span class='expansion'>3</span></span> : <span class='macro'>LOG_DEBUG<span class='expansion'>7</span></span>,</td></tr>
 <tr><td class="num" id="LN433">433</td><td class="line">                                  mount_table[k].what,</td></tr>
 <tr><td class="num" id="LN434">434</td><td class="line">                                  where,</td></tr>
 <tr><td class="num" id="LN435">435</td><td class="line">                                  mount_table[k].type,</td></tr>
@@ -638,15 +645,21 @@
 <tr><td class="num" id="LN553">553</td><td class="line">        where = <span class='macro'>prefix_roota(dest, m-&gt;destination)<span class='expansion'>({ const char* _path = (m-&gt;destination), *_root = (dest), *<br>_ret; char *_p, *_n; size_t _l; while (_path[0] == '/' &amp;&amp;<br> _path[1] == '/') _path ++; if (isempty(_root) || path_equal(<br>_root, "/")) _ret = _path; else { _l = strlen(_root) + 1 + strlen<br>(_path) + 1; _n = __builtin_alloca (_l); _p = stpcpy(_n, _root<br>); while (_p &gt; _n &amp;&amp; _p[-1] == '/') _p--; if (_path<br>[0] != '/') *(_p++) = '/'; strcpy(_p, _path); _ret = _n; } _ret<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN554">554</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN555">555</td><td class="line">        r = mkdir_p_label(where, 0755);</td></tr>
-<tr><td class="num" id="LN556">556</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0 &amp;&amp; r != -<span class='macro'>EEXIST<span class='expansion'>17</span></span>)</td></tr>
+<tr><td class="num" id="LN556">556</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span> &amp;&amp; r != -<span class='macro'>EEXIST<span class='expansion'>17</span></span>)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN557">557</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Creating mount point for tmpfs %s failed: %m"</span>, where)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn-mount.c"<br>, 557, __func__, "Creating mount point for tmpfs %s failed: %m"<br>, where) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN558">558</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN559">559</td><td class="line">        r = tmpfs_patch_options(m-&gt;options, userns, uid_shift, uid_range, <span class='macro'>false<span class='expansion'>0</span></span>, selinux_apifs_context, &amp;buf);</td></tr>
+<tr><td class="num" id="LN559">559</td><td class="line">        r = <span class="mrange"><span class="mrange">tmpfs_patch_options(m-&gt;options, userns, uid_shift, uid_range, <span class='macro'>false<span class='expansion'>0</span></span>, selinux_apifs_context, &amp;buf)</span></span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Calling 'tmpfs_patch_options'</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Returned allocated memory via 7th parameter</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN560">560</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN561">561</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/nspawn/nspawn-mount.c", 561, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN562">562</td><td class="line">        options = r &gt; 0 ? buf : m-&gt;options;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:19ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>'?' condition is true</td><td><div class="PathNav"><a href="#EndPath" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN563">563</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN564">564</td><td class="line">        <span class='keyword'>return</span> mount_verbose(<span class='macro'>LOG_ERR<span class='expansion'>3</span></span>, <span class='string_literal'>"tmpfs"</span>, where, <span class='string_literal'>"tmpfs"</span>, <span class='macro'>MS_NODEV<span class='expansion'>MS_NODEV</span></span>|<span class='macro'>MS_STRICTATIME<span class='expansion'>MS_STRICTATIME</span></span>, options);</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Potential leak of memory pointed to by 'options'</td></tr></table></div></td></tr>
 <tr><td class="num" id="LN565">565</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN566">566</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN567">567</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>char</span> *joined_and_escaped_lower_dirs(<span class='keyword'>char</span> * <span class='keyword'>const</span> *lower) {</td></tr>
@@ -799,17 +812,11 @@
 <tr><td class="num" id="LN714">714</td><td class="line">        <span class='keyword'>int</span> r;</td></tr>
 <tr><td class="num" id="LN715">715</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN716">716</td><td class="line">        to = <span class='macro'>strjoina(strempty(dest), <span class='string_literal'>"/sys/fs/cgroup/"</span>, hierarchy)<span class='expansion'>({ const char *_appendees_[] = { strempty(dest), "/sys/fs/cgroup/"<br>, hierarchy }; char *_d_, *_p_; int _len_ = 0; unsigned _i_; for<br> (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr( !__builtin_types_compatible_p<br>(typeof(_appendees_), typeof(&amp;*(_appendees_))), sizeof(_appendees_<br>)/sizeof((_appendees_)[0]), (void)0)) &amp;&amp; _appendees_[<br>_i_]; _i_++) _len_ += strlen(_appendees_[_i_]); _p_ = _d_ = __builtin_alloca<br> (_len_ + 1); for (_i_ = 0; _i_ &lt; __extension__ (__builtin_choose_expr<br>( !__builtin_types_compatible_p(typeof(_appendees_), typeof(&amp;<br>*(_appendees_))), sizeof(_appendees_)/sizeof((_appendees_)[0]<br>), (void)0)) &amp;&amp; _appendees_[_i_]; _i_++) _p_ = stpcpy<br>(_p_, _appendees_[_i_]); *_p_ = 0; _d_; })</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path23" class="msg msgControl" style="margin-left:14ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">23</div></td><td><div class="PathNav"><a href="#Path22" title="Previous event (22)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'strjoina':
-</td><td><div class="PathNav"><a href="#Path24" title="Next event (24)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Assuming pointer value is null</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN717">717</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN718">718</td><td class="line">        r = path_is_mount_point(to, 0);</td></tr>
-<tr><td class="num" id="LN719">719</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span> &amp;&amp; r != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path24" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">24</div></td><td><div class="PathNav"><a href="#Path23" title="Previous event (23)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path25" title="Next event (25)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN719">719</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0 &amp;&amp; r != -<span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
 <tr><td class="num" id="LN720">720</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine if %s is mounted already: %m"</span>, to)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn-mount.c"<br>, 720, __func__, "Failed to determine if %s is mounted already: %m"<br>, to) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN721">721</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &gt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path25" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">25</div></td><td><div class="PathNav"><a href="#Path24" title="Previous event (24)">&#x2190;</a></div></td></td><td>Assuming 'r' is &lt;= 0</td><td><div class="PathNav"><a href="#Path26" title="Next event (26)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path26" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">26</div></td><td><div class="PathNav"><a href="#Path25" title="Previous event (25)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (27)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN721">721</td><td class="line">        <span class='keyword'>if</span> (r &gt; 0)</td></tr>
 <tr><td class="num" id="LN722">722</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN723">723</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN724">724</td><td class="line">        mkdir_p(to, 0755);</td></tr>
@@ -817,9 +824,6 @@
 <tr><td class="num" id="LN726">726</td><td class="line">        <span class='comment'>/* The superblock mount options of the mount point need to be</span></td></tr>
 <tr><td class="num" id="LN727">727</td><td class="line">         <span class='comment'>* identical to the hosts', and hence writable... */</span></td></tr>
 <tr><td class="num" id="LN728">728</td><td class="line">        <span class='keyword'>if</span> (<span class='macro'>streq(controller, SYSTEMD_CGROUP_CONTROLLER)<span class='expansion'>(strcmp((controller),("name=systemd")) == 0)</span></span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:13ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">27</div></td><td><div class="PathNav"><a href="#Path26" title="Previous event (26)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'streq':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Null pointer passed as an argument to a 'nonnull' parameter</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN729">729</td><td class="line">                <span class='keyword'>if</span> (unified_requested &gt;= CGROUP_UNIFIED_SYSTEMD) {</td></tr>
 <tr><td class="num" id="LN730">730</td><td class="line">                        fstype = <span class='string_literal'>"cgroup2"</span>;</td></tr>
 <tr><td class="num" id="LN731">731</td><td class="line">                        opts = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
@@ -959,13 +963,9 @@
 <tr><td class="num" id="LN865">865</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN866">866</td><td class="line">        <span class='comment'>/* Mount a tmpfs to /sys/fs/cgroup if it's not mounted there yet. */</span></td></tr>
 <tr><td class="num" id="LN867">867</td><td class="line">        r = path_is_mount_point(cgroup_root, <span class='macro'>AT_SYMLINK_FOLLOW<span class='expansion'>0x400</span></span>);</td></tr>
-<tr><td class="num" id="LN868">868</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">1</div></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN868">868</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN869">869</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine if /sys/fs/cgroup is already mounted: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn-mount.c"<br>, 869, __func__, "Failed to determine if /sys/fs/cgroup is already mounted: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN870">870</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r == 0</span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Assuming 'r' is not equal to 0</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path5" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN870">870</td><td class="line">        <span class='keyword'>if</span> (r == 0) {</td></tr>
 <tr><td class="num" id="LN871">871</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *options = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN872">872</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN873">873</td><td class="line">                r = tmpfs_patch_options(<span class='string_literal'>"mode=755"</span>, userns, uid_shift, uid_range, <span class='macro'>false<span class='expansion'>0</span></span>, selinux_apifs_context, &amp;options);</td></tr>
@@ -979,70 +979,52 @@
 <tr><td class="num" id="LN881">881</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN882">882</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN883">883</td><td class="line">        <span class='keyword'>if</span> (cg_all_unified() &gt; 0)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path5" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path6" title="Next event (6)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN884">884</td><td class="line">                <span class='keyword'>goto</span> skip_controllers;</td></tr>
 <tr><td class="num" id="LN885">885</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN886">886</td><td class="line">        controllers = <span class='macro'>set_new(&amp;string_hash_ops)<span class='expansion'>internal_set_new(&amp;string_hash_ops )</span></span>;</td></tr>
-<tr><td class="num" id="LN887">887</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!controllers</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path6" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">6</div></td><td><div class="PathNav"><a href="#Path5" title="Previous event (5)">&#x2190;</a></div></td></td><td>Assuming 'controllers' is non-null</td><td><div class="PathNav"><a href="#Path7" title="Next event (7)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path7" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">7</div></td><td><div class="PathNav"><a href="#Path6" title="Previous event (6)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path8" title="Next event (8)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN887">887</td><td class="line">        <span class='keyword'>if</span> (!controllers)</td></tr>
 <tr><td class="num" id="LN888">888</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/nspawn/nspawn-mount.c", 888, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN889">889</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN890">890</td><td class="line">        r = cg_kernel_controllers(controllers);</td></tr>
-<tr><td class="num" id="LN891">891</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path8" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">8</div></td><td><div class="PathNav"><a href="#Path7" title="Previous event (7)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path9" title="Next event (9)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path9" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">9</div></td><td><div class="PathNav"><a href="#Path8" title="Previous event (8)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path10" title="Next event (10)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN891">891</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN892">892</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to determine cgroup controllers: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn-mount.c"<br>, 892, __func__, "Failed to determine cgroup controllers: %m"<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN893">893</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN894">894</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path10" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">10</div></td><td><div class="PathNav"><a href="#Path9" title="Previous event (9)">&#x2190;</a></div></td></td><td>Loop condition is true.  Entering loop body</td><td><div class="PathNav"><a href="#Path11" title="Next event (11)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN895">895</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *controller = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *origin = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, *combined = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN896">896</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN897">897</td><td class="line">                controller = set_steal_first(controllers);</td></tr>
-<tr><td class="num" id="LN898">898</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!controller</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path11" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">11</div></td><td><div class="PathNav"><a href="#Path10" title="Previous event (10)">&#x2190;</a></div></td></td><td>Assuming 'controller' is non-null</td><td><div class="PathNav"><a href="#Path12" title="Next event (12)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path12" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">12</div></td><td><div class="PathNav"><a href="#Path11" title="Previous event (11)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path13" title="Next event (13)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN898">898</td><td class="line">                <span class='keyword'>if</span> (!controller)</td></tr>
 <tr><td class="num" id="LN899">899</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
 <tr><td class="num" id="LN900">900</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN901">901</td><td class="line">                origin = prefix_root(<span class='string_literal'>"/sys/fs/cgroup/"</span>, controller);</td></tr>
-<tr><td class="num" id="LN902">902</td><td class="line">                <span class='keyword'>if</span> (<span class="mrange">!origin</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path13" class="msg msgEvent" style="margin-left:21ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">13</div></td><td><div class="PathNav"><a href="#Path12" title="Previous event (12)">&#x2190;</a></div></td></td><td>Assuming 'origin' is non-null</td><td><div class="PathNav"><a href="#Path14" title="Next event (14)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path14" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">14</div></td><td><div class="PathNav"><a href="#Path13" title="Previous event (13)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path15" title="Next event (15)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN902">902</td><td class="line">                <span class='keyword'>if</span> (!origin)</td></tr>
 <tr><td class="num" id="LN903">903</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/nspawn/nspawn-mount.c", 903, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN904">904</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN905">905</td><td class="line">                r = readlink_malloc(origin, &amp;combined);</td></tr>
 <tr><td class="num" id="LN906">906</td><td class="line">                <span class='keyword'>if</span> (r == -<span class='macro'>EINVAL<span class='expansion'>22</span></span>) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path15" class="msg msgControl" style="margin-left:17ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">15</div></td><td><div class="PathNav"><a href="#Path14" title="Previous event (14)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path16" title="Next event (16)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN907">907</td><td class="line">                        <span class='comment'>/* Not a symbolic link, but directly a single cgroup hierarchy */</span></td></tr>
 <tr><td class="num" id="LN908">908</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN909">909</td><td class="line">                        r = mount_legacy_cgroup_hierarchy(dest, controller, controller, unified_requested, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
 <tr><td class="num" id="LN910">910</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN911">911</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN912">912</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN913">913</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class="mrange">r &lt; 0</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path16" class="msg msgEvent" style="margin-left:28ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">16</div></td><td><div class="PathNav"><a href="#Path15" title="Previous event (15)">&#x2190;</a></div></td></td><td>Assuming 'r' is &gt;= 0</td><td><div class="PathNav"><a href="#Path17" title="Next event (17)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path17" class="msg msgControl" style="margin-left:24ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">17</div></td><td><div class="PathNav"><a href="#Path16" title="Previous event (16)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path18" title="Next event (18)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN913">913</td><td class="line">                } <span class='keyword'>else</span> <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN914">914</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(r, <span class='string_literal'>"Failed to read link %s: %m"</span>, origin)<span class='expansion'>({ int _level = (3), _e = (r); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn-mount.c"<br>, 914, __func__, "Failed to read link %s: %m", origin) : -abs<br>(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN915">915</td><td class="line">                <span class='keyword'>else</span> {</td></tr>
 <tr><td class="num" id="LN916">916</td><td class="line">                        <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *target = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
 <tr><td class="num" id="LN917">917</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN918">918</td><td class="line">                        target = prefix_root(dest, origin);</td></tr>
-<tr><td class="num" id="LN919">919</td><td class="line">                        <span class='keyword'>if</span> (<span class="mrange">!target</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path18" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">18</div></td><td><div class="PathNav"><a href="#Path17" title="Previous event (17)">&#x2190;</a></div></td></td><td>Assuming 'target' is non-null</td><td><div class="PathNav"><a href="#Path19" title="Next event (19)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path19" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">19</div></td><td><div class="PathNav"><a href="#Path18" title="Previous event (18)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path20" title="Next event (20)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN919">919</td><td class="line">                        <span class='keyword'>if</span> (!target)</td></tr>
 <tr><td class="num" id="LN920">920</td><td class="line">                                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/nspawn/nspawn-mount.c", 920, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN921">921</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN922">922</td><td class="line">                        <span class='comment'>/* A symbolic link, a combination of controllers in one hierarchy */</span></td></tr>
 <tr><td class="num" id="LN923">923</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN924">924</td><td class="line">                        <span class='keyword'>if</span> (!filename_is_valid(combined)) {</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path20" class="msg msgControl" style="margin-left:25ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">20</div></td><td><div class="PathNav"><a href="#Path19" title="Previous event (19)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path21" title="Next event (21)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN925">925</td><td class="line">                                <span class='macro'>log_warning(<span class='string_literal'>"Ignoring invalid combined hierarchy %s."</span>, combined)<span class='expansion'>({ int _level = (4), _e = (0); (log_get_max_level() &gt;= ((_level<br>) &amp; 0x07)) ? log_internal(_level, _e, "src/nspawn/nspawn-mount.c"<br>, 925, __func__, "Ignoring invalid combined hierarchy %s.", combined<br>) : -abs(_e); })</span></span>;</td></tr>
 <tr><td class="num" id="LN926">926</td><td class="line">                                <span class='keyword'>continue</span>;</td></tr>
 <tr><td class="num" id="LN927">927</td><td class="line">                        }</td></tr>
 <tr><td class="num" id="LN928">928</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN929">929</td><td class="line">                        r = <span class="mrange">mount_legacy_cgroup_hierarchy(dest, <span class="mrange">combined</span>, combined, unified_requested, <span class='macro'>true<span class='expansion'>1</span></span>)</span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path21" class="msg msgEvent" style="margin-left:65ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">21</div></td><td><div class="PathNav"><a href="#Path20" title="Previous event (20)">&#x2190;</a></div></td></td><td>Passing value via 2nd parameter 'controller'</td><td><div class="PathNav"><a href="#Path22" title="Next event (22)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path22" class="msg msgEvent" style="margin-left:29ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">22</div></td><td><div class="PathNav"><a href="#Path21" title="Previous event (21)">&#x2190;</a></div></td></td><td>Calling 'mount_legacy_cgroup_hierarchy'</td><td><div class="PathNav"><a href="#Path23" title="Next event (23)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN929">929</td><td class="line">                        r = mount_legacy_cgroup_hierarchy(dest, combined, combined, unified_requested, <span class='macro'>true<span class='expansion'>1</span></span>);</td></tr>
 <tr><td class="num" id="LN930">930</td><td class="line">                        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN931">931</td><td class="line">                                <span class='keyword'>return</span> r;</td></tr>
 <tr><td class="num" id="LN932">932</td><td class="line"> </td></tr>
