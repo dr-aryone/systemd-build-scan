@@ -9090,7 +9090,32 @@ static __inline__ char *btrfs_err_str(enum btrfs_err_code err_code)
 # 51 "./src/basic/missing.h" 2
 # 1022 "./src/basic/missing.h"
 typedef int32_t key_serial_t;
-# 1081 "./src/basic/missing.h"
+# 1084 "./src/basic/missing.h"
+struct ethtool_link_settings {
+        __u32 cmd;
+        __u32 speed;
+        __u8 duplex;
+        __u8 port;
+        __u8 phy_address;
+        __u8 autoneg;
+        __u8 mdio_support;
+        __u8 eth_tp_mdix;
+        __u8 eth_tp_mdix_ctrl;
+        __s8 link_mode_masks_nwords;
+        __u32 reserved[8];
+        __u32 link_mode_masks[0];
+
+
+
+
+
+};
+
+
+
+
+
+
 # 1 "./src/basic/missing_syscall.h" 1
 # 26 "./src/basic/missing_syscall.h"
 static inline int pivot_root(const char *new_root, const char *put_old) {
@@ -9195,7 +9220,7 @@ static inline ssize_t copy_file_range(int fd_in, loff_t *off_in,
 
 
 }
-# 1082 "./src/basic/missing.h" 2
+# 1109 "./src/basic/missing.h" 2
 # 47 "./src/basic/util.h" 2
 # 1 "./src/basic/time-util.h" 1
 # 24 "./src/basic/time-util.h"
