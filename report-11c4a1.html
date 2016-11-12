@@ -66,7 +66,7 @@
 
 <!-- FUNCTIONNAME sd_network_monitor_new -->
 
-<!-- BUGLINE 323 -->
+<!-- BUGLINE 317 -->
 
 <!-- BUGCOLUMN 9 -->
 
@@ -77,7 +77,7 @@
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>libsystemd/sd-network/sd-network.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 323, column 9</a></td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 317, column 9</a></td></tr>
 <tr><td class="rowname">Description:</td><td>Value stored to 'fd' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
@@ -309,179 +309,173 @@
 <tr><td class="num" id="LN224">224</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENODATA<span class='expansion'>61</span></span>;</td></tr>
 <tr><td class="num" id="LN225">225</td><td class="line">        <span class='keyword'>if</span> (r &lt; 0)</td></tr>
 <tr><td class="num" id="LN226">226</td><td class="line">                <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN227">227</td><td class="line">        <span class='keyword'>if</span> (isempty(s)) {</td></tr>
-<tr><td class="num" id="LN228">228</td><td class="line">                *ret = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN229">229</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN230">230</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN231">231</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN232">232</td><td class="line">        x = s;</td></tr>
-<tr><td class="num" id="LN233">233</td><td class="line">        <span class='keyword'>for</span> (;;) {</td></tr>
-<tr><td class="num" id="LN234">234</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *word = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN235">235</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN236">236</td><td class="line">                r = extract_first_word(&amp;x, &amp;word, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 0);</td></tr>
-<tr><td class="num" id="LN237">237</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN238">238</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN239">239</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
-<tr><td class="num" id="LN240">240</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
-<tr><td class="num" id="LN241">241</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN242">242</td><td class="line">                r = parse_ifindex(word, &amp;ifindex);</td></tr>
-<tr><td class="num" id="LN243">243</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
-<tr><td class="num" id="LN244">244</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
-<tr><td class="num" id="LN245">245</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN246">246</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(ifis, allocated, c + 1)<span class='expansion'>greedy_realloc((void**) &amp;(ifis), &amp;(allocated), (c + 1<br>), sizeof((ifis)[0]))</span></span>)</td></tr>
-<tr><td class="num" id="LN247">247</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN248">248</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN249">249</td><td class="line">                ifis[c++] = ifindex;</td></tr>
-<tr><td class="num" id="LN250">250</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN251">251</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN252">252</td><td class="line">        <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(ifis, allocated, c + 1)<span class='expansion'>greedy_realloc((void**) &amp;(ifis), &amp;(allocated), (c + 1<br>), sizeof((ifis)[0]))</span></span>)</td></tr>
-<tr><td class="num" id="LN253">253</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
-<tr><td class="num" id="LN254">254</td><td class="line">        ifis[c] = 0; <span class='comment'>/* Let's add a 0 ifindex to the end, to be nice*/</span></td></tr>
+<tr><td class="num" id="LN227">227</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN228">228</td><td class="line">        <span class='keyword'>for</span> (x = s;;) {</td></tr>
+<tr><td class="num" id="LN229">229</td><td class="line">                <span class='macro'>_cleanup_free_<span class='expansion'>__attribute__((cleanup(freep)))</span></span> <span class='keyword'>char</span> *word = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN230">230</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN231">231</td><td class="line">                r = extract_first_word(&amp;x, &amp;word, <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>, 0);</td></tr>
+<tr><td class="num" id="LN232">232</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN233">233</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN234">234</td><td class="line">                <span class='keyword'>if</span> (r == 0)</td></tr>
+<tr><td class="num" id="LN235">235</td><td class="line">                        <span class='keyword'>break</span>;</td></tr>
+<tr><td class="num" id="LN236">236</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN237">237</td><td class="line">                r = parse_ifindex(word, &amp;ifindex);</td></tr>
+<tr><td class="num" id="LN238">238</td><td class="line">                <span class='keyword'>if</span> (r &lt; 0)</td></tr>
+<tr><td class="num" id="LN239">239</td><td class="line">                        <span class='keyword'>return</span> r;</td></tr>
+<tr><td class="num" id="LN240">240</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN241">241</td><td class="line">                <span class='keyword'>if</span> (!<span class='macro'>GREEDY_REALLOC(ifis, allocated, c + 2)<span class='expansion'>greedy_realloc((void**) &amp;(ifis), &amp;(allocated), (c + 2<br>), sizeof((ifis)[0]))</span></span>)</td></tr>
+<tr><td class="num" id="LN242">242</td><td class="line">                        <span class='keyword'>return</span> -<span class='macro'>ENOMEM<span class='expansion'>12</span></span>;</td></tr>
+<tr><td class="num" id="LN243">243</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN244">244</td><td class="line">                ifis[c++] = ifindex;</td></tr>
+<tr><td class="num" id="LN245">245</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN246">246</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN247">247</td><td class="line">        <span class='keyword'>if</span> (ifis)</td></tr>
+<tr><td class="num" id="LN248">248</td><td class="line">                ifis[c] = 0; <span class='comment'>/* Let's add a 0 ifindex to the end, to be nice*/</span></td></tr>
+<tr><td class="num" id="LN249">249</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN250">250</td><td class="line">        *ret = ifis;</td></tr>
+<tr><td class="num" id="LN251">251</td><td class="line">        ifis = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN252">252</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN253">253</td><td class="line">        <span class='keyword'>return</span> c;</td></tr>
+<tr><td class="num" id="LN254">254</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN255">255</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN256">256</td><td class="line">        *ret = ifis;</td></tr>
-<tr><td class="num" id="LN257">257</td><td class="line">        ifis = <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN258">258</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN259">259</td><td class="line">        <span class='keyword'>return</span> c;</td></tr>
-<tr><td class="num" id="LN260">260</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN261">261</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN262">262</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_link_get_carrier_bound_to(<span class='keyword'>int</span> ifindex, <span class='keyword'>int</span> **ret) {</td></tr>
-<tr><td class="num" id="LN263">263</td><td class="line">        <span class='keyword'>return</span> network_link_get_ifindexes(ifindex, <span class='string_literal'>"CARRIER_BOUND_TO"</span>, ret);</td></tr>
-<tr><td class="num" id="LN264">264</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN265">265</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN266">266</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_link_get_carrier_bound_by(<span class='keyword'>int</span> ifindex, <span class='keyword'>int</span> **ret) {</td></tr>
-<tr><td class="num" id="LN267">267</td><td class="line">        <span class='keyword'>return</span> network_link_get_ifindexes(ifindex, <span class='string_literal'>"CARRIER_BOUND_BY"</span>, ret);</td></tr>
-<tr><td class="num" id="LN268">268</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN269">269</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN270">270</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>inline</span> <span class='keyword'>int</span> MONITOR_TO_FD(sd_network_monitor *m) {</td></tr>
-<tr><td class="num" id="LN271">271</td><td class="line">        <span class='keyword'>return</span> (<span class='keyword'>int</span>) (<span class='keyword'>unsigned</span> <span class='keyword'>long</span>) m - 1;</td></tr>
-<tr><td class="num" id="LN272">272</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN273">273</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN274">274</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>inline</span> sd_network_monitor* FD_TO_MONITOR(<span class='keyword'>int</span> fd) {</td></tr>
-<tr><td class="num" id="LN275">275</td><td class="line">        <span class='keyword'>return</span> (sd_network_monitor*) (<span class='keyword'>unsigned</span> <span class='keyword'>long</span>) (fd + 1);</td></tr>
-<tr><td class="num" id="LN276">276</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN277">277</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN278">278</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> monitor_add_inotify_watch(<span class='keyword'>int</span> fd) {</td></tr>
-<tr><td class="num" id="LN279">279</td><td class="line">        <span class='keyword'>int</span> k;</td></tr>
+<tr><td class="num" id="LN256">256</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_link_get_carrier_bound_to(<span class='keyword'>int</span> ifindex, <span class='keyword'>int</span> **ret) {</td></tr>
+<tr><td class="num" id="LN257">257</td><td class="line">        <span class='keyword'>return</span> network_link_get_ifindexes(ifindex, <span class='string_literal'>"CARRIER_BOUND_TO"</span>, ret);</td></tr>
+<tr><td class="num" id="LN258">258</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN259">259</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN260">260</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_link_get_carrier_bound_by(<span class='keyword'>int</span> ifindex, <span class='keyword'>int</span> **ret) {</td></tr>
+<tr><td class="num" id="LN261">261</td><td class="line">        <span class='keyword'>return</span> network_link_get_ifindexes(ifindex, <span class='string_literal'>"CARRIER_BOUND_BY"</span>, ret);</td></tr>
+<tr><td class="num" id="LN262">262</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN263">263</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN264">264</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>inline</span> <span class='keyword'>int</span> MONITOR_TO_FD(sd_network_monitor *m) {</td></tr>
+<tr><td class="num" id="LN265">265</td><td class="line">        <span class='keyword'>return</span> (<span class='keyword'>int</span>) (<span class='keyword'>unsigned</span> <span class='keyword'>long</span>) m - 1;</td></tr>
+<tr><td class="num" id="LN266">266</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN267">267</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN268">268</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>inline</span> sd_network_monitor* FD_TO_MONITOR(<span class='keyword'>int</span> fd) {</td></tr>
+<tr><td class="num" id="LN269">269</td><td class="line">        <span class='keyword'>return</span> (sd_network_monitor*) (<span class='keyword'>unsigned</span> <span class='keyword'>long</span>) (fd + 1);</td></tr>
+<tr><td class="num" id="LN270">270</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN271">271</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN272">272</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>int</span> monitor_add_inotify_watch(<span class='keyword'>int</span> fd) {</td></tr>
+<tr><td class="num" id="LN273">273</td><td class="line">        <span class='keyword'>int</span> k;</td></tr>
+<tr><td class="num" id="LN274">274</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN275">275</td><td class="line">        k = inotify_add_watch(fd, <span class='string_literal'>"/run/systemd/netif/links/"</span>, <span class='macro'>IN_MOVED_TO<span class='expansion'>0x00000080</span></span>|<span class='macro'>IN_DELETE<span class='expansion'>0x00000200</span></span>);</td></tr>
+<tr><td class="num" id="LN276">276</td><td class="line">        <span class='keyword'>if</span> (k &gt;= 0)</td></tr>
+<tr><td class="num" id="LN277">277</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN278">278</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
+<tr><td class="num" id="LN279">279</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN280">280</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN281">281</td><td class="line">        k = inotify_add_watch(fd, <span class='string_literal'>"/run/systemd/netif/links/"</span>, <span class='macro'>IN_MOVED_TO<span class='expansion'>0x00000080</span></span>|<span class='macro'>IN_DELETE<span class='expansion'>0x00000200</span></span>);</td></tr>
+<tr><td class="num" id="LN281">281</td><td class="line">        k = inotify_add_watch(fd, <span class='string_literal'>"/run/systemd/netif/"</span>, <span class='macro'>IN_CREATE<span class='expansion'>0x00000100</span></span>|<span class='macro'>IN_ISDIR<span class='expansion'>0x40000000</span></span>);</td></tr>
 <tr><td class="num" id="LN282">282</td><td class="line">        <span class='keyword'>if</span> (k &gt;= 0)</td></tr>
 <tr><td class="num" id="LN283">283</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
 <tr><td class="num" id="LN284">284</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
 <tr><td class="num" id="LN285">285</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN286">286</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN287">287</td><td class="line">        k = inotify_add_watch(fd, <span class='string_literal'>"/run/systemd/netif/"</span>, <span class='macro'>IN_CREATE<span class='expansion'>0x00000100</span></span>|<span class='macro'>IN_ISDIR<span class='expansion'>0x40000000</span></span>);</td></tr>
-<tr><td class="num" id="LN288">288</td><td class="line">        <span class='keyword'>if</span> (k &gt;= 0)</td></tr>
-<tr><td class="num" id="LN289">289</td><td class="line">                <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN290">290</td><td class="line">        <span class='keyword'>else</span> <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> != <span class='macro'>ENOENT<span class='expansion'>2</span></span>)</td></tr>
-<tr><td class="num" id="LN291">291</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN292">292</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN293">293</td><td class="line">        k = inotify_add_watch(fd, <span class='string_literal'>"/run/systemd/"</span>, <span class='macro'>IN_CREATE<span class='expansion'>0x00000100</span></span>|<span class='macro'>IN_ISDIR<span class='expansion'>0x40000000</span></span>);</td></tr>
-<tr><td class="num" id="LN294">294</td><td class="line">        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN295">295</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN296">296</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN297">297</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN298">298</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN299">299</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN300">300</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_new(sd_network_monitor **m, <span class='keyword'>const</span> <span class='keyword'>char</span> *category) {</td></tr>
-<tr><td class="num" id="LN301">301</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
-<tr><td class="num" id="LN302">302</td><td class="line">        <span class='keyword'>int</span> k;</td></tr>
-<tr><td class="num" id="LN303">303</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> good = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN287">287</td><td class="line">        k = inotify_add_watch(fd, <span class='string_literal'>"/run/systemd/"</span>, <span class='macro'>IN_CREATE<span class='expansion'>0x00000100</span></span>|<span class='macro'>IN_ISDIR<span class='expansion'>0x40000000</span></span>);</td></tr>
+<tr><td class="num" id="LN288">288</td><td class="line">        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN289">289</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN290">290</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN291">291</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN292">292</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN293">293</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN294">294</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_new(sd_network_monitor **m, <span class='keyword'>const</span> <span class='keyword'>char</span> *category) {</td></tr>
+<tr><td class="num" id="LN295">295</td><td class="line">        <span class='macro'>_cleanup_close_<span class='expansion'>__attribute__((cleanup(closep)))</span></span> <span class='keyword'>int</span> fd = -1;</td></tr>
+<tr><td class="num" id="LN296">296</td><td class="line">        <span class='keyword'>int</span> k;</td></tr>
+<tr><td class="num" id="LN297">297</td><td class="line">        <span class='macro'>bool<span class='expansion'>_Bool</span></span> good = <span class='macro'>false<span class='expansion'>0</span></span>;</td></tr>
+<tr><td class="num" id="LN298">298</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN299">299</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 299, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN300">300</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN301">301</td><td class="line">        fd = inotify_init1(<span class='macro'>IN_NONBLOCK<span class='expansion'>IN_NONBLOCK</span></span>|<span class='macro'>IN_CLOEXEC<span class='expansion'>IN_CLOEXEC</span></span>);</td></tr>
+<tr><td class="num" id="LN302">302</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN303">303</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
 <tr><td class="num" id="LN304">304</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN305">305</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 305, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN306">306</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN307">307</td><td class="line">        fd = inotify_init1(<span class='macro'>IN_NONBLOCK<span class='expansion'>IN_NONBLOCK</span></span>|<span class='macro'>IN_CLOEXEC<span class='expansion'>IN_CLOEXEC</span></span>);</td></tr>
-<tr><td class="num" id="LN308">308</td><td class="line">        <span class='keyword'>if</span> (fd &lt; 0)</td></tr>
-<tr><td class="num" id="LN309">309</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN310">310</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN311">311</td><td class="line">        <span class='keyword'>if</span> (!category || <span class='macro'>streq(category, <span class='string_literal'>"links"</span>)<span class='expansion'>(strcmp((category),("links")) == 0)</span></span>) {</td></tr>
-<tr><td class="num" id="LN312">312</td><td class="line">                k = monitor_add_inotify_watch(fd);</td></tr>
-<tr><td class="num" id="LN313">313</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN314">314</td><td class="line">                        <span class='keyword'>return</span> k;</td></tr>
+<tr><td class="num" id="LN305">305</td><td class="line">        <span class='keyword'>if</span> (!category || <span class='macro'>streq(category, <span class='string_literal'>"links"</span>)<span class='expansion'>(strcmp((category),("links")) == 0)</span></span>) {</td></tr>
+<tr><td class="num" id="LN306">306</td><td class="line">                k = monitor_add_inotify_watch(fd);</td></tr>
+<tr><td class="num" id="LN307">307</td><td class="line">                <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN308">308</td><td class="line">                        <span class='keyword'>return</span> k;</td></tr>
+<tr><td class="num" id="LN309">309</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN310">310</td><td class="line">                good = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
+<tr><td class="num" id="LN311">311</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN312">312</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN313">313</td><td class="line">        <span class='keyword'>if</span> (!good)</td></tr>
+<tr><td class="num" id="LN314">314</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
 <tr><td class="num" id="LN315">315</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN316">316</td><td class="line">                good = <span class='macro'>true<span class='expansion'>1</span></span>;</td></tr>
-<tr><td class="num" id="LN317">317</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN318">318</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN319">319</td><td class="line">        <span class='keyword'>if</span> (!good)</td></tr>
-<tr><td class="num" id="LN320">320</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>EINVAL<span class='expansion'>22</span></span>;</td></tr>
-<tr><td class="num" id="LN321">321</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN322">322</td><td class="line">        *m = FD_TO_MONITOR(fd);</td></tr>
-<tr><td class="num" id="LN323">323</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
+<tr><td class="num" id="LN316">316</td><td class="line">        *m = FD_TO_MONITOR(fd);</td></tr>
+<tr><td class="num" id="LN317">317</td><td class="line">        fd = <span class="mrange">-1</span>;</td></tr>
 <tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:9ex">Value stored to 'fd' is never read</div></td></tr>
+<tr><td class="num" id="LN318">318</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN319">319</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN320">320</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN321">321</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN322">322</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> sd_network_monitor* sd_network_monitor_unref(sd_network_monitor *m) {</td></tr>
+<tr><td class="num" id="LN323">323</td><td class="line">        <span class='keyword'>int</span> fd;</td></tr>
 <tr><td class="num" id="LN324">324</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN325">325</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN326">326</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN327">327</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN328">328</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> sd_network_monitor* sd_network_monitor_unref(sd_network_monitor *m) {</td></tr>
-<tr><td class="num" id="LN329">329</td><td class="line">        <span class='keyword'>int</span> fd;</td></tr>
-<tr><td class="num" id="LN330">330</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN331">331</td><td class="line">        <span class='keyword'>if</span> (m) {</td></tr>
-<tr><td class="num" id="LN332">332</td><td class="line">                fd = MONITOR_TO_FD(m);</td></tr>
-<tr><td class="num" id="LN333">333</td><td class="line">                close_nointr(fd);</td></tr>
-<tr><td class="num" id="LN334">334</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN335">335</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN336">336</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
-<tr><td class="num" id="LN337">337</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN325">325</td><td class="line">        <span class='keyword'>if</span> (m) {</td></tr>
+<tr><td class="num" id="LN326">326</td><td class="line">                fd = MONITOR_TO_FD(m);</td></tr>
+<tr><td class="num" id="LN327">327</td><td class="line">                close_nointr(fd);</td></tr>
+<tr><td class="num" id="LN328">328</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN329">329</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN330">330</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>NULL<span class='expansion'>((void*)0)</span></span>;</td></tr>
+<tr><td class="num" id="LN331">331</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN332">332</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN333">333</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_flush(sd_network_monitor *m) {</td></tr>
+<tr><td class="num" id="LN334">334</td><td class="line">        <span class='keyword'>union</span> inotify_event_buffer buffer;</td></tr>
+<tr><td class="num" id="LN335">335</td><td class="line">        <span class='keyword'>struct</span> inotify_event *e;</td></tr>
+<tr><td class="num" id="LN336">336</td><td class="line">        ssize_t l;</td></tr>
+<tr><td class="num" id="LN337">337</td><td class="line">        <span class='keyword'>int</span> fd, k;</td></tr>
 <tr><td class="num" id="LN338">338</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN339">339</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_flush(sd_network_monitor *m) {</td></tr>
-<tr><td class="num" id="LN340">340</td><td class="line">        <span class='keyword'>union</span> inotify_event_buffer buffer;</td></tr>
-<tr><td class="num" id="LN341">341</td><td class="line">        <span class='keyword'>struct</span> inotify_event *e;</td></tr>
-<tr><td class="num" id="LN342">342</td><td class="line">        ssize_t l;</td></tr>
-<tr><td class="num" id="LN343">343</td><td class="line">        <span class='keyword'>int</span> fd, k;</td></tr>
-<tr><td class="num" id="LN344">344</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN345">345</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 345, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN346">346</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN347">347</td><td class="line">        fd = MONITOR_TO_FD(m);</td></tr>
-<tr><td class="num" id="LN348">348</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN349">349</td><td class="line">        l = read(fd, &amp;buffer, <span class='keyword'>sizeof</span>(buffer));</td></tr>
-<tr><td class="num" id="LN350">350</td><td class="line">        <span class='keyword'>if</span> (l &lt; 0) {</td></tr>
-<tr><td class="num" id="LN351">351</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EAGAIN<span class='expansion'>11</span></span> || <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EINTR<span class='expansion'>4</span></span>)</td></tr>
-<tr><td class="num" id="LN352">352</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN353">353</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN354">354</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN355">355</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN339">339</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 339, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN340">340</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN341">341</td><td class="line">        fd = MONITOR_TO_FD(m);</td></tr>
+<tr><td class="num" id="LN342">342</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN343">343</td><td class="line">        l = read(fd, &amp;buffer, <span class='keyword'>sizeof</span>(buffer));</td></tr>
+<tr><td class="num" id="LN344">344</td><td class="line">        <span class='keyword'>if</span> (l &lt; 0) {</td></tr>
+<tr><td class="num" id="LN345">345</td><td class="line">                <span class='keyword'>if</span> (<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EAGAIN<span class='expansion'>11</span></span> || <span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span> == <span class='macro'>EINTR<span class='expansion'>4</span></span>)</td></tr>
+<tr><td class="num" id="LN346">346</td><td class="line">                        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN347">347</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN348">348</td><td class="line">                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN349">349</td><td class="line">        }</td></tr>
+<tr><td class="num" id="LN350">350</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN351">351</td><td class="line">        <span class='macro'>FOREACH_INOTIFY_EVENT(e, buffer, l)<span class='expansion'>for ((e) = &amp;buffer.ev; (uint8_t*) (e) &lt; (uint8_t*) (buffer<br>.raw) + (l); (e) = (struct inotify_event*) ((uint8_t*) (e) + sizeof<br>(struct inotify_event) + (e)-&gt;len))</span></span> {</td></tr>
+<tr><td class="num" id="LN352">352</td><td class="line">                <span class='keyword'>if</span> (e-&gt;mask &amp; <span class='macro'>IN_ISDIR<span class='expansion'>0x40000000</span></span>) {</td></tr>
+<tr><td class="num" id="LN353">353</td><td class="line">                        k = monitor_add_inotify_watch(fd);</td></tr>
+<tr><td class="num" id="LN354">354</td><td class="line">                        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN355">355</td><td class="line">                                <span class='keyword'>return</span> k;</td></tr>
 <tr><td class="num" id="LN356">356</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN357">357</td><td class="line">        <span class='macro'>FOREACH_INOTIFY_EVENT(e, buffer, l)<span class='expansion'>for ((e) = &amp;buffer.ev; (uint8_t*) (e) &lt; (uint8_t*) (buffer<br>.raw) + (l); (e) = (struct inotify_event*) ((uint8_t*) (e) + sizeof<br>(struct inotify_event) + (e)-&gt;len))</span></span> {</td></tr>
-<tr><td class="num" id="LN358">358</td><td class="line">                <span class='keyword'>if</span> (e-&gt;mask &amp; <span class='macro'>IN_ISDIR<span class='expansion'>0x40000000</span></span>) {</td></tr>
-<tr><td class="num" id="LN359">359</td><td class="line">                        k = monitor_add_inotify_watch(fd);</td></tr>
-<tr><td class="num" id="LN360">360</td><td class="line">                        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN361">361</td><td class="line">                                <span class='keyword'>return</span> k;</td></tr>
+<tr><td class="num" id="LN357">357</td><td class="line">                        k = inotify_rm_watch(fd, e-&gt;wd);</td></tr>
+<tr><td class="num" id="LN358">358</td><td class="line">                        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
+<tr><td class="num" id="LN359">359</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
+<tr><td class="num" id="LN360">360</td><td class="line">                }</td></tr>
+<tr><td class="num" id="LN361">361</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN362">362</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN363">363</td><td class="line">                        k = inotify_rm_watch(fd, e-&gt;wd);</td></tr>
-<tr><td class="num" id="LN364">364</td><td class="line">                        <span class='keyword'>if</span> (k &lt; 0)</td></tr>
-<tr><td class="num" id="LN365">365</td><td class="line">                                <span class='keyword'>return</span> -<span class='macro'>errno<span class='expansion'>(*__errno_location ())</span></span>;</td></tr>
-<tr><td class="num" id="LN366">366</td><td class="line">                }</td></tr>
-<tr><td class="num" id="LN367">367</td><td class="line">        }</td></tr>
-<tr><td class="num" id="LN368">368</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN369">369</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN370">370</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN371">371</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN372">372</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_get_fd(sd_network_monitor *m) {</td></tr>
-<tr><td class="num" id="LN373">373</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN374">374</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 374, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN375">375</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN376">376</td><td class="line">        <span class='keyword'>return</span> MONITOR_TO_FD(m);</td></tr>
-<tr><td class="num" id="LN377">377</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN378">378</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN379">379</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_get_events(sd_network_monitor *m) {</td></tr>
-<tr><td class="num" id="LN380">380</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN381">381</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 381, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN382">382</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN383">383</td><td class="line">        <span class='comment'>/* For now we will only return POLLIN here, since we don't</span></td></tr>
-<tr><td class="num" id="LN384">384</td><td class="line">         <span class='comment'>* need anything else ever for inotify.  However, let's have</span></td></tr>
-<tr><td class="num" id="LN385">385</td><td class="line">         <span class='comment'>* this API to keep our options open should we later on need</span></td></tr>
-<tr><td class="num" id="LN386">386</td><td class="line">         <span class='comment'>* it. */</span></td></tr>
-<tr><td class="num" id="LN387">387</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>POLLIN<span class='expansion'>0x001</span></span>;</td></tr>
-<tr><td class="num" id="LN388">388</td><td class="line">}</td></tr>
-<tr><td class="num" id="LN389">389</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN390">390</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_get_timeout(sd_network_monitor *m, uint64_t *timeout_usec) {</td></tr>
-<tr><td class="num" id="LN391">391</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN392">392</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 392, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN393">393</td><td class="line">        <span class='macro'>assert_return(timeout_usec, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(timeout_usec),1))) ? (1) : (<br>log_assert_failed_return("timeout_usec", "src/libsystemd/sd-network/sd-network.c"<br>, 393, __PRETTY_FUNCTION__), 0))) return (-22); } while (0)</span></span>;</td></tr>
-<tr><td class="num" id="LN394">394</td><td class="line"> </td></tr>
-<tr><td class="num" id="LN395">395</td><td class="line">        <span class='comment'>/* For now we will only return (uint64_t) -1, since we don't</span></td></tr>
-<tr><td class="num" id="LN396">396</td><td class="line">         <span class='comment'>* need any timeout. However, let's have this API to keep our</span></td></tr>
-<tr><td class="num" id="LN397">397</td><td class="line">         <span class='comment'>* options open should we later on need it. */</span></td></tr>
-<tr><td class="num" id="LN398">398</td><td class="line">        *timeout_usec = (uint64_t) -1;</td></tr>
-<tr><td class="num" id="LN399">399</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
-<tr><td class="num" id="LN400">400</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN363">363</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN364">364</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN365">365</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN366">366</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_get_fd(sd_network_monitor *m) {</td></tr>
+<tr><td class="num" id="LN367">367</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN368">368</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 368, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN369">369</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN370">370</td><td class="line">        <span class='keyword'>return</span> MONITOR_TO_FD(m);</td></tr>
+<tr><td class="num" id="LN371">371</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN372">372</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN373">373</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_get_events(sd_network_monitor *m) {</td></tr>
+<tr><td class="num" id="LN374">374</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN375">375</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 375, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN376">376</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN377">377</td><td class="line">        <span class='comment'>/* For now we will only return POLLIN here, since we don't</span></td></tr>
+<tr><td class="num" id="LN378">378</td><td class="line">         <span class='comment'>* need anything else ever for inotify.  However, let's have</span></td></tr>
+<tr><td class="num" id="LN379">379</td><td class="line">         <span class='comment'>* this API to keep our options open should we later on need</span></td></tr>
+<tr><td class="num" id="LN380">380</td><td class="line">         <span class='comment'>* it. */</span></td></tr>
+<tr><td class="num" id="LN381">381</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>POLLIN<span class='expansion'>0x001</span></span>;</td></tr>
+<tr><td class="num" id="LN382">382</td><td class="line">}</td></tr>
+<tr><td class="num" id="LN383">383</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN384">384</td><td class="line"><span class='macro'>_public_<span class='expansion'>__attribute__ ((visibility("default")))</span></span> <span class='keyword'>int</span> sd_network_monitor_get_timeout(sd_network_monitor *m, uint64_t *timeout_usec) {</td></tr>
+<tr><td class="num" id="LN385">385</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN386">386</td><td class="line">        <span class='macro'>assert_return(m, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(m),1))) ? (1) : (log_assert_failed_return<br>("m", "src/libsystemd/sd-network/sd-network.c", 386, __PRETTY_FUNCTION__<br>), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN387">387</td><td class="line">        <span class='macro'>assert_return(timeout_usec, -EINVAL)<span class='expansion'>do { if (!(((__builtin_expect(!!(timeout_usec),1))) ? (1) : (<br>log_assert_failed_return("timeout_usec", "src/libsystemd/sd-network/sd-network.c"<br>, 387, __PRETTY_FUNCTION__), 0))) return (-22); } while (0)</span></span>;</td></tr>
+<tr><td class="num" id="LN388">388</td><td class="line"> </td></tr>
+<tr><td class="num" id="LN389">389</td><td class="line">        <span class='comment'>/* For now we will only return (uint64_t) -1, since we don't</span></td></tr>
+<tr><td class="num" id="LN390">390</td><td class="line">         <span class='comment'>* need any timeout. However, let's have this API to keep our</span></td></tr>
+<tr><td class="num" id="LN391">391</td><td class="line">         <span class='comment'>* options open should we later on need it. */</span></td></tr>
+<tr><td class="num" id="LN392">392</td><td class="line">        *timeout_usec = (uint64_t) -1;</td></tr>
+<tr><td class="num" id="LN393">393</td><td class="line">        <span class='keyword'>return</span> 0;</td></tr>
+<tr><td class="num" id="LN394">394</td><td class="line">}</td></tr>
 </table></body></html>
