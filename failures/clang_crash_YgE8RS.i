@@ -11696,11 +11696,10 @@ struct ExecContext {
         _Bool nice_set:1;
         _Bool ioprio_set:1;
         _Bool cpu_sched_set:1;
-        _Bool no_new_privileges_set:1;
 };
 
 static inline _Bool exec_context_restrict_namespaces_set(const ExecContext *c) {
-        do { if ((__builtin_expect(!!(!(c)),0))) log_assert_failed("c", "./src/core/execute.h", 223, __PRETTY_FUNCTION__); } while (0);
+        do { if ((__builtin_expect(!!(!(c)),0))) log_assert_failed("c", "./src/core/execute.h", 222, __PRETTY_FUNCTION__); } while (0);
 
         return (c->restrict_namespaces & ((unsigned long) (0x02000000| 0x08000000| 0x40000000| 0x00020000| 0x20000000| 0x10000000| 0x04000000))) != ((unsigned long) (0x02000000| 0x08000000| 0x40000000| 0x00020000| 0x20000000| 0x10000000| 0x04000000));
 }
@@ -17148,7 +17147,7 @@ void unit_notify_user_lookup(Unit *u, uid_t uid, gid_t gid);
 
 int unit_set_invocation_id(Unit *u, sd_id128_t id);
 int unit_acquire_invocation_id(Unit *u);
-# 268 "./src/core/execute.h" 2
+# 267 "./src/core/execute.h" 2
 
 
 int exec_spawn(Unit *unit,
