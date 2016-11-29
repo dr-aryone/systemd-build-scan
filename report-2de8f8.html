@@ -54,31 +54,31 @@
 </style>
 </head>
 <body>
-<!-- BUGDESC Potential leak of memory pointed to by 'manager' -->
+<!-- BUGDESC Value stored to 'fd_lock' is never read -->
 
-<!-- BUGTYPE Memory leak -->
+<!-- BUGTYPE Dead assignment -->
 
-<!-- BUGCATEGORY Memory Error -->
+<!-- BUGCATEGORY Dead store -->
 
 <!-- BUGFILE /home/runner/systemd/src/udev/udevd.c -->
 
 <!-- FILENAME udevd.c -->
 
-<!-- FUNCTIONNAME manager_new -->
+<!-- FUNCTIONNAME worker_spawn -->
 
-<!-- BUGLINE 1505 -->
+<!-- BUGLINE 446 -->
 
-<!-- BUGCOLUMN 24 -->
+<!-- BUGCOLUMN 49 -->
 
-<!-- BUGPATHLENGTH 5 -->
+<!-- BUGPATHLENGTH 1 -->
 
 <!-- BUGMETAEND -->
 <!-- REPORTHEADER -->
 <h3>Bug Summary</h3>
 <table class="simpletable">
 <tr><td class="rowname">File:</td><td>udev/udevd.c</td></tr>
-<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 1505, column 24</a></td></tr>
-<tr><td class="rowname">Description:</td><td>Potential leak of memory pointed to by 'manager'</td></tr>
+<tr><td class="rowname">Location:</td><td><a href="#EndPath">line 446, column 49</a></td></tr>
+<tr><td class="rowname">Description:</td><td>Value stored to 'fd_lock' is never read</td></tr>
 </table>
 <!-- REPORTSUMMARYEXTRA -->
 <h3>Annotated Source Code</h3>
@@ -213,7 +213,7 @@
 <tr><td class="num" id="LN128">128</td><td class="line">};</td></tr>
 <tr><td class="num" id="LN129">129</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN130">130</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>inline</span> <span class='keyword'>struct</span> event *node_to_event(<span class='keyword'>struct</span> udev_list_node *node) {</td></tr>
-<tr><td class="num" id="LN131">131</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>container_of(node, <span class='keyword'>struct</span> event, node)<span class='expansion'>__extension__ ({ const typeof( ((struct event*)0)-&gt;node ) *<br>__unique_prefix_A14 = ((node)); (struct event*)( (char *)__unique_prefix_A14<br> - __builtin_offsetof(struct event, node) ); })</span></span>;</td></tr>
+<tr><td class="num" id="LN131">131</td><td class="line">        <span class='keyword'>return</span> <span class='macro'>container_of(node, <span class='keyword'>struct</span> event, node)<span class='expansion'>__extension__ ({ const typeof( ((struct event*)0)-&gt;node ) *<br>__unique_prefix_A8 = ((node)); (struct event*)( (char *)__unique_prefix_A8<br> - __builtin_offsetof(struct event, node) ); })</span></span>;</td></tr>
 <tr><td class="num" id="LN132">132</td><td class="line">}</td></tr>
 <tr><td class="num" id="LN133">133</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN134">134</td><td class="line"><span class='keyword'>static</span> <span class='keyword'>void</span> event_queue_cleanup(Manager *manager, <span class='keyword'>enum</span> event_state type);</td></tr>
@@ -528,7 +528,8 @@
 <tr><td class="num" id="LN443">443</td><td class="line">                                        fd_lock = open(udev_device_get_devnode(d), <span class='macro'>O_RDONLY<span class='expansion'>00</span></span>|<span class='macro'>O_CLOEXEC<span class='expansion'>02000000</span></span>|<span class='macro'>O_NOFOLLOW<span class='expansion'>0400000</span></span>|<span class='macro'>O_NONBLOCK<span class='expansion'>04000</span></span>);</td></tr>
 <tr><td class="num" id="LN444">444</td><td class="line">                                        <span class='keyword'>if</span> (fd_lock &gt;= 0 &amp;&amp; flock(fd_lock, <span class='macro'>LOCK_SH<span class='expansion'>1</span></span>|<span class='macro'>LOCK_NB<span class='expansion'>4</span></span>) &lt; 0) {</td></tr>
 <tr><td class="num" id="LN445">445</td><td class="line">                                                <span class='macro'>log_debug_errno(errno, <span class='string_literal'>"Unable to flock(%s), skipping event handling: %m"</span>, udev_device_get_devnode(d))<span class='expansion'>({ int _level = (7), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c"<br>, 445, __func__, "Unable to flock(%s), skipping event handling: %m"<br>, udev_device_get_devnode(d)) : -abs(_e); })</span></span>;</td></tr>
-<tr><td class="num" id="LN446">446</td><td class="line">                                                fd_lock = safe_close(fd_lock);</td></tr>
+<tr><td class="num" id="LN446">446</td><td class="line">                                                fd_lock = <span class="mrange">safe_close(fd_lock)</span>;</td></tr>
+<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgEvent" style="margin-left:49ex">Value stored to 'fd_lock' is never read</div></td></tr>
 <tr><td class="num" id="LN447">447</td><td class="line">                                                <span class='keyword'>goto</span> skip;</td></tr>
 <tr><td class="num" id="LN448">448</td><td class="line">                                        }</td></tr>
 <tr><td class="num" id="LN449">449</td><td class="line">                                }</td></tr>
@@ -766,7 +767,7 @@
 <tr><td class="num" id="LN681">681</td><td class="line">                }</td></tr>
 <tr><td class="num" id="LN682">682</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN683">683</td><td class="line">                <span class='comment'>/* compare devpath */</span></td></tr>
-<tr><td class="num" id="LN684">684</td><td class="line">                common = <span class='macro'>MIN(loop_event-&gt;devpath_len, event-&gt;devpath_len)<span class='expansion'>__extension__ ({ const typeof((loop_event-&gt;devpath_len)) __unique_prefix_A15<br> = ((loop_event-&gt;devpath_len)); const typeof((event-&gt;devpath_len<br>)) __unique_prefix_B16 = ((event-&gt;devpath_len)); __unique_prefix_A15<br> &lt; __unique_prefix_B16 ? __unique_prefix_A15 : __unique_prefix_B16<br>; })</span></span>;</td></tr>
+<tr><td class="num" id="LN684">684</td><td class="line">                common = <span class='macro'>MIN(loop_event-&gt;devpath_len, event-&gt;devpath_len)<span class='expansion'>__extension__ ({ const typeof((loop_event-&gt;devpath_len)) __unique_prefix_A9<br> = ((loop_event-&gt;devpath_len)); const typeof((event-&gt;devpath_len<br>)) __unique_prefix_B10 = ((event-&gt;devpath_len)); __unique_prefix_A9<br> &lt; __unique_prefix_B10 ? __unique_prefix_A9 : __unique_prefix_B10<br>; })</span></span>;</td></tr>
 <tr><td class="num" id="LN685">685</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN686">686</td><td class="line">                <span class='comment'>/* one devpath is contained in the other? */</span></td></tr>
 <tr><td class="num" id="LN687">687</td><td class="line">                <span class='keyword'>if</span> (memcmp(loop_event-&gt;devpath, event-&gt;devpath, common) != 0)</td></tr>
@@ -1430,7 +1431,7 @@
 <tr><td class="num" id="LN1345">1345</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(netlink_fd, <span class='string_literal'>"could not get uevent fd: %m"</span>)<span class='expansion'>({ int _level = (3), _e = (netlink_fd); (log_get_max_level() &gt;=<br> ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c"<br>, 1345, __func__, "could not get uevent fd: %m") : -abs(_e); }<br>)</span></span>;</td></tr>
 <tr><td class="num" id="LN1346">1346</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1347">1347</td><td class="line">                netlink_fd = fcntl(fd, <span class='macro'>F_DUPFD_CLOEXEC<span class='expansion'>1030</span></span>, 3);</td></tr>
-<tr><td class="num" id="LN1348">1348</td><td class="line">                <span class='keyword'>if</span> (ctrl_fd &lt; 0)</td></tr>
+<tr><td class="num" id="LN1348">1348</td><td class="line">                <span class='keyword'>if</span> (netlink_fd &lt; 0)</td></tr>
 <tr><td class="num" id="LN1349">1349</td><td class="line">                        <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"could not dup netlink fd: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c"<br>, 1349, __func__, "could not dup netlink fd: %m") : -abs(_e);<br> })</span></span>;</td></tr>
 <tr><td class="num" id="LN1350">1350</td><td class="line">        }</td></tr>
 <tr><td class="num" id="LN1351">1351</td><td class="line"> </td></tr>
@@ -1578,12 +1579,7 @@
 <tr><td class="num" id="LN1493">1493</td><td class="line">        <span class='macro'>assert(fd_uevent &gt;= 0)<span class='expansion'>do { if ((__builtin_expect(!!(!(fd_uevent &gt;= 0)),0))) log_assert_failed<br>("fd_uevent &gt;= 0", "src/udev/udevd.c", 1493, __PRETTY_FUNCTION__<br>); } while (0)</span></span>;</td></tr>
 <tr><td class="num" id="LN1494">1494</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1495">1495</td><td class="line">        manager = <span class='macro'>new0(Manager, 1)<span class='expansion'>((Manager*) calloc((1), sizeof(Manager)))</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path1" class="msg msgControl" style="margin-left:19ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">1</div></td><td>Within the expansion of the macro 'new0':
-</td><td><div class="PathNav"><a href="#Path2" title="Next event (2)">&#x2192;</a></div></td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Memory is allocated</td></tr></table></div>
-</div></td></tr>
-<tr><td class="num" id="LN1496">1496</td><td class="line">        <span class='keyword'>if</span> (<span class="mrange">!manager</span>)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path2" class="msg msgEvent" style="margin-left:13ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">2</div></td><td><div class="PathNav"><a href="#Path1" title="Previous event (1)">&#x2190;</a></div></td></td><td>Assuming 'manager' is non-null</td><td><div class="PathNav"><a href="#Path3" title="Next event (3)">&#x2192;</a></div></td></tr></table></div></td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path3" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">3</div></td><td><div class="PathNav"><a href="#Path2" title="Previous event (2)">&#x2190;</a></div></td></td><td>Taking false branch</td><td><div class="PathNav"><a href="#Path4" title="Next event (4)">&#x2192;</a></div></td></tr></table></div></td></tr>
+<tr><td class="num" id="LN1496">1496</td><td class="line">        <span class='keyword'>if</span> (!manager)</td></tr>
 <tr><td class="num" id="LN1497">1497</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_oom()<span class='expansion'>log_oom_internal("src/udev/udevd.c", 1497, __func__)</span></span>;</td></tr>
 <tr><td class="num" id="LN1498">1498</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1499">1499</td><td class="line">        manager-&gt;fd_inotify = -1;</td></tr>
@@ -1592,11 +1588,7 @@
 <tr><td class="num" id="LN1502">1502</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1503">1503</td><td class="line">        manager-&gt;udev = udev_new();</td></tr>
 <tr><td class="num" id="LN1504">1504</td><td class="line">        <span class='keyword'>if</span> (!manager-&gt;udev)</td></tr>
-<tr><td class="num"></td><td class="line"><div id="Path4" class="msg msgControl" style="margin-left:9ex"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">4</div></td><td><div class="PathNav"><a href="#Path3" title="Previous event (3)">&#x2190;</a></div></td></td><td>Taking true branch</td><td><div class="PathNav"><a href="#EndPath" title="Next event (5)">&#x2192;</a></div></td></tr></table></div></td></tr>
 <tr><td class="num" id="LN1505">1505</td><td class="line">                <span class='keyword'>return</span> <span class='macro'>log_error_errno(errno, <span class='string_literal'>"could not allocate udev context: %m"</span>)<span class='expansion'>({ int _level = (3), _e = ((*__errno_location ())); (log_get_max_level<br>() &gt;= ((_level) &amp; 0x07)) ? log_internal(_level, _e, "src/udev/udevd.c"<br>, 1505, __func__, "could not allocate udev context: %m") : -abs<br>(_e); })</span></span>;</td></tr>
-<tr><td class="num"></td><td class="line"><div id="EndPath" class="msg msgControl" style="margin-left:24ex; max-width:100em"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexControl">5</div></td><td><div class="PathNav"><a href="#Path4" title="Previous event (4)">&#x2190;</a></div></td></td><td>Within the expansion of the macro 'log_error_errno':
-</td></tr></table><div class="msg msgEvent" style="width:94%; margin-left:5px"><table class="msgT"><tr><td valign="top"><div class="PathIndex PathIndexEvent">a</div></td><td valign="top">Potential leak of memory pointed to by 'manager'</td></tr></table></div>
-</div></td></tr>
 <tr><td class="num" id="LN1506">1506</td><td class="line"> </td></tr>
 <tr><td class="num" id="LN1507">1507</td><td class="line">        udev_builtin_init(manager-&gt;udev);</td></tr>
 <tr><td class="num" id="LN1508">1508</td><td class="line"> </td></tr>
